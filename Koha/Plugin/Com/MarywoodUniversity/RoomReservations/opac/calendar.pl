@@ -44,7 +44,7 @@ Locale::Messages->select_package('gettext_pp');
 use Locale::Messages qw(:locale_h :libintl_h);
 
 use Calendar::Simple;
-my @months = (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
+my @months = (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'). gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'),);
 
 my $pluginDir = dirname(abs_path($0));
 
@@ -514,115 +514,34 @@ END_OF_BODY
 
     $template->param(
         op => $op,
-    );    
+    );
 
     if ( $sendCopy eq '1' && $valid ) {
-
-        my $email = Koha::Email->new();
-        my $user_email = C4::Context->preference('KohaAdminEmailAddress');
-
-        # KohaAdmin address is the default - no need to set
-        my %mail = $email->create_message_headers({
-            to => $patronEmail,
-        });
-        $mail{'X-Abuse-Report'} = C4::Context->preference('KohaAdminEmailAddress');
-
-        # Since we are already logged in, no need to check credentials again
-        # when loading a second template.
-        my $template2 = C4::Templates::gettemplate(
-            $template2_name, 'opac', $cgi, 1
-        );
-
         my $timestamp = getCurrentTimestamp();
 
-        $template2->param(
-            user => $user,
-            room => $roomnumber,
-            from => $displayed_start,
-            to   => $displayed_end,
-            confirmed_timestamp => $timestamp,
-            language => C4::Languages::getlanguage($cgi) || 'en',
-			mbf_path => abs_path( '../translations' )
+        my $patron = Koha::Patrons->find( $borrowernumber );
+
+        my $letter = C4::Letters::GetPreparedLetter(
+            module                 => 'members',
+            letter_code            => 'ROOM_RESERVATION',
+            lang                   => $patron->lang,
+            message_transport_type => 'email',
+            substitute             => {
+                user                => $user,
+                room                => $roomnumber,
+                from                => $displayed_start,
+                to                  => $displayed_end,
+                confirmed_timestamp => $timestamp,
+            },
         );
 
-        # Getting template result
-        my $template_res = $template2->output();
-        my $body;
-
-        # Analysing information and getting mail properties
-
-        if ($template_res =~ /<SUBJECT>(.*)<END_SUBJECT>/s) {
-            $mail{subject} = $1;
-            $mail{subject} =~ s|\n?(.*)\n?|$1|;
-            $mail{subject} = Encode::encode("UTF-8", $mail{subject});
-        }
-        else { $mail{'subject'} = "no subject"; }
-
-        my $email_header = "";
-
-        if ( $template_res =~ /<HEADER>(.*)<END_HEADER>/s ) {
-            $email_header = $1;
-            $email_header =~ s|\n?(.*)\n?|$1|;
-            $email_header = encode_qp(Encode::encode("UTF-8", $email_header));
-        }
-
-        my $email_file = "bookingconfirmation.txt";
-        if ( $template_res =~ /<FILENAME>(.*)<END_FILENAME>/s ) {
-            $email_file = $1;
-            $email_file =~ s|\n?(.*)\n?|$1|;
-        }
-
-        if ( $template_res =~ /<MESSAGE>(.*)<END_MESSAGE>/s ) {
-            $body = $1;
-            $body =~ s|\n?(.*)\n?|$1|;
-            $body = encode_qp(Encode::encode("UTF-8", $body));
-        }
-
-        $mail{body} = $body;
-
-        my $boundary = "====" . time() . "====";
-
-        $mail{'content-type'} = "multipart/mixed; boundary=\"$boundary\"";
-        $boundary = '--' . $boundary;
-        $mail{body} = <<END_OF_BODY;
-$boundary
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-$email_header
-$body
-$boundary--
-END_OF_BODY
-
-## This version includes file attachment (if necessary)
-# $boundary
-# MIME-Version: 1.0
-# Content-Type: text/plain; charset="UTF-8"
-# Content-Transfer-Encoding: quoted-printable
-# $email_header
-# $body
-# $boundary
-# Content-Type: application/octet-stream; name="basket.iso2709"
-# Content-Transfer-Encoding: base64
-# Content-Disposition: attachment; filename="basket.iso2709"
-# $isofile
-# $boundary--
-# END_OF_BODY
-
-        # Sending mail (if not empty basket)
-        if (sendmail %mail) {
-            # do something if it works....
-            $template->param(
-                SENT      => "1",
-                patron_email => $patronEmail,
-            );
-        }
-        else {
-            # do something if it doesnt work....
-            carp "Error sending mail: an error has occurred";
-            carp "Error sending mail: $Mail::Sendmail::error" if $Mail::Sendmail::error;
-            $template->param( error => 1 );
-        }
+        C4::Letters::EnqueueLetter(
+            {
+                letter                 => $letter,
+                borrowernumber         => $borrowernumber,
+                message_transport_type => 'email',
+            }
+        );
     }
 
     $template->param(
@@ -748,31 +667,15 @@ sub getConfirmedCalendarBookingsByMonthAndYear {
 
     ## Returns hashref of the fields:
     ## roomnumber, monthdate, bookedtime
-    #~ my $query =
-    #~ 'SELECT
-        #~ r.roomnumber,
-        #~ DATE_FORMAT(b.start, "%e") AS monthdate,
-        #~ CONCAT(DATE_FORMAT(b.start, "%H:%i"), " - ", DATE_FORMAT(b.end, "%H:%i")) AS bookedtime
-        #~ FROM ' . "$rooms_table AS r, $bookings_table AS b " .
-        #~ 'WHERE r.roomid = b.roomid
-        #~ AND start BETWEEN \'' . "$year-$month-01 00:00:00' AND '" . "$year-$month-31 23:59:59'" .
-        #~ 'ORDER BY b.roomid ASC, start ASC';
     my $query =
     'SELECT
         r.roomnumber,
-        DATE_FORMAT(b.start, "%Y") AS year_start,
-        DATE_FORMAT(b.start, "%c") AS month_start,
-        DATE_FORMAT(b.start, "%e") AS monthdate_start,
-        DATE_FORMAT(b.start, "%Y") AS year_end,
-        DATE_FORMAT(b.end, "%c") AS month_end,
-        DATE_FORMAT(b.end, "%e") AS monthdate_end,
-        CONCAT(DATE_FORMAT(b.start, "%H:%i"), " - ", DATE_FORMAT(b.end, "%H:%i")) AS bookedtime
+        DATE_FORMAT(b.start, "%e") AS monthdate,
+        CONCAT(DATE_FORMAT(b.start, "%h:%i %p"), " - ", DATE_FORMAT(b.end, "%h:%i %p")) AS bookedtime
         FROM ' . "$rooms_table AS r, $bookings_table AS b " .
         'WHERE r.roomid = b.roomid
-        AND ' . "$month" . ' BETWEEN DATE_FORMAT(b.start, "%c") AND DATE_FORMAT(b.end, "%c")
-        AND ' . "$year" . ' BETWEEN DATE_FORMAT(b.start, "%Y") AND DATE_FORMAT(b.end, "%Y")
-        ORDER BY b.roomid ASC, start ASC';
-
+        AND start BETWEEN \'' . "$year-$month-01 00:00:00' AND '" . "$year-$month-31 23:59:59'" .
+        'ORDER BY b.roomid ASC, start ASC';
     $sth = $dbh->prepare($query);
     $sth->execute();
 
@@ -1121,49 +1024,6 @@ sub getCurrentTimestamp {
     my $timestamp = strftime('%m/%d/%Y %I:%M:%S %p', localtime);
 
     return $timestamp;
-}
-
-sub getAllOpeningHours {
-	
-	my $convertWeekdays = 0;
-	$convertWeekdays = shift;
-	
-    my $dbh = C4::Context->dbh;
-
-    my $sth = '';
-
-    my $query = "
-        SELECT openid,day, DATE_FORMAT(start, '%H:%i') as start, DATE_FORMAT(end, '%H:%i') as end
-        FROM $opening_hours_table
-        ORDER BY day ASC, start ASC;";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allOpeningHours;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-		if ($convertWeekdays == 1) {
-			if ($row->{day} == 1){
-				$row->{day} = "Monday";
-			} elsif ($row->{day} == 2){
-				$row->{day} = "Tuesday";
-			} elsif ($row->{day} == 3){
-				$row->{day} = "Wednesday";
-			} elsif ($row->{day} == 4){
-				$row->{day} = "Thursday";
-			} elsif ($row->{day} == 5){
-				$row->{day} = "Friday";
-			} elsif ($row->{day} == 6){
-				$row->{day} = "Saturday";
-			} elsif ($row->{day} == 7){
-				$row->{day} = "Sunday";
-			} 
-		}
-        push ( @allOpeningHours, $row );
-    }
-
-    return \@allOpeningHours;
 }
 
 output_html_with_http_headers $cgi, $cookie, $template->output;

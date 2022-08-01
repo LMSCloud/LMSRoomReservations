@@ -1,0 +1,4 @@
+Perltidy version is 20220217
+
+<source_stream>: Begin Error Output Stream
+2213: already saw definition of 'sub getTranslation' in package 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations' at line 2208
