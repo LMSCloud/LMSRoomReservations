@@ -63,6 +63,7 @@
         			[% 'Select an action:' | gettext %]
         			<select name="tool_actions_selection">
         				<option value=""></option>
+                        <option value="action-manage-openings">[% 'Manage opening hours' | gettext %]</option>
                         <option value="action-manage-blackouts">[% 'Manage blackouts' | gettext %]</option>
         				<option value="action-manage-reservations">[% 'Manage reservations' | gettext %]</option>
         			</select><br />
