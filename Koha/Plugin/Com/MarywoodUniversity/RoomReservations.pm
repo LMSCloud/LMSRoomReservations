@@ -38,13 +38,15 @@ our $equipment_table     = 'booking_equipment';
 our $equipment_index     = 'bookingequipment_idx';
 our $roomequipment_table = 'booking_room_equipment';
 our $roomequipment_index = 'bookingroomequipment_idx';
+our $opening_hours_table = 'booking_opening_hours';
+our $opening_hours_index = 'booking_opening_idx';
 
 # set locale settings for gettext
 my $self = new('Koha::Plugin::Com::MarywoodUniversity::RoomReservations');
 my $cgi  = $self->{'cgi'};
 
 my $locale = C4::Languages::getlanguage($cgi);
-$locale = substr( $locale, 0, 2 );
+$locale = substr $locale, 0, 2;
 $ENV{'LANGUAGE'} = $locale;
 setlocale Locale::Messages::LC_ALL(), '';
 textdomain "com.marywooduniversity.roomreservations";
@@ -94,11 +96,12 @@ sub install() {
     my $original_version = $self->retrieve_data('plugin_version');    # is this a new install or an upgrade?
 
     my @installer_statements = (
-        qq{DROP TABLE IF EXISTS $bookings_table, $roomequipment_table, $equipment_table, $rooms_table, $openinghours_table},
+        qq{DROP TABLE IF EXISTS $bookings_table, $roomequipment_table, $equipment_table, $rooms_table, $opening_hours_table},
         qq{CREATE TABLE $rooms_table (
               `roomid` INT NOT NULL AUTO_INCREMENT,
               `roomnumber` VARCHAR(20) NOT NULL, -- alphanumeric room identifier
               `maxcapacity` INT NOT NULL, -- maximum number of people allowed in the room
+              `description` TEXT, -- room description to display in OPAC
             PRIMARY KEY (roomid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
         qq{CREATE INDEX $rooms_index ON $rooms_table(roomid);},
@@ -114,14 +117,14 @@ sub install() {
               CONSTRAINT calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
         qq{CREATE INDEX $bookings_index ON $bookings_table(borrowernumber, roomid);},
-        qq{CREATE TABLE $openinghours_table (
+        qq{CREATE TABLE $opening_hours_table (
               `openid` INT NOT NULL AUTO_INCREMENT,
               `day` INT NOT NULL,
               `start` TIME NOT NULL, -- start date/time of opening hours
               `end` TIME NOT NULL, -- end date/time of opening hours
               PRIMARY KEY (openid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
-        qq{CREATE INDEX $openinghours_index ON $openinghours_table(openid);},
+        qq{CREATE INDEX $opening_hours_index ON $opening_hours_table(openid);},
         qq{CREATE TABLE $equipment_table (
               `equipmentid` INT NOT NULL AUTO_INCREMENT,
               `equipmentname` VARCHAR(20) NOT NULL,
@@ -420,9 +423,11 @@ sub tool {
     my $tool_action = $cgi->param('tool_actions_selection');
 
     # used for manage blackouts
-    my $manage_blackouts_submit = $cgi->param('manage-blackouts-submit') || q{};    # delete existing blackout
-    my $submit_full_blackout    = $cgi->param('submit-full-blackout')    || q{};    # add full day blackout(s)
-    my $submit_partial_blackout = $cgi->param('submit-partial-blackout') || q{};    # add partial-day blackout
+    my $manage_blackouts_submit  = $cgi->param('manage-blackouts-submit')  || q{};    # delete existing blackout
+    my $submit_full_blackout     = $cgi->param('submit-full-blackout')     || q{};    # add full day blackout(s)
+    my $submit_partial_blackout  = $cgi->param('submit-partial-blackout')  || q{};    # add partial-day blackout
+    my $submit_opening_hours     = $cgi->param('submit-opening-hours')     || q{};    # add partial-day blackout
+    my $submit_opening_hours_del = $cgi->param('submit-opening-hours-del') || q{};    # add partial-day blackout
 
     if (   $op eq 'action-selected'
         && $tool_action eq 'action-manage-reservations' )
@@ -447,6 +452,50 @@ sub tool {
             op            => 'manage-blackouts',
             blackouts     => $blackouts,
             current_rooms => $rooms,
+        );
+    }
+    elsif ( $op eq 'action-selected' && $tool_action eq 'action-manage-openings' ) {
+
+        my $opening_hours = getOpeningHours(1);
+
+        $template->param(
+            deleted       => -1,
+            op            => 'manage-openings',
+            opening_hours => $opening_hours,
+        );
+    }
+    elsif ( $op eq 'manage-openings' && $submit_opening_hours_del ne '' ) {
+
+        my $selected   = $cgi->param('manage-openings-action');
+        my $selectedId = $cgi->param('manage-openings-id');
+        my $deleted    = -1;
+
+        if ( $selected eq 'delete' ) {
+            $deleted = deleteOpeningHoursById($selectedId);
+        }
+
+        my $opening_hours = getOpeningHours(1);
+
+        $template->param(
+            deleted       => $deleted,
+            op            => 'manage-openings',
+            opening_hours => $opening_hours,
+        );
+    }
+    elsif ( $op eq 'manage-openings' && $submit_opening_hours ne '' ) {
+
+        my $starttime = $cgi->param('opening-from');
+        my $endtime   = $cgi->param('opening-to');
+
+        my @days = $cgi->param('weekdays');
+
+        addOpeningHours( \@days, $starttime, $endtime );
+
+        my $opening_hours = getOpeningHours(1);
+
+        $template->param(
+            op            => $op,
+            opening_hours => $opening_hours,
         );
     }
     elsif ( $op eq 'manage-reservations' ) {
@@ -850,10 +899,11 @@ sub configure {
         if ( $addedRoom eq '1' ) {
             my $roomnumber        = $cgi->param('add-room-roomnumber');
             my $maxcapacity       = $cgi->param('add-room-maxcapacity');
+            my $description       = $cgi->param('add-room-description');
             my @selectedEquipment = $cgi->param('selected-equipment');
 
             ## pass @selectedEquipment by reference
-            addRoom( $roomnumber, $maxcapacity, \@selectedEquipment );
+            addRoom( $roomnumber, $maxcapacity, $description, \@selectedEquipment );
         }
 
         my $availableEquipment = getAllRoomEquipmentNamesAndIds();
@@ -881,8 +931,9 @@ sub configure {
             my $roomIdToUpdate     = $cgi->param('room-details-updated-roomid');
             my $updatedRoomNumber  = $cgi->param('edit-rooms-room-roomnumber');
             my $updatedMaxCapacity = $cgi->param('edit-rooms-room-maxcapacity');
+            my $updatedDescription = $cgi->param('edit-rooms-room-description');
 
-            updateRoomDetails( $roomIdToUpdate, $updatedRoomNumber, $updatedMaxCapacity );
+            updateRoomDetails( $roomIdToUpdate, $updatedRoomNumber, $updatedDescription, $updatedMaxCapacity );
         }
 
         if ( $roomEquipmentUpdated eq '1' ) {
@@ -1235,16 +1286,17 @@ sub areAnyRoomsAvailableToDelete {
 
 sub updateRoomDetails {
 
-    my ( $roomid, $roomnumber, $maxcapacity ) = @_;
+    my ( $roomid, $roomnumber, $description, $maxcapacity ) = @_;
 
-    $roomnumber = "'" . $roomnumber . "'";
+    $roomnumber  = "'" . $roomnumber . "'";
+    $description = "'" . $description . "'";
 
     ## load access to database
     my $dbh = C4::Context->dbh;
 
     my $query = "
         UPDATE $rooms_table
-        SET roomnumber = $roomnumber, maxcapacity = $maxcapacity
+        SET roomnumber = $roomnumber, maxcapacity = $maxcapacity, description = $description
         WHERE roomid = $roomid;";
 
     $dbh->do($query);
@@ -1347,17 +1399,85 @@ sub loadRoomEquipmentNamesToEditByRoomId {
     return \@equipmentNames;
 }
 
+sub getOpeningHours {
+
+    my $convert_weekdays = 0;
+    $convert_weekdays = shift;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = qq{
+        SELECT openid,day, DATE_FORMAT(start, '%H:%i') as start, DATE_FORMAT(end, '%H:%i') as end
+        FROM $opening_hours_table
+        ORDER BY day ASC, start ASC; };
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @opening_hours;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        if ( $convert_weekdays == 1 ) {
+            if    ( $row->{'day'} == 1 ) { $row->{'day'} = "Monday"; }
+            elsif ( $row->{'day'} == 2 ) { $row->{'day'} = "Tuesday"; }
+            elsif ( $row->{'day'} == 3 ) { $row->{'day'} = "Wednesday"; }
+            elsif ( $row->{'day'} == 4 ) { $row->{'day'} = "Thursday"; }
+            elsif ( $row->{'day'} == 5 ) { $row->{'day'} = "Friday"; }
+            elsif ( $row->{'day'} == 6 ) { $row->{'day'} = "Saturday"; }
+            elsif ( $row->{'day'} == 7 ) { $row->{'day'} = "Sunday"; }
+        }
+        push @opening_hours, $row;
+    }
+
+    return \@opening_hours;
+}
+
+sub addOpeningHours {
+    my ( $days, $start, $end ) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    foreach my $day ( @{$days} ) {
+        if ($day) {
+            $dbh->do(
+                qq{    
+                INSERT INTO $opening_hours_table (day, start, end)
+                VALUES ($day, '$start', '$end'); }
+            );
+        }
+    }
+}
+
+sub deleteOpeningHoursById {
+
+    my ($openId) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = qq{DELETE FROM booking_opening_hours WHERE openid = $openId;};
+
+    $sth = $dbh->prepare($query);
+    my $count = $sth->execute();
+
+    $count == 0
+        ? return 0
+        : return 1;    # ? no row(s) affected : sucessfully deleted row(s)
+}
+
 sub addRoom {
 
-    my ( $roomnumber, $maxcapacity, $equipment ) = @_;
+    my ( $roomnumber, $maxcapacity, $description, $equipment ) = @_;
 
     ## make $roomnumber SQL-friendly by surrounding with single quotes
-    $roomnumber = "'" . $roomnumber . "'";
+    $roomnumber  = "'" . $roomnumber . "'";
+    $description = "'" . $description . "'";
 
     my $dbh = C4::Context->dbh;
 
     ## first insert roomnumber and maxcapacity into $rooms_table
-    $dbh->do("INSERT INTO $rooms_table (roomnumber, maxcapacity) VALUES ($roomnumber, $maxcapacity);");
+    $dbh->do("INSERT INTO $rooms_table (roomnumber, maxcapacity, description) VALUES ($roomnumber, $maxcapacity, $description);");
 
     foreach my $piece (@$equipment) {
 
@@ -1589,7 +1709,7 @@ sub getRoomDetailsById {
 
     ## Note: GROUP BY is used to prevent duplication of rows in next step
     my $query = "
-        SELECT r.roomnumber, r.maxcapacity, e.equipmentname
+        SELECT r.roomnumber, r.maxcapacity, r.description, e.equipmentname
         FROM $rooms_table AS r, $equipment_table AS e, $roomequipment_table AS re
         WHERE r.roomid = re.roomid
         AND   e.equipmentid = re.equipmentid

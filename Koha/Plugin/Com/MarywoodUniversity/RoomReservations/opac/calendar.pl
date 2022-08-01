@@ -94,6 +94,7 @@ if ( !defined $op ) {
     my $calendarBookings = getConfirmedCalendarBookingsByMonthAndYear( $mon, $yr );
 
     my $month = sprintf '%02s', $mon;
+    my $rooms = getRoomsWithEquipment();
 
     my $userenv  = C4::Context->userenv;
     my $number   = $userenv->{number};
@@ -126,17 +127,17 @@ if ( !defined $op ) {
         month_is_active   => 1,
         plugin_dir        => $pluginDir,
         op                => $op,
+        rooms             => $rooms,
     );
 }
 elsif ( $op eq 'availability-search' ) {
 
-    my $equipment = loadAllEquipment();
-
-    my $capacities = loadAllMaxCapacities();
-
-    my $max_num_days = getFutureDays() || '0';
-
-    my $max_time = getMaxTime() || '0';
+    my $equipment     = loadAllEquipment();
+    my $capacities    = loadAllMaxCapacities();
+    my $max_num_days  = getFutureDays() || '0';
+    my $max_time      = getMaxTime()    || '0';
+    my $rooms         = getRoomsWithEquipment();
+    my $opening_hours = getOpeningHours(1);
 
     if ( $max_num_days eq '0' ) {
         $max_num_days = '';
@@ -152,6 +153,8 @@ elsif ( $op eq 'availability-search' ) {
         all_room_capacities      => $capacities,
         max_days                 => $max_num_days,
         max_time                 => $max_time,
+        opening_hours            => $opening_hours,
+        rooms                    => $rooms,
     );
 }
 elsif ( $op eq 'availability-search-results' ) {
@@ -178,8 +181,8 @@ elsif ( $op eq 'availability-search-results' ) {
     ( $availability_format_end_date   = $availability_format_end_date )   =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/x;
 
     # used exclusively for getAvailableRooms -- BUG excluding T from the DATETIME start/end field returns wrong results?
-    my $availability_format_start = sprintf"%sT%s", $availability_format_start_date, $start_time;
-    my $availability_format_end   = sprintf"%sT%s", $availability_format_end_date,   $end_time;
+    my $availability_format_start = sprintf "%sT%s", $availability_format_start_date, $start_time;
+    my $availability_format_end   = sprintf "%sT%s", $availability_format_end_date,   $end_time;
 
     # generates a DateTime object from a string
     $event_start = dt_from_string($event_start);
@@ -408,6 +411,84 @@ sub areAnyRoomsAvailable {
         # return false
         return 0;
     }
+}
+
+sub getRoomsWithEquipment {
+
+    ## load access to database
+    my $dbh = C4::Context->dbh;
+
+    ## database statement handler
+    my $sth_rooms     = q{};
+    my $sth_equipment = q{};
+
+    my $rooms_query = qq{
+        SELECT *
+        FROM $rooms_table;
+    };
+    my $equipment_query = q{};
+
+    $sth_rooms = $dbh->prepare($rooms_query);
+    $sth_rooms->execute();
+
+    my @rooms_with_equipment;
+
+    while ( my $rooms_row = $sth_rooms->fetchrow_hashref() ) {
+        my $roomid = $rooms_row->{'roomid'};
+        $equipment_query = qq{
+            SELECT equipmentname
+            FROM $equipment_table AS equipment
+            LEFT JOIN $roomequipment_table as roomequipment ON equipment.equipmentid = roomequipment.equipmentid
+            LEFT JOIN $rooms_table AS room ON roomequipment.roomid = room.roomid
+            WHERE room.roomid = $roomid;
+        };
+        $sth_equipment = $dbh->prepare($equipment_query);
+        $sth_equipment->execute();
+
+        my @equipment;
+        while ( my $equipment_row = $sth_equipment->fetchrow_hashref() ) {
+            push @equipment, $equipment_row;
+        }
+
+        $rooms_row->{'equipment'} = \@equipment;
+        push @rooms_with_equipment, $rooms_row;
+    }
+
+    return \@rooms_with_equipment;
+}
+
+sub getOpeningHours {
+
+    my $convert_weekdays = 0;
+    $convert_weekdays = shift;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = qq{
+        SELECT openid,day, DATE_FORMAT(start, '%H:%i') as start, DATE_FORMAT(end, '%H:%i') as end
+        FROM $opening_hours_table
+        ORDER BY day ASC, start ASC; };
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @opening_hours;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        if ( $convert_weekdays == 1 ) {
+            if    ( $row->{'day'} == 1 ) { $row->{'day'} = "Monday"; }
+            elsif ( $row->{'day'} == 2 ) { $row->{'day'} = "Tuesday"; }
+            elsif ( $row->{'day'} == 3 ) { $row->{'day'} = "Wednesday"; }
+            elsif ( $row->{'day'} == 4 ) { $row->{'day'} = "Thursday"; }
+            elsif ( $row->{'day'} == 5 ) { $row->{'day'} = "Friday"; }
+            elsif ( $row->{'day'} == 6 ) { $row->{'day'} = "Saturday"; }
+            elsif ( $row->{'day'} == 7 ) { $row->{'day'} = "Sunday"; }
+        }
+        push @opening_hours, $row;
+    }
+
+    return \@opening_hours;
 }
 
 sub getConfirmedCalendarBookingsByMonthAndYear {
