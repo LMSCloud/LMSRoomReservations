@@ -4,7 +4,27 @@
     <title>Plugins - [% gtx.gettext("Koha: Room Reservations Plugin: Configuration") %]</title>
 [% INCLUDE 'doc-head-close.inc' %]
     <style type="text/css">
+        div#doc3 > form, 
+        div#doc3 > div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        div#doc3 > h3 {
+            margin: 0.5em 0.8em;
+        }
+
+        div#doc3 > table {
+            margin: 0 auto;
+            max-width: 90%;
+        }
+
         .fieldset-auto-width {
+            text-align: center;
             display: inline-block;
         }
 

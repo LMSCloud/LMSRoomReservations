@@ -3,36 +3,175 @@
 [% USE Koha %]
 [% USE Branches %]
 [% INCLUDE 'doc-head-open.inc' %]
-    <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %][% 'Koha online' | gettext %][% END %] [% 'catalog' | gettext %] &rsaquo; [% 'Booking' | gettext %]</title>
+<title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %][% 'Koha online' | gettext %][% END %] [% 'catalog'
+  | gettext %] &rsaquo; [% 'Booking' | gettext %]</title>
 
 [% INCLUDE 'doc-head-close.inc' %]
-    <style>
-        .avail-room {
-            text-align: center;
-        }
-        .calendar-table {
-            table-layout: auto;
-            border-collapse: collapse;
-        }
-        #study-room-calendar td {
-            vertical-align: top;
-            text-align: left;
-            min-width:100px;
-        }
-        /* used for <div> in calendar <td> */
-        .min-height {
-            min-height: 50px;
-            text-align: center;
-        }
-        button {
-            background:none!important;
-            color:#0000EE;
-            border:none;
-            padding:0!important;
-            font: inherit;
-            cursor: pointer;
-        }
-    </style>
+<style>
+  #alert-room-unavailable-button {
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: var(--danger);
+    padding: 0.25em;
+  }
+
+  .avail-room {
+    text-align: center;
+  }
+
+  .calendar-submit {
+    padding: 0.75em;
+    margin: 0;
+    border-radius: 50%;
+    line-height: 0.5em;
+    border: 1px solid transparent;
+  }
+
+  input[name="book-room-btn"],
+  input[name="submit-check-room-availability"],
+  input[name="confirmationSubmit"],
+  input[name="startOverSubmit"],
+  button#jump-to-calendar {
+    padding: 0.5em;
+    margin: 0;
+    border-radius: 7px;
+    border: 1px solid transparent;
+  }
+
+  input[name="startOverSubmit"] {
+    background: none;
+    color: var(--secondary);
+  }
+  
+  input[name="book-room-btn"]:hover,
+  .calendar-submit:hover,
+  input[name="submit-check-room-availability"]:hover,
+  input[name="confirmationSubmit"]:hover,
+  button#jump-to-calendar:hover {
+    position: relative;
+    top: -3px;
+    box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
+  }
+
+  input[name="startOverSubmit"]:hover {
+    text-decoration: underline;
+    color: var(--warning);
+  }
+
+  input[name="book-room-btn"]:active,
+  .calendar-submit:active,
+  input[name="submit-check-room-availability"]:active,
+  input[name="confirmationSubmit"]:active,
+  button#jump-to-calendar:active {
+    top: 0;
+    box-shadow: none;
+  }
+
+  input[name="startOverSubmit"]:active {
+    color: var(--danger);
+  }
+
+  .lmsr-calendar {
+    margin: 0 auto;
+    width: 100%;
+    border-radius: 12px;
+    padding: 1em 2em;
+    box-shadow: 1px 2px 4px rgb(0 0 0 / 40%);
+  }
+
+  .lmsr-calendar-controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
+  .lmsr-calendar-body {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid rgba(0,0,0,0.1);
+  }
+
+  .lmsr-calendar-foot div.lmsr-calendar-row {
+    justify-content: right;
+  }
+
+  .lmsr-calendar-data-booking {
+    margin: 0.5em 2.5em 0.5em 0.5em;
+    border-radius: 7px;
+    padding: 0.25em;
+    font-size: small;
+    text-align: center;
+  }
+
+  .lmsr-calendar-data {
+    width: 100%;
+    height: 15vh;
+    border: 1px solid rgba(0,0,0,0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+  }
+
+  .lmsr-calendar-dayofmonth {
+    position: absolute;
+    top: 0.25em;
+    right: 0.25em;
+  }
+
+  .lmsr-calendar-header {
+    width: 100%;
+    text-align: right;
+    padding: 0 0.25em;
+  }
+
+  .lmsr-calendar-row {
+    display: flex;
+  }
+
+  .lmsr-calendar-vertical-separator {
+    width: 90%;
+  }
+
+  .lmsr-card-room {
+    height: calc(100% - 1em);
+  }
+
+  .lmsr-list {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .lmsr-list-item {
+    position: relative;
+    list-style-type: none;
+    padding-left: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .lmsr-list-item:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 5px;
+    height: 11px;
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+    border-color: #00a8a8;
+    transform-origin: bottom left;
+    transform: rotate(45deg);
+  }
+
+  .ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
+    height: 100%;
+  }
+
+</style>
 </head>
 [% BLOCK cssinclude %][% END %]
 
@@ -40,943 +179,649 @@
 [% INCLUDE 'masthead.inc' %]
 
 <div class="main">
-    <!-- op defaults to 'undef' if template param is undef (meaning show calendar) -->
-    [% DEFAULT op = 'undef' %]
-    [% IF op == 'undef' %]
-    <ul class="breadcrumb">
-        <li><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a> <span class="divider">&rsaquo;</span></li>
-        <li><a href="#">[% "Study Room Calendar" | gettext %]</a></li>
-    </ul>
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
-                    [% IF is_restricted %]
-                        [% IF is_restricted_message == '' %]
-                            <h1>[% 'You do not have permission to access this page' | gettext %]</h1>
-                        [% ELSE %]
-                            <h1>[% is_restricted_message %]</h1>
-                        [% END %]
-                    [% ELSE %]
-                    <table class="calendar-table" id="study-room-calendar" border="2" height="80%" width="80%" align="center">
-                        <thead>
-                            <tr>
-                                <th colspan="10" align="center">[% active_month | gettext %] [% active_year %]</th>
-                            </tr>
-                            <tr>
-                                <th>[% 'SUN' | gettext %]</th>
-                                <th>[% 'MON' | gettext %]</th>
-                                <th>[% 'TUE' | gettext %]</th>
-                                <th>[% 'WED' | gettext %]</th>
-                                <th>[% 'THU' | gettext %]</th>
-                                <th>[% 'FRI' | gettext %]</th>
-                                <th>[% 'SAT' | gettext %]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                [% n = 0 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                                [% n = n + 1 %]
-                                <td>
-                                [% current_month_cal.$n %]
-                                <div class="min-height">
-                                    [% FOREACH booking IN calendar_bookings %]
-                                        [% IF booking.monthdate == current_month_cal.$n %]
-                                            [% booking.roomnumber %] ([% booking.bookedtime %])<br />
-                                        [% END %]
-                                    [% END # FOREACH booking IN calendar_bookings %]
-                                </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                       <tfoot>
-                         <tr>
-                           <td style="text-align:left" colspan="10">
-                             <form method="post" name="book-room" action="#">
-                               <input type="hidden" name="op" value="availability-search" />
-                               <input type="submit" name="book-room-btn" value="[% 'Book a Room' | gettext %]" />
-                             </form>
-                           </td>
-                         </tr>
-                       </tfoot>
-                     </table>
-                        [% IF month_is_active == 1 %]
-                            <p>[% current_month_cal.count %]</p>
-                        [% END # month_is_active == 1 %]
-                    [% END %]
-                </div> <!-- / .span12 -->
-            </div> <!-- / .row-fluid -->
-        </div> <!-- / .container-fluid -->
-    [% ELSIF op == 'availability-search' %]
-        <script type="text/javascript">
-            function validateAvailabilitySearch() {
+  <!-- op defaults to 'undef' if template param is undef (meaning show calendar) -->
+  [% DEFAULT op = 'undef' %]
+  [% IF op == 'undef' %]
+    [% DEFAULT selected_mon_cnt = 0 %]
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="#">[% "Study Room Calendar" | gettext %]</a></li>
+      </ol>
+    </nav>
 
-                var startDate = document.forms["availabilitySearchForm"]["availability-search-start-date"].value;
-                var startTime = document.forms["availabilitySearchForm"]["availability-search-start-time"].value;
-                var endDate = document.forms["availabilitySearchForm"]["availability-search-end-date"].value;
-                var endTime = document.forms["availabilitySearchForm"]["availability-search-end-time"].value;
-                var maxCapacity = document.forms["availabilitySearchForm"]["availability-search-room-capacity"].value;
-                // populate an equipment array to iterate for validation
-                var equipments = document.getElementsByName("availability-search-selected-equipment");
-
-                var max_time = $('#max_time').val();
-
-                var maxTimeToMilliSeconds;
-
-                // convert milliseconds to hours, minutes, seconds
-                var x;
-                var seconds;
-                var minutes;
-                var hours;
-
-                if (max_time !== "0") {
-
-                    maxTimeToMilliSeconds = max_time * 60000; // convert seconds to milliseconds
-
-                          // convert milliseconds to seconds, minutes, hours
-                          x = maxTimeToMilliSeconds / 1000;
-                    seconds = x % 60;
-                         x /= 60;
-                    minutes = x % 60;
-                         x /= 60;
-                      hours = x % 24;
-                } else {
-                    maxTimeToMilliSeconds = 0;
-                                        x = 0;
-                                  seconds = 0;
-                                  minutes = 0;
-                                    hours = 0;
-                }
-
-                var startTimestamp = startDate + " " + startTime;
-                var endTimestamp = endDate + " " + endTime;
-
-                var startToMilliseconds = Date.parse(startTimestamp);
-                var endToMilliseconds = Date.parse(endTimestamp);
-
-                var timeDifferenceInMilliseconds = endToMilliseconds - startToMilliseconds;
-
-                if (timeDifferenceInMilliseconds > maxTimeToMilliSeconds && maxTimeToMilliSeconds > 0) {
-
-                    var timeString = "";
-
-                    if (hours > 0) {
-                        timeString += "" + hours + " [% 'hours' | gettext %]";
-                    }
-
-                    alert("[% 'Selected time range exceeds maximum time allowed of' | gettext %] " + timeString + "!");
-                    return false;
-                }
-                else if (startTimestamp >= endTimestamp) {
-                    alert("[% 'Please select a valid time range!' | gettext %]");
-                    return false;
-                }
-
-                if ( startDate == "" ) {
-                    alert("[% 'Start date is required.' | gettext %]");
-                    return false;
-                }
-
-                if ( startTime == "" ) {
-                    alert("[% 'Start time is required.' | gettext %]");
-                    return false;
-                }
-
-                if ( endDate == "" ) {
-                    alert("[% 'End date is required.' | gettext %]");
-                    return false;
-                }
-
-                if ( endTime == "" ) {
-                    alert("[% 'End time is required.' | gettext %]");
-                    return false;
-                }
-
-                if ( maxCapacity == "" ) {
-                    alert("[% 'Room capacity is required.' | gettext %]");
-                    return false;
-                }
-            }
-        </script>
-        <ul class="breadcrumb">
-            <li><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a> <span class="divider">&rsaquo;</span></li>
-            <li><a href="/booking">[% 'Study Room Calendar' | gettext %]</a> <span class="divider">&rsaquo;</span></li>
-            <li><a href="#">[% 'Availability Search' | gettext %]</a></li>
-        </ul>
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
-
-                <form name="availabilitySearchForm" method="post" action="#" onsubmit="return (validateAvailabilitySearch() && checkExistingBookings())">
-                    <input type="hidden" name="max_days" id="max_days" value="[% max_days %]" />
-                    <input type="hidden" name="max_time" id="max_time" value="[% max_time %]" />
-                    <table align="center">
-                        <thead>
-                            <tr>
-                                <th style="text-align:center;">[% 'Availability Search' | gettext %]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>
-                            <input class ="datefield" name="availability-search-start-date" id="availability-search-start-date" size="10" placeholder="[% 'Start date' | gettext %]" />
-                            <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
-
-                            <select name="availability-search-start-time">
-                                <option value="">[% 'Time' | gettext %]</option>
-                                <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
-                                <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
-                                <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
-                                <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
-                                <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
-                                <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
-                                <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
-                                <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
-                                <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
-                                <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
-                                <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
-                                <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
-                                <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
-                                <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
-                                <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
-                                <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
-                                <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
-                                <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
-                                <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
-                                <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
-                                <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
-                                <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
-                                <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
-                                <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
-                                <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
-                                <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
-                                <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
-                                <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
-                                <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
-                                <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
-                                <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
-                                <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
-                                <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
-                                <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
-                                <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
-                                <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
-                                <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
-                                <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
-                                <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
-                                <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
-                                <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
-                                <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
-                                <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
-                                <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
-                                <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
-                                <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
-                                <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
-                                <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
-                            </select><br />
-
-                            <input class ="datefield" name="availability-search-end-date" id="availability-search-end-date" size="10" placeholder="[% 'End date' | gettext %]" />
-                            <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
-
-                            <select name="availability-search-end-time">
-                              <option value="">[% 'Time' | gettext %]</option>
-                              <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
-                              <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
-                              <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
-                              <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
-                              <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
-                              <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
-                              <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
-                              <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
-                              <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
-                              <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
-                              <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
-                              <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
-                              <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
-                              <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
-                              <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
-                              <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
-                              <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
-                              <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
-                              <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
-                              <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
-                              <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
-                              <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
-                              <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
-                              <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
-                              <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
-                              <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
-                              <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
-                              <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
-                              <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
-                              <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
-                              <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
-                              <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
-                              <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
-                              <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
-                              <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
-                              <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
-                              <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
-                              <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
-                              <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
-                              <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
-                              <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
-                              <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
-                              <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
-                              <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
-                              <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
-                              <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
-                              <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
-                              <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
-                            </select><br />
-                            </td>
-                          </tr>
-                          <tr>
-                              <td>
-                                  <div class="headcount-selection">
-                                        <h3>[% 'Maximum Room Capacity' | gettext %]</h3>
-                                        <select name="availability-search-room-capacity">
-                                            <option value=""></option>
-                                            [% FOREACH capacity IN all_room_capacities %]
-                                            <option value="[% capacity.maxcapacity %]">[% capacity.maxcapacity %] [% 'people' | gettext %] </option>
-                                            [% END # FOREACH capacity IN all_room_capacities %]
-                                        </select>
-                                  </div>
-                              </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <div class="room-features-selection">
-                                <h3>[% 'Room Equipment' | gettext %]</h3>
-                                [% count = 1 %]
-                                [% FOREACH equipment IN available_room_equipment %]
-                                  [% equipmentname = equipment.equipmentname %]
-                                  [% IF equipmentname == 'none' %]
-                                      [% equipmentname = gtx.gettext('none') %]
-                                  [% END %]
-                                <!-- the modulo wraps the list around to the next row with 4 pieces of equipment to a row -->
-                                [% IF count mod 4 == 0 %]
-                                <input type="checkbox" name="availability-search-selected-equipment" value="[% equipment.equipmentid %]" /> [% equipmentname %]<br />
-                                [% ELSE %]
-                                <input type="checkbox" name="availability-search-selected-equipment" value="[% equipment.equipmentid %]" /> [% equipmentname %]
-                                [% END # IF count %]
-                                [% count = count + 1 %] <!-- equal to count++ to advance the loop -->
-                                <input type="hidden" name="availability-search-selected-equipment-name" value="[% equipmentname %]" />
-
-                                [% END # FOREACH equipment IN available_room_equipment %]
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                              <td>
-                                <br />
-                                <input type="hidden" name="op" value="availability-search-results" />
-                                <input type="submit" value="[% 'Check Room Availability' | gettext %]">
-                              </td>
-                          </tr>
-                        </tbody>
-                    </table>
-                </form>
-
-                </div> <!-- / .span12 -->
-            </div> <!-- / .row-fluid -->
-        </div> <!-- / .container-fluid -->
-    [% ELSIF op == 'availability-search-results' %]
-    <script type="text/javascript">
-            function validateAvailabilitySearchResults() {
-
-                // populate an equipment array to iterate for validation
-                var rooms = document.getElementsByName("selected-room-id");
-                var numMatchingRooms = document.getElementsByClassName("no-rooms-match");
-
-                var roomChecked = false;
-                for ( var i = 0; i < rooms.length; i++ ) {
-                    if ( rooms[i].checked ) {
-                        roomChecked = true;
-                        last; // exit out of loop
-                    }
-                }
-
-                if (numMatchingRooms.length > 0) {
-                    // do nothing
-                }
-                else {
-                    if ( !roomChecked ) {
-                        alert('[% 'Select a room to continue.' | gettext %]');
-                        return false;
-                    }
-                }
-            }
-        </script>
-    <ul class="breadcrumb">
-            <li><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a> <span class="divider">&rsaquo;</span></li>
-            <li><a href="#">[% 'Study Room Calendar' | gettext %]</a> <span class="divider">&rsaquo;</span></li>
-            <li><a href="#">[% 'Availability Search Results' | gettext %]</a></li>
-    </ul>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <form method="post" action="#" onsubmit="return validateAvailabilitySearchResults()">
-                    <input type="hidden" name="start-date" value="[% start_date %]" />
-                [% IF are_rooms_available == 1 %]
-                    <table border="2">
-                        <thead>
-                            <tr>
-                                <th colspan="4">[% 'Available Rooms' | gettext %]</th>
-                            </tr>
-                            <tr>
-                                <th>[% 'Select' | gettext %]</th>
-                                <th>[% 'Room #' | gettext %]</th>
-                                <th>[% 'Max Capacity' | gettext %]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            [% FOREACH room IN available_rooms %]
-                                <tr class="avail-room">
-                                    <td><input type="radio" name="selected-room-id" value="[% room.roomid %]" /></td>
-                                    <td>[% room.roomnumber %]</td>
-                                    <input type="hidden" name="selected-room-no" value="[% room.roomnumber %]" />
-                                    <td>[% room.maxcapacity %]</td>
-                                </tr>
+    <div class="container">
+      <div class="row mb-2">
+        <div class="col col-sm-6 mr-auto align-self-center">
+          <h2>[% 'Available Rooms' | gettext %]</h2>
+        </div>
+        <div class="col col-sm-6 text-right align-self-center">
+          <button type="button" id="jump-to-calendar" disabled>[% 'Jump to calendar' | gettext %]</button>
+        </div>
+      </div>
+      <div>
+        <div class="row">
+          <span class="lmsr-admin-confirmation-mail" hidden>admin_confirmation_email: [% admin_confirmation_email %]</span><br> 
+            [% FOR room IN rooms %]
+              <div class="col-12 col-sm-6">
+                <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+                  <div id="antolin-topicselect" class="ui-tabs-panel ui-widget-content ui-corner-bottom lmsr-card-room">
+                    <a href="#[% room.roomid %]" class="link-collection-collapse-toggle">
+                      <legend class="entrypage-legend">[% room.roomnumber %]</legend>
+                    </a>
+                    <div class="row-fluid link-collection-collapse-entries" id="[% room.roomid %]">
+                      <div class="container">
+                        <div class="border rounded p-3 mb-2 d-flex flex-column">
+                          <span class="border-bottom pb-1"><b>[% 'Max. Capacity' | gettext %]</b></span>
+                          <span class="mt-2">[% room.maxcapacity %] [% 'Persons'  | gettext %]</span>
+                        </div>
+                        <div class="border rounded p-3 mb-2 d-flex flex-column">
+                          <span class="border-bottom pb-1"><b>[% 'Description' | gettext %]</b></span>
+                          <span class="mt-2">[% room.description %]</span>
+                        </div>
+                        <div class="border rounded p-3 mb-2 d-flex flex-column">
+                          <span class="border-bottom pb-1">
+                            <b>[% 'Equipment' | gettext %]</b>
+                          </span>
+                          <ul class="lmsr-list mt-2">
+                            [% FOR eqipment IN room.equipment %]
+                              [% equipmentname = eqipment.equipmentname %]
+                              [% IF equipmentname == 'none' %]
+                                [% equipmentname = gtx.gettext('none') %]
+                              [% END %]
+                              <li class="lmsr-list-item">[% equipmentname %]</li>
                             [% END %]
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <input type="hidden" name="displayed-start" value="[% displayed_start %]" />
-                                <input type="hidden" name="displayed-end" value="[% displayed_end %]" />
-                                <input type="hidden" name="event-start-time" value="[% event_start_time %]" />
-                                <input type="hidden" name="event-end-time" value="[% event_end_time %]" />
-                                <input type="hidden" name="op" value="room-selection-confirmation" />
-                                <td></td>
-                                <td colspan="2"><input type="submit" value="[% 'Select Room' | gettext %]" /></td>
-                            <tr>
-                        </tfoot>
-                    </table>
-                [% ELSE %]
-                <h2 class="no-rooms-match">[% 'No rooms match your criteria!' | gettext %]</h2>
-                <form method="post" action="#">
-                    <input type="hidden" name="op" value="availability-search" />
-
-                    <button>[% 'Click here to try another search' | gettext %]</button>
-                </form>
-                [% END # IF are_rooms_available == 1 %]
-                </form>
-
-            </div> <!-- / .span12 -->
-        </div> <!-- / .row-fluid -->
-    </div> <!-- / .container-fluid -->
-    [% ELSIF op == 'room-selection-confirmation' %]
-    <script type="text/javascript">
-        function validateConfirmationForm() {
-
-            var resLimit = document.getElementById('count-limit').value;
-            var userLimit = document.getElementById('user-daily-limit').value;
-
-            if (userLimit == resLimit && userLimit > 0) {
-                alert("[% 'Unable to continue!\nYou have reached the limit of daily reservations per user for today!' | gettext %]");
-                return false;
-            }
-        }
-    </script>
-    <ul class="breadcrumb">
-            <li><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a> <span class="divider">&rsaquo;</span></li>
-            <li><a href="#">[% 'Study Room Calendar' | gettext %]</a> <span class="divider">&rsaquo;</span></li>
-            <li><a href="#">[% 'Confirm' | gettext %]</a></li>
-    </ul>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-
-            <form name="confirmationForm" id="confirmationForm" method="post" action="#" onsubmit="return validateConfirmationForm();">
-                <fieldset style="float:left;">
-                    <legend>[% 'Confirmation' | gettext %]</legend>
-                    <p>[% 'Name:' | gettext %] <input type="text" size="36" value="[% current_user %]" readonly="true" /></p>
-                    <input type="hidden" name="count-limit" id="count-limit" value="[% count_limit %]" />
-                    <input type="hidden" name="user-daily-limit" id="user-daily-limit" value="[% user_daily_limit %]" />
-                    <input type="hidden" name="confirmed-user" value="[% current_user %]" />
-                    <input type="hidden" name="confirmed-user-fn" value="[% current_user_fn %]" />
-                    <input type="hidden" name="confirmed-user-ln" value="[% current_user_ln %]" />
-                    <p>[% 'Email:' | gettext %] <input type="text" size="36" value="[% current_user_email %]" readonly="true" /></p>
-                    <input type="hidden" name="confirmed-email" value="[% current_user_email %]" />
-                    [% FOREACH roomnumber IN selected_room_no %]
-                    <p>[% 'Room:' | gettext %] <input type="text" size="36" value="[% roomnumber.roomnumber %]" readonly="true" /></p>
-                    <input type="hidden" name="confirmed-roomnumber" value="[% roomnumber.roomnumber %]" />
-                    [% END %]
-                    <p style="float:right;">[% 'Time:' | gettext %] <input type="text" size="36" value="[% displayed_time %]" readonly="true" /></p>
-                    <input type="hidden" name="confirmed-displayed-start" value="[% displayed_start %]" />
-                    <input type="hidden" name="confirmed-displayed-end" value="[% displayed_end %]" />
-                    <input type="hidden" name="confirmed-room-id" value="[% selected_room_id %]" />
-                    <input type="hidden" name="confirmed-start" value="[% selected_start_time %]" />
-                    <input type="hidden" name="confirmed-end" value="[% selected_end_time %]" />
-                    <input type="hidden" name="op" value="reservation-confirmed" />
-                    [% IF Koha.Preference('KohaAdminEmailAddress') %]
-                    <!-- Checked by default -->
-                    <p><input type="checkbox" name="send-confirmation-copy" value="1" checked="true" />Send me a copy of my confirmation</p>
-                    [% END # IF Koha.Preference('KohaAdminEmailAddress') %]
-                    <p><input type="submit" name="confirmationSubmit" value="[% 'Confirm' | gettext %]" /><input type="submit" name="confirmationSubmit" value="[% 'Start over' | gettext %]" /></p>
-                </fieldset>
-            </form>
-
-            </div> <!-- / .span12 -->
-        </div> <!-- / .row-fluid -->
-    </div> <!-- / .container-fluid -->
-    [% ELSIF op == 'reservation-confirmed' %]
-
-        [% IF invalid_booking == 1 %]
-            <h1>[% 'Sorry!' | gettext %]</h1>
-            <br />
-            <h2>[% 'It appears there was a problem completing your reservation' | gettext %]
-                <br />
-                [% 'This is most likely due to someone else placing a reservation for a conflicting time slot.' | gettext %]
-            </h2>
-
-            <form method="post" action="#">
-
-                <button>[% 'Click here to search again' | gettext %]</button>
-            </form>
-        [% ELSE %]
-            <h1>[% 'Congratulations! Your reservation is confirmed!' | gettext %]</h1>
-            <br />
-            [% IF SENT == '1' %]
-            <h3>[% 'An email confirmation has been sent to' | gettext %] [% patron_email %]!</h3>
+                          </ul>
+                        </div>
+                      </div> <!-- span12 -->
+                    </div> <!-- row-fluid -->
+                  </div> <!-- div id advsearches -->
+                </div> <!-- toptabs -->
+              </div>
             [% END %]
+        </div>
+        <div class="span9">
+          [% IF is_restricted %]
+            [% IF is_restricted_message == '' %]
+              <h1>[% 'You do not have permission to access this page' | gettext %]</h1>
+            [% ELSE %]
+              <h1>[% is_restricted_message %]</h1>
+            [% END %]
+          [% ELSE %]
+          <div class="calendar-table lmsr-calendar" id="study-room-calendar">
+            <div class="lmsr-calendar-head">
+              <div class="lmsr-calendar-header lmsr-calendar-controls">
+                <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-prev-month" method="post" name="prev-month" action="#">
+                  <input type="hidden" name="selected_mon_cnt" value="[% selected_mon_cnt - 1 %]" />
+                  <input class="calendar-submit" type="submit" name="prev-month" value="«" />
+                </form>
+                <div>
+                  <span class="lmsr-calendar-controls-activemonth">[% active_month | gettext %]</span>
+                  <span class="lmsr-calendar-controls-activeyear">[% active_year %]</span>
+                </div>
+                <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-next-month" method="post" name="next-month" action="#">
+                  <input type="hidden" name="selected_mon_cnt" value="[% selected_mon_cnt + 1 %]" />
+                  <input class="calendar-submit" type="submit" name="next-month" value="»" />
+                </form>
+              </div>
+              <hr class="lmsr-calendar-vertical-seperator">
+              <div class="lmsr-calendar-row">
+                <span class="lmsr-calendar-header">[% 'MON' | gettext %]</span>
+                <span class="lmsr-calendar-header">[% 'TUE' | gettext %]</span>
+                <span class="lmsr-calendar-header">[% 'WED' | gettext %]</span>
+                <span class="lmsr-calendar-header">[% 'THU' | gettext %]</span>
+                <span class="lmsr-calendar-header">[% 'FRI' | gettext %]</span>
+                <span class="lmsr-calendar-header">[% 'SAT' | gettext %]</span>
+                <span class="lmsr-calendar-header">[% 'SUN' | gettext %]</span>
+              </div>
+            </div>
+            <div class="lmsr-calendar-body">
+              [% w = 0 %]
+              [% WHILE w < 5 %] 
+                <div class="lmsr-calendar-row">
+                  [% d = 0 %]
+                  [% WHILE d < 7 %] 
+                    [% n=w * 7 + d %] 
+                      <div class="lmsr-calendar-data">
+                        <span class="lmsr-calendar-dayofmonth">&nbsp;[% current_month_cal.$n %]</span>
+                        <div class="min-height lmsr-calendar-data-entry">
+                          [% FOREACH booking IN booking_days.$n %]
+                            <div class="lmsr-calendar-data-booking">
+                              <span class="lmsr-calendar-data-roomnumber">[% booking.roomnumber %]</span><br>
+                              <span class="lmsr-calendar-data-bookedtime">([% booking.bookedtime %])</span><br />
+                            </div>
+                          [% END # FOREACH booking IN booking_days %]
+                        </div>
+                      </div>
+                    [% d = d + 1 %]
+                  [% END %]
+                </div>
+                [% w = w + 1 %]
+              [% END %]
+            </div>
+            <hr>
+            <div class="lmsr-calendar-foot">
+              <div class="lmsr-calendar-row">
+                <div class="">
+                  <form class="lmsr-calendar-form" method="post" name="book-room" action="#">
+                    <input type="hidden" name="op" value="availability-search" />
+                    <input type="submit" name="book-room-btn" value="[% 'Book a Room' | gettext %]" />
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          [% IF month_is_active == 1 %]
+            <p>[% current_month_cal.count %]</p>
+          [% END # month_is_active == 1 %]
+          [% END %]
+        </div>
+        <!-- / .span12 -->
+      </div>
+      <!-- / .row-fluid -->
+      <script>
+        const jumpToCalendarButton = document.getElementById('jump-to-calendar');
+        const _calendar = document.getElementById('study-room-calendar');
+
+        jumpToCalendarButton.addEventListener('click', () => {
+          _calendar.scrollIntoView();
+        });
+
+        jumpToCalendarButton.disabled = false;
+
+        /* We could think about assigning dedicated configurable colors to these. */
+        const activeBookingsInCalendar = document.querySelectorAll(
+          '.lmsr-calendar-data-booking',
+        );
+
+        const getColorTextWithContrast = (element) => {
+          const ELEMENT_REFERENCE = element;
+          // Generate random RGB values
+          const red = Math.floor(Math.random() * 256 - 1);
+          const green = Math.floor(Math.random() * 256 - 1);
+          const blue = Math.floor(Math.random() * 256 - 1);
+
+          // Calculate brightness of randomized colour
+          const brightness = (red * 299 + green * 587 + blue * 114) / 1000;
+
+          // Calculate brightness of white and black text
+          const lightText = (255 * 299 + 255 * 587 + 255 * 114) / 1000;
+          const darkText = (0 * 299 + 0 * 587 + 0 * 114) / 1000;
+
+          const backgroundColor = `rgb(${red},${green},${blue})`;
+          const textColor = Math.abs(brightness - lightText) > Math.abs(brightness - darkText) ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)';
+
+          return [backgroundColor, textColor];
+        };
+
+        activeBookingsInCalendar.forEach((activeBookingInCalendar) => {
+          const ACTIVE_BOOKING_REFERENCE = activeBookingInCalendar;
+          const [backgroundColor, textColor] = getColorTextWithContrast();
+          ACTIVE_BOOKING_REFERENCE.style.backgroundColor = backgroundColor;
+          ACTIVE_BOOKING_REFERENCE.style.color = textColor;
+        });
+      </script>
+    </div>
+    <!-- / .container-fluid -->
+
+    <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
+
+  [% ELSIF op == 'availability-search' %]
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
+        <li class="breadcrumb-item"><a href="/booking">[% 'Study Room Calendar' | gettext %]</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Availability Search' | gettext %]</a></li>
+      </ol>
+    </nav>
+
+    <div class="container">
+      <h2 class="lmsr-section-heading">[% 'Available Rooms' | gettext %]</h2>
+        <div class="row">
+          [% FOR room IN rooms %]
+          <div class="col-12 col-sm-6">
+            <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+              <div id="antolin-topicselect" class="ui-tabs-panel ui-widget-content ui-corner-bottom lmsr-card-room">
+                <a href="#[% room.roomid %]" class="link-collection-collapse-toggle">
+                  <legend class="entrypage-legend">[% room.roomnumber %]</legend>
+                </a>
+                <div class="row-fluid link-collection-collapse-entries" id="[% room.roomid %]">
+                  <div class="container">
+                    <div class="border rounded p-3 mb-2 d-flex flex-column">
+                      <span class="border-bottom pb-1"><b>[% 'Max. Capacity' | gettext %]</b></span>
+                      <span class="mt-2">[% room.maxcapacity %] [% 'Persons'  | gettext %]</span>
+                    </div>
+                    <div class="border rounded p-3 mb-2 d-flex flex-column">
+                      <span class="border-bottom pb-1"><b>[% 'Description' | gettext %]</b></span>
+                      <span class="mt-2">[% room.description %]</span>
+                    </div>
+                    <div class="border rounded p-3 mb-2 d-flex flex-column">
+                      <span class="border-bottom pb-1">
+                        <b>[% 'Equipment' | gettext %]</b>
+                      </span>
+                      <ul class="lmsr-list mt-2">
+                        [% FOR eqipment IN room.equipment %]
+                          [% equipmentname = eqipment.equipmentname %]
+                          [% IF equipmentname == 'none' %]
+                            [% equipmentname = gtx.gettext('none') %]
+                          [% END %]
+                          <li class="lmsr-list-item">[% equipmentname %]</li>
+                        [% END %]
+                      </ul>
+                    </div>
+                  </div> <!-- span12 -->
+                </div> <!-- row-fluid -->
+              </div> <!-- div id advsearches -->
+            </div> <!-- toptabs -->
+          </div>
+          [% END %]
+        </div>
+        <h2 class="lmsr-section-heading">[% 'Book a room' | gettext %]</h2>
+        <!-- <div class="container"> -->
+        <div class="row">
+          <div class="col-12 col-sm-6" id="room-booking">
+            <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+              <div id="antolin-topicselect" class="ui-tabs-panel ui-widget-content ui-corner-bottom lmsr-card-room">
+                <a href="#avsearch" class="link-collection-collapse-toggle">
+                  <legend class="entrypage-legend">[% 'Avalability Search' | gettext %]</legend>
+                </a>
+                <div class="row-fluid link-collection-collapse-entries" id="avsearch">
+                  <div class="container">
+
+                    <form name="availabilitySearchForm" method="post" action="#">
+                      <div class="form-group">
+                        <input type="hidden" name="max_days" id="max_days" value="[% max_days %]" />
+                        <input type="hidden" name="max_time" id="max_time" value="[% max_time %]" />
+                        <input type="hidden" name="op" value="availability-search" />
+                        [% IF room_checked == 0 %]
+                          <div class="alert alert-info row" id="alert-room-unavailable">
+                            <button id="alert-room-unavailable-button" class="col-1" disabled>x</button><br>
+                            <span class="col-11"><b>[% 'Room is not available at the selected time. Please note the opening
+                              hours.' | gettext %]</b></span>
+                          </div>
+                          <script>
+                            const alertRoomUnavailable = document.getElementById('alert-room-unavailable');
+                            const alertRoomUnavailableButton = document.getElementById('alert-room-unavailable-button');
+
+                            alertRoomUnavailableButton.addEventListener('click', () => {
+                              alertRoomUnavailable.remove();
+                            });
+
+                            alertRoomUnavailableButton.disabled = false;
+                          </script>
+                        [% END %]
+
+                        <div class="form-group">
+                          <div class="form-row mb-2">
+                            <label class="col col-form-label">[% 'Start time' | gettext %]</label>
+                            <input class="form-control col" type="date" name="availability-search-start-date" id="availability-search-start-date">
+                            <input class="form-control col" type="time" name="availability-search-start-time" id="availability-search-start-time">
+                          </div>
+                          <div class="form-row">
+                            <label class="col col-form-label">[% 'End time' | gettext %]</label>
+                            <input class="form-control col" type="date" name="availability-search-end-date" id="availability-search-end-date">
+                            <input class="form-control col" type="time" name="availability-search-end-time" id="availability-search-end-time">
+                          </div>
+                        </div>
+                        
+                        <hr>
+
+                        <div class="headcount-selection form-group">
+                          <div class="form-row">
+                            <label class="col-sm-6 col-form-label">[% 'Select Room' | gettext %]</label>
+                            <select class="form-control col-sm-6" name="availability-search-room" id="availability-search-room">
+                              <option value=""></option> <!-- FIXME: This needs a value -->
+                              [% FOREACH room IN rooms %]
+                                <option value="[% room.roomid %]">[% room.roomnumber %] ([% 'max.' | gettext
+                                  %] [% room.maxcapacity %] [% 'people' | gettext %])</option>
+                              [% END %]
+                            </select>
+                          </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-group">
+                          <div class="form-row">
+                            <div class="col-sm-12">
+                              <input class="w-100 text-wrap" type="submit" name="submit-check-room-availability"
+                                value="[% 'Check Room Availability' | gettext %]" disabled>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div> <!-- span12 -->
+                </div> <!-- row-fluid -->
+              </div> <!-- div id advsearches -->
+            </div> <!-- toptabs -->
+
+          </div> <!-- / .span12 -->
+          <div class="col-12 col-sm-6">
+            <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+              <div id="antolin-topicselect" class="ui-tabs-panel ui-widget-content ui-corner-bottom lmsr-card-room">
+                <a href="#open" class="link-collection-collapse-toggle">
+                  <legend class="entrypage-legend">[% 'Opening hours' | gettext %]</legend>
+                </a>
+                <div class="container-fluid link-collection-collapse-entries" id="open">
+                  [% FOR hour IN opening_hours %]
+                  <div class="row my-3 mx-1 p-1 border rounded">
+                    <div class="col-6 col-sm-12 col-md-7 text-left text-sm-center text-md-left rounded">[% hour.day | gettext %]</div>
+                    <div class="col-6 col-sm-12 col-md-5 text-center text-sm-center text-md-left text-lg-right">[% hour.start %] - [% hour.end %]</div>
+                  </div>
+                  [% END %]
+                </div> <!-- row-fluid -->
+              </div> <!-- div id advsearches -->
+            </div> <!-- toptabs -->
+          </div>
+        </div> <!-- row-->
+      <script>
+        /* We want to scroll into the room booking immediately; they just saw the rooms */
+        setTimeout(() => {
+          document.getElementById('room-booking').scrollIntoView();
+        }, 500);
+
+        const availabilitySearchForm = document.querySelector('form[name="availabilitySearchForm"]');
+        const availabilitySearchSubmitButton = document.querySelector('input[name="submit-check-room-availability"]');
+
+        availabilitySearchForm.addEventListener('submit', (e) => {
+
+          const searchForm = {
+            sd: {
+              field: document.getElementById('availability-search-start-date'),
+              value: document.getElementById('availability-search-start-date').value
+            },
+            st: {
+              field: document.getElementById('availability-search-start-time'),
+              value: document.getElementById('availability-search-start-time').value 
+            },
+            ed: {
+              field: document.getElementById('availability-search-end-date'),
+              value: document.getElementById('availability-search-end-date').value 
+            },
+            et: {
+              field: document.getElementById('availability-search-end-time'),
+              value: document.getElementById('availability-search-end-time').value 
+            },
+            ro: {
+              field: document.getElementById('availability-search-room'),
+              value: document.getElementById('availability-search-room').value
+            },
+          };
+
+          const searchFormArray = Array.from(Object.entries(searchForm));
+
+          searchFormArray.forEach((entry) => { const [, values] = entry; if (values.field.classList.contains('border-danger')) { values.field.classList.toggle('border-danger') }; });
+
+          const MINUTES_TO_MILLISECONDS = 60000;
+          const MILLISECONDS_TO_HOURS = 3600000;
+
+          const maximumBookableTimeframe = parseInt(document.getElementById('max_time').value);
+          const maximumBookableTimeframeInMilliseconds = maximumBookableTimeframe !== 0 ? maximumBookableTimeframe * MINUTES_TO_MILLISECONDS : 0;
+          const maximumBookableTimeframeInHours = maximumBookableTimeframeInMilliseconds !== 0 ? (maximumBookableTimeframeInMilliseconds / MILLISECONDS_TO_HOURS) % 24 : 0;
+
+          const startTimestamp = `${searchForm.sd.value} ${searchForm.st.value}`;
+          const endTimestamp = `${searchForm.ed.value} ${searchForm.et.value}`;
+
+          const startTimestampInMilliseconds = Date.parse(startTimestamp);
+          const endTimestampInMilliseconds = Date.parse(endTimestamp);
+
+          const timeDifferenceInMilliseconds = endTimestampInMilliseconds - startTimestampInMilliseconds;
+
+          if (
+            timeDifferenceInMilliseconds > maximumBookableTimeframeInMilliseconds &&
+            maximumBookableTimeframeInMilliseconds > 0
+          ) {
+            let timeString = '';
+
+            if (maximumBookableTimeframeInHours > 0) {
+              timeString += `${maximumBookableTimeframeInHours} [% 'hours' | gettext %]`;
+            }
+
+            e.preventDefault();
+            alert(
+              `[% 'Selected time range exceeds maximum time allowed of' | gettext %] ${timeString}!`,
+            );
+            return false;
+          }
+
+          searchFormArray.forEach((entry) => {
+            const [, values] = entry;
+            if (values.value === '') {
+              values.field.classList.toggle('border-danger'); 
+            }; 
+          });
+
+          if (searchFormArray.some((entry) => { const [, values] = entry; return values.value === '' })) { e.preventDefault(); return false; }
+
+          return undefined;
+        });
+
+        availabilitySearchSubmitButton.disabled = false;
+      </script>
+    </div> <!-- / .container-fluid -->
+
+    <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
+
+  [% ELSIF op == 'availability-search-results' %]
+    <script type="text/javascript">
+      function validateAvailabilitySearchResults() {
+        // populate an equipment array to iterate for validation
+        const rooms = document.getElementsByName('selected-room-id');
+        const numMatchingRooms = document.getElementsByClassName('no-rooms-match');
+
+        let roomChecked = false;
+        for (let i = 0; i < rooms.length; i += 1) {
+          if (rooms[i].checked) {
+            roomChecked = true;
+            break; // exit out of loop
+          }
+        }
+
+        if (numMatchingRooms.length > 0) {
+          // do nothing
+        } else if (!roomChecked) {
+          alert("[% 'Select a room to continue.' | gettext %]");
+          return false;
+        }
+
+        return undefined;
+      }
+    </script>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
+        <li class="breadcrumb-item"><a href="#">[% 'Study Room Calendar' | gettext %]</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Availability Search Results' | gettext %]</a></li>
+      </ol>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span12">
+          <form method="post" action="#" onsubmit="return validateAvailabilitySearchResults()">
+            <input type="hidden" name="start-date" value="[% start_date %]" />
+            [% IF are_rooms_available == 1 %]
+            <table border="2">
+              <thead>
+                <tr>
+                  <th colspan="4">[% 'Available Rooms' | gettext %]</th>
+                </tr>
+                <tr>
+                  <th>[% 'Select' | gettext %]</th>
+                  <th>[% 'Room #' | gettext %]</th>
+                  <th>[% 'Max Capacity' | gettext %]</th>
+                </tr>
+              </thead>
+              <tbody>
+                [% FOREACH room IN available_rooms %]
+                <tr class="avail-room">
+                  <td><input type="radio" name="selected-room-id" value="[% room.roomid %]" /></td>
+                  <td>[% room.roomnumber %]</td>
+                  <input type="hidden" name="selected-room-no" value="[% room.roomnumber %]" />
+                  <td>[% room.maxcapacity %]</td>
+                </tr>
+                [% END %]
+              </tbody>
+              <tfoot>
+                <tr>
+                  <input type="hidden" name="displayed-start" value="[% displayed_start %]" />
+                  <input type="hidden" name="displayed-end" value="[% displayed_end %]" />
+                  <input type="hidden" name="event-start-time" value="[% event_start_time %]" />
+                  <input type="hidden" name="event-end-time" value="[% event_end_time %]" />
+                  <input type="hidden" name="op" value="room-selection-confirmation" />
+                  <td></td>
+                  <td colspan="2"><input type="submit" value="[% 'Select Room' | gettext %]" /></td>
+                <tr>
+              </tfoot>
+            </table>
+            [% ELSE %]
+            <h2 class="no-rooms-match">[% 'No rooms match your criteria!' | gettext %]</h2>
             <form method="post" action="#">
+              <input type="hidden" name="op" value="availability-search" />
 
-                <button>[% 'Back to calendar' | gettext %]</button>
+              <button>[% 'Click here to try another search' | gettext %]</button>
             </form>
-        [% END # IF invalid_booking == 1 %]
+            [% END # IF are_rooms_available == 1 %]
+          </form>
 
-    [% END %]
+        </div> <!-- / .span12 -->
+      </div> <!-- / .row-fluid -->
+    </div> <!-- / .container-fluid -->
+
+    <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
+
+  [% ELSIF op == 'room-selection-confirmation' %]
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
+        <li class="breadcrumb-item"><a href="#">[% 'Study Room Calendar' | gettext %]</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Confirm' | gettext %]</a></li>
+      </ol>
+    </nav>
+
+    <div class="container-fluid">
+      <form name="confirmationForm" id="confirmationForm" method="post" action="#">
+        <div class="p-3 border rounded">
+          <legend>[% 'Confirmation' | gettext %]</legend>
+          <hr>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="username">[% 'Name:' | gettext %]&nbsp;</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="username" name="username" size="36" value="[% current_user %]" readonly="true" />
+      
+              <input type="hidden" name="count-limit" id="count-limit" value="[% count_limit %]" />
+              <input type="hidden" name="user-daily-limit" id="user-daily-limit" value="[% user_daily_limit %]" />
+              <input type="hidden" name="confirmed-user" value="[% current_user %]" />
+              <input type="hidden" name="confirmed-user-fn" value="[% current_user_fn %]" />
+              <input type="hidden" name="confirmed-user-ln" value="[% current_user_ln %]" />
+      
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="email">[% 'Email:' | gettext %]&nbsp;</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="email" name="email" size="36" value="[% current_user_email %]" readonly="true" />
+      
+              <input type="hidden" name="confirmed-email" value="[% current_user_email %]" />
+            </div>
+          </div>
+          [% FOREACH roomnumber IN selected_room_no %]
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="room">[% 'Room:' | gettext %]&nbsp;</label>
+              <div class="col-sm-10">
+                <input class="form-control" type="text" id="room" name="room" size="36"
+                  value="[% roomnumber.roomnumber %]" readonly="true" />
+    
+                <input type="hidden" name="confirmed-roomnumber" value="[% roomnumber.roomnumber %]" />
+              </div>
+            </div>
+          [% END %]
+          <div class="from-group row">
+            <label class="col-sm-2 col-form-label" for="time">[% 'Time:' | gettext %]&nbsp;</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="time" name="time" size="36"
+                value="[% displayed_time %]" readonly="true" />
+    
+              <input type="hidden" name="confirmed-displayed-start" value="[% displayed_start %]" />
+              <input type="hidden" name="confirmed-displayed-end" value="[% displayed_end %]" />
+              <input type="hidden" name="confirmed-room-id" value="[% selected_room_id %]" />
+              <input type="hidden" name="confirmed-start" value="[% selected_start_time %]" />
+              <input type="hidden" name="confirmed-end" value="[% selected_end_time %]" />
+              <input type="hidden" name="op" value="reservation-confirmed" />
+            </div>
+          </div>
+          <hr>
+          <div class="row justify-content-between align-items-center mx-3">
+            [% IF Koha.Preference('KohaAdminEmailAddress') %]
+              <!-- Checked by default -->
+              <div class="form-group form-check col col-sm-6 mb-0">
+                <input class="form-check-input" type="checkbox" id="send-confirmation-copy" name="send-confirmation-copy" value="1" checked>
+                <label class="form-check-label" for="send-confirmation-copy">[% 'Send me a copy of my confirmation' | gettext %]</label>
+              </div>
+            [% END # IF Koha.Preference('KohaAdminEmailAddress') %]
+            <div class="col col-sm-6 text-right">
+              <input type="submit" name="startOverSubmit" value="[% 'Start over' | gettext %]" />
+              <input type="submit" name="confirmationSubmit" value="[% 'Confirm' | gettext %]" disabled/>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <script type="text/javascript">
+        const validateConfirmationForm = () => {
+          const confirmationSubmitButton = document.querySelector('input[name="confirmationSubmit"]');
+          const confirmationForm = document.querySelector('form[name="confirmationForm"]');
+
+          const resLimit = document.getElementById('count-limit').value;
+          const userLimit = document.getElementById('user-daily-limit').value;
+
+          console.log(resLimit, userLimit); // FIXME: Remove
+
+          confirmationForm.addEventListener('submit', (e) => {
+            if (userLimit === resLimit && userLimit > 0 && e.submitter.name === 'confirmationSubmit') {
+              e.preventDefault();
+              alert(
+                "[% 'Unable to continue!\nYou have reached the limit of daily reservations per user for today!' | gettext %]"
+              );
+              return false;
+            }
+          });
+
+          confirmationSubmitButton.disabled = false;
+        }
+
+        validateConfirmationForm();
+      </script>
+    </div> <!-- / .container-fluid -->
+
+    <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
+
+  [% ELSIF op == 'reservation-confirmed' %]
+    [% IF invalid_booking == 1 %]
+      <h1>[% 'Sorry!' | gettext %]</h1><br />
+      <h2>[% 'It appears there was a problem completing your reservation' | gettext %]<br />
+        [% 'This is most likely due to someone else placing a reservation for a conflicting time slot.' | gettext %]
+      </h2>
+
+      <form method="post" action="#">
+        <button>[% 'Click here to search again' | gettext %]</button>
+      </form>
+
+    [% ELSE %]
+      <h1>[% 'Congratulations! Your reservation is confirmed!' | gettext %]</h1><br />
+      [% IF SENT == '1' %]
+        <h3>[% 'An email confirmation has been sent to' | gettext %] [% patron_email %]!</h3>
+      [% END %]
+      <form method="post" action="#">
+        <button>[% 'Back to calendar' | gettext %]</button>
+      </form>
+    [% END # IF invalid_booking == 1 %]
+
+  [% END # END OF OPERATIONS %]
 </div> <!-- / .main -->
+
 [% INCLUDE 'opac-bottom.inc' %]
 [% BLOCK jsinclude %]
 [% INCLUDE calendar.inc %]
-<script type="text/javascript">
-// <![CDATA[
-
-    $(document).ready(function() {
-        $(".datefield").prop("readOnly", true);
-    });
-
-    var max_days = $('#max_days').val();
-    var maxDateStr = "+";
-    maxDateStr.concat(max_days);
-    maxDateStr.concat("D");
-
-
-    if (max_days === "") {
-        // http://jqueryui.com/demos/datepicker/#date-range
-        var requestdates = $( "#availability-search-start-date, #availability-search-end-date" ).datepicker({
-            minDate: 0,
-            changeMonth: true,
-            numberOfMonths: 1,
-            onSelect: function( selectedDate ) {
-                var option = this.id == "availability-search-start-date" ? "minDate" : "maxDate",
-                    instance = $( this ).data( "datepicker" );
-                    date = $.datepicker.parseDate(
-                        instance.settings.dateFormat ||
-                        $.datepicker._defaults.dateFormat,
-                        selectedDate, instance.settings );
-                requestdates.not( this ).datepicker("option", option, date);
-            }
-        });
-    } else {
-        // http://jqueryui.com/demos/datepicker/#date-range
-        var requestdates = $( "#availability-search-start-date, #availability-search-end-date" ).datepicker({
-            minDate: 0,
-            maxDate: "+" + max_days + "D",
-            changeMonth: true,
-            numberOfMonths: 1,
-            onSelect: function( selectedDate ) {
-                var option = this.id == "availability-search-start-date" ? "minDate" : "maxDate",
-                    instance = $( this ).data( "datepicker" );
-                    date = $.datepicker.parseDate(
-                        instance.settings.dateFormat ||
-                        $.datepicker._defaults.dateFormat,
-                        selectedDate, instance.settings );
-                requestdates.not( this ).datepicker("option", option, date);
-            }
-        });
-    }
-// ]]>
-</script>
 [% END %]

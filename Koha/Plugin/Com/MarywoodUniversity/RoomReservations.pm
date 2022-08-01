@@ -53,11 +53,9 @@ my $locale_path = abs_path( $self->mbf_path('translations') );
 bindtextdomain "com.marywooduniversity.roomreservations" => $locale_path;
 
 our $metadata = {
-    name        => getTranslation('Room Reservations Plugin'),
-    author      => 'Lee Jamison',
-    description => getTranslation(
-'This plugin provides a room reservation solution on both intranet and OPAC interfaces.'
-    ),
+    name            => getTranslation('Room Reservations Plugin'),
+    author          => 'Lee Jamison',
+    description     => getTranslation('This plugin provides a room reservation solution on both intranet and OPAC interfaces.'),
     date_authored   => '2017-05-08',
     date_updated    => '1900-01-01',
     minimum_version => '3.22',
@@ -65,8 +63,7 @@ our $metadata = {
     version         => $VERSION,
 };
 
-our $valid
-  ;    # used to check if booking still valid prior to insertion of new booking
+our $valid;    # used to check if booking still valid prior to insertion of new booking
 
 sub new {
     my ( $class, $args ) = @_;
@@ -94,11 +91,10 @@ sub new {
 sub install() {
     my ( $self, $args ) = @_;
 
-    my $original_version = $self->retrieve_data('plugin_version')
-      ;    # is this a new install or an upgrade?
+    my $original_version = $self->retrieve_data('plugin_version');    # is this a new install or an upgrade?
 
     my @installer_statements = (
-qq{DROP TABLE IF EXISTS $bookings_table, $roomequipment_table, $equipment_table, $rooms_table},
+        qq{DROP TABLE IF EXISTS $bookings_table, $roomequipment_table, $equipment_table, $rooms_table, $openinghours_table},
         qq{CREATE TABLE $rooms_table (
               `roomid` INT NOT NULL AUTO_INCREMENT,
               `roomnumber` VARCHAR(20) NOT NULL, -- alphanumeric room identifier
@@ -117,7 +113,15 @@ qq{DROP TABLE IF EXISTS $bookings_table, $roomequipment_table, $equipment_table,
               CONSTRAINT calendar_icfk FOREIGN KEY (roomid) REFERENCES $rooms_table(roomid),
               CONSTRAINT calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
-qq{CREATE INDEX $bookings_index ON $bookings_table(borrowernumber, roomid);},
+        qq{CREATE INDEX $bookings_index ON $bookings_table(borrowernumber, roomid);},
+        qq{CREATE TABLE $openinghours_table (
+              `openid` INT NOT NULL AUTO_INCREMENT,
+              `day` INT NOT NULL,
+              `start` TIME NOT NULL, -- start date/time of opening hours
+              `end` TIME NOT NULL, -- end date/time of opening hours
+              PRIMARY KEY (openid)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
+        qq{CREATE INDEX $openinghours_index ON $openinghours_table(openid);},
         qq{CREATE TABLE $equipment_table (
               `equipmentid` INT NOT NULL AUTO_INCREMENT,
               `equipmentname` VARCHAR(20) NOT NULL,
@@ -131,18 +135,17 @@ qq{CREATE INDEX $bookings_index ON $bookings_table(borrowernumber, roomid);},
               CONSTRAINT roomequipment_iafk FOREIGN KEY (roomid) REFERENCES $rooms_table(roomid),
               CONSTRAINT roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $equipment_table(equipmentid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
-qq{CREATE INDEX $roomequipment_index ON $roomequipment_table(roomid, equipmentid);},
+        qq{CREATE INDEX $roomequipment_index ON $roomequipment_table(roomid, equipmentid);},
         qq{INSERT INTO $equipment_table (equipmentname) VALUES ('none');},
     );
 
-    if ( !defined($original_version) ) {    # clean install
+    if ( !defined $original_version ) {    # clean install
 
         # Add required IntranetUserJS entry to place
         # reservations for a patron from circulation.pl
         my $IntranetUserJS = C4::Context->preference('IntranetUserJS');
 
-        $IntranetUserJS =~
-s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///gs;
+        $IntranetUserJS =~ s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///xgs;
 
         $IntranetUserJS .= q[/* JS for Koha RoomReservation Plugin
 This JS was added automatically by installing the RoomReservation plugin
@@ -180,7 +183,8 @@ var data = $("div.patroninfo h5").html();
         }
     }
 
-    C4::Context->dbh->do(q{
+    C4::Context->dbh->do(
+        q{
         INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
             'members', 'ROOM_RESERVATION', "", "Room Reservation", 1, "Study Room Reservation Confirmation", "email", "default", "
 <p>Your study room request has been completed!</p>
@@ -194,10 +198,10 @@ To: [% to %]<br/>
 Reservation confirmed: [% confirmed_timestamp %]
 <hr/>"
 );
-    });
+    }
+    );
 
-    $self->store_data( { plugin_version => $VERSION } )
-      ;       # used when upgrading to newer version
+    $self->store_data( { plugin_version => $VERSION } );    # used when upgrading to newer version
 
     return 1;
 }
@@ -283,8 +287,7 @@ sub bookas {
 
         my $room_capacity = $cgi->param('availability-search-room-capacity');
 
-        my @equipment =
-          $cgi->param('availability-search-selected-equipment') || ();
+        my @equipment = $cgi->param('availability-search-selected-equipment') || ();
 
         my $event_start = sprintf( "%s %s", $start_date, $start_time );
         my $event_end   = sprintf( "%s %s", $end_date,   $end_time );
@@ -294,28 +297,21 @@ sub bookas {
         ( my $availability_format_end_date   = $end_date )   =~ s/\//\-/g;
 
         # re-arranges from MM-DD-YYYY to YYYY-MM-DD
-        ( $availability_format_start_date = $availability_format_start_date )
-          =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/;
-        ( $availability_format_end_date = $availability_format_end_date ) =~
-          s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/;
+        ( $availability_format_start_date = $availability_format_start_date ) =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/;
+        ( $availability_format_end_date   = $availability_format_end_date )   =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/;
 
-# used exclusively for getAvailableRooms -- BUG excluding T from the DATETIME start/end field returns wrong results?
-        my $availability_format_start =
-          sprintf( "%sT%s", $availability_format_start_date, $start_time );
-        my $availability_format_end =
-          sprintf( "%sT%s", $availability_format_end_date, $end_time );
+        # used exclusively for getAvailableRooms -- BUG excluding T from the DATETIME start/end field returns wrong results?
+        my $availability_format_start = sprintf( "%sT%s", $availability_format_start_date, $start_time );
+        my $availability_format_end   = sprintf( "%sT%s", $availability_format_end_date,   $end_time );
 
         # generates a DateTime object from a string
         $event_start = dt_from_string($event_start);
         $event_end   = dt_from_string($event_end);
 
-        my $displayed_event_start = output_pref(
-            { dt => $event_start, dateformat => 'us', timeformat => '12hr' } );
-        my $displayed_event_end = output_pref(
-            { dt => $event_end, dateformat => 'us', timeformat => '12hr' } );
+        my $displayed_event_start = output_pref( { dt => $event_start, dateformat => 'us', timeformat => '12hr' } );
+        my $displayed_event_end   = output_pref( { dt => $event_end,   dateformat => 'us', timeformat => '12hr' } );
 
-        my $availableRooms = getAvailableRooms( $availability_format_start,
-            $availability_format_end, $room_capacity, \@equipment );
+        my $availableRooms = getAvailableRooms( $availability_format_start, $availability_format_end, $room_capacity, \@equipment );
 
         # boolean -- returns 1 (one) if true or 0 (zero) if false
         my $roomsAreAvailable = areAnyRoomsAvailable($availableRooms);
@@ -381,7 +377,7 @@ sub bookas {
 
             my $timestamp = getCurrentTimestamp();
 
-            my $patron = Koha::Patrons->find( $borrowernumber );
+            my $patron = Koha::Patrons->find($borrowernumber);
 
             my $letter = C4::Letters::GetPreparedLetter(
                 module                 => 'members',
@@ -398,8 +394,7 @@ sub bookas {
             );
 
             C4::Letters::EnqueueLetter(
-                {
-                    letter                 => $letter,
+                {   letter                 => $letter,
                     borrowernumber         => $borrowernumber,
                     message_transport_type => 'email',
                 }
@@ -425,12 +420,9 @@ sub tool {
     my $tool_action = $cgi->param('tool_actions_selection');
 
     # used for manage blackouts
-    my $manage_blackouts_submit =
-      $cgi->param('manage-blackouts-submit') || q{};  # delete existing blackout
-    my $submit_full_blackout =
-      $cgi->param('submit-full-blackout') || q{};     # add full day blackout(s)
-    my $submit_partial_blackout =
-      $cgi->param('submit-partial-blackout') || q{};  # add partial-day blackout
+    my $manage_blackouts_submit = $cgi->param('manage-blackouts-submit') || q{};    # delete existing blackout
+    my $submit_full_blackout    = $cgi->param('submit-full-blackout')    || q{};    # add full day blackout(s)
+    my $submit_partial_blackout = $cgi->param('submit-partial-blackout') || q{};    # add partial-day blackout
 
     if (   $op eq 'action-selected'
         && $tool_action eq 'action-manage-reservations' )
@@ -507,10 +499,8 @@ sub tool {
         my $blackout_end_date   = $cgi->param('blackout-end-date');
         my @rooms               = $cgi->multi_param('current-room-blackout');
 
-        my $start_date = sprintf '%3$04d-%02d-%02d', split m:/:,
-          $blackout_start_date;
-        my $end_date = sprintf '%3$04d-%02d-%02d', split m:/:,
-          $blackout_end_date;
+        my $start_date = sprintf '%3$04d-%02d-%02d', split m:/:, $blackout_start_date;
+        my $end_date   = sprintf '%3$04d-%02d-%02d', split m:/:, $blackout_end_date;
 
         $start_date = $start_date . ' 00:00:00';
         $end_date   = $end_date . ' 23:59:59';
@@ -525,18 +515,14 @@ sub tool {
 
             for my $item (@room_IDs) {
                 for my $key ( keys %$item ) {
-                    addBlackoutBooking(
-                        $current_user, $item->{$key},
-                        $start_date,   $end_date
-                    );
+                    addBlackoutBooking( $current_user, $item->{$key}, $start_date, $end_date );
                 }
             }
         }
         else {
 
-            for ( my $i = 0 ; $i < scalar(@rooms) ; $i++ ) {
-                addBlackoutBooking( $current_user, $rooms[$i], $start_date,
-                    $end_date );
+            for ( my $i = 0; $i < scalar(@rooms); $i++ ) {
+                addBlackoutBooking( $current_user, $rooms[$i], $start_date, $end_date );
             }
         }
 
@@ -571,14 +557,13 @@ sub tool {
 
             for my $item (@room_IDs) {
                 for my $key ( keys %$item ) {
-                    addBlackoutBooking( $current_user, $item->{$key}, $start,
-                        $end );
+                    addBlackoutBooking( $current_user, $item->{$key}, $start, $end );
                 }
             }
         }
         else {
 
-            for ( my $i = 0 ; $i < scalar(@rooms) ; $i++ ) {
+            for ( my $i = 0; $i < scalar(@rooms); $i++ ) {
                 addBlackoutBooking( $current_user, $rooms[$i], $start, $end );
             }
         }
@@ -745,12 +730,10 @@ sub configure {
 
         if ( $submitted eq '1' ) {
 
-            my @restricted_categories_to_clear =
-              $cgi->multi_param('currently-restricted-category');
+            my @restricted_categories_to_clear = $cgi->multi_param('currently-restricted-category');
 
             if ( scalar(@restricted_categories_to_clear) > 0 ) {
-                clearPatronCategoryRestriction(
-                    \@restricted_categories_to_clear );
+                clearPatronCategoryRestriction( \@restricted_categories_to_clear );
             }
             else {
                 clearPatronCategoryRestriction(undef);
@@ -899,8 +882,7 @@ sub configure {
             my $updatedRoomNumber  = $cgi->param('edit-rooms-room-roomnumber');
             my $updatedMaxCapacity = $cgi->param('edit-rooms-room-maxcapacity');
 
-            updateRoomDetails( $roomIdToUpdate, $updatedRoomNumber,
-                $updatedMaxCapacity );
+            updateRoomDetails( $roomIdToUpdate, $updatedRoomNumber, $updatedMaxCapacity );
         }
 
         if ( $roomEquipmentUpdated eq '1' ) {
@@ -978,8 +960,7 @@ sub configure {
 
         my $availableRooms = getAllRoomNumbersAndIdsAvailableToDelete();
 
-        my $areThereRoomsToDelete =
-          areAnyRoomsAvailableToDelete($availableRooms);
+        my $areThereRoomsToDelete = areAnyRoomsAvailableToDelete($availableRooms);
 
         if ( $areThereRoomsToDelete == 1 ) {
             $template->param( rooms_available_to_delete => 1, );
@@ -1022,14 +1003,12 @@ sub configure {
         my $delete = $cgi->param('delete') || q{};
 
         if ( $delete eq '1' ) {
-            my $equipmentIdToDelete =
-              $cgi->param('delete-equipment-radio-button');
+            my $equipmentIdToDelete = $cgi->param('delete-equipment-radio-button');
 
             deleteEquipment($equipmentIdToDelete);
         }
 
-        my $availableEquipment =
-          getAllRoomEquipmentNamesAndIdsAvailableToDelete();
+        my $availableEquipment = getAllRoomEquipmentNamesAndIdsAvailableToDelete();
 
         $template->param(
             op                  => $op,
@@ -1212,10 +1191,7 @@ sub addBlackoutBooking {
 
     $dbh->do( "
         INSERT INTO $bookings_table (borrowernumber, roomid, start, end, blackedout)
-        VALUES ($borrowernumber, $roomid, " . "'"
-          . $start . "'" . "," . "'"
-          . $end . "'"
-          . ', 1);' );
+        VALUES ($borrowernumber, $roomid, " . "'" . $start . "'" . "," . "'" . $end . "'" . ', 1);' );
 }
 
 sub deleteBookingById {
@@ -1284,9 +1260,7 @@ sub updateRoomEquipment {
 
     foreach my $piece (@$equipment) {
 
-        $dbh->do(
-"INSERT INTO $roomequipment_table (roomid, equipmentid) VALUES ($roomid, $piece);"
-        );
+        $dbh->do("INSERT INTO $roomequipment_table (roomid, equipmentid) VALUES ($roomid, $piece);");
     }
 }
 
@@ -1383,15 +1357,11 @@ sub addRoom {
     my $dbh = C4::Context->dbh;
 
     ## first insert roomnumber and maxcapacity into $rooms_table
-    $dbh->do(
-"INSERT INTO $rooms_table (roomnumber, maxcapacity) VALUES ($roomnumber, $maxcapacity);"
-    );
+    $dbh->do("INSERT INTO $rooms_table (roomnumber, maxcapacity) VALUES ($roomnumber, $maxcapacity);");
 
     foreach my $piece (@$equipment) {
 
-        $dbh->do(
-"INSERT INTO $roomequipment_table (roomid, equipmentid) VALUES ((SELECT roomid FROM $rooms_table WHERE roomnumber = $roomnumber), $piece);"
-        );
+        $dbh->do("INSERT INTO $roomequipment_table (roomid, equipmentid) VALUES ((SELECT roomid FROM $rooms_table WHERE roomnumber = $roomnumber), $piece);");
     }
 }
 
@@ -1412,9 +1382,7 @@ sub addEquipment {
 
     my $dbh = C4::Context->dbh;
 
-    $dbh->do(
-        "INSERT INTO $equipment_table (equipmentname) VALUES ($equipmentname);"
-    );
+    $dbh->do("INSERT INTO $equipment_table (equipmentname) VALUES ($equipmentname);");
 }
 
 sub deleteEquipment {
@@ -1744,7 +1712,7 @@ sub getAvailableRooms {
             WHERE
             \'$end\' > start AND \'$start\' < end)";
 
-# if dereferenced array ref has zero elements (length evaluated in scalar context)
+    # if dereferenced array ref has zero elements (length evaluated in scalar context)
     if ( @$equipment > 0 ) {
 
         # counts number of elements
@@ -1862,10 +1830,7 @@ sub addBooking {
 
     $dbh->do( "
         INSERT INTO $bookings_table (borrowernumber, roomid, start, end)
-        VALUES ($borrowernumber, $roomid, " . "'"
-          . $start . "'" . "," . "'"
-          . $end . "'"
-          . ');' );
+        VALUES ($borrowernumber, $roomid, " . "'" . $start . "'" . "," . "'" . $end . "'" . ');' );
 }
 
 sub getTranslation {
