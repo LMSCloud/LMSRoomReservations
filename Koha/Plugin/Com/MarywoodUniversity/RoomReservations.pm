@@ -4,6 +4,12 @@ use Modern::Perl;
 
 use base qw(Koha::Plugins::Base);
 
+use strict;
+use warnings;
+use utf8;
+use Modern::Perl;
+use English qw( -no_match_vars );
+
 use Carp;
 use Cwd qw( abs_path cwd );
 use File::Basename qw( dirname );
@@ -15,10 +21,15 @@ use POSIX 'strftime';
 use C4::Auth;
 use C4::Context;
 use C4::Output;
+use C4::Languages;
+use C4::Letters;
 use Koha::DateUtils;
 use Koha::Email;
 use Koha::Patrons;
 use Encode;
+use Readonly;
+use feature qw(switch);
+use DateTime;
 
 use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
@@ -29,17 +40,16 @@ use POSIX qw(setlocale);
 our $VERSION = "{VERSION}";
 
 ## Table names and associated MySQL indexes
-#
-our $rooms_table         = 'booking_rooms';
-our $rooms_index         = 'bookingrooms_idx';
-our $bookings_table      = 'bookings';
-our $bookings_index      = 'bookingbookings_idx';
-our $equipment_table     = 'booking_equipment';
-our $equipment_index     = 'bookingequipment_idx';
-our $roomequipment_table = 'booking_room_equipment';
-our $roomequipment_index = 'bookingroomequipment_idx';
-our $opening_hours_table = 'booking_opening_hours';
-our $opening_hours_index = 'booking_opening_idx';
+our $ROOMS_TABLE         = 'booking_rooms';
+our $ROOMS_INDEX         = 'bookingrooms_idx';
+our $BOOKINGS_TABLE      = 'bookings';
+our $BOOKINGS_INDEX      = 'bookingbookings_idx';
+our $EQUIPMENT_TABLE     = 'booking_equipment';
+our $EQUIPMENT_INDEX     = 'bookingequipment_idx';
+our $ROOMEQUIPMENT_TABLE = 'booking_room_equipment';
+our $ROOMEQUIPMENT_INDEX = 'bookingroomequipment_idx';
+our $OPENING_HOURS_TABLE = 'booking_opening_hours';
+our $OPENING_HOURS_INDEX = 'booking_opening_idx';
 
 # set locale settings for gettext
 my $self = new('Koha::Plugin::Com::MarywoodUniversity::RoomReservations');
@@ -47,17 +57,17 @@ my $cgi  = $self->{'cgi'};
 
 my $locale = C4::Languages::getlanguage($cgi);
 $locale = substr $locale, 0, 2;
-$ENV{'LANGUAGE'} = $locale;
-setlocale Locale::Messages::LC_ALL(), '';
-textdomain "com.marywooduniversity.roomreservations";
+local $ENV{'LANGUAGE'} = $locale;
+setlocale Locale::Messages::LC_ALL(), q{};
+textdomain q{com.marywooduniversity.roomreservations};
 
 my $locale_path = abs_path( $self->mbf_path('translations') );
-bindtextdomain "com.marywooduniversity.roomreservations" => $locale_path;
+bindtextdomain q{com.marywooduniversity.roomreservations} => $locale_path;
 
 our $metadata = {
-    name            => getTranslation('Room Reservations Plugin'),
+    name            => get_translation('Room Reservations Plugin'),
     author          => 'Lee Jamison',
-    description     => getTranslation('This plugin provides a room reservation solution on both intranet and OPAC interfaces.'),
+    description     => get_translation('This plugin provides a room reservation solution on both intranet and OPAC interfaces.'),
     date_authored   => '2017-05-08',
     date_updated    => '1900-01-01',
     minimum_version => '3.22',
@@ -96,50 +106,60 @@ sub install() {
     my $original_version = $self->retrieve_data('plugin_version');    # is this a new install or an upgrade?
 
     my @installer_statements = (
-        qq{DROP TABLE IF EXISTS $bookings_table, $roomequipment_table, $equipment_table, $rooms_table, $opening_hours_table},
-        qq{CREATE TABLE $rooms_table (
+        qq{DROP TABLE IF EXISTS $BOOKINGS_TABLE, $ROOMEQUIPMENT_TABLE, $EQUIPMENT_TABLE, $ROOMS_TABLE, $OPENING_HOURS_TABLE},
+        <<~"EOF",
+            CREATE TABLE $ROOMS_TABLE (
               `roomid` INT NOT NULL AUTO_INCREMENT,
               `roomnumber` VARCHAR(20) NOT NULL, -- alphanumeric room identifier
               `maxcapacity` INT NOT NULL, -- maximum number of people allowed in the room
               `description` TEXT, -- room description to display in OPAC
             PRIMARY KEY (roomid)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
-        qq{CREATE INDEX $rooms_index ON $rooms_table(roomid);},
-        qq{CREATE TABLE $bookings_table (
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+        EOF
+        qq{CREATE INDEX $ROOMS_INDEX ON $ROOMS_TABLE(roomid);},
+        <<~"EOF",
+            CREATE TABLE $BOOKINGS_TABLE (
               `bookingid` INT NOT NULL AUTO_INCREMENT,
               `borrowernumber` INT NOT NULL, -- foreign key; borrowers table
-              `roomid` INT NOT NULL, -- foreign key; $rooms_table table
+              `roomid` INT NOT NULL, -- foreign key; $ROOMS_TABLE table
               `start` DATETIME NOT NULL, -- start date/time of booking
               `end` DATETIME NOT NULL, -- end date/time of booking
               `blackedout` TINYINT(1) NOT NULL DEFAULT 0,
               PRIMARY KEY (bookingid),
-              CONSTRAINT calendar_icfk FOREIGN KEY (roomid) REFERENCES $rooms_table(roomid),
+              CONSTRAINT calendar_icfk FOREIGN KEY (roomid) REFERENCES $ROOMS_TABLE(roomid),
               CONSTRAINT calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
-        qq{CREATE INDEX $bookings_index ON $bookings_table(borrowernumber, roomid);},
-        qq{CREATE TABLE $opening_hours_table (
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+        EOF
+        qq{CREATE INDEX $BOOKINGS_INDEX ON $BOOKINGS_TABLE(borrowernumber, roomid);},
+        <<~"EOF",
+            CREATE TABLE $OPENING_HOURS_TABLE (
               `openid` INT NOT NULL AUTO_INCREMENT,
               `day` INT NOT NULL,
               `start` TIME NOT NULL, -- start date/time of opening hours
               `end` TIME NOT NULL, -- end date/time of opening hours
               PRIMARY KEY (openid)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
-        qq{CREATE INDEX $opening_hours_index ON $opening_hours_table(openid);},
-        qq{CREATE TABLE $equipment_table (
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+        EOF
+        qq{CREATE INDEX $OPENING_HOURS_INDEX ON $OPENING_HOURS_TABLE(openid);},
+        <<~"EOF",
+            CREATE TABLE $EQUIPMENT_TABLE (
               `equipmentid` INT NOT NULL AUTO_INCREMENT,
               `equipmentname` VARCHAR(20) NOT NULL,
               PRIMARY KEY (equipmentid)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
-        qq{CREATE INDEX $equipment_index ON $equipment_table(equipmentid);},
-        qq{CREATE TABLE $roomequipment_table (
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+        EOF
+        qq{CREATE INDEX $EQUIPMENT_INDEX ON $EQUIPMENT_TABLE(equipmentid);},
+        <<~"EOF",
+            CREATE TABLE $ROOMEQUIPMENT_TABLE (
               `roomid` INT NOT NULL,
               `equipmentid` INT NOT NULL,
               PRIMARY KEY (roomid, equipmentid),
-              CONSTRAINT roomequipment_iafk FOREIGN KEY (roomid) REFERENCES $rooms_table(roomid),
-              CONSTRAINT roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $equipment_table(equipmentid)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;},
-        qq{CREATE INDEX $roomequipment_index ON $roomequipment_table(roomid, equipmentid);},
-        qq{INSERT INTO $equipment_table (equipmentname) VALUES ('none');},
+              CONSTRAINT roomequipment_iafk FOREIGN KEY (roomid) REFERENCES $ROOMS_TABLE(roomid),
+              CONSTRAINT roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT_TABLE(equipmentid)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+        EOF
+        qq{CREATE INDEX $ROOMEQUIPMENT_INDEX ON $ROOMEQUIPMENT_TABLE(roomid, equipmentid);},
+        qq{INSERT INTO $EQUIPMENT_TABLE (equipmentname) VALUES ('none');},
     );
 
     if ( !defined $original_version ) {    # clean install
@@ -150,33 +170,38 @@ sub install() {
 
         $IntranetUserJS =~ s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///xgs;
 
-        $IntranetUserJS .= q[/* JS for Koha RoomReservation Plugin
-This JS was added automatically by installing the RoomReservation plugin
-Please do not modify */
+        $IntranetUserJS .= <<~"EOF";
+            /* JS for Koha RoomReservation Plugin
+            This JS was added automatically by installing the RoomReservation plugin
+            Please do not modify */
 
-$(document).ready(function() {
-var buttonText = "];
-        $IntranetUserJS .= getTranslation('Reserve room as patron') . q[";
-var data = $("div.patroninfo h5").html();
+            \$(document).ready(function() {
+                var buttonText = "
+        EOF
 
-    if (typeof borrowernumber !== 'undefined') {
-        if (data) {
-            var regExp = /\(([^)]+)\)/;
-            var matches = regExp.exec(data);
-            var cardnumber = matches[1];
+        $IntranetUserJS .= get_translation('Reserve room as patron') . q{";};
+        $IntranetUserJS .= <<~"EOF";
+                var data = \$("div.patroninfo h5").html();
 
-            $('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter($('#addnewmessageLabel'));
-        }
-    }
-});
+                if (typeof borrowernumber !== 'undefined') {
+                    if (data) {
+                        var regExp = /\(([^)]+)\)/;
+                        var matches = regExp.exec(data);
+                        var cardnumber = matches[1];
 
-    /* End of JS for Koha RoomReservation Plugin */];
+                        \$('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter(\$('#addnewmessageLabel'));
+                    }
+                }
+            });
+
+            /* End of JS for Koha RoomReservation Plugin */
+        EOF
 
         C4::Context->set_preference( 'IntranetUserJS', $IntranetUserJS );
 
         for (@installer_statements) {
             my $sth = C4::Context->dbh->prepare($_);
-            $sth->execute or die C4::Context->dbh->errstr;
+            $sth->execute or croak C4::Context->dbh->errstr;
         }
     }
     else {    # upgrade
@@ -186,23 +211,23 @@ var data = $("div.patroninfo h5").html();
         }
     }
 
-    C4::Context->dbh->do(
-        q{
+    my $statement = <<~'EOF';
         INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
-            'members', 'ROOM_RESERVATION', "", "Room Reservation", 1, "Study Room Reservation Confirmation", "email", "default", "
-<p>Your study room request has been completed!</p>
-<p>For proof of reservation, print or save this email containing the reservation details!</p>
+            'members', 'ROOM_RESERVATION', "", "Room Reservation", 1, "Study Room Reservation Confirmation", "email", "default", 
+            "<p>Your study room request has been completed!</p>
+            <p>For proof of reservation, print or save this email containing the reservation details!</p>
 
-<hr/>
-Name: [% user %]<br/>
-Room: [% room %]<br/>
-From: [% from %]<br/>
-To: [% to %]<br/>
-Reservation confirmed: [% confirmed_timestamp %]
-<hr/>"
-);
-    }
-    );
+            <hr/>
+            Name: [% user %]<br/>
+            Room: [% room %]<br/>
+            From: [% from %]<br/>
+            To: [% to %]<br/>
+            Reservation confirmed: [% confirmed_timestamp %]
+            <hr/>"
+        );
+    EOF
+
+    C4::Context->dbh->do($statement);
 
     $self->store_data( { plugin_version => $VERSION } );    # used when upgrading to newer version
 
@@ -221,15 +246,15 @@ sub uninstall() {
     ## of the install() method's order
 
     my @uninstaller_statements = (
-        qq{DROP TABLE IF EXISTS $bookings_table;},
-        qq{DROP TABLE IF EXISTS $roomequipment_table;},
-        qq{DROP TABLE IF EXISTS $equipment_table;},
-        qq{DROP TABLE IF EXISTS $rooms_table;},
+        qq{DROP TABLE IF EXISTS $BOOKINGS_TABLE;},
+        qq{DROP TABLE IF EXISTS $ROOMEQUIPMENT_TABLE;},
+        qq{DROP TABLE IF EXISTS $EQUIPMENT_TABLE;},
+        qq{DROP TABLE IF EXISTS $ROOMS_TABLE;},
     );
 
     for (@uninstaller_statements) {
         my $sth = C4::Context->dbh->prepare($_);
-        $sth->execute or die C4::Context->dbh->errstr;
+        $sth->execute or croak C4::Context->dbh->errstr;
     }
 
     return 1;
@@ -260,7 +285,7 @@ sub bookas {
 
     if ( $submitButton eq 'Start over' ) {
 
-        $op = '';
+        $op = q{};
     }
 
     $template->param(
@@ -271,10 +296,10 @@ sub bookas {
         email          => $member_email,
     );
 
-    if ( $op eq '' ) {
+    if ( $op eq q{} ) {
         my $equipment = loadAllEquipment();
 
-        my $capacities = loadAllMaxCapacities();
+        my $capacities = load_all_max_capacities();
 
         $template->param(
             available_room_equipment => $equipment,
@@ -292,20 +317,20 @@ sub bookas {
 
         my @equipment = $cgi->param('availability-search-selected-equipment') || ();
 
-        my $event_start = sprintf( "%s %s", $start_date, $start_time );
-        my $event_end   = sprintf( "%s %s", $end_date,   $end_time );
+        my $event_start = sprintf '%s %s', $start_date, $start_time;
+        my $event_end   = sprintf '%s %s', $end_date,   $end_time;
 
         # converts '/' to '-'
-        ( my $availability_format_start_date = $start_date ) =~ s/\//\-/g;
-        ( my $availability_format_end_date   = $end_date )   =~ s/\//\-/g;
+        ( my $availability_format_start_date = $start_date ) =~ s/\//\-/smxg;
+        ( my $availability_format_end_date   = $end_date )   =~ s/\//\-/smxg;
 
         # re-arranges from MM-DD-YYYY to YYYY-MM-DD
-        ( $availability_format_start_date = $availability_format_start_date ) =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/;
-        ( $availability_format_end_date   = $availability_format_end_date )   =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/;
+        ( $availability_format_start_date = $availability_format_start_date ) =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/smx;
+        ( $availability_format_end_date   = $availability_format_end_date )   =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/smx;
 
-        # used exclusively for getAvailableRooms -- BUG excluding T from the DATETIME start/end field returns wrong results?
-        my $availability_format_start = sprintf( "%sT%s", $availability_format_start_date, $start_time );
-        my $availability_format_end   = sprintf( "%sT%s", $availability_format_end_date,   $end_time );
+        # used exclusively for get_available_rooms -- BUG excluding T from the DATETIME start/end field returns wrong results?
+        my $availability_format_start = sprintf '%sT%s', $availability_format_start_date, $start_time;
+        my $availability_format_end   = sprintf '%sT%s', $availability_format_end_date,   $end_time;
 
         # generates a DateTime object from a string
         $event_start = dt_from_string($event_start);
@@ -314,10 +339,10 @@ sub bookas {
         my $displayed_event_start = output_pref( { dt => $event_start, dateformat => 'us', timeformat => '12hr' } );
         my $displayed_event_end   = output_pref( { dt => $event_end,   dateformat => 'us', timeformat => '12hr' } );
 
-        my $availableRooms = getAvailableRooms( $availability_format_start, $availability_format_end, $room_capacity, \@equipment );
+        my $availableRooms = get_available_rooms( $availability_format_start, $availability_format_end, $room_capacity, \@equipment );
 
         # boolean -- returns 1 (one) if true or 0 (zero) if false
-        my $roomsAreAvailable = areAnyRoomsAvailable($availableRooms);
+        my $roomsAreAvailable = are_any_rooms_available($availableRooms);
 
         $template->param(
             available_rooms     => $availableRooms,
@@ -444,9 +469,9 @@ sub tool {
         && $tool_action eq 'action-manage-blackouts' )
     {
 
-        my $blackouts = getAllBlackedoutBookings();
+        my $blackouts = get_all_blackout_bookings();
 
-        my $rooms = getCurrentRoomNumbers();
+        my $rooms = get_current_room_numbers();
 
         $template->param(
             op            => 'manage-blackouts',
@@ -464,7 +489,7 @@ sub tool {
             opening_hours => $opening_hours,
         );
     }
-    elsif ( $op eq 'manage-openings' && $submit_opening_hours_del ne '' ) {
+    elsif ( $op eq 'manage-openings' && $submit_opening_hours_del ne q{} ) {
 
         my $selected   = $cgi->param('manage-openings-action');
         my $selectedId = $cgi->param('manage-openings-id');
@@ -482,7 +507,7 @@ sub tool {
             opening_hours => $opening_hours,
         );
     }
-    elsif ( $op eq 'manage-openings' && $submit_opening_hours ne '' ) {
+    elsif ( $op eq 'manage-openings' && $submit_opening_hours ne q{} ) {
 
         my $starttime = $cgi->param('opening-from');
         my $endtime   = $cgi->param('opening-to');
@@ -505,7 +530,7 @@ sub tool {
 
         if ( $selected eq 'delete' ) {
 
-            my $deleted = deleteBookingById($selectedId);
+            my $deleted = delete_booking_by_id($selectedId);
 
             my $bookings = getAllBookings();
 
@@ -525,16 +550,16 @@ sub tool {
 
         $template->param( op => $op, );
     }
-    elsif ( $op eq 'manage-blackouts' && $manage_blackouts_submit ne '' ) {
+    elsif ( $op eq 'manage-blackouts' && $manage_blackouts_submit ne q{} ) {
 
         # TODO - delete the selected blackout
 
         my $bookingid = $cgi->param('manage-blackouts-id');
 
-        deleteBookingById($bookingid);
+        delete_booking_by_id($bookingid);
 
-        my $blackouts = getAllBlackedoutBookings();
-        my $rooms     = getCurrentRoomNumbers();
+        my $blackouts = get_all_blackout_bookings();
+        my $rooms     = get_current_room_numbers();
 
         $template->param(
             op            => $op,
@@ -542,14 +567,14 @@ sub tool {
             current_rooms => $rooms,
         );
     }
-    elsif ( $op eq 'manage-blackouts' && $submit_full_blackout ne '' ) {
+    elsif ( $op eq 'manage-blackouts' && $submit_full_blackout ne q{} ) {
 
         my $blackout_start_date = $cgi->param('blackout-start-date');
         my $blackout_end_date   = $cgi->param('blackout-end-date');
         my @rooms               = $cgi->multi_param('current-room-blackout');
 
-        my $start_date = sprintf '%3$04d-%02d-%02d', split m:/:, $blackout_start_date;
-        my $end_date   = sprintf '%3$04d-%02d-%02d', split m:/:, $blackout_end_date;
+        my $start_date = sprintf '%3$04d-%02d-%02d', split m:/:x, $blackout_start_date;
+        my $end_date   = sprintf '%3$04d-%02d-%02d', split m:/:x, $blackout_end_date;
 
         $start_date = $start_date . ' 00:00:00';
         $end_date   = $end_date . ' 23:59:59';
@@ -558,25 +583,25 @@ sub tool {
 
         if ( $rooms[0] eq '0' ) {
 
-            my $room_ids = getAllRoomIds();    # IDs of all rooms in rooms table
+            my $room_ids = get_all_room_ids();    # IDs of all rooms in rooms table
 
-            my @room_IDs = @$room_ids;
+            my @room_IDs = @{$room_ids};
 
             for my $item (@room_IDs) {
-                for my $key ( keys %$item ) {
-                    addBlackoutBooking( $current_user, $item->{$key}, $start_date, $end_date );
+                for my $key ( keys %{$item} ) {
+                    add_blackout_booking( $current_user, $item->{$key}, $start_date, $end_date );
                 }
             }
         }
         else {
 
-            for ( my $i = 0; $i < scalar(@rooms); $i++ ) {
-                addBlackoutBooking( $current_user, $rooms[$i], $start_date, $end_date );
+            for ( my $i = 0; $i < scalar @rooms; $i++ ) {
+                add_blackout_booking( $current_user, $rooms[$i], $start_date, $end_date );
             }
         }
 
-        my $blackouts     = getAllBlackedoutBookings();
-        my $current_rooms = getCurrentRoomNumbers();
+        my $blackouts     = get_all_blackout_bookings();
+        my $current_rooms = get_current_room_numbers();
 
         $template->param(
             op            => $op,
@@ -584,7 +609,7 @@ sub tool {
             current_rooms => $current_rooms,
         );
     }
-    elsif ( $op eq 'manage-blackouts' && $submit_partial_blackout ne '' ) {
+    elsif ( $op eq 'manage-blackouts' && $submit_partial_blackout ne q{} ) {
 
         my $blackout_date = $cgi->param('blackout-date');
         my $start_time    = $cgi->param('blackout-start-time');
@@ -600,25 +625,25 @@ sub tool {
 
         if ( $rooms[0] eq '0' ) {
 
-            my $room_ids = getAllRoomIds();    # IDs of all rooms in rooms table
+            my $room_ids = get_all_room_ids();    # IDs of all rooms in rooms table
 
-            my @room_IDs = @$room_ids;
+            my @room_IDs = @{$room_ids};
 
             for my $item (@room_IDs) {
-                for my $key ( keys %$item ) {
-                    addBlackoutBooking( $current_user, $item->{$key}, $start, $end );
+                for my $key ( keys %{$item} ) {
+                    add_blackout_booking( $current_user, $item->{$key}, $start, $end );
                 }
             }
         }
         else {
 
-            for ( my $i = 0; $i < scalar(@rooms); $i++ ) {
-                addBlackoutBooking( $current_user, $rooms[$i], $start, $end );
+            for ( my $i = 0; $i < scalar @rooms; $i++ ) {
+                add_blackout_booking( $current_user, $rooms[$i], $start, $end );
             }
         }
 
-        my $blackouts     = getAllBlackedoutBookings();
-        my $current_rooms = getCurrentRoomNumbers();
+        my $blackouts     = get_all_blackout_bookings();
+        my $current_rooms = get_current_room_numbers();
 
         $template->param(
             op            => $op,
@@ -644,7 +669,7 @@ sub configure {
 
     my $op = $cgi->param('op') || q{};
 
-    if ( $op eq '' ) {    # Displays currently configured rooms
+    if ( $op eq q{} ) {    # Displays currently configured rooms
 
         $template->param(
 
@@ -654,7 +679,7 @@ sub configure {
 
         my $selected = $cgi->param('config_actions_selection');
 
-        my $action = '';
+        my $action = q{};
 
         if ( $selected eq 'action-select-display' ) {
 
@@ -761,7 +786,7 @@ sub configure {
         my $current_limit = $self->retrieve_data('count_limit');
 
         if ( $current_limit eq '0' ) {
-            $current_limit = '';
+            $current_limit = q{};
         }
 
         $template->param(
@@ -775,17 +800,15 @@ sub configure {
 
         my $rest_message = $cgi->param('restricted-message');
 
-        my $check_count;
-
         if ( $submitted eq '1' ) {
 
             my @restricted_categories_to_clear = $cgi->multi_param('currently-restricted-category');
 
             if ( scalar(@restricted_categories_to_clear) > 0 ) {
-                clearPatronCategoryRestriction( \@restricted_categories_to_clear );
+                clear_patron_category_restriction( \@restricted_categories_to_clear );
             }
             else {
-                clearPatronCategoryRestriction(undef);
+                clear_patron_category_restriction(undef);
             }
 
             my @categories_to_restrict = $cgi->multi_param('patron-category');
@@ -805,11 +828,11 @@ sub configure {
             $self->store_data( { restricted_message => $rest_message } );
         }
 
-        my $restricted = getRestrictedPatronCategories();
+        my $restricted = get_restricted_patron_categories();
 
         my $searchfield = q||;
 
-        my $categories = getPatronCategories();
+        my $categories = get_patron_categories();
 
         my $restricted_message = $self->retrieve_data('restricted_message');
 
@@ -860,7 +883,7 @@ sub configure {
         my $max_num_days = $self->retrieve_data('max_future_days');
 
         if ( $max_num_days eq '0' ) {
-            $max_num_days = '';
+            $max_num_days = q{};
         }
 
         $template->param(
@@ -871,7 +894,7 @@ sub configure {
     }
     elsif ( $op eq 'display-rooms' ) {
 
-        my $roomnumbers = getAllRoomNumbers();
+        my $roomnumbers = get_all_room_numbers();
 
         $template->param(
             op          => $op,
@@ -882,9 +905,9 @@ sub configure {
 
         my $roomIdToDisplay = $cgi->param('selected-displayed-room');
 
-        my $roomDetails = getRoomDetailsById($roomIdToDisplay);
+        my $roomDetails = get_room_details_by_id($roomIdToDisplay);
 
-        my $roomEquipment = getRoomEquipmentById($roomIdToDisplay);
+        my $roomEquipment = get_room_equipment_by_id($roomIdToDisplay);
 
         $template->param(
             op                      => $op,
@@ -903,11 +926,11 @@ sub configure {
             my @selectedEquipment = $cgi->param('selected-equipment');
 
             ## pass @selectedEquipment by reference
-            addRoom( $roomnumber, $maxcapacity, $description, \@selectedEquipment );
+            add_room( $roomnumber, $maxcapacity, $description, \@selectedEquipment );
         }
 
-        my $availableEquipment = getAllRoomEquipmentNamesAndIds();
-        my $roomNumbers        = getCurrentRoomNumbers();
+        my $availableEquipment = get_all_room_equipment_names_and_ids();
+        my $roomNumbers        = get_current_room_numbers();
 
         $template->param(
             op                  => $op,
@@ -933,17 +956,17 @@ sub configure {
             my $updatedMaxCapacity = $cgi->param('edit-rooms-room-maxcapacity');
             my $updatedDescription = $cgi->param('edit-rooms-room-description');
 
-            updateRoomDetails( $roomIdToUpdate, $updatedRoomNumber, $updatedDescription, $updatedMaxCapacity );
+            update_room_details( $roomIdToUpdate, $updatedRoomNumber, $updatedDescription, $updatedMaxCapacity );
         }
 
         if ( $roomEquipmentUpdated eq '1' ) {
             my $equipmentRoomId  = $cgi->param('room-equipment-updated-roomid');
             my @equipmentIdArray = $cgi->param('edit-rooms-current-equipment');
 
-            updateRoomEquipment( $equipmentRoomId, \@equipmentIdArray );
+            update_room_equipment( $equipmentRoomId, \@equipmentIdArray );
         }
 
-        my $roomNumbers = getAllRoomNumbers();
+        my $roomNumbers = get_all_room_numbers();
 
         $template->param(
             op            => $op,
@@ -956,7 +979,7 @@ sub configure {
 
         my $selectedRoomId = $cgi->param('current-rooms-edit') || q{};
 
-        my $editAction = '';
+        my $editAction = q{};
 
         if ( $choice eq 'room' ) {
 
@@ -978,7 +1001,7 @@ sub configure {
 
         my $selectedRoomId = $cgi->param('selected-room-id') || q{};
 
-        my $roomDetails = loadRoomDetailsToEditByRoomId($selectedRoomId);
+        my $roomDetails = load_room_details_to_edit_by_room_id($selectedRoomId);
 
         $template->param(
             op           => $op,
@@ -989,7 +1012,7 @@ sub configure {
 
         my $selectedRoomId = $cgi->param('selected-room-id') || q{};
 
-        my $roomDetails = loadRoomDetailsToEditByRoomId($selectedRoomId);
+        my $roomDetails = load_room_details_to_edit_by_room_id($selectedRoomId);
 
         my $allAvailableEquipment = loadAllEquipment();
 
@@ -1006,12 +1029,12 @@ sub configure {
         if ( $delete eq '1' ) {
             my $roomIdToDelete = $cgi->param('delete-room-radio-button');
 
-            deleteRoom($roomIdToDelete);
+            delete_room($roomIdToDelete);
         }
 
-        my $availableRooms = getAllRoomNumbersAndIdsAvailableToDelete();
+        my $availableRooms = get_all_room_numbers_and_ids_available_to_delete();
 
-        my $areThereRoomsToDelete = areAnyRoomsAvailableToDelete($availableRooms);
+        my $areThereRoomsToDelete = are_any_rooms_available_to_delete($availableRooms);
 
         if ( $areThereRoomsToDelete == 1 ) {
             $template->param( rooms_available_to_delete => 1, );
@@ -1034,15 +1057,15 @@ sub configure {
             my $addedEquipment = $cgi->param('add-equipment-text-field');
 
             ## Convert to lowercase to enforce uniformity
-            $addedEquipment = lc($addedEquipment);
+            $addedEquipment = lc $addedEquipment;
 
             ## Enclose in single quotes for DB string compatibility
-            $addedEquipment = "'" . $addedEquipment . "'";
+            $addedEquipment = qq{'$addedEquipment'};
 
-            addEquipment($addedEquipment);
+            add_equipment($addedEquipment);
         }
 
-        my $availableEquipment = getAllRoomEquipmentNames();
+        my $availableEquipment = get_all_room_equipment_names();
 
         $template->param(
             op                  => $op,
@@ -1056,10 +1079,10 @@ sub configure {
         if ( $delete eq '1' ) {
             my $equipmentIdToDelete = $cgi->param('delete-equipment-radio-button');
 
-            deleteEquipment($equipmentIdToDelete);
+            delete_equipment($equipmentIdToDelete);
         }
 
-        my $availableEquipment = getAllRoomEquipmentNamesAndIdsAvailableToDelete();
+        my $availableEquipment = get_all_room_equipment_names_and_ids_available_to_delete();
 
         $template->param(
             op                  => $op,
@@ -1071,191 +1094,60 @@ sub configure {
     print $template->output();
 }
 
-sub getCurrentTimestamp {
+# BOOKINGS
 
-    my $timestamp = strftime( '%m/%d/%Y %I:%M:%S %p', localtime );
-
-    return $timestamp;
-}
-
-sub getAllBookings {
+sub pre_booking_availability_check {
+    my ( $roomid, $start, $end ) = @_;
 
     my $dbh = C4::Context->dbh;
+    my $sth = q{};
 
-    my $sth = '';
-
-    my $query = "
-        SELECT bk.bookingid, r.roomnumber, b.firstname, b.surname, DATE_FORMAT(bk.start, \"%m/%d/%Y %h:%i %p\") AS start, DATE_FORMAT(bk.end, \"%m/%d/%Y %h:%i %p\") AS end
-        FROM borrowers b, $bookings_table bk, $rooms_table r
-        WHERE b.borrowernumber = bk.borrowernumber
-        AND bk.roomid = r.roomid
-        ORDER BY bk.roomid ASC, bk.start DESC;
-    ";
+    my $query = <<~"EOF";
+        SELECT COUNT(*)
+        FROM $BOOKINGS_TABLE
+        WHERE roomid = $roomid
+        AND \'$end\' > start
+        AND \'$start\' < end;
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allBookings;
+    my ($count) = $sth->fetchrow_array();
 
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allBookings, $row );
+    if ( $count > 0 ) {    # a conflicting booking was found
+        return 0;
     }
-
-    return \@allBookings;
-}
-
-sub getRestrictedPatronCategories {
-
-    my $dbh = C4::Context->dbh;
-
-    my $sth = '';
-
-    my $query = "
-        SELECT categorycode, description
-        FROM categories, plugin_data
-        WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
-        AND plugin_key LIKE 'rcat_%'
-        AND plugin_value = categorycode;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @categories;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @categories, $row );
-    }
-
-    return \@categories;
-}
-
-sub clearPatronCategoryRestriction {
-
-    my ($restricted_category) = @_;
-
-    my $delete_query;
-
-    if ( $restricted_category == undef ) {
-        my $dbh = C4::Context->dbh;
-
-        $delete_query = "
-            DELETE FROM plugin_data
-            WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
-            AND plugin_key LIKE 'rcat_%';";
-
-        $dbh->do($delete_query);
-    }
-    else {
-        my @restricted = @$restricted_category;
-
-        my $counter = scalar(@restricted);
-
-        my $dbh = C4::Context->dbh;
-
-        $delete_query = "
-            DELETE FROM plugin_data
-            WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
-            AND plugin_key LIKE 'rcat_%'";
-
-        if ( $counter == 0 ) {
-            $delete_query .= ";";
-        }
-        else {
-            $delete_query .= " AND plugin_value NOT IN (";
-
-            for my $code (@restricted) {
-
-                if ( $counter > 0 && $counter != 1 ) {
-                    $delete_query .= "'$code', ";
-                }
-                else {
-                    $delete_query .= "'$code'";
-                }
-
-                $counter--;
-            }
-
-            $delete_query .= ");";
-        }
-
-        $dbh->do($delete_query);
+    else {                 # no conflict found
+        return 1;
     }
 }
 
-sub getPatronCategories {
-
-    my $dbh = C4::Context->dbh;
-
-    my $sth = '';
-
-    my $query = "
-        SELECT categorycode, description
-        FROM categories
-        ORDER BY categorycode ASC;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @categories;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @categories, $row );
-    }
-
-    return \@categories;
-}
-
-sub getAllBlackedoutBookings {
-
-    my $dbh = C4::Context->dbh;
-
-    my $sth = '';
-
-    my $query = "
-        SELECT bk.bookingid, r.roomnumber, DATE_FORMAT(bk.start, \"%m/%d/%Y %h:%i %p\") AS start, DATE_FORMAT(bk.end, \"%m/%d/%Y %h:%i %p\") AS end
-        FROM $bookings_table bk, $rooms_table r
-        WHERE bk.roomid = r.roomid
-        AND bk.blackedout = 1
-        AND bk.start BETWEEN CAST(CONCAT(CURDATE(), \" 00:00:00\") AS DATETIME) AND CAST(CONCAT(DATE_ADD(CURDATE(), INTERVAL 30 DAY), \" 23:59:59\") AS DATETIME)
-        ORDER BY bk.start ASC;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allBlackedoutBookings;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allBlackedoutBookings, $row );
-    }
-
-    return \@allBlackedoutBookings;
-}
-
-sub addBlackoutBooking {
+sub add_booking {
 
     my ( $borrowernumber, $roomid, $start, $end ) = @_;
 
     my $dbh = C4::Context->dbh;
 
-    $dbh->do( "
-        INSERT INTO $bookings_table (borrowernumber, roomid, start, end, blackedout)
-        VALUES ($borrowernumber, $roomid, " . "'" . $start . "'" . "," . "'" . $end . "'" . ', 1);' );
+    my $statement = <<~"EOF";
+        INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end)
+        VALUES ($borrowernumber, $roomid, '$start', '$end');
+    EOF
+
+    $dbh->do($statement);
+
+    return;
 }
 
-sub deleteBookingById {
+sub delete_booking_by_id {
 
     my ($bookingId) = @_;
 
     my $dbh = C4::Context->dbh;
 
-    my $sth = '';
+    my $sth = q{};
 
-    my $query = "
-        DELETE FROM bookings WHERE bookingid = $bookingId;
-    ";
+    my $query = qq{DELETE FROM bookings WHERE bookingid = $bookingId;};
 
     $sth = $dbh->prepare($query);
 
@@ -1269,435 +1161,100 @@ sub deleteBookingById {
     }
 }
 
-sub areAnyRoomsAvailableToDelete {
+sub add_blackout_booking {
 
-    my ($rooms) = @_;
-
-    if ( @$rooms > 0 ) {
-
-        # return true
-        return 1;
-    }
-    else {
-        # return false
-        return 0;
-    }
-}
-
-sub updateRoomDetails {
-
-    my ( $roomid, $roomnumber, $description, $maxcapacity ) = @_;
-
-    $roomnumber  = "'" . $roomnumber . "'";
-    $description = "'" . $description . "'";
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    my $query = "
-        UPDATE $rooms_table
-        SET roomnumber = $roomnumber, maxcapacity = $maxcapacity, description = $description
-        WHERE roomid = $roomid;";
-
-    $dbh->do($query);
-}
-
-sub updateRoomEquipment {
-
-    my ( $roomid, $equipment ) = @_;
+    my ( $borrowernumber, $roomid, $start, $end ) = @_;
 
     my $dbh = C4::Context->dbh;
 
-    $dbh->do("DELETE FROM $roomequipment_table WHERE roomid = $roomid;");
+    my $statement = <<~"EOF";
+        INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end, blackedout)
+        VALUES ($borrowernumber, $roomid, '$start', '$end', 1);
+    EOF
 
-    foreach my $piece (@$equipment) {
+    $dbh->do($statement);
 
-        $dbh->do("INSERT INTO $roomequipment_table (roomid, equipmentid) VALUES ($roomid, $piece);");
-    }
+    return;
 }
 
-sub loadRoomDetailsToEditByRoomId {
+sub get_all_blackout_bookings {
 
-    my ($roomid) = @_;
-
-    ## load access to database
     my $dbh = C4::Context->dbh;
 
-    ## database statement handler
-    my $sth = '';
+    my $sth = q{};
 
-    my $query = "
-        SELECT *
-        FROM $rooms_table
-        WHERE roomid = $roomid;
-    ";
+    my $query = <<~"EOF";
+        SELECT bk.bookingid, r.roomnumber, DATE_FORMAT(bk.start, \"%m/%d/%Y %h:%i %p\") AS start, DATE_FORMAT(bk.end, \"%m/%d/%Y %h:%i %p\") AS end
+        FROM $BOOKINGS_TABLE bk, $ROOMS_TABLE r
+        WHERE bk.roomid = r.roomid
+        AND bk.blackedout = 1
+        AND bk.start BETWEEN CAST(CONCAT(CURDATE(), \" 00:00:00\") AS DATETIME) AND CAST(CONCAT(DATE_ADD(CURDATE(), INTERVAL 30 DAY), \" 23:59:59\") AS DATETIME)
+        ORDER BY bk.start ASC;
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @roomDetails;
+    my @allBlackedoutBookings;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @roomDetails, $row );
+        push @allBlackedoutBookings, $row;
     }
 
-    return \@roomDetails;
+    return \@allBlackedoutBookings;
 }
 
-sub loadAllEquipment {
+sub get_all_bookings {
 
-    ## load access to database
     my $dbh = C4::Context->dbh;
 
-    ## database statement handler
-    my $sth = '';
+    my $sth = q{};
 
-    my $query = "
-        SELECT *
-        FROM $equipment_table;
-    ";
+    my $query = <<~"EOF";
+        SELECT bk.bookingid, r.roomnumber, b.firstname, b.surname, DATE_FORMAT(bk.start, \"%m/%d/%Y %h:%i %p\") AS start, DATE_FORMAT(bk.end, \"%m/%d/%Y %h:%i %p\") AS end
+        FROM borrowers b, $BOOKINGS_TABLE bk, $ROOMS_TABLE r
+        WHERE b.borrowernumber = bk.borrowernumber
+        AND bk.roomid = r.roomid
+        ORDER BY bk.roomid ASC, bk.start DESC;
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allAvailableEquipmentNames;
+    my @allBookings;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allAvailableEquipmentNames, $row );
+        push @allBookings, $row;
     }
 
-    return \@allAvailableEquipmentNames;
+    return \@allBookings;
 }
 
-## DO NOT USE - causes strange TT software errors
-sub loadRoomEquipmentNamesToEditByRoomId {
+# EQUIPMENT
 
-    my ($roomid) = @_;
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT e.equipmentname
-        FROM $equipment_table AS e, $roomequipment_table AS re
-        WHERE re.equipmentid = e.equipmentid
-        AND re.roomid = $roomid;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @equipmentNames;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @equipmentNames, $row );
-    }
-
-    return \@equipmentNames;
-}
-
-sub getOpeningHours {
-
-    my $convert_weekdays = 0;
-    $convert_weekdays = shift;
+sub load_all_equipment {
 
     my $dbh = C4::Context->dbh;
     my $sth = q{};
 
-    my $query = qq{
-        SELECT openid,day, DATE_FORMAT(start, '%H:%i') as start, DATE_FORMAT(end, '%H:%i') as end
-        FROM $opening_hours_table
-        ORDER BY day ASC, start ASC; };
+    my $query = <<~"EOF";
+        SELECT *
+        FROM $EQUIPMENT_TABLE;
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @opening_hours;
+    my @all_available_equipment_names;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        if ( $convert_weekdays == 1 ) {
-            if    ( $row->{'day'} == 1 ) { $row->{'day'} = "Monday"; }
-            elsif ( $row->{'day'} == 2 ) { $row->{'day'} = "Tuesday"; }
-            elsif ( $row->{'day'} == 3 ) { $row->{'day'} = "Wednesday"; }
-            elsif ( $row->{'day'} == 4 ) { $row->{'day'} = "Thursday"; }
-            elsif ( $row->{'day'} == 5 ) { $row->{'day'} = "Friday"; }
-            elsif ( $row->{'day'} == 6 ) { $row->{'day'} = "Saturday"; }
-            elsif ( $row->{'day'} == 7 ) { $row->{'day'} = "Sunday"; }
-        }
-        push @opening_hours, $row;
+        push @all_available_equipment_names, $row;
     }
 
-    return \@opening_hours;
+    return \@all_available_equipment_names;
 }
 
-sub addOpeningHours {
-    my ( $days, $start, $end ) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    foreach my $day ( @{$days} ) {
-        if ($day) {
-            $dbh->do(
-                qq{    
-                INSERT INTO $opening_hours_table (day, start, end)
-                VALUES ($day, '$start', '$end'); }
-            );
-        }
-    }
-}
-
-sub deleteOpeningHoursById {
-
-    my ($openId) = @_;
-
-    my $dbh = C4::Context->dbh;
-    my $sth = q{};
-
-    my $query = qq{DELETE FROM booking_opening_hours WHERE openid = $openId;};
-
-    $sth = $dbh->prepare($query);
-    my $count = $sth->execute();
-
-    $count == 0
-        ? return 0
-        : return 1;    # ? no row(s) affected : sucessfully deleted row(s)
-}
-
-sub addRoom {
-
-    my ( $roomnumber, $maxcapacity, $description, $equipment ) = @_;
-
-    ## make $roomnumber SQL-friendly by surrounding with single quotes
-    $roomnumber  = "'" . $roomnumber . "'";
-    $description = "'" . $description . "'";
-
-    my $dbh = C4::Context->dbh;
-
-    ## first insert roomnumber and maxcapacity into $rooms_table
-    $dbh->do("INSERT INTO $rooms_table (roomnumber, maxcapacity, description) VALUES ($roomnumber, $maxcapacity, $description);");
-
-    foreach my $piece (@$equipment) {
-
-        $dbh->do("INSERT INTO $roomequipment_table (roomid, equipmentid) VALUES ((SELECT roomid FROM $rooms_table WHERE roomnumber = $roomnumber), $piece);");
-    }
-}
-
-sub deleteRoom {
-
-    my ($roomId) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    $dbh->do("DELETE FROM $roomequipment_table WHERE roomid = $roomId");
-
-    $dbh->do("DELETE FROM $rooms_table WHERE roomid = $roomId");
-}
-
-sub addEquipment {
-
-    my ($equipmentname) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    $dbh->do("INSERT INTO $equipment_table (equipmentname) VALUES ($equipmentname);");
-}
-
-sub deleteEquipment {
-
-    my ($equipmentId) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    $dbh->do("DELETE FROM $equipment_table WHERE equipmentid = $equipmentId");
-}
-
-sub countRooms {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT COUNT(roomid) AS count
-        FROM $rooms_table;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my $row = $sth->fetchrow_hashref();
-
-    my $count = $row->{'count'};
-
-    return $count;
-}
-
-sub getAllRoomIds {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT roomid
-        FROM $rooms_table
-        ORDER BY roomid;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allRoomIds;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allRoomIds, $row );
-    }
-
-    return \@allRoomIds;
-}
-
-sub getCurrentRoomNumbers {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT roomid, roomnumber
-        FROM $rooms_table
-        ORDER BY roomnumber;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allRoomNumbers;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allRoomNumbers, $row );
-    }
-
-    return \@allRoomNumbers;
-}
-
-sub getAllRoomEquipmentNames {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT equipmentname
-        FROM $equipment_table
-        ORDER BY equipmentname;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allEquipmentNames;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allEquipmentNames, $row );
-    }
-
-    return \@allEquipmentNames;
-}
-
-sub getAllRoomEquipmentNamesAndIds {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT equipmentid, equipmentname
-        FROM $equipment_table
-        ORDER BY equipmentname;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allEquipmentNamesAndIds;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allEquipmentNamesAndIds, $row );
-    }
-
-    return \@allEquipmentNamesAndIds;
-}
-
-sub getAllRoomEquipmentNamesAndIdsAvailableToDelete {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT equipmentid, equipmentname
-        FROM $equipment_table
-        WHERE equipmentid NOT IN
-            (SELECT equipmentid FROM $roomequipment_table)
-        ORDER BY equipmentname;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allEquipmentNamesAndIds;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allEquipmentNamesAndIds, $row );
-    }
-
-    return \@allEquipmentNamesAndIds;
-}
-
-sub getAllRoomNumbersAndIdsAvailableToDelete {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT roomid, roomnumber
-        FROM $rooms_table
-        WHERE roomid NOT IN
-            (SELECT roomid FROM $bookings_table)
-        ORDER BY roomid;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allRoomNumbersAndIds;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allRoomNumbersAndIds, $row );
-    }
-
-    return \@allRoomNumbersAndIds;
-}
-
-sub getRoomDetailsById {
+sub get_room_equipment_by_id {
 
     my ($selectedRoomId) = @_;
 
@@ -1705,46 +1262,14 @@ sub getRoomDetailsById {
     my $dbh = C4::Context->dbh;
 
     ## database statement handler
-    my $sth = '';
+    my $sth = q{};
 
-    ## Note: GROUP BY is used to prevent duplication of rows in next step
-    my $query = "
-        SELECT r.roomnumber, r.maxcapacity, r.description, e.equipmentname
-        FROM $rooms_table AS r, $equipment_table AS e, $roomequipment_table AS re
-        WHERE r.roomid = re.roomid
-        AND   e.equipmentid = re.equipmentid
-        AND r.roomid = $selectedRoomId
-        GROUP BY r.roomnumber;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @selectedRoomDetails;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @selectedRoomDetails, $row );
-    }
-
-    return \@selectedRoomDetails;
-}
-
-sub getRoomEquipmentById {
-
-    my ($selectedRoomId) = @_;
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
+    my $query = <<~"EOF";
         SELECT e.equipmentname
-        FROM $equipment_table AS e, $roomequipment_table AS re
+        FROM $EQUIPMENT_TABLE AS e, $ROOMEQUIPMENT_TABLE AS re
         WHERE e.equipmentid = re.equipmentid
         AND re.roomid = $selectedRoomId;
-    ";
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
@@ -1752,97 +1277,545 @@ sub getRoomEquipmentById {
     my @selectedRoomEquipment;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @selectedRoomEquipment, $row );
+        push @selectedRoomEquipment, $row;
     }
 
     return \@selectedRoomEquipment;
 }
 
-## Used in display-rooms
-## Returns an array
-## Key: roomnumber
-## Value: maxcapacity
-sub getAllRoomNumbers {
+sub get_all_room_equipment_names_and_ids_available_to_delete {
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT equipmentid, equipmentname
+        FROM $EQUIPMENT_TABLE
+        WHERE equipmentid NOT IN
+            (SELECT equipmentid FROM $ROOMEQUIPMENT_TABLE)
+        ORDER BY equipmentname;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @allEquipmentNamesAndIds;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @allEquipmentNamesAndIds, $row;
+    }
+
+    return \@allEquipmentNamesAndIds;
+}
+
+sub get_all_room_equipment_names_and_ids {
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT equipmentid, equipmentname
+        FROM $EQUIPMENT_TABLE
+        ORDER BY equipmentname;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @allEquipmentNamesAndIds;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @allEquipmentNamesAndIds, $row;
+    }
+
+    return \@allEquipmentNamesAndIds;
+}
+
+sub get_all_room_equipment_names {
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT equipmentname
+        FROM $EQUIPMENT_TABLE
+        ORDER BY equipmentname;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @allEquipmentNames;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @allEquipmentNames, $row;
+    }
+
+    return \@allEquipmentNames;
+}
+
+sub delete_equipment {
+
+    my ($equipmentId) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    $dbh->do("DELETE FROM $EQUIPMENT_TABLE WHERE equipmentid = $equipmentId");
+
+    return;
+}
+
+sub add_equipment {
+
+    my ($equipmentname) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    $dbh->do("INSERT INTO $EQUIPMENT_TABLE (equipmentname) VALUES ($equipmentname);");
+
+    return;
+}
+
+## DO NOT USE - causes strange TT software errors
+sub load_room_equipment_names_to_edit_by_room_id {
+
+    my ($roomid) = @_;
 
     ## load access to database
     my $dbh = C4::Context->dbh;
 
     ## database statement handler
-    my $sth = '';
+    my $sth = q{};
 
-    my $query = '';
-
-    ## room selection query
-    $query = "SELECT * FROM $rooms_table;";
+    my $query = <<~"EOF";
+        SELECT e.equipmentname
+        FROM $EQUIPMENT_TABLE AS e, $ROOMEQUIPMENT_TABLE AS re
+        WHERE re.equipmentid = e.equipmentid
+        AND re.roomid = $roomid;
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allRooms;
+    my @equipmentNames;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allRooms, $row );
+        push @equipmentNames, $row;
     }
 
-    return \@allRooms;
+    return \@equipmentNames;
 }
 
-sub loadAllMaxCapacities {
+sub update_room_equipment {
+
+    my ( $roomid, $equipment ) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    $dbh->do("DELETE FROM $ROOMEQUIPMENT_TABLE WHERE roomid = $roomid;");
+
+    foreach my $piece (@{ $equipment }) {
+
+        $dbh->do("INSERT INTO $ROOMEQUIPMENT_TABLE (roomid, equipmentid) VALUES ($roomid, $piece);");
+    }
+
+    return;
+}
+
+# LIMITS
+
+sub get_future_days {
+
+    my $dbh = C4::Context->dbh;
+    my $sql = q{SELECT plugin_value FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?};
+    my $sth = $dbh->prepare($sql);
+    $sth->execute( 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations', 'max_future_days' );
+    my $row = $sth->fetchrow_hashref();
+
+    return $row->{'plugin_value'};
+}
+
+sub get_max_time {
+
+    my $dbh = C4::Context->dbh;
+    my $sql = q{SELECT plugin_value FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?};
+    my $sth = $dbh->prepare($sql);
+    $sth->execute( 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations', 'max_time' );
+    my $row = $sth->fetchrow_hashref();
+
+    return $row->{'plugin_value'};
+}
+
+sub get_daily_reservation_limit {
+
+    my $dbh = C4::Context->dbh;
+    my $sql = q{SELECT plugin_value FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?};
+    my $sth = $dbh->prepare($sql);
+    $sth->execute( 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations', 'count_limit' );
+    my $row = $sth->fetchrow_hashref();
+
+    return $row->{'plugin_value'};
+}
+
+sub get_daily_reservation_limit_of_patron {
+
+    my ( $bn, $date ) = @_;
+
+    $date = "$date%";
+
+    my $dbh = C4::Context->dbh;
+    my $sql = q{SELECT COUNT(*) AS daily_total FROM bookings WHERE borrowernumber = ? AND start LIKE ?};
+    my $sth = $dbh->prepare($sql);
+    $sth->execute( $bn, $date );
+    my $row = $sth->fetchrow_hashref();
+
+    return $row->{'daily_total'};
+}
+
+# MISC
+
+sub get_restricted_message {
+
+    my $dbh = C4::Context->dbh;
+    my $sql = q{SELECT plugin_value FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?};
+    my $sth = $dbh->prepare($sql);
+    $sth->execute( 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations', 'restricted_message' );
+    my $row = $sth->fetchrow_hashref();
+
+    return $row->{'plugin_value'};
+}
+
+sub is_restricted_category {
+
+    my ($category) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    my $sth = q{};
+
+    my $query = <<~'EOF';
+        SELECT COUNT(categorycode)
+        FROM categories, plugin_data
+        WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
+        AND plugin_key LIKE 'rcat_%'
+        AND plugin_value = categorycode
+        AND plugin_value = ?;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute($category);
+
+    my $rows = $sth->fetchrow_arrayref->[0];
+
+    if ( $rows != 0 ) {
+        return 1;    # restricted
+    }
+    else {
+        return 0;    # not restricted
+    }
+}
+
+sub get_translation {
+    my ($string) = @_;
+    return Encode::decode( 'UTF-8', gettext($string) );
+}
+
+sub get_patron_categories {
+
+    my $dbh = C4::Context->dbh;
+
+    my $sth = q{};
+
+    my $query = <<~'EOF';
+        SELECT categorycode, description
+        FROM categories
+        ORDER BY categorycode ASC;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @categories;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @categories, $row;
+    }
+
+    return \@categories;
+}
+
+sub clear_patron_category_restriction {
+
+    my ($restricted_category) = @_;
+
+    my $delete_query;
+
+    if ( $restricted_category == undef ) {
+        my $dbh = C4::Context->dbh;
+
+        $delete_query = <<~'EOF';
+            DELETE FROM plugin_data
+            WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
+            AND plugin_key LIKE 'rcat_%';
+        EOF
+
+        $dbh->do($delete_query);
+    }
+    else {
+        my @restricted = @{ $restricted_category };
+
+        my $counter = scalar @restricted;
+
+        my $dbh = C4::Context->dbh;
+
+        $delete_query = <<~"EOF";
+            DELETE FROM plugin_data
+            WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
+            AND plugin_key LIKE 'rcat_%'
+        EOF
+
+        if ( $counter == 0 ) {
+            $delete_query .= q{;};
+        }
+        else {
+            $delete_query .= q{ AND plugin_value NOT IN (};
+
+            for my $code (@restricted) {
+
+                if ( $counter > 0 && $counter != 1 ) {
+                    $delete_query .= "'$code', ";
+                }
+                else {
+                    $delete_query .= "'$code'";
+                }
+
+                $counter--;
+            }
+
+            $delete_query .= q{);};
+        }
+
+        $dbh->do($delete_query);
+    }
+
+    return;
+}
+
+sub get_restricted_patron_categories {
+
+    my $dbh = C4::Context->dbh;
+
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT categorycode, description
+        FROM categories, plugin_data
+        WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
+        AND plugin_key LIKE 'rcat_%'
+        AND plugin_value = categorycode;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @categories;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @categories, $row;
+    }
+
+    return \@categories;
+}
+
+# ROOMS
+
+sub get_rooms_with_equipment {
 
     ## load access to database
     my $dbh = C4::Context->dbh;
 
     ## database statement handler
-    my $sth = '';
+    my $sth_rooms     = q{};
+    my $sth_equipment = q{};
 
-    my $query = "
-        SELECT DISTINCT maxcapacity
-        FROM $rooms_table;
-    ";
+    my $rooms_query = <<~"EOF";
+        SELECT *
+        FROM $ROOMS_TABLE;
+    EOF
+    my $equipment_query = q{};
+
+    $sth_rooms = $dbh->prepare($rooms_query);
+    $sth_rooms->execute();
+
+    my @rooms_with_equipment;
+
+    while ( my $rooms_row = $sth_rooms->fetchrow_hashref() ) {
+        my $roomid = $rooms_row->{'roomid'};
+
+        $equipment_query = <<~"EOF";
+            SELECT equipmentname
+            FROM $EQUIPMENT_TABLE AS equipment
+            LEFT JOIN $ROOMEQUIPMENT_TABLE as roomequipment ON equipment.equipmentid = roomequipment.equipmentid
+            LEFT JOIN $ROOMS_TABLE AS room ON roomequipment.roomid = room.roomid
+            WHERE room.roomid = $roomid;
+        EOF
+
+        $sth_equipment = $dbh->prepare($equipment_query);
+        $sth_equipment->execute();
+
+        my @equipment;
+        while ( my $equipment_row = $sth_equipment->fetchrow_hashref() ) {
+            push @equipment, $equipment_row;
+        }
+
+        $rooms_row->{'equipment'} = \@equipment;
+        push @rooms_with_equipment, $rooms_row;
+    }
+
+    return \@rooms_with_equipment;
+}
+
+sub get_room_number_by_id {
+
+    my ($roomid) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT roomnumber
+        FROM $ROOMS_TABLE
+        WHERE roomid = $roomid;
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allMaxCapacities;
+    my @room_number_from_id;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allMaxCapacities, $row );
+        push @room_number_from_id, $row;
     }
 
-    return \@allMaxCapacities;
+    return \@room_number_from_id;
 }
 
-sub getAvailableRooms {
+sub is_room_available_at_specified_time {
+    my ($datetime) = @_;
+    my $result     = 0;
+    my $dbh        = C4::Context->dbh;
+    my $sth        = q{};
+    my $weekday    = $datetime->day_of_week;
+
+    my $query = <<~"EOF";
+        SELECT start, end
+        FROM $OPENING_HOURS_TABLE
+        WHERE day = $weekday;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @opening_hours;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @opening_hours, $row;
+    }
+
+    foreach my $opening_hour (@opening_hours) {
+        my @times    = split /:/smx, $opening_hour->{'start'};
+        my $dt_start = DateTime->new(
+            year   => $datetime->year,
+            month  => $datetime->month,
+            day    => $datetime->day,
+            hour   => $times[0],
+            minute => $times[1],
+        );
+
+        @times = split /:/smx, $opening_hour->{'end'};
+        my $dt_end = DateTime->new(
+            year   => $datetime->year,
+            month  => $datetime->month,
+            day    => $datetime->day,
+            hour   => $times[0],
+            minute => $times[1],
+        );
+
+        if ( DateTime->compare( $datetime, $dt_start ) >= 0 && DateTime->compare( $datetime, $dt_end ) <= 0 ) { $result = 1; last; }
+    }
+
+    return $result;
+}
+
+sub get_room_availability {
+
+    my ( $room_id, $start, $end ) = @_;
+
+    # check if start and end time are in opening hours
+    if ( is_room_available_at_specified_time($start) == 0 || is_room_available_at_specified_time($end) == 0 ) { return 0; }
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT roomid
+        FROM $BOOKINGS_TABLE
+        WHERE
+        \'$end\' > start AND \'$start\' < end AND roomid = \'$room_id\';
+    EOF
+
+    $sth = $dbh->prepare($query);
+    my $count = $sth->execute();
+
+    $count != 0 ? return 0 : return 1;
+
+    return;
+}
+
+sub are_any_rooms_available {
+
+    my ($rooms) = @_;
+
+    if ( @{$rooms} > 0 ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+sub get_available_rooms {
 
     my ( $start, $end, $capacity, $equipment ) = @_;
 
-    ## load access to database
     my $dbh = C4::Context->dbh;
+    my $sth = q{};
 
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
+    my $query = <<~"EOF";
         SELECT *
-        FROM $rooms_table
+        FROM $ROOMS_TABLE
         WHERE maxcapacity = $capacity
         AND roomid NOT IN
             (SELECT roomid
-            FROM $bookings_table
+            FROM $BOOKINGS_TABLE
             WHERE
-            \'$end\' > start AND \'$start\' < end)";
+            \'$end\' > start AND \'$start\' < end)
+    EOF
 
     # if dereferenced array ref has zero elements (length evaluated in scalar context)
-    if ( @$equipment > 0 ) {
+    if ( @{$equipment} > 0 ) {
 
         # counts number of elements
         my $totalElements = scalar @{$equipment};
 
-        $query .= " AND roomid IN (SELECT roomid
-                                        FROM $roomequipment_table
-                                        WHERE";
+        $query .= <<~"EOF";
+            AND roomid IN 
+                (SELECT roomid
+                FROM $ROOMEQUIPMENT_TABLE
+                WHERE
+        EOF
 
-        foreach my $piece (@$equipment) {
+        foreach my $piece ( @{$equipment} ) {
 
             if ( --$totalElements == 0 ) {
 
@@ -1864,98 +1837,402 @@ sub getAvailableRooms {
     my @allAvailableRooms;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @allAvailableRooms, $row );
+        push @allAvailableRooms, $row;
     }
 
     return \@allAvailableRooms;
 }
 
-sub areAnyRoomsAvailable {
+sub load_all_max_capacities {
 
-    my ($rooms) = @_;
+    ## load access to database
+    my $dbh = C4::Context->dbh;
 
-    if ( @$rooms > 0 ) {
+    ## database statement handler
+    my $sth = q{};
 
-        # return true
-        return 1;
+    my $query = <<~"EOF";
+        SELECT DISTINCT maxcapacity
+        FROM $ROOMS_TABLE;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @allMaxCapacities;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @allMaxCapacities, $row;
     }
-    else {
-        # return false
-        return 0;
-    }
+
+    return \@allMaxCapacities;
 }
 
-sub getRoomNumberById {
+## Used in display-rooms
+## Returns an array
+## Key: roomnumber
+## Value: maxcapacity
+sub get_all_room_numbers {
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = q{};
+
+    ## room selection query
+    $query = "SELECT * FROM $ROOMS_TABLE;";
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @allRooms;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @allRooms, $row;
+    }
+
+    return \@allRooms;
+}
+
+sub get_room_details_by_id {
+
+    my ($selectedRoomId) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    ## Note: GROUP BY is used to prevent duplication of rows in next step
+    my $query = <<~"EOF";
+        SELECT r.roomnumber, r.maxcapacity, r.description, e.equipmentname
+        FROM $ROOMS_TABLE AS r, $EQUIPMENT_TABLE AS e, $ROOMEQUIPMENT_TABLE AS re
+        WHERE r.roomid = re.roomid
+        AND   e.equipmentid = re.equipmentid
+        AND r.roomid = $selectedRoomId
+        GROUP BY r.roomnumber;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @selectedRoomDetails;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @selectedRoomDetails, $row;
+    }
+
+    return \@selectedRoomDetails;
+}
+
+sub get_all_room_numbers_and_ids_available_to_delete {
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT roomid, roomnumber
+        FROM $ROOMS_TABLE
+        WHERE roomid NOT IN
+            (SELECT roomid FROM $BOOKINGS_TABLE)
+        ORDER BY roomid;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @allRoomNumbersAndIds;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @allRoomNumbersAndIds, $row;
+    }
+
+    return \@allRoomNumbersAndIds;
+}
+
+sub get_current_room_numbers {
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT roomid, roomnumber
+        FROM $ROOMS_TABLE
+        ORDER BY roomnumber;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @allRoomNumbers;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @allRoomNumbers, $row;
+    }
+
+    return \@allRoomNumbers;
+}
+
+sub get_all_room_ids {
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT roomid
+        FROM $ROOMS_TABLE
+        ORDER BY roomid;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @allRoomIds;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @allRoomIds, $row;
+    }
+
+    return \@allRoomIds;
+}
+
+sub count_rooms {
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT COUNT(roomid) AS count
+        FROM $ROOMS_TABLE;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my $row = $sth->fetchrow_hashref();
+
+    my $count = $row->{'count'};
+
+    return $count;
+}
+
+sub delete_room {
+
+    my ($roomId) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    $dbh->do("DELETE FROM $ROOMEQUIPMENT_TABLE WHERE roomid = $roomId");
+
+    $dbh->do("DELETE FROM $ROOMS_TABLE WHERE roomid = $roomId");
+
+    return;
+}
+
+sub add_room {
+
+    my ( $roomnumber, $maxcapacity, $description, $equipment ) = @_;
+
+    ## make $roomnumber SQL-friendly by surrounding with single quotes
+    $roomnumber  = qq{'$roomnumber'};
+    $description = qq{'$description'};
+
+    my $dbh = C4::Context->dbh;
+
+    ## first insert roomnumber and maxcapacity into $ROOMS_TABLE
+    $dbh->do("INSERT INTO $ROOMS_TABLE (roomnumber, maxcapacity, description) VALUES ($roomnumber, $maxcapacity, $description);");
+
+    foreach my $piece ( @{$equipment} ) {
+
+        $dbh->do("INSERT INTO $ROOMEQUIPMENT_TABLE (roomid, equipmentid) VALUES ((SELECT roomid FROM $ROOMS_TABLE WHERE roomnumber = $roomnumber), $piece);");
+    }
+
+    return;
+}
+
+sub load_room_details_to_edit_by_room_id {
 
     my ($roomid) = @_;
 
-    # load access to database
     my $dbh = C4::Context->dbh;
+    my $sth = q{};
 
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT roomnumber
-        FROM $rooms_table
+    my $query = <<~"EOF";
+        SELECT *
+        FROM $ROOMS_TABLE
         WHERE roomid = $roomid;
-    ";
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @roomNumberFromId;
+    my @roomDetails;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @roomNumberFromId, $row );
+        push @roomDetails, $row;
     }
 
-    return \@roomNumberFromId;
+    return \@roomDetails;
 }
 
-sub preBookingAvailabilityCheck {
-    my ( $roomid, $start, $end ) = @_;
+sub update_room_details {
 
+    my ( $roomid, $roomnumber, $description, $maxcapacity ) = @_;
+
+    $roomnumber  = qq{'$roomnumber'};
+    $description = qq{'$description'};
+
+    ## load access to database
     my $dbh = C4::Context->dbh;
 
-    ## database statement handler
-    my $sth = '';
+    my $query = <<~"EOF";
+        UPDATE $ROOMS_TABLE
+        SET roomnumber = $roomnumber, maxcapacity = $maxcapacity, description = $description
+        WHERE roomid = $roomid;
+    EOF
 
-    my $query = "
-        SELECT COUNT(*)
-        FROM $bookings_table
-        WHERE roomid = $roomid
-        AND \'$end\' > start
-        AND \'$start\' < end;
-    ";
+    $dbh->do($query);
+
+    return;
+}
+
+sub are_any_rooms_available_to_delete {
+
+    my ($rooms) = @_;
+
+    if ( @{$rooms} > 0 ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+# TIMES
+
+sub get_opening_hours {
+
+    my $convert_weekdays = 0;
+    $convert_weekdays = shift;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT openid,day, DATE_FORMAT(start, '%H:%i') as start, DATE_FORMAT(end, '%H:%i') as end
+        FROM $OPENING_HOURS_TABLE
+        ORDER BY day ASC, start ASC;
+    EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my ($count) = $sth->fetchrow_array();
+    my @opening_hours;
+    Readonly my $MONDAY    => 1;
+    Readonly my $TUESDAY   => 2;
+    Readonly my $WEDNESDAY => 3;
+    Readonly my $THRUSDAY  => 4;
+    Readonly my $FRIDAY    => 5;
+    Readonly my $SATURDAY  => 6;
+    Readonly my $SUNDAY    => 7;
 
-    if ( $count > 0 ) {    # a conflicting booking was found
-        return 0;
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        if ( $convert_weekdays == 1 ) {
+            given ( $row->{'day'} ) {
+                when ($MONDAY)    { $row->{'day'} = 'Monday'; }
+                when ($TUESDAY)   { $row->{'day'} = 'Tuesday'; }
+                when ($WEDNESDAY) { $row->{'day'} = 'Wednesday'; }
+                when ($THRUSDAY)  { $row->{'day'} = 'Thursday'; }
+                when ($FRIDAY)    { $row->{'day'} = 'Friday'; }
+                when ($SATURDAY)  { $row->{'day'} = 'Saturday'; }
+                when ($SUNDAY)    { $row->{'day'} = 'Sunday'; }
+            }
+        }
+        push @opening_hours, $row;
     }
-    else {                 # no conflict found
-        return 1;
-    }
+
+    return \@opening_hours;
 }
 
-sub addBooking {
+sub get_confirmed_calendar_bookings_by_month_and_year {
 
-    my ( $borrowernumber, $roomid, $start, $end ) = @_;
+    my ( $month, $year ) = @_;
+
+    ## zero-pad the month to be DATETIME-friendly (two-digit)
+    $month = sprintf '%02s', $month;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    ## Returns hashref of the fields:
+    ## roomnumber, monthdate, bookedtime
+    my $query = <<~"EOF";
+        SELECT r.roomnumber,
+        DATE_FORMAT(b.start, "%Y") AS year_start,
+        DATE_FORMAT(b.start, "%c") AS month_start,
+        DATE_FORMAT(b.start, "%e") AS monthdate_start,
+        DATE_FORMAT(b.start, "%Y") AS year_end,
+        DATE_FORMAT(b.end, "%c") AS month_end,
+        DATE_FORMAT(b.end, "%e") AS monthdate_end,
+        CONCAT(DATE_FORMAT(b.start, "%H:%i"), " - ", DATE_FORMAT(b.end, "%H:%i")) AS bookedtime
+        FROM $ROOMS_TABLE AS r, $BOOKINGS_TABLE AS b WHERE r.roomid = b.roomid
+        AND $month BETWEEN DATE_FORMAT(b.start, "%c") AND DATE_FORMAT(b.end, "%c")
+        AND $year BETWEEN DATE_FORMAT(b.start, "%Y") AND DATE_FORMAT(b.end, "%Y")
+        ORDER BY b.roomid ASC, start ASC
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @calendar_bookings;
+
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @calendar_bookings, $row;
+    }
+
+    return \@calendar_bookings;
+}
+
+sub get_current_timestamp {
+
+    my $timestamp = strftime( '%m/%d/%Y %I:%M:%S %p', localtime );
+
+    return $timestamp;
+}
+
+sub delete_opening_hours_by_id {
+
+    my ($openId) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = qq{DELETE FROM booking_opening_hours WHERE openid = $openId;};
+
+    $sth = $dbh->prepare($query);
+    my $count = $sth->execute();
+
+    $count == 0
+        ? return 0
+        : return 1;    # ? no row(s) affected : sucessfully deleted row(s)
+
+    return;
+}
+
+sub add_opening_hours {
+    my ( $days, $start, $end ) = @_;
 
     my $dbh = C4::Context->dbh;
 
-    $dbh->do( "
-        INSERT INTO $bookings_table (borrowernumber, roomid, start, end)
-        VALUES ($borrowernumber, $roomid, " . "'" . $start . "'" . "," . "'" . $end . "'" . ');' );
-}
+    foreach my $day ( @{$days} ) {
+        if ($day) {
+            my $statement = <<~"EOF";
+                INSERT INTO $OPENING_HOURS_TABLE (day, start, end)
+                VALUES ($day, '$start', '$end');
+            EOF
+            $dbh->do($statement);
+        }
+    }
 
-sub getTranslation {
-    my ($string) = @_;
-    return Encode::decode( 'UTF-8', gettext($string) );
+    return;
 }
 
 1;

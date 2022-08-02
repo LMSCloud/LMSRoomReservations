@@ -16,41 +16,65 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Koha; if not, see <http://www.gnu.org/licenses>.
+use strict;
+use warnings;
+use utf8;
+use English qw( -no_match_vars );
 use Modern::Perl;
 
-use Carp;
-use C4::Context;
-use C4::Output;
-use C4::Auth;
-use Koha::Email;
-use Mail::Sendmail;
-use MIME::QuotedPrint;
-use MIME::Base64;
-use Koha::Patrons;
-use Koha::Patron::Category;
-use Koha::Patron::Categories;
-use Koha::DateUtils;
-use Cwd qw( abs_path );
-use File::Basename qw( dirname );
-use POSIX 'strftime';
+our $VERSION = q{1.0.0};
 
-use CGI qw ( -utf8 );
+BEGIN {
+    use Data::Dumper;
+    use Carp;
+    use C4::Context;
+    use C4::Output;
+    use C4::Auth;
+    use C4::Languages;
+    use C4::Letters;
+    use Koha::Email;
+    use Mail::Sendmail;
+    use MIME::QuotedPrint;
+    use MIME::Base64;
+    use Koha::Patrons;
+    use Koha::Patron::Category;
+    use Koha::Patron::Categories;
+    use Koha::DateUtils;
+    use Cwd qw( abs_path );
+    use File::Basename qw( dirname );
+    use POSIX qw( floor );
+    use DateTime;
+    use Readonly;
 
-use Locale::Messages;
-Locale::Messages->select_package('gettext_pp');
+    use CGI qw ( -utf8 );
 
-use Locale::Messages qw(:locale_h :libintl_h);
+    # use Data::Dumper;
+    use Locale::Messages;
+    Locale::Messages->select_package('gettext_pp');
+    use Locale::Messages qw(:locale_h :libintl_h);
 
-use Calendar::Simple;
+    use lib dirname( abs_path($PROGRAM_NAME) );
+
+    use Calendar::Helpers::Bookings;
+    use Calendar::Helpers::Equipment;
+    use Calendar::Helpers::Limits;
+    use Calendar::Helpers::Misc;
+    use Calendar::Helpers::Rooms;
+    use Calendar::Helpers::Times;
+
+    use Calendar::Simple;
+}
+
+my $plugin_dir = dirname( abs_path($PROGRAM_NAME) );
+warn Dumper( $plugin_dir );
+
 my @months = (
-    gettext('January'), gettext('February'),  gettext('March'),   gettext('April'),    gettext('May') . gettext('June'), gettext('July'),
-    gettext('August'),  gettext('September'), gettext('October'), gettext('November'), gettext('December'),
+    gettext('January'), gettext('February'), gettext('March'),     gettext('April'),   gettext('May'),      gettext('June'),
+    gettext('July'),    gettext('August'),   gettext('September'), gettext('October'), gettext('November'), gettext('December'),
 );
 
-my $pluginDir = dirname( abs_path($0) );
-
-my $template_name  = $pluginDir . '/calendar.tt';
-my $template2_name = $pluginDir . '/calendar-sendconfirmation.tt';
+my $template_name  = $plugin_dir . '/calendar.tt';
+my $template2_name = $plugin_dir . '/calendar-sendconfirmation.tt';
 
 my $rooms_table         = 'booking_rooms';
 my $opening_hours_table = 'booking_opening_hours';
@@ -69,7 +93,7 @@ my $op = $cgi->param('op');
 my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
     {   template_name   => $template_name,
         query           => $cgi,
-        type            => "opac",
+        type            => 'opac',
         authnotrequired => 0,
         is_plugin       => 1,
     }
@@ -80,134 +104,224 @@ $template->param(
     mbf_path => abs_path('../translations')
 );
 
-if ( !defined $op ) {
-    my $mon = shift || (localtime)[4] + 1;
-    my $yr  = shift || (localtime)[5] + 1900;
+DEFAULT: {
+    if ( !defined $op ) {
+        Readonly my $MONTH                 => 1;
+        Readonly my $LOCALTIME_BASE_YEAR   => 1900;
+        Readonly my $LOCALTIME_MONTH_FIELD => 4;
+        Readonly my $LOCALTIME_YEAR_FIELD  => 5;
+        Readonly my $MONTHS_IN_YEAR        => 12;
 
-    my @month = calendar( $mon, $yr );
-    my @month_days;
+        my $selected_month = $cgi->param('selected_month');
 
-    foreach (@month) {
-        push @month_days, map { $_ ? sprintf "%d", $_ : '' } @$_;
-    }
+        my $mon = (localtime)[$LOCALTIME_MONTH_FIELD] + $MONTH;
+        my $yr  = (localtime)[$LOCALTIME_YEAR_FIELD] + $LOCALTIME_BASE_YEAR;
 
-    my $calendarBookings = getConfirmedCalendarBookingsByMonthAndYear( $mon, $yr );
+        if ( defined $selected_month ) {
+            $yr  = $yr + floor( ( $mon + $selected_month - 1 ) / $MONTHS_IN_YEAR );
+            $mon = ( $mon + $selected_month ) % $MONTHS_IN_YEAR;
+            if ( $mon == 0 ) {
+                $mon = $MONTHS_IN_YEAR;
+            }
+        }
 
-    my $month = sprintf '%02s', $mon;
-    my $rooms = getRoomsWithEquipment();
+        my @month = calendar( $mon, $yr );
+        my @month_days;
 
-    my $userenv  = C4::Context->userenv;
-    my $number   = $userenv->{number};
-    my $patron   = Koha::Patrons->find($number);
-    my $category = $patron->category->categorycode;
+        foreach (@month) {
+            push @month_days, map { $_ ? sprintf '%d', $_ : q{} } @{$_};
+        }
 
-    my $isRestricted = checkForRestrictedCategory($category);
+        my $calendar_bookings = get_confirmed_calendar_bookings_by_month_and_year( $mon, $yr );
 
-    my $restricted_message = getRestrictedMessage();
+        my $dt       = DateTime->new( year => $yr, month => $mon, day => 1, );
+        my $dt_start = DateTime->new( year => $yr, month => $mon, day => 1, );
+        my $dt_end   = DateTime->new( year => $yr, month => $mon, day => 1, );
 
-    if ( $isRestricted > 0 ) {
+        my @booking_days;
+        for my $month_day (@month_days) {
+            if ( $month_day eq q{} ) { next; }
+
+            my @bookings;
+            $dt->set( day => $month_day );
+
+            for my $booking ( @{$calendar_bookings} ) {
+                $dt_start->set( day => $booking->{'monthdate_start'}, month => $booking->{'month_start'}, year => $booking->{'year_start'} );
+                $dt_end->set( day => $booking->{'monthdate_end'}, month => $booking->{'month_end'}, year => $booking->{'year_end'} );
+                if ( DateTime->compare( $dt, $dt_start ) >= 0 && DateTime->compare( $dt, $dt_end ) <= 0 ) {
+                    push @bookings, $booking;
+                }
+            }
+            push @booking_days, \@bookings;
+        }
+
+        my $month = sprintf '%02s', $mon;
+        my $rooms = get_rooms_with_equipment();
+
+        my $userenv  = C4::Context->userenv;
+        my $number   = $userenv->{'number'};
+        my $patron   = Koha::Patrons->find($number);
+        my $category = $patron->category->categorycode;
+
+        my $is_restricted = is_restricted_category($category);
+
+        my $restricted_message = get_restricted_message();
+
+        if ( $is_restricted > 0 ) {
+            $template->param(
+                is_restricted         => 1,
+                is_restricted_message => $restricted_message,
+                patron_category       => $category,
+            );
+        }
+        else {
+            $template->param(
+                is_restricted   => undef,
+                patron_category => $category,
+            );
+        }
+
         $template->param(
-            is_restricted         => 1,
-            is_restricted_message => $restricted_message,
-            patron_category       => $category,
+            current_month_cal => \@month_days,
+            calendar_bookings => $calendar_bookings,
+            booking_days      => \@booking_days,
+            active_month      => $months[ $mon - 1 ],
+            active_year       => $yr + 0,
+            month_is_active   => 1,
+            op                => $op,
+            plugin_dir        => $plugin_dir,
+            rooms             => $rooms,
+            selected_month    => $selected_month,
         );
     }
-    else {
+}
+
+AVAILABILITY_SEARCH: {
+    if ( defined $op && $op eq 'availability-search' ) {
+
+        my $equipment     = load_all_equipment();
+        my $rooms         = get_rooms_with_equipment();
+        my $max_num_days  = get_future_days() || '0';
+        my $max_time      = get_max_time()    || '0';
+        my $opening_hours = get_opening_hours(1);
+
+        if ( $max_num_days eq '0' ) { $max_num_days = q{}; }
+        if ( $max_time eq '0' )     { $max_time     = q{}; }
+
+        my $submit_check_room_availability = $cgi->param('submit-check-room-availability') || q{};
+
+        if ( $submit_check_room_availability ne q{} ) {
+
+            my $start_date        = $cgi->param('availability-search-start-date');
+            my $start_time        = $cgi->param('availability-search-start-time');
+            my $end_date          = $cgi->param('availability-search-end-date');
+            my $end_time          = $cgi->param('availability-search-end-time');
+            my $start_datetime    = dt_from_string( sprintf '%s %s', $start_date, $start_time );
+            my $end_datetime      = dt_from_string( sprintf '%s %s', $end_date,   $end_time );
+            my $room_id           = $cgi->param('availability-search-room');
+            my $is_room_available = get_room_availability( $room_id, $start_datetime, $end_datetime );
+
+            if ($is_room_available) {    # --> go to confirmation page
+                my $displayed_start          = output_pref( { dt => $start_datetime, } );
+                my $displayed_end            = output_pref( { dt => $end_datetime, } );
+                my $displayed_event_time     = "$displayed_start - $displayed_end";
+                my $user_fn                  = C4::Context->userenv->{'firstname'} || q{};
+                my $user_ln                  = C4::Context->userenv->{'surname'}   || q{};
+                my $user_bn                  = C4::Context->userenv->{'number'};
+                my $user                     = "$user_fn $user_ln";
+                my $email                    = C4::Context->userenv->{'emailaddress'};
+                my $selected_room_number     = get_room_number_by_id($room_id);
+                my $count_limit              = get_daily_reservation_limit();
+                my $current_user_daily_limit = get_daily_reservation_limit_of_patron( $user_bn, $start_date );
+
+                $template->param(
+                    op                  => 'room-selection-confirmation',
+                    current_user        => $user,
+                    current_user_fn     => $user_fn,
+                    current_user_ln     => $user_ln,
+                    current_user_email  => $email,
+                    selected_room_id    => $room_id,
+                    selected_room_no    => $selected_room_number,
+                    displayed_time      => $displayed_event_time,
+                    selected_start_time => $start_datetime,
+                    selected_end_time   => $end_datetime,
+                    displayed_start     => $displayed_start,
+                    displayed_end       => $displayed_end,
+                    count_limit         => $count_limit,
+                    user_daily_limit    => $current_user_daily_limit,
+                );
+            }
+            else {    # --> room is not available: print warning
+                $template->param(
+                    op                       => $op,
+                    room_checked             => 0,
+                    rooms                    => $rooms,
+                    available_room_equipment => $equipment,
+                    max_days                 => $max_num_days,
+                    max_time                 => $max_time,
+                    opening_hours            => $opening_hours,
+                );
+            }
+        }
+        else {    # --> submit button not pressed, yet
+            $template->param(
+                op                       => $op,
+                room_checked             => -1,
+                rooms                    => $rooms,
+                available_room_equipment => $equipment,
+                max_days                 => $max_num_days,
+                max_time                 => $max_time,
+                opening_hours            => $opening_hours,
+            );
+        }
+    }
+}
+
+ROOM_SELECTION_CONFIRMATION: {
+    if ( defined $op && $op eq 'room-selection-confirmation' ) {
+
+        my $selected_id     = $cgi->param('selected-room-id');
+        my $displayed_start = $cgi->param('displayed-start');
+        my $displayed_end   = $cgi->param('displayed-end');
+        my $event_start     = $cgi->param('event-start-time');
+        my $event_end       = $cgi->param('event-end-time');
+
+        my $start_date = $cgi->param('start-date');
+
+        my $displayed_event_time = "$displayed_start - $displayed_end";
+
+        my $user_fn = C4::Context->userenv->{'firstname'} || q{};
+        my $user_ln = C4::Context->userenv->{'surname'}   || q{};
+        my $user_bn = C4::Context->userenv->{'number'};
+
+        my $user  = "$user_fn $user_ln";
+        my $email = C4::Context->userenv->{'emailaddress'};
+
+        my $selected_room_number = get_room_number_by_id($selected_id);
+
+        my $count_limit = get_daily_reservation_limit();
+
+        my $current_user_daily_limit = get_daily_reservation_limit_of_patron( $user_bn, $start_date );
+
         $template->param(
-            is_restricted   => undef,
-            patron_category => $category,
+            op                  => $op,
+            current_user        => $user,
+            current_user_fn     => $user_fn,
+            current_user_ln     => $user_ln,
+            current_user_email  => $email,
+            selected_room_id    => $selected_id,
+            selected_room_no    => $selected_room_number,
+            displayed_time      => $displayed_event_time,
+            selected_start_time => $event_start,
+            selected_end_time   => $event_end,
+            displayed_start     => $displayed_start,
+            displayed_end       => $displayed_end,
+            count_limit         => $count_limit,
+            user_daily_limit    => $current_user_daily_limit,
         );
     }
-
-    $template->param(
-        current_month_cal => \@month_days,
-        calendar_bookings => $calendarBookings,
-        active_month      => $months[ $mon - 1 ],
-        active_year       => $yr + 0,
-        month_is_active   => 1,
-        plugin_dir        => $pluginDir,
-        op                => $op,
-        rooms             => $rooms,
-    );
 }
-elsif ( $op eq 'availability-search' ) {
-
-    my $equipment     = loadAllEquipment();
-    my $capacities    = loadAllMaxCapacities();
-    my $max_num_days  = getFutureDays() || '0';
-    my $max_time      = getMaxTime()    || '0';
-    my $rooms         = getRoomsWithEquipment();
-    my $opening_hours = getOpeningHours(1);
-
-    if ( $max_num_days eq '0' ) {
-        $max_num_days = '';
-    }
-
-    if ( $max_time eq '0' ) {
-        $max_time = '';
-    }
-
-    $template->param(
-        op                       => $op,
-        available_room_equipment => $equipment,
-        all_room_capacities      => $capacities,
-        max_days                 => $max_num_days,
-        max_time                 => $max_time,
-        opening_hours            => $opening_hours,
-        rooms                    => $rooms,
-    );
-}
-elsif ( $op eq 'availability-search-results' ) {
-
-    my $start_date = $cgi->param('availability-search-start-date');
-    my $start_time = $cgi->param('availability-search-start-time');
-
-    my $end_date = $cgi->param('availability-search-end-date');
-    my $end_time = $cgi->param('availability-search-end-time');
-
-    my $room_capacity = $cgi->param('availability-search-room-capacity');
-
-    my @equipment = $cgi->param('availability-search-selected-equipment') || ();
-
-    my $event_start = sprintf "%s %s", $start_date, $start_time;
-    my $event_end   = sprintf "%s %s", $end_date,   $end_time;
-
-    # converts '/' to '-'
-    ( my $availability_format_start_date = $start_date ) =~ s/\//\-/xg;
-    ( my $availability_format_end_date   = $end_date )   =~ s/\//\-/xg;
-
-    # re-arranges from MM-DD-YYYY to YYYY-MM-DD
-    ( $availability_format_start_date = $availability_format_start_date ) =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/x;
-    ( $availability_format_end_date   = $availability_format_end_date )   =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/x;
-
-    # used exclusively for getAvailableRooms -- BUG excluding T from the DATETIME start/end field returns wrong results?
-    my $availability_format_start = sprintf "%sT%s", $availability_format_start_date, $start_time;
-    my $availability_format_end   = sprintf "%sT%s", $availability_format_end_date,   $end_time;
-
-    # generates a DateTime object from a string
-    $event_start = dt_from_string($event_start);
-    $event_end   = dt_from_string($event_end);
-
-    my $displayed_event_start = output_pref( { dt => $event_start, dateformat => 'us', timeformat => '12hr' } );
-    my $displayed_event_end   = output_pref( { dt => $event_end,   dateformat => 'us', timeformat => '12hr' } );
-
-    my $availableRooms = getAvailableRooms( $availability_format_start, $availability_format_end, $room_capacity, \@equipment );
-
-    # boolean -- returns 1 (one) if true or 0 (zero) if false
-    my $roomsAreAvailable = areAnyRoomsAvailable($availableRooms);
-
-    $template->param(
-        op                  => $op,
-        available_rooms     => $availableRooms,
-        are_rooms_available => $roomsAreAvailable,
-        displayed_start     => $displayed_event_start,
-        displayed_end       => $displayed_event_end,
-        event_start_time    => $event_start,
-        event_end_time      => $event_end,
-        start_date          => $availability_format_start_date,
-    );
-}
-elsif ( $op eq 'room-selection-confirmation' ) {
+if ( defined $op && $op eq 'room-selection-confirmation' ) {
 
     my $selected_id     = $cgi->param('selected-room-id');
     my $displayed_start = $cgi->param('displayed-start');
@@ -226,11 +340,11 @@ elsif ( $op eq 'room-selection-confirmation' ) {
     my $user  = "$user_fn $user_ln";
     my $email = C4::Context->userenv->{'emailaddress'};
 
-    my $selectedRoomNumber = getRoomNumberById($selected_id);
+    my $selected_room_number = get_room_number_by_id($selected_id);
 
-    my $count_limit = getDailyReservationLimit();
+    my $count_limit = get_daily_reservation_limit();
 
-    my $current_user_daily_limit = getUserDailyResLimit( $user_bn, $start_date );
+    my $current_user_daily_limit = get_daily_reservation_limit_of_patron( $user_bn, $start_date );
 
     $template->param(
         op                  => $op,
@@ -239,7 +353,7 @@ elsif ( $op eq 'room-selection-confirmation' ) {
         current_user_ln     => $user_ln,
         current_user_email  => $email,
         selected_room_id    => $selected_id,
-        selected_room_no    => $selectedRoomNumber,
+        selected_room_no    => $selected_room_number,
         displayed_time      => $displayed_event_time,
         selected_start_time => $event_start,
         selected_end_time   => $event_end,
@@ -249,463 +363,69 @@ elsif ( $op eq 'room-selection-confirmation' ) {
         user_daily_limit    => $current_user_daily_limit,
     );
 }
-elsif ( $op eq 'reservation-confirmed' ) {
 
-    my $borrowernumber  = C4::Context->userenv->{'number'};
-    my $roomid          = $cgi->param('confirmed-room-id');
-    my $start           = $cgi->param('confirmed-start');
-    my $end             = $cgi->param('confirmed-end');
-    my $sendCopy        = $cgi->param('send-confirmation-copy') || q{};
-    my $submitButton    = $cgi->param('confirmationSubmit');
-    my $user            = $cgi->param('confirmed-user');
-    my $roomnumber      = $cgi->param('confirmed-roomnumber');
-    my $displayed_start = $cgi->param('confirmed-displayed-start');
-    my $displayed_end   = $cgi->param('confirmed-displayed-end');
-    my $patronEmail     = $cgi->param('confirmed-email');
+RESERVATION_CONFIRMED: {
+    if ( defined $op && $op eq 'reservation-confirmed' ) {
 
-    if ( $submitButton eq 'Start over' ) {
+        # my $borrowernumber    = C4::Context->userenv->{'number'};
+        my $roomid            = $cgi->param('confirmed-room-id');
+        my $start             = $cgi->param('confirmed-start');
+        my $end               = $cgi->param('confirmed-end');
+        my $send_copy         = $cgi->param('send-confirmation-copy') || q{};
+        my $submit_button     = $cgi->param('confirmationSubmit');
+        my $start_over_submit = $cgi->param('startOverSubmit');
+        my $user              = $cgi->param('confirmed-user');
+        my $roomnumber        = $cgi->param('confirmed-roomnumber');
+        my $displayed_start   = $cgi->param('confirmed-displayed-start');
+        my $displayed_end     = $cgi->param('confirmed-displayed-end');
+        my $patron_email      = $cgi->param('confirmed-email');
 
-        $op = 'availability-search';
-    }
-    else {
-
-        $valid = preBookingAvailabilityCheck( $roomid, $start, $end );
-
-        if ($valid) {
-            addBooking( $borrowernumber, $roomid, $start, $end );
+        if ( defined $start_over_submit && ( $start_over_submit eq 'Start over' || $start_over_submit eq 'Nochmal' ) ) {
+            $op = 'availability-search';
+            goto AVAILABILITY_SEARCH;
         }
         else {
-            $template->param( invalid_booking => 1, );
-        }
-    }
 
-    if ( $sendCopy eq '1' && $valid ) {
-        my $timestamp = getCurrentTimestamp();
+            $valid = pre_booking_availability_check( $roomid, $start, $end );
 
-        my $patron = Koha::Patrons->find($borrowernumber);
-
-        my $letter = C4::Letters::GetPreparedLetter(
-            module                 => 'members',
-            letter_code            => 'ROOM_RESERVATION',
-            lang                   => $patron->lang,
-            message_transport_type => 'email',
-            substitute             => {
-                user                => $user,
-                room                => $roomnumber,
-                from                => $displayed_start,
-                to                  => $displayed_end,
-                confirmed_timestamp => $timestamp,
-            },
-        );
-
-        C4::Letters::EnqueueLetter(
-            {   letter                 => $letter,
-                borrowernumber         => $borrowernumber,
-                message_transport_type => 'email',
-            }
-        );
-    }
-
-    $template->param( op => $op, );
-}
-
-sub checkForRestrictedCategory {
-
-    my ($category) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    my $sth = '';
-
-    my $query = "
-        SELECT COUNT(categorycode)
-        FROM categories, plugin_data
-        WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
-        AND plugin_key LIKE 'rcat_%'
-        AND plugin_value = categorycode
-        AND plugin_value = ?;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute($category);
-
-    my $rows = $sth->fetchrow_arrayref->[0];
-
-    if ( $rows != 0 ) {
-        return 1;    # restricted
-    }
-    else {
-        return 0;    # not restricted
-    }
-}
-
-sub getRestrictedMessage {
-
-    my $dbh = C4::Context->dbh;
-    my $sql = "SELECT plugin_value FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?";
-    my $sth = $dbh->prepare($sql);
-    $sth->execute( 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations', 'restricted_message' );
-    my $row = $sth->fetchrow_hashref();
-
-    return $row->{'plugin_value'};
-}
-
-sub getFutureDays {
-
-    my $dbh = C4::Context->dbh;
-    my $sql = "SELECT plugin_value FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?";
-    my $sth = $dbh->prepare($sql);
-    $sth->execute( 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations', 'max_future_days' );
-    my $row = $sth->fetchrow_hashref();
-
-    return $row->{'plugin_value'};
-}
-
-sub getMaxTime {
-
-    my $dbh = C4::Context->dbh;
-    my $sql = "SELECT plugin_value FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?";
-    my $sth = $dbh->prepare($sql);
-    $sth->execute( 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations', 'max_time' );
-    my $row = $sth->fetchrow_hashref();
-
-    return $row->{'plugin_value'};
-}
-
-sub getDailyReservationLimit {
-
-    my $dbh = C4::Context->dbh;
-    my $sql = "SELECT plugin_value FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?";
-    my $sth = $dbh->prepare($sql);
-    $sth->execute( 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations', 'count_limit' );
-    my $row = $sth->fetchrow_hashref();
-
-    return $row->{'plugin_value'};
-}
-
-sub getUserDailyResLimit {
-
-    my ( $bn, $date ) = @_;
-
-    $date = "$date%";
-
-    my $dbh = C4::Context->dbh;
-    my $sql = "SELECT COUNT(*) AS daily_total FROM bookings WHERE borrowernumber = ? AND start LIKE ?";
-    my $sth = $dbh->prepare($sql);
-    $sth->execute( $bn, $date );
-    my $row = $sth->fetchrow_hashref();
-
-    return $row->{'daily_total'};
-}
-
-sub areAnyRoomsAvailable {
-
-    my ($rooms) = @_;
-
-    if ( @$rooms > 0 ) {
-
-        # return true
-        return 1;
-    }
-    else {
-        # return false
-        return 0;
-    }
-}
-
-sub getRoomsWithEquipment {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth_rooms     = q{};
-    my $sth_equipment = q{};
-
-    my $rooms_query = qq{
-        SELECT *
-        FROM $rooms_table;
-    };
-    my $equipment_query = q{};
-
-    $sth_rooms = $dbh->prepare($rooms_query);
-    $sth_rooms->execute();
-
-    my @rooms_with_equipment;
-
-    while ( my $rooms_row = $sth_rooms->fetchrow_hashref() ) {
-        my $roomid = $rooms_row->{'roomid'};
-        $equipment_query = qq{
-            SELECT equipmentname
-            FROM $equipment_table AS equipment
-            LEFT JOIN $roomequipment_table as roomequipment ON equipment.equipmentid = roomequipment.equipmentid
-            LEFT JOIN $rooms_table AS room ON roomequipment.roomid = room.roomid
-            WHERE room.roomid = $roomid;
-        };
-        $sth_equipment = $dbh->prepare($equipment_query);
-        $sth_equipment->execute();
-
-        my @equipment;
-        while ( my $equipment_row = $sth_equipment->fetchrow_hashref() ) {
-            push @equipment, $equipment_row;
-        }
-
-        $rooms_row->{'equipment'} = \@equipment;
-        push @rooms_with_equipment, $rooms_row;
-    }
-
-    return \@rooms_with_equipment;
-}
-
-sub getOpeningHours {
-
-    my $convert_weekdays = 0;
-    $convert_weekdays = shift;
-
-    my $dbh = C4::Context->dbh;
-    my $sth = q{};
-
-    my $query = qq{
-        SELECT openid,day, DATE_FORMAT(start, '%H:%i') as start, DATE_FORMAT(end, '%H:%i') as end
-        FROM $opening_hours_table
-        ORDER BY day ASC, start ASC; };
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @opening_hours;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        if ( $convert_weekdays == 1 ) {
-            if    ( $row->{'day'} == 1 ) { $row->{'day'} = "Monday"; }
-            elsif ( $row->{'day'} == 2 ) { $row->{'day'} = "Tuesday"; }
-            elsif ( $row->{'day'} == 3 ) { $row->{'day'} = "Wednesday"; }
-            elsif ( $row->{'day'} == 4 ) { $row->{'day'} = "Thursday"; }
-            elsif ( $row->{'day'} == 5 ) { $row->{'day'} = "Friday"; }
-            elsif ( $row->{'day'} == 6 ) { $row->{'day'} = "Saturday"; }
-            elsif ( $row->{'day'} == 7 ) { $row->{'day'} = "Sunday"; }
-        }
-        push @opening_hours, $row;
-    }
-
-    return \@opening_hours;
-}
-
-sub getConfirmedCalendarBookingsByMonthAndYear {
-
-    my ( $month, $year ) = @_;
-
-    ## zero-pad the month to be DATETIME-friendly (two-digit)
-    $month = sprintf "%02s", $month;
-
-    # load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    ## Returns hashref of the fields:
-    ## roomnumber, monthdate, bookedtime
-    my $query = 'SELECT
-        r.roomnumber,
-        DATE_FORMAT(b.start, "%e") AS monthdate,
-        CONCAT(DATE_FORMAT(b.start, "%h:%i %p"), " - ", DATE_FORMAT(b.end, "%h:%i %p")) AS bookedtime
-        FROM ' . "$rooms_table AS r, $bookings_table AS b " . 'WHERE r.roomid = b.roomid
-        AND start BETWEEN \'' . "$year-$month-01 00:00:00' AND '" . "$year-$month-31 23:59:59'" . 'ORDER BY b.roomid ASC, start ASC';
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @calendarBookings;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push @calendarBookings, $row;
-    }
-
-    return \@calendarBookings;
-}
-
-sub preBookingAvailabilityCheck {
-    my ( $roomid, $start, $end ) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT COUNT(*)
-        FROM $bookings_table
-        WHERE roomid = $roomid
-        AND \'$end\' > start
-        AND \'$start\' < end;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my ($count) = $sth->fetchrow_array();
-
-    if ( $count > 0 ) {    # a conflicting booking was found
-        return 0;
-    }
-    else {                 # no conflict found
-        return 1;
-    }
-}
-
-sub addBooking {
-
-    my ( $borrowernumber, $roomid, $start, $end ) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    $dbh->do( "
-        INSERT INTO $bookings_table (borrowernumber, roomid, start, end)
-        VALUES ($borrowernumber, $roomid, " . "'" . $start . "'" . "," . "'" . $end . "'" . ');' );
-}
-
-sub getRoomNumberById {
-
-    my ($roomid) = @_;
-
-    # load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT roomnumber
-        FROM $rooms_table
-        WHERE roomid = $roomid;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @roomNumberFromId;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push @roomNumberFromId, $row;
-    }
-
-    return \@roomNumberFromId;
-}
-
-sub getAvailableRooms {
-
-    my ( $start, $end, $capacity, $equipment ) = @_;
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT *
-        FROM $rooms_table
-        WHERE maxcapacity = $capacity
-        AND roomid NOT IN
-            (SELECT roomid
-            FROM $bookings_table
-            WHERE
-            \'$end\' > start AND \'$start\' < end)";
-
-    # if dereferenced array ref has zero elements (length evaluated in scalar context)
-    if ( @$equipment > 0 ) {
-
-        # counts number of elements
-        my $totalElements = scalar @{$equipment};
-
-        $query .= " AND roomid IN (SELECT roomid
-                                        FROM $roomequipment_table
-                                        WHERE";
-
-        foreach my $piece (@$equipment) {
-
-            if ( --$totalElements == 0 ) {
-
-                $query .= " equipmentid = $piece)";
+            if ($valid) {
+                add_booking( $borrowernumber, $roomid, $start, $end );
             }
             else {
-                $query .= " equipmentid = $piece AND";
+                $template->param( invalid_booking => 1, );
             }
-
-            $totalElements--;
         }
+
+        if ( $send_copy eq '1' && $valid ) {
+            my $timestamp = get_current_timestamp();
+
+            my $patron = Koha::Patrons->find($borrowernumber);
+
+            my $letter = C4::Letters::GetPreparedLetter(
+                module                 => 'members',
+                letter_code            => 'ROOM_RESERVATION',
+                lang                   => $patron->lang,
+                message_transport_type => 'email',
+                substitute             => {
+                    user                => $user,
+                    room                => $roomnumber,
+                    from                => $displayed_start,
+                    to                  => $displayed_end,
+                    confirmed_timestamp => $timestamp,
+                },
+            );
+
+            C4::Letters::EnqueueLetter(
+                {   letter                 => $letter,
+                    borrowernumber         => $borrowernumber,
+                    branchcode             => $patron->branchcode,
+                    message_transport_type => 'email',
+                }
+            );
+        }
+
+        $template->param( op => $op, );
     }
-
-    $query .= ' GROUP BY roomnumber;';
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allAvailableRooms;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allAvailableRooms, $row;
-    }
-
-    return \@allAvailableRooms;
-}
-
-sub loadAllMaxCapacities {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT DISTINCT maxcapacity
-        FROM $rooms_table;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allMaxCapacities;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allMaxCapacities, $row;
-    }
-
-    return \@allMaxCapacities;
-}
-
-sub loadAllEquipment {
-
-    ## load access to database
-    my $dbh = C4::Context->dbh;
-
-    ## database statement handler
-    my $sth = '';
-
-    my $query = "
-        SELECT *
-        FROM $equipment_table;
-    ";
-
-    $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @allAvailableEquipmentNames;
-
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allAvailableEquipmentNames, $row;
-    }
-
-    return \@allAvailableEquipmentNames;
-}
-
-sub getCurrentTimestamp {
-
-    my $timestamp = strftime( '%m/%d/%Y %I:%M:%S %p', localtime );
-
-    return $timestamp;
 }
 
 output_html_with_http_headers $cgi, $cookie, $template->output;

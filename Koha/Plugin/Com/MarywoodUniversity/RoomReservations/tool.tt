@@ -51,11 +51,7 @@
     [% INCLUDE 'header.inc' %]
     [% INCLUDE 'cat-search.inc' %]
 
-    <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext%]</a> &rsaquo; <a href="/cgi-bin/koha
-        /plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> &rsaquo; [% 'Room Reservations' | gettext %] &rsaquo;
-        [% 'To
-        ol' | gettext %]</div>
-
+    <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext%]</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> &rsaquo; [% 'Room Reservations' | gettext %] &rsaquo; [% 'Tool' | gettext %]</div>
     <div id="doc3">
 
         <!-- We can access our own plugins resource files using the PLUGIN_PATH variable. -->
