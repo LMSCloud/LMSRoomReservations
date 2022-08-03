@@ -438,6 +438,385 @@ msgstr ""
 msgid "Please select a room"
 msgstr ""
 
+#: bookas.tt:19 tool.tt:37
+msgid "Tool"
+msgstr ""
+
+#: bookas.tt:24
+msgid "Reserve as"
+msgstr ""
+
+#: bookas.tt:80 configure.tt:359 configure.tt:398 opac/calendar.tt:222
+msgid "hours"
+msgstr ""
+
+#: bookas.tt:83 opac/calendar.tt:225
+msgid "Selected time range exceeds maximum time allowed of"
+msgstr ""
+
+#: bookas.tt:87 opac/calendar.tt:229
+msgid "Please select a valid time range!"
+msgstr ""
+
+#: bookas.tt:92 opac/calendar.tt:234
+msgid "Start date is required."
+msgstr ""
+
+#: bookas.tt:97 opac/calendar.tt:239
+msgid "Start time is required."
+msgstr ""
+
+#: bookas.tt:102 opac/calendar.tt:244
+msgid "End date is required."
+msgstr ""
+
+#: bookas.tt:107 opac/calendar.tt:249
+msgid "End time is required."
+msgstr ""
+
+#: bookas.tt:112 opac/calendar.tt:254
+msgid "Room is required."
+msgstr ""
+
+#: bookas.tt:124 opac/calendar.tt:262
+msgid "Availability Search"
+msgstr ""
+
+#: bookas.tt:132
+msgid "Room is not available at the selected time."
+msgstr ""
+
+#: bookas.tt:138 opac/calendar.tt:312
+msgid "Start time"
+msgstr ""
+
+#: bookas.tt:141 opac/calendar.tt:315
+msgid "End time"
+msgstr ""
+
+#: bookas.tt:145
+msgid "Start date"
+msgstr ""
+
+#: bookas.tt:149 bookas.tt:204
+msgid "Time"
+msgstr ""
+
+#: bookas.tt:150 bookas.tt:205 tool.tt:639 tool.tt:694
+msgid "12:00 AM"
+msgstr ""
+
+#: bookas.tt:151 bookas.tt:206 tool.tt:640 tool.tt:695
+msgid "12:30 AM"
+msgstr ""
+
+#: bookas.tt:152 bookas.tt:207 tool.tt:641 tool.tt:696
+msgid "1:00 AM"
+msgstr ""
+
+#: bookas.tt:153 bookas.tt:208 tool.tt:642 tool.tt:697
+msgid "1:30 AM"
+msgstr ""
+
+#: bookas.tt:154 bookas.tt:209 tool.tt:643 tool.tt:698
+msgid "2:00 AM"
+msgstr ""
+
+#: bookas.tt:155 bookas.tt:210 tool.tt:644 tool.tt:699
+msgid "2:30 AM"
+msgstr ""
+
+#: bookas.tt:156 bookas.tt:211 tool.tt:645 tool.tt:700
+msgid "3:00 AM"
+msgstr ""
+
+#: bookas.tt:157 bookas.tt:212 tool.tt:646 tool.tt:701
+msgid "3:30 AM"
+msgstr ""
+
+#: bookas.tt:158 bookas.tt:213 tool.tt:647 tool.tt:702
+msgid "4:00 AM"
+msgstr ""
+
+#: bookas.tt:159 bookas.tt:214 tool.tt:648 tool.tt:703
+msgid "4:30 AM"
+msgstr ""
+
+#: bookas.tt:160 bookas.tt:215 tool.tt:649 tool.tt:704
+msgid "5:00 AM"
+msgstr ""
+
+#: bookas.tt:161 bookas.tt:216 tool.tt:650 tool.tt:705
+msgid "5:30 AM"
+msgstr ""
+
+#: bookas.tt:162 bookas.tt:217 tool.tt:651 tool.tt:706
+msgid "6:00 AM"
+msgstr ""
+
+#: bookas.tt:163 bookas.tt:218 tool.tt:652 tool.tt:707
+msgid "6:30 AM"
+msgstr ""
+
+#: bookas.tt:164 bookas.tt:219 tool.tt:653 tool.tt:708
+msgid "7:00 AM"
+msgstr ""
+
+#: bookas.tt:165 bookas.tt:220 tool.tt:654 tool.tt:709
+msgid "7:30 AM"
+msgstr ""
+
+#: bookas.tt:166 bookas.tt:221 tool.tt:655 tool.tt:710
+msgid "8:00 AM"
+msgstr ""
+
+#: bookas.tt:167 bookas.tt:222 tool.tt:656 tool.tt:711
+msgid "8:30 AM"
+msgstr ""
+
+#: bookas.tt:168 bookas.tt:223 tool.tt:657 tool.tt:712
+msgid "9:00 AM"
+msgstr ""
+
+#: bookas.tt:169 bookas.tt:224 tool.tt:658 tool.tt:713
+msgid "9:30 AM"
+msgstr ""
+
+#: bookas.tt:170 bookas.tt:225 tool.tt:659 tool.tt:714
+msgid "10:00 AM"
+msgstr ""
+
+#: bookas.tt:171 bookas.tt:226 tool.tt:660 tool.tt:715
+msgid "10:30 AM"
+msgstr ""
+
+#: bookas.tt:172 bookas.tt:227 tool.tt:661 tool.tt:716
+msgid "11:00 AM"
+msgstr ""
+
+#: bookas.tt:173 bookas.tt:228 tool.tt:662 tool.tt:717
+msgid "11:30 AM"
+msgstr ""
+
+#: bookas.tt:174 bookas.tt:229 tool.tt:663 tool.tt:718
+msgid "12:00 PM"
+msgstr ""
+
+#: bookas.tt:175 bookas.tt:230 tool.tt:664 tool.tt:719
+msgid "12:30 PM"
+msgstr ""
+
+#: bookas.tt:176 bookas.tt:231 tool.tt:665 tool.tt:720
+msgid "1:00 PM"
+msgstr ""
+
+#: bookas.tt:177 bookas.tt:232 tool.tt:666 tool.tt:721
+msgid "1:30 PM"
+msgstr ""
+
+#: bookas.tt:178 bookas.tt:233 tool.tt:667 tool.tt:722
+msgid "2:00 PM"
+msgstr ""
+
+#: bookas.tt:179 bookas.tt:234 tool.tt:668 tool.tt:723
+msgid "2:30 PM"
+msgstr ""
+
+#: bookas.tt:180 bookas.tt:235 tool.tt:669 tool.tt:724
+msgid "3:00 PM"
+msgstr ""
+
+#: bookas.tt:181 bookas.tt:236 tool.tt:670 tool.tt:725
+msgid "3:30 PM"
+msgstr ""
+
+#: bookas.tt:182 bookas.tt:237 tool.tt:671 tool.tt:726
+msgid "4:00 PM"
+msgstr ""
+
+#: bookas.tt:183 bookas.tt:238 tool.tt:672 tool.tt:727
+msgid "4:30 PM"
+msgstr ""
+
+#: bookas.tt:184 bookas.tt:239 tool.tt:673 tool.tt:728
+msgid "5:00 PM"
+msgstr ""
+
+#: bookas.tt:185 bookas.tt:240 tool.tt:674 tool.tt:729
+msgid "5:30 PM"
+msgstr ""
+
+#: bookas.tt:186 bookas.tt:241 tool.tt:675 tool.tt:730
+msgid "6:00 PM"
+msgstr ""
+
+#: bookas.tt:187 bookas.tt:242 tool.tt:676 tool.tt:731
+msgid "6:30 PM"
+msgstr ""
+
+#: bookas.tt:188 bookas.tt:243 tool.tt:677 tool.tt:732
+msgid "7:00 PM"
+msgstr ""
+
+#: bookas.tt:189 bookas.tt:244 tool.tt:678 tool.tt:733
+msgid "7:30 PM"
+msgstr ""
+
+#: bookas.tt:190 bookas.tt:245 tool.tt:679 tool.tt:734
+msgid "8:00 PM"
+msgstr ""
+
+#: bookas.tt:191 bookas.tt:246 tool.tt:680 tool.tt:735
+msgid "8:30 PM"
+msgstr ""
+
+#: bookas.tt:192 bookas.tt:247 tool.tt:681 tool.tt:736
+msgid "9:00 PM"
+msgstr ""
+
+#: bookas.tt:193 bookas.tt:248 tool.tt:682 tool.tt:737
+msgid "9:30 PM"
+msgstr ""
+
+#: bookas.tt:194 bookas.tt:249 tool.tt:683 tool.tt:738
+msgid "10:00 PM"
+msgstr ""
+
+#: bookas.tt:195 bookas.tt:250 tool.tt:684 tool.tt:739
+msgid "10:30 PM"
+msgstr ""
+
+#: bookas.tt:196 bookas.tt:251 tool.tt:685 tool.tt:740
+msgid "11:00 PM"
+msgstr ""
+
+#: bookas.tt:197 bookas.tt:252 tool.tt:686 tool.tt:741
+msgid "11:30 PM"
+msgstr ""
+
+#: bookas.tt:200
+msgid "End date"
+msgstr ""
+
+#: bookas.tt:260 bookas.tt:363 opac/calendar.tt:320 opac/calendar.tt:443
+msgid "Select Room"
+msgstr ""
+
+#: bookas.tt:273 opac/calendar.tt:329
+msgid "Room Equipment"
+msgstr ""
+
+#: bookas.tt:278 configure.tt:237 configure.tt:672 configure.tt:899
+#: configure.tt:1018 configure.tt:1098 configure.tt:1143 configure.tt:1210
+#: opac/calendar.tt:84 opac/calendar.tt:282 opac/calendar.tt:334
+msgid "none"
+msgstr ""
+
+#: bookas.tt:296 opac/calendar.tt:349
+msgid "Check Room Availability"
+msgstr ""
+
+#: bookas.tt:323 opac/calendar.tt:397
+msgid "Select a room to continue."
+msgstr ""
+
+#: bookas.tt:337 opac/calendar.tt:70 opac/calendar.tt:268 opac/calendar.tt:417
+msgid "Available Rooms"
+msgstr ""
+
+#: bookas.tt:340 opac/calendar.tt:420
+msgid "Select"
+msgstr ""
+
+#: bookas.tt:341 opac/calendar.tt:421
+msgid "Room #"
+msgstr ""
+
+#: bookas.tt:342 opac/calendar.tt:422
+msgid "Max Capacity"
+msgstr ""
+
+#: bookas.tt:368 opac/calendar.tt:448
+msgid "No rooms match your criteria!"
+msgstr ""
+
+#: bookas.tt:372 opac/calendar.tt:452
+msgid "Click here to try another search"
+msgstr ""
+
+#: bookas.tt:381 opac/calendar.tt:484
+msgid "Confirmation"
+msgstr ""
+
+#: bookas.tt:383 configure.tt:222 configure.tt:1042 configure.tt:1145
+#: opac/calendar-sendconfirmation.tt:24 opac/calendar.tt:486
+msgid "Name:"
+msgstr ""
+
+#: bookas.tt:390 opac/calendar.tt:495
+msgid "Email:"
+msgstr ""
+
+#: bookas.tt:396 opac/calendar-sendconfirmation.tt:26 opac/calendar.tt:501
+msgid "Room:"
+msgstr ""
+
+#: bookas.tt:402 opac/calendar.tt:507
+msgid "Time:"
+msgstr ""
+
+#: bookas.tt:416
+msgid "Send a copy as confirmation"
+msgstr ""
+
+#: bookas.tt:419 opac/calendar.tt:476 opac/calendar.tt:524
+msgid "Confirm"
+msgstr ""
+
+#: bookas.tt:419 opac/calendar.tt:525
+msgid "Start over"
+msgstr ""
+
+#: bookas.tt:429 opac/calendar.tt:536
+msgid "Sorry!"
+msgstr ""
+
+#: bookas.tt:431 opac/calendar.tt:538
+msgid "It appears there was a problem completing your reservation"
+msgstr ""
+
+#: bookas.tt:433 opac/calendar.tt:540
+msgid "This is most likely due to someone else placing a reservation for a conflicting time slot."
+msgstr ""
+
+#: bookas.tt:440 opac/calendar.tt:545
+msgid "Click here to search again"
+msgstr ""
+
+#: bookas.tt:443 opac/calendar.tt:548
+msgid "Congratulations! Your reservation is confirmed!"
+msgstr ""
+
+#: bookas.tt:446 opac/calendar.tt:551
+msgid "An email confirmation has been sent to"
+msgstr ""
+
+#: bookas.tt:452
+msgid "Back to patron record"
+msgstr ""
+
+#: configure.tt:4 configure.tt:81 tool.tt:4
+msgid "Koha: Room Reservations Plugin: Configuration"
+msgstr ""
+
+#: configure.tt:30 configure.tt:60
+msgid "Please choose an action"
+msgstr ""
+
+#: configure.tt:51
+msgid "Please select a room"
+msgstr ""
+
 #: configure.tt:76
 msgid "Configuration"
 msgstr ""
@@ -451,38 +830,42 @@ msgid "Select an action:"
 msgstr ""
 
 #: configure.tt:95
-msgid "Add room"
-msgstr ""
-
-#: configure.tt:96
-msgid "Add room equipment"
-msgstr ""
-
-#: configure.tt:97
-msgid "Delete room"
-msgstr ""
-
-#: configure.tt:98
-msgid "Delete room equipment"
-msgstr ""
-
-#: configure.tt:99
 msgid "Display rooms"
 msgstr ""
 
-#: configure.tt:100
+#: configure.tt:96
+msgid "Add room"
+msgstr ""
+
+#: configure.tt:97
 msgid "Edit room"
 msgstr ""
 
+#: configure.tt:98
+msgid "Delete room"
+msgstr ""
+
+#: configure.tt:99
+msgid "Add room equipment"
+msgstr ""
+
+#: configure.tt:100
+msgid "Edit room equipment"
+msgstr ""
+
 #: configure.tt:101
-msgid "OPAC max future date"
+msgid "Delete room equipment"
 msgstr ""
 
 #: configure.tt:102
-msgid "OPAC max time"
+msgid "OPAC max future date"
 msgstr ""
 
 #: configure.tt:103
+msgid "OPAC max time"
+msgstr ""
+
+#: configure.tt:104
 msgid "Restrict daily reservations per patron"
 msgstr ""
 
@@ -498,7 +881,7 @@ msgstr ""
 msgid "Processing..."
 msgstr ""
 
-#: configure.tt:149
+#: configure.tt:150
 msgid "Select a room to display its details or select another action."
 msgstr ""
 
@@ -512,11 +895,11 @@ msgstr ""
 msgid "Room"
 msgstr ""
 
-#: configure.tt:191
+#: configure.tt:192
 msgid "Show details"
 msgstr ""
 
-#: configure.tt:213
+#: configure.tt:214
 msgid "Select another room to display"
 msgstr ""
 

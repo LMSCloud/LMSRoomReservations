@@ -31,7 +31,7 @@ use Readonly;
 use feature qw(switch);
 use DateTime;
 
-use Locale::Messages;
+use Locale::Messages;;
 Locale::Messages->select_package('gettext_pp');
 
 use Locale::Messages qw(:locale_h :libintl_h);
@@ -289,7 +289,7 @@ sub bookas {
     my $member_email     = $member->email;
 
     my $submitButton = $cgi->param('confirmationSubmit') || q{};
-
+    
     if ( $submitButton eq 'Start over' ) {
 
         $op = q{};
@@ -624,7 +624,7 @@ sub tool {
         my $end_time      = $cgi->param('blackout-end-time');
         my @rooms         = $cgi->multi_param('current-room-blackout');
 
-        $blackout_date = sprintf '%3$04d-%02d-%02d', split m:/:, $blackout_date;
+        #$blackout_date = sprintf '%3$04d-%02d-%02d', split m:/:, $blackout_date;
 
         my $start = $blackout_date . " $start_time";
         my $end   = $blackout_date . " $end_time";
@@ -732,6 +732,15 @@ sub configure {
             $template->param(
                 action => $action,
                 op     => $op,
+            );
+        }
+        elsif ( $selected eq 'action-select-edit-equipment' ) {
+
+            $action = 'edit-equipment-selection';
+
+            $template->param(
+                action => $action,
+                op => $op,
             );
         }
         elsif ( $selected eq 'action-select-delete-equipment' ) {
@@ -1097,6 +1106,49 @@ sub configure {
             available_equipment => $availableEquipment,
         );
     }
+    elsif ( $op eq 'edit-equipment-selection' ) {
+
+        my $availableEquipment = getAllRoomEquipmentNamesAndIds();
+
+        $template->param(
+            op => $op,
+            available_equipment => $availableEquipment,
+        );
+    }
+    elsif ( $op eq 'edit-equipment' ) {
+
+		my $edit = $cgi->param('edit') || q{};
+
+        if ( $edit eq '1') {
+			my $editedEquipmentId = $cgi->param('edit-equipment-id');
+            my $editedEquipmentName = $cgi->param('edit-equipment-text-field');
+
+            ## Convert to lowercase to enforce uniformity
+            $editedEquipmentName = lc($editedEquipmentName);
+
+            ## Enclose in single quotes for DB string compatibility
+            $editedEquipmentName = "'" . $editedEquipmentName . "'";
+
+            updateEquipment($editedEquipmentId, $editedEquipmentName);
+
+            my $availableEquipment = getAllRoomEquipmentNamesAndIds();
+
+			$template->param(
+				op => 'edit-equipment-selection',
+				available_equipment => $availableEquipment,
+			);
+        }
+        else {
+			my $equipmentIdToEdit = $cgi->param('edit-equipment-radio-button');
+			my $equipmentToEdit = getEquipmentById($equipmentIdToEdit);
+
+			$template->param(
+				op => $op,
+				equipment_to_edit => $equipmentToEdit,
+			);
+		}
+    }
+
 
     print $cgi->header( -type => 'text/html', -charset => 'utf-8' );
     print $template->output();

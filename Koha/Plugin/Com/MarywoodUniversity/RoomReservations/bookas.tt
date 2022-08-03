@@ -349,7 +349,11 @@
                 <input type="hidden" name="op" value="reservation-confirmed" />
                 [% IF Koha.Preference('KohaAdminEmailAddress') %]
                 <!-- Checked by default -->
-                <p><input type="checkbox" name="send-confirmation-copy" value="1" checked="true" />Send me a copy of my confirmation</p>
+                <!-- Checked by default -->
+                    <p>
+						<input type="checkbox" id="send-confirmation-copy" name="send-confirmation-copy" value="1" checked> 
+						<label for="send-confirmation-copy">[% 'Send a copy as confirmation' | gettext %]</label>
+					</p>
                 [% END # IF Koha.Preference('KohaAdminEmailAddress') %]
                 <p><input type="submit" name="confirmationSubmit" value="[% 'Confirm' | gettext %]" /><input type="submit" name="confirmationSubmit" value="[% 'Start over' | gettext %]" /></p>
             </fieldset>
@@ -394,7 +398,6 @@
 [% INCLUDE 'intranet-bottom.inc' %]
 [% INCLUDE calendar.inc %]
 <script type="text/javascript">
-// <![CDATA[
 
     $(document).ready(function() {
         $(".datefield").prop("readOnly", true);
@@ -415,5 +418,5 @@
             requestdates.not( this ).datepicker("option", option, date);
         }
     });
-// ]]>
 </script>
+        

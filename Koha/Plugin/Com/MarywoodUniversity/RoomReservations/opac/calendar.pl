@@ -315,48 +315,6 @@ ROOM_SELECTION_CONFIRMATION: {
         );
     }
 }
-if ( defined $op && $op eq 'room-selection-confirmation' ) {
-
-    my $selected_id     = $cgi->param('selected-room-id');
-    my $displayed_start = $cgi->param('displayed-start');
-    my $displayed_end   = $cgi->param('displayed-end');
-    my $event_start     = $cgi->param('event-start-time');
-    my $event_end       = $cgi->param('event-end-time');
-
-    my $start_date = $cgi->param('start-date');
-
-    my $displayed_event_time = "$displayed_start - $displayed_end";
-
-    my $user_fn = C4::Context->userenv->{'firstname'} || q{};
-    my $user_ln = C4::Context->userenv->{'surname'}   || q{};
-    my $user_bn = C4::Context->userenv->{'number'};
-
-    my $user  = "$user_fn $user_ln";
-    my $email = C4::Context->userenv->{'emailaddress'};
-
-    my $selected_room_number = get_room_number_by_id($selected_id);
-
-    my $count_limit = get_daily_reservation_limit();
-
-    my $current_user_daily_limit = get_daily_reservation_limit_of_patron( $user_bn, $start_date );
-
-    $template->param(
-        op                  => $op,
-        current_user        => $user,
-        current_user_fn     => $user_fn,
-        current_user_ln     => $user_ln,
-        current_user_email  => $email,
-        selected_room_id    => $selected_id,
-        selected_room_no    => $selected_room_number,
-        displayed_time      => $displayed_event_time,
-        selected_start_time => $event_start,
-        selected_end_time   => $event_end,
-        displayed_start     => $displayed_start,
-        displayed_end       => $displayed_end,
-        count_limit         => $count_limit,
-        user_daily_limit    => $current_user_daily_limit,
-    );
-}
 
 RESERVATION_CONFIRMED: {
     if ( defined $op && $op eq 'reservation-confirmed' ) {

@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: bookas.tt:6
 msgid "Koha: Room Reservations Plugin: Reserve as patron"
@@ -437,13 +437,13 @@ msgstr "Zurück zum Benutzerdatensatz"
 msgid "Koha: Room Reservations Plugin: Configuration"
 msgstr "Plugin für Raumreservierungen: Konfiguration"
 
-#: configure.tt:30 configure.tt:60
-msgid "Please choose an action"
-msgstr "Bitte wählen Sie eine Aktion"
+#: opac/calendar.pl:47
+msgid "February"
+msgstr "Februar"
 
-#: configure.tt:51
-msgid "Please select a room"
-msgstr "Bitte wählen Sie einen Raum aus"
+#: opac/calendar.pl:47
+msgid "March"
+msgstr "März"
 
 #: configure.tt:76
 msgid "Configuration"
@@ -458,38 +458,42 @@ msgid "Select an action:"
 msgstr "Eine Aktion wählen:"
 
 #: configure.tt:95
-msgid "Add room"
-msgstr "Raum hinzufügen"
-
-#: configure.tt:96
-msgid "Add room equipment"
-msgstr "Raumequipment hinzufügen"
-
-#: configure.tt:97
-msgid "Delete room"
-msgstr "Raum löschen"
-
-#: configure.tt:98
-msgid "Delete room equipment"
-msgstr "Raumequipment löschen"
-
-#: configure.tt:99
 msgid "Display rooms"
 msgstr "Räume anzeigen"
 
-#: configure.tt:100
+#: configure.tt:96
+msgid "Add room"
+msgstr "Raum hinzufügen"
+
+#: configure.tt:97
 msgid "Edit room"
 msgstr "Raum bearbeiten"
 
+#: configure.tt:98
+msgid "Delete room"
+msgstr "Raum löschen"
+
+#: configure.tt:99
+msgid "Add room equipment"
+msgstr "Raumequipment hinzufügen"
+
+#: configure.tt:100
+msgid "Edit room equipment"
+msgstr "Raumequipment bearbeiten"
+
 #: configure.tt:101
+msgid "Delete room equipment"
+msgstr "Raumequipment löschen"
+
+#: configure.tt:102
 msgid "OPAC max future date"
 msgstr "OPAC max. Datum"
 
-#: configure.tt:102
+#: configure.tt:103
 msgid "OPAC max time"
 msgstr "OPAC max. Zeit"
 
-#: configure.tt:103
+#: configure.tt:104
 msgid "Restrict daily reservations per patron"
 msgstr "Tägliche Reservierungen pro Benutzer begrenzen"
 
@@ -509,7 +513,7 @@ msgstr "Weiter"
 msgid "Processing..."
 msgstr "Arbeite..."
 
-#: configure.tt:149
+#: configure.tt:150
 msgid "Select a room to display its details or select another action."
 msgstr "Einen Raum um Details anzuzeigen oder eine andere Aktion wählen."
 
@@ -523,11 +527,11 @@ msgstr "Eine andere Aktion wählen"
 msgid "Room"
 msgstr "Raum"
 
-#: configure.tt:191
+#: configure.tt:192
 msgid "Show details"
 msgstr "Zeige Details"
 
-#: configure.tt:213
+#: configure.tt:214
 msgid "Select another room to display"
 msgstr "Einen anderen Raum zum bearbeiten wählen"
 
