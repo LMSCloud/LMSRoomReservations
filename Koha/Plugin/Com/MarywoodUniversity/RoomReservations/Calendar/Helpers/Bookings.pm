@@ -1,4 +1,4 @@
-package Calendar::Helpers::Bookings;
+package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Bookings;
 
 use strict;
 use warnings;
@@ -16,8 +16,8 @@ our @EXPORT  = qw(
     get_all_bookings
 );
 
-my $ROOMS_TABLE         = 'booking_rooms';
-my $BOOKINGS_TABLE      = 'bookings';
+my $ROOMS_TABLE    = 'booking_rooms';
+my $BOOKINGS_TABLE = 'bookings';
 
 sub pre_booking_availability_check {
     my ( $roomid, $start, $end ) = @_;

@@ -31,7 +31,8 @@
   input[name="submit-check-room-availability"],
   input[name="confirmationSubmit"],
   input[name="startOverSubmit"],
-  button#jump-to-calendar {
+  button#jump-to-calendar,
+  .lmsr-button {
     padding: 0.5em;
     margin: 0;
     border-radius: 7px;
@@ -47,7 +48,8 @@
   .calendar-submit:hover,
   input[name="submit-check-room-availability"]:hover,
   input[name="confirmationSubmit"]:hover,
-  button#jump-to-calendar:hover {
+  button#jump-to-calendar:hover,
+  .lmsr-button:hover {
     position: relative;
     top: -3px;
     box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
@@ -62,7 +64,8 @@
   .calendar-submit:active,
   input[name="submit-check-room-availability"]:active,
   input[name="confirmationSubmit"]:active,
-  button#jump-to-calendar:active {
+  button#jump-to-calendar:active,
+  .lmsr-button:active {
     top: 0;
     box-shadow: none;
   }
@@ -399,7 +402,9 @@
                   <input type="hidden" name="op" value="availability-search" />
                   [% IF room_checked == 0 %]
                     <div class="alert alert-info row" id="alert-room-unavailable">
-                      <button id="alert-room-unavailable-button" class="col-1" disabled>x</button><br>
+                      <button id="alert-room-unavailable-button" class="col-1" disabled>
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                      </button><br>
                       <span class="col-11"><b>[% 'Room is not available at the selected time. Please note the opening
                           hours.' | gettext %]</b></span>
                     </div>
@@ -735,23 +740,29 @@
 
 [% ELSIF op == 'reservation-confirmed' %]
   [% IF invalid_booking == 1 %]
-    <h1>[% 'Sorry!' | gettext %]</h1><br />
-    <h2>[% 'It appears there was a problem completing your reservation' | gettext %]<br />
-      [% 'This is most likely due to someone else placing a reservation for a conflicting time slot.' | gettext %]
-    </h2>
-
-    <form method="post" action="#">
-      <button>[% 'Click here to search again' | gettext %]</button>
-    </form>
-
-    [% ELSE %]
-      <h1>[% 'Congratulations! Your reservation is confirmed!' | gettext %]</h1><br />
-    [% IF SENT == '1' %]
-      <h3>[% 'An email confirmation has been sent to' | gettext %] [% patron_email %]!</h3>
-    [% END %]
-    <form method="post" action="#">
-      <button>[% 'Back to calendar' | gettext %]</button>
-    </form>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">[% 'Sorry!' | gettext %]</h5><br />
+        <p class="card-text">[% 'It appears there was a problem completing your reservation' | gettext %]<br />
+          [% 'This is most likely due to someone else placing a reservation for a conflicting time slot.' | gettext %]
+        </p>
+        <form method="post" action="#">
+          <button class="lmsr-button">[% 'Click here to search again' | gettext %]</button>
+        </form>
+      </div>
+    </div>
+  [% ELSE %]
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">[% 'Congratulations! Your reservation is confirmed!' | gettext %]</h5><br />
+          [% IF SENT == '1' %]
+            <p class="card-text">[% 'An email confirmation has been sent to' | gettext %] [% patron_email %]!</p>
+          [% END %]
+        <form method="post" action="#">
+          <button class="lmsr-button">[% 'Back to calendar' | gettext %]</button>
+        </form>
+      </div>
+    </div>
   [% END # IF invalid_booking == 1 %]
 
 [% END # END OF OPERATIONS %]

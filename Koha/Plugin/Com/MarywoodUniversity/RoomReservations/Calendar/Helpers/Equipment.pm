@@ -1,4 +1,4 @@
-package Calendar::Helpers::Equipment;
+package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Equipment;
 
 use strict;
 use warnings;
@@ -203,7 +203,7 @@ sub update_room_equipment {
 
     $dbh->do("DELETE FROM $ROOMEQUIPMENT_TABLE WHERE roomid = $roomid;");
 
-    foreach my $piece (@{ $equipment }) {
+    foreach my $piece ( @{$equipment} ) {
 
         $dbh->do("INSERT INTO $ROOMEQUIPMENT_TABLE (roomid, equipmentid) VALUES ($roomid, $piece);");
     }

@@ -3,20 +3,41 @@
 [% USE gtx = Gettext('com.marywooduniversity.roomreservations', language, 'utf-8', mbf_path) %]
 
 [% INCLUDE 'doc-head-open.inc' %]
-    <title>[% 'Koha: Room Reservations Plugin: Reserve as patron' | gettext %]</title>
+  <title>[% 'Koha: Room Reservations Plugin: Reserve as patron' | gettext %]</title>
 [% INCLUDE 'doc-head-close.inc' %]
-    <style>
-        .avail-room {
-            text-align: center;
-        }
-    </style>
+  <style>
+    .avail-room {
+      text-align: center;
+    }
+
+    div#doc3>form,
+    div#doc3>div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      width: 50%;
+      margin: 0 auto;
+    }
+
+    div#doc3>h3 {
+      margin: 0.5em 0.8em;
+    }
+  </style>
 </head>
 
 <body>
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
-<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext %]</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> &rsaquo; [% 'Room Reservations' | gettext %] &rsaquo; [% 'Tool' | gettext %]</div>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
+    <li class="breadcrumb-item"><a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a></li>
+    <li class="breadcrumb-item active"><a href="#">[% 'Room Reservations' | gettext %]</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Tool' | gettext %]</a></li>
+  </ol>
+</nav>
 
 <div id="doc3">
 

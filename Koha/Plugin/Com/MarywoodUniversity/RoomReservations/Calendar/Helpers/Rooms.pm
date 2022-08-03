@@ -1,4 +1,4 @@
-package Calendar::Helpers::Rooms;
+package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Rooms;
 
 use strict;
 use warnings;

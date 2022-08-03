@@ -1,4 +1,4 @@
-package Calendar::Helpers::Misc;
+package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Misc;
 
 use strict;
 use warnings;
@@ -110,7 +110,7 @@ sub clear_patron_category_restriction {
         $dbh->do($delete_query);
     }
     else {
-        my @restricted = @{ $restricted_category };
+        my @restricted = @{$restricted_category};
 
         my $counter = scalar @restricted;
 

@@ -24,49 +24,43 @@ use Modern::Perl;
 
 our $VERSION = q{1.0.0};
 
-BEGIN {
-    use Data::Dumper;
-    use Carp;
-    use C4::Context;
-    use C4::Output;
-    use C4::Auth;
-    use C4::Languages;
-    use C4::Letters;
-    use Koha::Email;
-    use Mail::Sendmail;
-    use MIME::QuotedPrint;
-    use MIME::Base64;
-    use Koha::Patrons;
-    use Koha::Patron::Category;
-    use Koha::Patron::Categories;
-    use Koha::DateUtils;
-    use Cwd qw( abs_path );
-    use File::Basename qw( dirname );
-    use POSIX qw( floor );
-    use DateTime;
-    use Readonly;
+use Carp;
+use C4::Context;
+use C4::Output;
+use C4::Auth;
+use C4::Languages;
+use C4::Letters;
+use Koha::Email;
+use Mail::Sendmail;
+use MIME::QuotedPrint;
+use MIME::Base64;
+use Koha::Patrons;
+use Koha::Patron::Category;
+use Koha::Patron::Categories;
+use Koha::DateUtils;
+use Cwd qw( abs_path );
+use File::Basename qw( dirname );
+use POSIX qw( floor );
+use DateTime;
+use Readonly;
 
-    use CGI qw ( -utf8 );
+use CGI qw ( -utf8 );
 
-    # use Data::Dumper;
-    use Locale::Messages;
-    Locale::Messages->select_package('gettext_pp');
-    use Locale::Messages qw(:locale_h :libintl_h);
+# use Data::Dumper;
+use Locale::Messages;
+Locale::Messages->select_package('gettext_pp');
+use Locale::Messages qw(:locale_h :libintl_h);
 
-    use lib dirname( abs_path($PROGRAM_NAME) );
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Bookings;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Equipment;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Limits;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Misc;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Rooms;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Times;
 
-    use Calendar::Helpers::Bookings;
-    use Calendar::Helpers::Equipment;
-    use Calendar::Helpers::Limits;
-    use Calendar::Helpers::Misc;
-    use Calendar::Helpers::Rooms;
-    use Calendar::Helpers::Times;
-
-    use Calendar::Simple;
-}
+use Calendar::Simple;
 
 my $plugin_dir = dirname( abs_path($PROGRAM_NAME) );
-warn Dumper( $plugin_dir );
 
 my @months = (
     gettext('January'), gettext('February'), gettext('March'),     gettext('April'),   gettext('May'),      gettext('June'),

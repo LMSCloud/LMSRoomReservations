@@ -1,4 +1,4 @@
-package Calendar::Helpers::Limits;
+package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Limits;
 
 use strict;
 use warnings;
