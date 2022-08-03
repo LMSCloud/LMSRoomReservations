@@ -289,7 +289,7 @@ sub bookas {
     my $member_email     = $member->email;
 
     my $submitButton = $cgi->param('confirmationSubmit') || q{};
-    
+
     if ( $submitButton eq 'Start over' ) {
 
         $op = q{};
@@ -877,7 +877,7 @@ sub configure {
         my $max_num_time = $self->retrieve_data('max_time');
 
         if ( $max_num_time eq '0' ) {
-            $max_num_time = '';
+            $max_num_time = q{};
         }
 
         $template->param(
@@ -1108,7 +1108,7 @@ sub configure {
     }
     elsif ( $op eq 'edit-equipment-selection' ) {
 
-        my $availableEquipment = getAllRoomEquipmentNamesAndIds();
+        my $availableEquipment = get_all_room_equipment_names_and_ids();
 
         $template->param(
             op => $op,
@@ -1124,14 +1124,14 @@ sub configure {
             my $editedEquipmentName = $cgi->param('edit-equipment-text-field');
 
             ## Convert to lowercase to enforce uniformity
-            $editedEquipmentName = lc($editedEquipmentName);
+            $editedEquipmentName = lc $editedEquipmentName;
 
             ## Enclose in single quotes for DB string compatibility
-            $editedEquipmentName = "'" . $editedEquipmentName . "'";
+            $editedEquipmentName = qq{'$editedEquipmentName'};
 
-            updateEquipment($editedEquipmentId, $editedEquipmentName);
+            update_room_equipment($editedEquipmentId, $editedEquipmentName);
 
-            my $availableEquipment = getAllRoomEquipmentNamesAndIds();
+            my $availableEquipment = get_all_room_equipment_names_and_ids();
 
 			$template->param(
 				op => 'edit-equipment-selection',
@@ -1140,7 +1140,7 @@ sub configure {
         }
         else {
 			my $equipmentIdToEdit = $cgi->param('edit-equipment-radio-button');
-			my $equipmentToEdit = getEquipmentById($equipmentIdToEdit);
+			my $equipmentToEdit = get_room_equipment_by_id($equipmentIdToEdit);
 
 			$template->param(
 				op => $op,
