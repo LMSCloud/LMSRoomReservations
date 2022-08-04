@@ -1,902 +1,929 @@
 [% USE gtx = Gettext('com.marywooduniversity.roomreservations', language, 'utf-8', mbf_path) %]
 
 [% INCLUDE 'doc-head-open.inc' %]
-<title>[% "Koha: Room Reservations Plugin: Configuration" | gettext %]</title>
+  <title>[% "Koha: Room Reservations Plugin: Configuration" | gettext %]</title>
 [% INCLUDE 'doc-head-close.inc' %]
-<style type="text/css">
+  <style type="text/css">
+    :root {
+      --shadow-sm: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+      --shadow-md: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+      --shadow-lg: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+      --shadow-hv: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+    }
+
     div#doc3>form,
     div#doc3>div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        width: 50%;
-        margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+      margin: 0 auto;
     }
 
     div#doc3>h3 {
-        margin: 0.5em 0.8em;
+      margin: 0.5em 0.8em;
     }
 
     .fieldset-auto-width {
-        text-align: center;
-        display: inline-block;
+      text-align: center;
+      display: inline-block;
+    }
+
+    input[name="submit-opening-hours"] {
+      margin-right: 0px;
+      margin-left: auto;
     }
 
     .table-header-bold {
-        font-weight: bold;
+      font-weight: bold;
     }
 
     .table-row-centered {
-        text-align: center;
+      text-align: center;
     }
 
     button {
-        background: none !important;
-        color: #0000EE;
-        border: none;
-        padding: 0 !important;
-        font: inherit;
-        cursor: pointer;
+      background: none !important;
+      color: #0000EE;
+      border: none;
+      padding: 0 !important;
+      font: inherit;
+      cursor: pointer;
     }
-</style>
-<script type="text/javascript">
-    function loadSelectedAction() {
-        document.getElementById('actionSelectedBtn').click();
+
+    .lmsr-action-table {
+      padding: 1em;
+      border: rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
     }
-</script>
+
+    .lmsr-action-table-body-item-selector {
+      margin: 0.375em !important;
+    }
+
+    .lmsr-action-table-delete-opening-hours {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      grid-column-gap: 0.5em;
+      grid-row-gap: 0.5em;
+      justify-items: stretch;
+      align-items: stretch;
+    }
+
+    .lmsr-action-table-delete-reservations {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      grid-column-gap: 0.5em;
+      grid-row-gap: 0.5em;
+      justify-items: stretch;
+      align-items: stretch;
+    }
+
+    .lmsr-action-table-header-item,
+    .lmsr-action-table-body-item {
+      padding: 0.5em;
+    }
+
+    .lmsr-button-close,
+    .lmsr-button-close *,
+    .lmsr-button-close:disabled,
+    .lmsr-button-close:active {
+      border: none;
+      background: none;
+      color: darkslategrey;
+    }
+
+    .lmsr-content-block {
+      max-width: 300px;
+    }
+
+    .lmsr-content-main {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+    }
+
+    .lmsr-menu {
+      display: block !important;
+      position: absolute;
+      left: 0;
+      top: 25%;
+      width: 15% !important;
+      margin: 0.5em 0.8em;
+    }
+
+    .lmsr-menu-input,
+    .lmsr-visibility-hidden {
+      visibility: hidden;
+    }
+
+    .lmsr-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .lmsr-menu-list-add-opening-hours {
+      padding: 0 1em;
+    }
+
+    .lmsr-menu-list-add-opening-hours>div {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .lmsr-menu-list-heading {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 0.5em 0;
+    }
+
+    .lmsr-menu-list-heading,
+    .lmsr-menu-list-item {
+      list-style-type: none;
+    }
+
+    .lmsr-menu-list-item {
+      color: #004D99;
+    }
+
+    .lmsr-menu-list-item:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .lmsr-time-picker-add-opening-hours {
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    .lmsr-toast {
+      position: absolute;
+      top: 25%;
+      right: 1em;
+      width: 200px;
+      border-radius: 7px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-hv);
+    }
+
+    .lmsr-toast-body,
+    .lmsr-toast-header {
+      padding: 0.5em;
+    }
+
+    .lmsr-toast-header {
+      width: 100%;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    select,
+    input[type="submit"],
+    input[type="time"],
+    input[type="date"] {
+      border-radius: 7px;
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  <script type="text/javascript">
+    const loadSelectedAction = () => { document.getElementById('actionSelectedBtn').click(); }
+
+    const closeToast = () => {
+      const lmsrToast = document.querySelector('.lmsr-toast');
+      const lmsrToastButtonClose = document.querySelector('.lmsr-toast-button-close');
+      lmsrToastButtonClose.addEventListener('click', () => { lmsrToast.remove(); });
+      lmsrToastButtonClose.disabled = false;
+      window.setTimeout(() => { lmsrToast.remove(); }, 3000);
+    };
+
+    const validateOpeningHours = (e) => {
+      const start = document.forms["OpeningHoursForm"]["opening-from"].value;
+      const end = document.forms["OpeningHoursForm"]["opening-to"].value;
+
+      const weekdays = document.querySelectorAll('input[name="weekdays"]:checked');
+      if (weekdays.length === 0) { e.preventDefault(); ("[% 'Please select at least one weekday.' | gettext %]"); return false; };
+      if (end <= start || start === 0 || end === 0) { e.preventDefault(); ("[% 'Please select valid start and end time.' | gettext %]"); return false; };
+    };
+
+    const validateBookingAction = (e) => {
+      const action = document.forms["manageBookingsForm"]["manage-bookings-action"].value;
+      const ids = document.getElementsByName("manage-bookings-id");
+
+      let checked = 0;
+      console.log(ids);
+      ids.forEach((id) => {
+        if (id.checked) { checked += 1; }
+      });
+
+      if (checked !== 1) { e.preventDefault(); alert("Please make a selection to continue."); return false; }
+      if (action === '') { e.preventDefault(); alert("Please select an action to continue."); return false; }
+    };
+
+    const validateManageBlackouts = (e) => {
+      const actionChoice = document.forms["manageBlackoutsForm"]["manage-blackouts-action"].value;
+      if (actionChoice == "") { e.preventDefault(); alert("[% 'Please select an action.' | gettext %]"); return false; }
+    };
+
+    const validateDate = (dateStr) => {
+      const regExp = /^(\d\d?)\/(\d\d?)\/(\d{4})$/;
+      let matches = dateStr.match(regExp);
+      let isValid = matches;
+      let maxDate = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+      if (matches) {
+          const month = parseInt(matches[1]);
+          const date = parseInt(matches[2]);
+          const year = parseInt(matches[3]);
+
+          isValid = month <= 12 && month > 0;
+          isValid &= date <= maxDate[month] && date > 0;
+
+          const leapYear = (year % 400 == 0) ||
+              (year % 4 == 0 && year % 100 != 0);
+          isValid &= month != 2 || leapYear || date <= 28;
+      }
+
+      return isValid;
+    };
+
+    const validateFullBlackout = (e) => {
+      const startDate = document.forms["fullBlackoutForm"]["blackout-start-date"].value;
+      const endDate = document.forms["fullBlackoutForm"]["blackout-end-date"].value;
+      const rooms = document.getElementsByName("current-room-blackout");
+      let roomChecked = false;
+
+      if (!validateDate(startDate)) { alert("[% 'Start date is required.' | gettext %]"); return false; }
+      if (!validateDate(endDate)) { alert("[% 'End date is required.' | gettext %]"); return false; }
+
+      rooms.forEach((room) => {
+        if (room.checked) { roomChecked = true; }
+      });
+      
+      if (!roomChecked) { e.preventDefault(); alert("[% 'Please select one or more rooms.' | gettext %]"); return false; }
+    }
+
+    const validatePartialBlackout = (e) => {
+      const blackoutStartTime = document.forms["partialBlackoutForm"]["blackout-start-time"].value;
+      const blackoutEndTime = document.forms["partialBlackoutForm"]["blackout-end-time"].value;
+      const rooms = document.getElementsByName("current-room-blackout");
+      let blackoutDate = document.forms["partialBlackoutForm"]["blackout-date"].value;
+      let roomChecked = false;
+
+      if (!validateDate(blackoutDate)) { alert("Date is required."); return false; }
+
+      // convert date format from mm/dd/yyyy to yyyy-mm-dd
+      blackoutDate = blackoutDate.replace(/(\d\d)\/(\d\d)\/(\d{4})/, "$3-$1-$2");
+
+      // timestamp of MySQL type DATETIME
+      var startTimestamp = `${blackoutDate}  ${blackoutStartTime}`;
+      var endTimestamp = `${blackoutDate} ${blackoutEndTime}`;
+
+      // determines if invalid start/end values were entered
+      if (startTimestamp >= endTimestamp) { alert("[% 'Please select a valid start and end time!' | gettext %]"); return false; }
+
+      rooms.forEach((room) => {
+        if (room.checked) { roomChecked = true; }
+      });
+
+      if (!roomChecked) { e.preventDefault(); alert("[% 'Please select one or more rooms.' | gettext %]"); return false; }
+    }
+  </script>
 </head>
 
 <body>
-    [% INCLUDE 'header.inc' %]
-    [% INCLUDE 'cat-search.inc' %]
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
 
-    <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext%]</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> &rsaquo; [% 'Room Reservations' | gettext %] &rsaquo; [% 'Tool' | gettext %]</div>
-    <div id="doc3">
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext%]</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> &rsaquo; [% 'Room Reservations' | gettext %] &rsaquo; [% 'Tool' | gettext %]</div>
+<div id="doc3">
 
-        <!-- We can access our own plugins resource files using the PLUGIN_PATH variable. -->
-        <h3>[% 'Koha: Room Reservations Plugin: Tool' | gettext %]</h3>
+  <!-- We can access our own plugins resource files using the PLUGIN_PATH variable. -->
+  <h3 id="lmsr-heading-main">[% 'Koha: Room Reservations Plugin: Tool' | gettext %]</h3>
 
-        [% IF op == '' %]
-        <script type="text/javascript">
-            function validateAction() {
-                var action = document.forms["tool_actions"]["tool_actions_selection"].value;
+  <template id="lmsr-menu-template">
+    <div class="lmsr-menu">
+      <ol class="lmsr-menu-list">
+        <li class="lmsr-menu-list-heading">Menu</li>
+        <li class="lmsr-menu-list-item" data-value="">Start</li>
+        <li class="lmsr-menu-list-item" data-value="action-manage-openings">[% 'Manage opening hours' | gettext %]</li>
+        <li class="lmsr-menu-list-item" data-value="action-manage-blackouts">[% 'Manage blackouts' | gettext %]</li>
+        <li class="lmsr-menu-list-item" data-value="action-manage-reservations">[% 'Manage reservations' | gettext %]</li>
+      </ol>
+    </div>
 
-                if (action == "") {
-                    alert("[% 'Please select an action to continue.' | gettext %]");
-                    return false;
-                }
-            }
-        </script>
-        <form name="tool_actions" method="post" action="#" onsubmit="return validateAction()">
-            <input type="hidden" name="class" value="[% CLASS %]" />
-            <input type="hidden" name="method" value="[% METHOD %]" />
-            <input type="hidden" name="op" value="action-selected" />
+    <form name="tool_actions" method="post" action="#">
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="op" value="action-selected" />
+      <input type="hidden" name="tool_actions_selection" value="" />
+      <input type="submit" name="tool-actions-submit" value="[% 'Continue' | gettext %]" class="lmsr-menu-input" />
+    </form>
+  </template>
 
-            <fieldset class="fieldset-auto-width">
-                <legend>[% 'Actions' | gettext %]</legend>
-                <div>
-                    [% 'Select an action:' | gettext %]
-                    <select name="tool_actions_selection">
-                        <option value=""></option>
-                        <option value="action-manage-openings">[% 'Manage opening hours' | gettext %]</option>
-                        <option value="action-manage-blackouts">[% 'Manage blackouts' | gettext %]</option>
-                        <option value="action-manage-reservations">[% 'Manage reservations' | gettext %]</option>
-                    </select><br />
-                    <span style="float:right;"><input type="submit" name="tool-actions-submit"
-                            value="[% 'Continue' | gettext %]" /></span>
-                </div>
-            </fieldset>
-        </form>
-        [% END # op == '' %]
+  [% IF op == '' %]
+    <div class="lmsr-content-main">
+      
+    </div>
+  [% END # op == '' %]
 
-        [% IF op == 'action-selected' %]
-        <script type="text/javascript">
-            // binds onload to anonymous function
-            // this causes the fieldless form below
-            // to automatically "load" the selected
-            // action
-            window.onload = function () {
-                loadSelectedAction();
-            };
-        </script>
-        <form method="post" action="#">
-            <input type="hidden" name="class" value="[% CLASS %]" />
-            <input type="hidden" name="method" value="[% METHOD %]" />
-            <input type="hidden" name="op" value="[% action %]" />
+  [% IF op == 'action-selected' %]
+    <script type="text/javascript">
+        // binds onload to anonymous function
+        // this causes the fieldless form below
+        // to automatically "load" the selected
+        // action
+        window.onload = function () {
+            loadSelectedAction();
+        };
+    </script>
+    <form method="post" action="#">
+        <input type="hidden" name="class" value="[% CLASS %]" />
+        <input type="hidden" name="method" value="[% METHOD %]" />
+        <input type="hidden" name="op" value="[% action %]" />
 
-            <p>[% 'Processing...' | gettext %]</p>
-            <div style="display:none;">
-                <input type="submit" name="actionSelectedBtn" id="actionSelectedBtn" />
-            </div>
-        </form>
-        [% END # op == 'action-selected' %]
-
-
-        [% IF op == 'manage-openings' %]
-
-        <script type="text/javascript">
-            function validateOpeningAction() {
-
-            }
-        </script>
-
-        <script type="text/javascript">
-            function validateOpeningHours() {
-                var start = document.forms["OpeningHoursForm"]["opening-from"].value;
-                var end = document.forms["OpeningHoursForm"]["opening-to"].value;
-
-
-                var weekdays = document.querySelectorAll('input[name="weekdays"]:checked');
-                if (weekdays.length == 0) {
-                    alert("[% 'Please select at least one weekday.' | gettext %]");
-                    return false;
-                };
-
-                if (end <= start || start == 0 || end == 0) {
-                    alert("[% 'Please select valid start and end time.' | gettext %]");
-                    return false;
-                };
-            }
-        </script>
-
-
-        <form method="post" action="#">
-            <input type="hidden" name="class" value="[% CLASS %]" />
-            <input type="hidden" name="method" value="[% METHOD %]" />
-
-            <button>[% 'Select another action' | gettext %]</button>
-        </form>
-        <div>
-            <form name="manageOpeningHoursForm" method="post" action="#" onsubmit="return validateOpeningAction()">
-                <input type="hidden" name="class" value="[% CLASS %]" />
-                <input type="hidden" name="method" value="[% METHOD %]" />
-                <input type="hidden" name="op" value="manage-openings" />
-                <br />
-                [% IF deleted == 0 %]
-                <div class="dialog alert audio-alert-warning">
-                    <p class="problem">[% 'There was a problem deleting the selected opening hours. Please try again' |
-                        gettext %]</p>
-                </div>
-                [% ELSIF deleted == 1 %]
-                <div class="dialog alert audio-alert-warning">
-                    <p class="problem">[% 'Selected opening hours deleted successfully' | gettext %]</p>
-                </div>
-                <br />
-                [% END # IF deleted %]
-
-                <fieldset class="fieldset-auto-width">
-                    <legend>[% 'Delete opening hours' | gettext %]</legend>
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>&nbsp;</th>
-                                <th>[% 'Day' | gettext %]</th>
-                                <th>[% 'Start' | gettext %]</th>
-                                <th>[% 'End' | gettext %]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            [% IF opening_hours %]
-                            [% FOREACH opening_hour IN opening_hours %]
-                            <tr style="text-align: center;">
-                                <td style="margin: 0;"><input type="radio" name="manage-openings-id"
-                                        value="[% opening_hour.openid %]"></td>
-                                <td>[% opening_hour.day | gettext %]</td>
-                                <td>[% opening_hour.start %]</td>
-                                <td>[% opening_hour.end %]</td>
-                            </tr>
-                            [% END %]
-                            <tr>
-                                <td colspan="4">
-                                    <select name="manage-openings-action">
-                                        <option value="">[% 'Actions' | gettext %]</option>
-                                        <option value="delete">[% 'Delete' | gettext %]</option>
-                                    </select>
-                                    &nbsp;<input type="submit" name="submit-opening-hours-del"
-                                        value="[% 'Submit' | gettext %]" />
-                                </td>
-                            </tr>
-                            [% ELSE %]
-                            <tr>
-                                <td colspan="4">
-                                    [% 'No opening hours configured.' | gettext %]
-                                </td>
-                            </tr>
-                            [% END %]
-                        </tbody>
-                    </table>
-                </fieldset>
-            </form>
+        <p>[% 'Processing...' | gettext %]</p>
+        <div style="display: none;">
+            <input type="submit" name="actionSelectedBtn" id="actionSelectedBtn" />
         </div>
-        <div>
-            <form action="#" name="OpeningHoursForm" method="post" onsubmit="return validateOpeningHours();">
-                <input type="hidden" name="class" value="[% CLASS %]" />
-                <input type="hidden" name="method" value="[% METHOD %]" />
-                <input type="hidden" name="op" value="manage-openings" />
-                <fieldset class="fieldset-auto-width">
-                    <legend>[% 'Add opening hours' | gettext %]</legend>
-                    <table>
-                        <tr>
-                            <td>
-                                <b>[% 'Select opening days' | gettext %]</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div>
-                                    <input type="checkbox" name="weekdays" id="mon" value="1" />
-                                    <label for="mon">[% 'Monday' | gettext %]</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" name="weekdays" id="tue" value="2" />
-                                    <label for="tue">[% 'Tuesday' | gettext %]</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" name="weekdays" id="wed" value="3" />
-                                    <label for="wed">[% 'Wednesday' | gettext %]</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" name="weekdays" id="thu" value="4" />
-                                    <label for="thu">[% 'Thursday' | gettext %]</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" name="weekdays" id="fri" value="5" />
-                                    <label for="fri">[% 'Friday' | gettext %]</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" name="weekdays" id="sat" value="6" />
-                                    <label for="sat">[% 'Saturday' | gettext %]</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" name="weekdays" id="sun" value="7" />
-                                    <label for="sun">[% 'Sunday' | gettext %]</label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>[% 'Select opening hours' | gettext %]</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div>
-                                    <label for="from">[% 'From' | gettext %]</label>
-                                    <input type="time" name="opening-from" id="from" />
-                                    <label for="to">[% 'To' | gettext %]</label>
-                                    <input type="time" name="opening-to" id="to" />
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="submit" name="submit-opening-hours" value="[% 'Add' | gettext %]" />
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-            </form>
-        </div>
+    </form>
+  [% END # op == 'action-selected' %]
 
-        [% END # op == 'manage-openings' %]
 
-        [% IF op == 'manage-reservations' %]
-        <script type="text/javascript">
-            function validateBookingAction() {
-                var action = document.forms["manageBookingsForm"]["manage-bookings-action"].value;
-                var ids = document.getElementsByName("manage-bookings-id");
-
-                var checked = 0;
-
-                for (var i = 0; i < ids.length; i++) {
-                    if (ids[i].checked) {
-                        checked++;
-                    }
-                }
-
-                if (checked != 1) {
-                    alert("Please make a selection to continue.");
-                    return false;
-                }
-
-                if (action == "") {
-                    alert("Please select an action to continue.");
-                    return false;
-                }
-            }
-        </script>
-        <!-- TODO: add JS validation to check only one action item is selected - if (count > 1) -->
-        <form name="manageBookingsForm" method="post" action="#" onsubmit="return validateBookingAction()">
-            <input type="hidden" name="class" value="[% CLASS %]" />
-            <input type="hidden" name="method" value="[% METHOD %]" />
-            <input type="hidden" name="op" value="manage-reservations" />
-            <br />
-            [% IF deleted == 1 %]
-            <div class="dialog alert audio-alert-warning">
-                <p class="problem">[% 'There was a problem deleting the selected booking. Please try again' | gettext %]
-                </p>
+  [% IF op == 'manage-openings' %]
+    <div class="lmsr-content-main">
+      <div class="lmsr-content-block">
+        <form name="manageOpeningHoursForm" method="post" action="#">
+          <input type="hidden" name="class" value="[% CLASS %]" />
+          <input type="hidden" name="method" value="[% METHOD %]" />
+          <input type="hidden" name="op" value="manage-openings" />
+  
+          [% IF deleted == 0 %]
+            <div class="lmsr-toast">
+              <div class="lmsr-toast-header">
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                <strong>Warning</strong>
+                <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
+                  <span aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></span>
+                </button>
+              </div>
+              <div class="lmsr-toast-body">
+                <p>[% 'There was a problem deleting the selected opening hours. Please try again' | gettext %]</p>
+              </div>
             </div>
-            [% ELSIF deleted == 0 %]
-            <div class="dialog alert audio-alert-warning">
-                <p class="problem">[% 'Selected booking deleted successfully' | gettext %]</p>
+            <script>closeToast();</script>
+          [% ELSIF deleted == 1 %]
+            <div class="lmsr-toast">
+              <div class="lmsr-toast-header">
+                <i class="fa fa-check" aria-hidden="true"></i>
+                <strong>Success</strong>
+                <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
+                  <span aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></span>
+                </button>
+              </div>
+              <div class="lmsr-toast-body">
+                <p>[% 'Selected opening hours deleted successfully' | gettext %]</p>
+              </div>
             </div>
-            <br />
-            [% END # IF deleted %]
-            [% IF bookings %]
-            <h4>[% 'Manage reservations' | gettext %]</h4>
-            <a href="[% OPACBaseURL %]/booking" target="_blank">[% 'Go to OPAC-Calendar view' | gettext %]</a>
-            <table>
-                <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th>[% 'Room' | gettext %] #</th>
-                        <th>[% 'Patron' | gettext %]</th>
-                        <th>[% 'Start' | gettext %]</th>
-                        <th>[% 'End' | gettext %]</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    [% FOREACH booking IN bookings %]
-                    <tr style="text-align: center;">
-                        <td style="margin: 0;"><input type="radio" name="manage-bookings-id"
-                                value="[% booking.bookingid %]"></td>
-                        <td>[% booking.roomnumber %]</td>
-                        <td>[% booking.firstname %] [% booking.surname %]</td>
-                        <td>[% booking.start %]</td>
-                        <td>[% booking.end %]</td>
-                    </tr>
-                    [% END # FOREACH booking IN bookings %]
-                    <tr>
-                        <td colspan="5">
-                            <select name="manage-bookings-action">
-                                <option value="">[% 'Actions' | gettext %]</option>
-                                <option value="delete">[% 'Delete' | gettext %]</option>
-                            </select>
-                            &nbsp;<input type="submit" value="[% 'Submit' | gettext %]" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <script>closeToast();</script>
+          [% END # IF deleted %]
+  
+          <h4>[% 'Delete opening hours' | gettext %]</h4>
+  
+          <div class="lmsr-action-table lmsr-action-table-delete-opening-hours">
+            <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+            <span class="lmsr-action-table-header-item">[% 'Day' | gettext %]</span>
+            <span class="lmsr-action-table-header-item">[% 'Start' | gettext %]</span>
+            <span class="lmsr-action-table-header-item">[% 'End' | gettext %]</span>
+  
+            [% IF opening_hours %]
+              [% FOREACH opening_hour IN opening_hours %]
+                <input type="radio" name="manage-openings-id" value="[% opening_hour.openid %]" class="lmsr-action-table-body-item-selector">
+                <span class="lmsr-action-table-body-item">[% opening_hour.day | gettext %]</span>
+                <span class="lmsr-action-table-body-item">[% opening_hour.start %]</span>
+                <span class="lmsr-action-table-body-item">[% opening_hour.end %]</span>
+              [% END %]
+  
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <select name="manage-openings-action">
+                <option value="">[% 'Actions' | gettext %]</option>
+                <option value="delete">[% 'Delete' | gettext %]</option>
+              </select>
+              <input type="submit" name="submit-opening-hours-del" value="[% 'Submit' | gettext %]" />
+  
             [% ELSE %]
-            <h5>[% 'No bookings found!' | gettext %]</h5>
-            [% END # IF bookings %]
+              <span class="lmsr-action-table-body-message">[% 'No opening hours configured.' | gettext %]</span>
+            [% END %]
+          </div>
         </form>
-        [% END # op == 'manage-reservations' %]
+      </div>
+  
+      <div class="lmsr-content-block">
+        <form action="#" name="OpeningHoursForm" method="post">
+          <input type="hidden" name="class" value="[% CLASS %]" />
+          <input type="hidden" name="method" value="[% METHOD %]" />
+          <input type="hidden" name="op" value="manage-openings" />
+          
+          <h4>[% 'Add opening hours' | gettext %]</h4>
+  
+          <div class="lmsr-action-table">
+            <h5>[% 'Select opening days' | gettext %]</h5>
+            <div class="lmsr-menu-list lmsr-menu-list-add-opening-hours">
+              <div><input type="checkbox" name="weekdays" id="mon" value="1" /><label for="mon">[% 'Monday' | gettext %]</label></div>
+              <div><input type="checkbox" name="weekdays" id="tue" value="2" /><label for="tue">[% 'Tuesday' | gettext %]</label></div>
+              <div><input type="checkbox" name="weekdays" id="wed" value="3" /><label for="wed">[% 'Wednesday' | gettext %]</label></div>
+              <div><input type="checkbox" name="weekdays" id="thu" value="4" /><label for="thu">[% 'Thursday' | gettext %]</label></div>
+              <div><input type="checkbox" name="weekdays" id="fri" value="5" /><label for="fri">[% 'Friday' | gettext %]</label></div>
+              <div><input type="checkbox" name="weekdays" id="sat" value="6" /><label for="sat">[% 'Saturday' | gettext %]</label></div>
+              <div><input type="checkbox" name="weekdays" id="sun" value="7" /><label for="sun">[% 'Sunday' | gettext %]</label></div>
+            </div>
+            
+            <hr>
+            
+            <h5>[% 'Select opening hours' | gettext %]</h5>
+            <div class="lmsr-time-picker lmsr-time-picker-add-opening-hours">
+              <label for="from">[% 'From' | gettext %]</label>
+              <input type="time" name="opening-from" id="from" />
+              <label for="to">[% 'To' | gettext %]</label>
+              <input type="time" name="opening-to" id="to" />
+            </div>
+  
+            <hr>
 
-        [% IF op == 'manage-blackouts' %]
-        <script type="text/javascript">
-            $(document).ready(function () {
-                var blackoutType = $('#blackoutType');
-                var blackoutSelectionDiv = $('#b-selection');
-                var fullBlackoutDiv = $('#full-blackout');
-                var partialBlackoutDiv = $('#partial-blackout');
-
-                partialBlackoutDiv.hide();
-                fullBlackoutDiv.hide();
-
-                blackoutType.change(function () {
-                    if (blackoutType.val() == "full") {
-                        blackoutSelectionDiv.hide();
-                        partialBlackoutDiv.hide();
-                        fullBlackoutDiv.show();
-                    } else if (blackoutType.val() == "partial") {
-                        blackoutSelectionDiv.hide();
-                        partialBlackoutDiv.show();
-                        fullBlackoutDiv.hide();
-                    }
-                });
-            });
+            <input type="submit" name="submit-opening-hours" value="[% 'Add' | gettext %]" disabled/>
+          </div>
+        </form>
+        <script>
+          const openingHoursForm = document.querySelector('form[name="OpeningHoursForm"]');
+          const inputSubmitOpeningHours = document.querySelector('input[name="submit-opening-hours"]');
+          openingHoursForm.addEventListener('submit', validateOpeningHours);
+          inputSubmitOpeningHours.disabled = false;
         </script>
-        <script type="text/javascript">
-            function validateManageBlackouts() {
-                var actionChoice = document.forms["manageBlackoutsForm"]["manage-blackouts-action"].value;
+      </div>
+    </div>
+  [% END # op == 'manage-openings' %]
 
-                if (actionChoice == "") {
-                    alert('[% '
-                        Please select an action.
-                        ' | gettext %]');
-                    return false;
+  [% IF op == 'manage-reservations' %]
+    <div class="lmsr-content-main">
+      <div class="lmsr-content-block-exception">
+        <!-- TODO: add JS validation to check only one action item is selected - if (count > 1) -->
+        <form name="manageBookingsForm" method="post" action="#">
+          <input type="hidden" name="class" value="[% CLASS %]" />
+          <input type="hidden" name="method" value="[% METHOD %]" />
+          <input type="hidden" name="op" value="manage-reservations" />
+          [% IF deleted == 1 %]
+            <div class="lmsr-toast">
+              <div class="lmsr-toast-header">
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                <strong>Warning</strong>
+                <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
+                  <span aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></span>
+                </button>
+              </div>
+              <div class="lmsr-toast-body">
+                <p>[% 'There was a problem deleting the selected booking. Please try again' | gettext %]</p>
+              </div>
+            </div>
+            <script>closeToast();</script>
+          [% ELSIF deleted == 0 %]
+            <div class="lmsr-toast">
+              <div class="lmsr-toast-header">
+                <i class="fa fa-check" aria-hidden="true"></i>
+                <strong>Success</strong>
+                <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
+                  <span aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></span>
+                </button>
+              </div>
+              <div class="lmsr-toast-body">
+                <p>[% 'Selected booking deleted successfully' | gettext %]</p>
+              </div>
+            </div>
+            <script>closeToast();</script>
+          [% END # IF deleted %]
+          [% IF bookings %]
+    
+            <h4>[% 'Manage reservations' | gettext %]</h4>
+    
+            <div class="lmsr-action-table lmsr-action-table-delete-reservations">
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <span class="lmsr-action-table-header-item">[% 'Room' | gettext %]</span>
+              <span class="lmsr-action-table-header-item">[% 'Patron' | gettext %]</span>
+              <span class="lmsr-action-table-header-item">[% 'Start' | gettext %]</span>
+              <span class="lmsr-action-table-header-item">[% 'End' | gettext %]</span>
+    
+              [% FOREACH booking IN bookings %]
+                <input type="radio" name="manage-bookings-id" value="[% booking.bookingid %]" class="lmsr-action-table-body-item-selector">
+                <span class="lmsr-action-table-body-item">[% booking.roomnumber %]</span>
+                <span class="lmsr-action-table-body-item">[% booking.firstname %] [% booking.surname %]</span>
+                <span class="lmsr-action-table-body-item">[% booking.start %]</span>
+                <span class="lmsr-action-table-body-item">[% booking.end %]</span>
+              [% END %]
+    
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <select name="manage-bookings-action">
+                <option value="">[% 'Actions' | gettext %]</option>
+                <option value="delete">[% 'Delete' | gettext %]</option>
+              </select>
+
+              <input type="submit" name="submit-manage-bookings" value="[% 'Submit' | gettext %]" disabled/>
+            </div>
+          [% ELSE %]
+            <h5>[% 'No bookings found!' | gettext %]</h5>
+          [% END # IF bookings %]
+        </form>
+        <script>
+          const manageBookingsForm = document.querySelector('form[name="manageBookingsForm"]');
+          const inputSubmitManageBookings = document.querySelector('input[name="submit-manage-bookings"]');
+          manageBookingsForm.addEventListener('submit', validateBookingAction);
+          inputSubmitManageBookings.disabled = false;
+        </script>
+      </div>
+    </div>
+  [% END # op == 'manage-reservations' %]
+
+  [% IF op == 'manage-blackouts' %]
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var blackoutType = $('#blackoutType');
+            var blackoutSelectionDiv = $('#b-selection');
+            var fullBlackoutDiv = $('#full-blackout');
+            var partialBlackoutDiv = $('#partial-blackout');
+
+            partialBlackoutDiv.hide();
+            fullBlackoutDiv.hide();
+
+            blackoutType.change(function () {
+                if (blackoutType.val() == "full") {
+                    blackoutSelectionDiv.hide();
+                    partialBlackoutDiv.hide();
+                    fullBlackoutDiv.show();
+                } else if (blackoutType.val() == "partial") {
+                    blackoutSelectionDiv.hide();
+                    partialBlackoutDiv.show();
+                    fullBlackoutDiv.hide();
                 }
-            }
-        </script>
-        <form name="manageBlackoutsForm" action="#" method="post" onsubmit="return validateManageBlackouts()">
+            });
+        });
+    </script>
+    <div class="lmsr-content-main">
+      <div class="lmsr-content-block">
+
+        [% IF blackouts %]
+          <form name="manageBlackoutsForm" action="#" method="post">
             <input type="hidden" name="class" value="[% CLASS %]" />
             <input type="hidden" name="method" value="[% METHOD %]" />
             <input type="hidden" name="op" value="manage-blackouts" />
-
-            [% IF blackouts %]
-            <h4>[% 'Manage Blackouts' | gettext %]</h4>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th>[% 'Room' | gettext %] #</th>
-                        <th>[% 'Blackout start' | gettext %]</th>
-                        <th>[% 'Blackout end' | gettext %]</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    [% FOREACH blackout IN blackouts %]
-                    <tr style="text-align: center;">
-                        <td style="margin: 0;"><input type="radio" name="manage-blackouts-id" required="required"
-                                value="[% blackout.bookingid %]"></td>
-                        <td>[% blackout.roomnumber %]</td>
-                        <td>[% blackout.start %]</td>
-                        <td>[% blackout.end %]</td>
-                    </tr>
-                    [% END # FOREACH booking IN bookings %]
-                    <tr>
-                        <td colspan="5">
-                            <select name="manage-blackouts-action">
-                                <option value="">Actions</option>
-                                <option value="delete">Delete</option>
-                            </select>
-                            &nbsp;<input type="submit" name="manage-blackouts-submit" value="Submit" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
+    
+    
+            <div class="lmsr-action-table lmsr-action-table-delete-reservations">
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <span class="lmsr-action-table-header-item">[% 'Room' | gettext %]</span>
+              <span class="lmsr-action-table-header-item">[% 'Blackout start' | gettext %]</span>
+              <span class="lmsr-action-table-header-item">[% 'Blackout end' | gettext %]</span>
+    
+              [% FOREACH blackout IN blackouts %]
+                <input type="radio" name="manage-blackouts-id" value="[% blackout.bookingid %]" class="lmsr-action-table-body-item-selector" required>
+                <span class="lmsr-action-table-body-item">[% blackout.roomnumber %]</span>
+                <span class="lmsr-action-table-body-item">[% 'Blackout start' | gettext %]</span>
+                <span class="lmsr-action-table-body-item">[% blackout.end %]</span>
+    
+              [% END # FOREACH blackout IN blackouts %]
+    
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+              <select name="manage-blackouts-action">
+                <option value="">Actions</option>
+                <option value="delete">Delete</option>
+              </select>
+              <input type="submit" name="manage-blackouts-submit" value="Submit" />
+            </div>
+          </form>
+          <script>
+            const manageBlackoutsForm = document.querySelector('form[name="manageBlackoutsForm"]');
+            const inputSubmitManageBlackouts = document.querySelector('input[name="manage-blackouts-submit"]');
+            manageBlackoutsForm.addEventListener('submit', validateManageBlackouts);
+            inputSubmitManageBlackouts.disabled = false;
+          </script>
+    
         [% ELSE %]
-        <br />
-        <h5>[% 'No upcoming blackouts scheduled!' | gettext %]</h5>
+          <h5>[% 'No upcoming blackouts scheduled!' | gettext %]</h5>
         [% END # IF blackouts %]
-
-        <br />
-        <br />
-
+      </div>
+      
+      <div class="lmsr-content-block">
+      
         <div id="b-selection">
-            <fieldset class="fieldset-auto-width">
-                <legend>[% 'Add a blackout' | gettext %]</legend>
-                <table>
-                    <tr style="text-align: center;">
-                        <td>[% 'How long is the blackout?' | gettext %]</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <select id="blackoutType" style="display: block; margin: 0 auto;">
-                                <option value="null"></option>
-                                <option value="full">[% 'Full day(s)' | gettext %]</option>
-                                <option value="partial">[% 'A few hours' | gettext %]</option>
-                            </select>
-                        </td>
-                    </tr>
-                </table>
-            </fieldset>
-        </div> <!-- b-selection -->
+          <div class="lmsr-action-table">
+            <h5>[% 'How long is the blackout?' | gettext %]</h5>
+            <select id="blackoutType" style="display: block; margin: 0 auto;">
+              <option value="null"></option>
+              <option value="full">[% 'Full day(s)' | gettext %]</option>
+              <option value="partial">[% 'A few hours' | gettext %]</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-        <script type="text/javascript">
-            // disable all room checkboxes
-            // if 'All rooms' is selected
-            $(document).ready(function () {
-                $(".full-blackout").change(function () {
-                    if (this.value == "0") {
-                        if (this.checked) {
-                            var rooms = document.getElementsByName("current-room-blackout");
+      <div class="lmsr-content-block" id="full-blackout">
+        <form action="#" name="fullBlackoutForm" method="post" onsubmit="return validateFullBlackout();">
+          <input type="hidden" name="class" value="[% CLASS %]" />
+          <input type="hidden" name="method" value="[% METHOD %]" />
+          <input type="hidden" name="op" value="manage-blackouts" />
+          
+          <h4>[% 'Add a blackout' | gettext %]</h4>
+  
+          <div class="lmsr-action-table">
+            <h5>[% 'Select opening days' | gettext %]</h5>
+            <div class="lmsr-menu-list">
+              <div>
+                <input class="datefield" name="blackout-start-date" id="blackout-start-date" size="10" placeholder="[% 'Start' | gettext %]" required />
+                <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
+              </div>
+              <div>
+                <input class="datefield" name="blackout-end-date" id="blackout-end-date" size="10" placeholder="[% 'End' | gettext %]" required />
+                <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
+              </div>
+            </div>
+            
+            <hr>
+            
+            <div>
+              <span>[% 'All day' | gettext %]</span><input type="checkbox" checked="true" disabled="true" />
+            </div>
 
-                            for (var i = 1; i < rooms.length; i++) {
-                                // disable all other checkboxes
-                                // when 'All rooms' selected
-                                rooms[i].checked = false;
-                                rooms[i].disabled = true;
-                            }
-                        } else {
-                            var rooms = document.getElementsByName("current-room-blackout");
+            <hr>
 
-                            for (var i = 1; i < rooms.length; i++) {
-                                // disable all other checkboxes
-                                // when 'All rooms' selected
-                                rooms[i].checked = false;
-                                rooms[i].disabled = false;
-                            }
-                        }
-                    }
-                });
-            });
+            [% IF current_rooms %]
+              <h5>[% 'Select room(s) to blackout' | gettext %]</h5>
 
-            $(document).ready(function () {
-                $(".partial-blackout").change(function () {
-                    if (this.value == "0") {
-                        if (this.checked) {
-                            var rooms = document.getElementsByClassName("partial-blackout");
+              <div>
+                <div>
+                  <input type="checkbox" name="current-room-blackout" class="full-blackout" value="0" /><span>[% 'All rooms' | gettext %]</span>
+                </div>
+              </div>
 
-                            for (var i = 1; i < rooms.length; i++) {
-                                // disable all other checkboxes
-                                // when 'All rooms' selected
-                                rooms[i].checked = false;
-                                rooms[i].disabled = true;
-                            }
-                        } else {
-                            var rooms = document.getElementsByClassName("partial-blackout");
+              [% FOREACH room IN current_rooms %]
+                <div>
+                  <div>
+                    <input type="checkbox" name="current-room-blackout" class="full-blackout" value="[% room.roomid %]" /><span>[% room.roomnumber %]</span>
+                  </div>
+                </div>
+              [% END # FOREACH room IN current_rooms %]
+            [% END # IF current_rooms %]
 
-                            for (var i = 1; i < rooms.length; i++) {
-                                // disable all other checkboxes
-                                // when 'All rooms' selected
-                                rooms[i].checked = false;
-                                rooms[i].disabled = false;
-                            }
-                        }
-                    }
-                });
-            });
+            <hr>
 
-            function validateDate(dateStr) {
-                const regExp = /^(\d\d?)\/(\d\d?)\/(\d{4})$/;
-                let matches = dateStr.match(regExp);
-                let isValid = matches;
-                let maxDate = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            [% IF current_rooms %]
+              <input type="submit" name="submit-full-blackout" value="[% 'Add' | gettext %]" />
+            [% ELSE %]
+              <input type="submit" name="submit-full-blackout" value="[% 'Add' | gettext %]" disabled="true" />
+            [% END # IF current_rooms %]
+          </div>
+        </form>
+      </div>
 
-                if (matches) {
-                    const month = parseInt(matches[1]);
-                    const date = parseInt(matches[2]);
-                    const year = parseInt(matches[3]);
+      <div class="lmsr-content-block" id="partial-blackout">
+        <form action="#" name="partialBlackoutForm" method="post" onsubmit="return validatePartialBlackout();">
+          <input type="hidden" name="class" value="[% CLASS %]" />
+          <input type="hidden" name="method" value="[% METHOD %]" />
+          <input type="hidden" name="op" value="manage-blackouts" />
 
-                    isValid = month <= 12 && month > 0;
-                    isValid &= date <= maxDate[month] && date > 0;
+          <div class="lmsr-action-table">
+            <h5>[% 'Select opening days' | gettext %]</h5>
+            <div class="lmsr-menu-list">
+              <div>
+                <input class="datefield" name="blackout-date" id="blackout-date" size="10" placeholder="Date" />
+                <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
+              </div>
+              <div>
+                <select name="blackout-start-time">
+                  <option value="">[% 'From' | gettext %]</option>
+                  <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
+                  <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
+                  <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
+                  <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
+                  <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
+                  <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
+                  <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
+                  <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
+                  <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
+                  <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
+                  <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
+                  <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
+                  <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
+                  <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
+                  <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
+                  <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
+                  <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
+                  <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
+                  <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
+                  <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
+                  <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
+                  <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
+                  <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
+                  <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
+                  <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
+                  <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
+                  <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
+                  <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
+                  <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
+                  <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
+                  <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
+                  <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
+                  <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
+                  <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
+                  <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
+                  <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
+                  <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
+                  <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
+                  <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
+                  <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
+                  <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
+                  <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
+                  <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
+                  <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
+                  <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
+                  <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
+                  <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
+                  <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
+                </select>
+              </div>
+              <div>
+                <select name="blackout-end-time">
+                  <option value="">[% 'To' | gettext %]</option>
+                  <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
+                  <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
+                  <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
+                  <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
+                  <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
+                  <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
+                  <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
+                  <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
+                  <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
+                  <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
+                  <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
+                  <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
+                  <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
+                  <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
+                  <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
+                  <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
+                  <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
+                  <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
+                  <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
+                  <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
+                  <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
+                  <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
+                  <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
+                  <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
+                  <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
+                  <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
+                  <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
+                  <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
+                  <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
+                  <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
+                  <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
+                  <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
+                  <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
+                  <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
+                  <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
+                  <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
+                  <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
+                  <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
+                  <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
+                  <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
+                  <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
+                  <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
+                  <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
+                  <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
+                  <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
+                  <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
+                  <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
+                  <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
+                </select>
+              </div>
+            </div>
+            
+            <hr>
+            
+            <div>
+              <span>[% 'All day' | gettext %]</span><input type="checkbox" checked="true" disabled="true" />
+            </div>
 
-                    const leapYear = (year % 400 == 0) ||
-                        (year % 4 == 0 && year % 100 != 0);
-                    isValid &= month != 2 || leapYear || date <= 28;
-                }
+            <hr>
 
-                return isValid
-            }
+            [% IF current_rooms %]
+              <h5>[% 'Select room(s) to blackout' | gettext %]</h5>
 
-            function validateFullBlackout() {
-                var startDate = document.forms["fullBlackoutForm"]["blackout-start-date"].value;
-                var endDate = document.forms["fullBlackoutForm"]["blackout-end-date"].value;
-                var rooms = document.getElementsByName("current-room-blackout");
-                var roomChecked = false;
+              <div>
+                <div>
+                  <input type="checkbox" name="current-room-blackout" class="partial-blackout" value="0" /><span>[% 'All rooms' | gettext %]</span>
+                </div>
+              </div>
 
-                if (!validateDate(startDate)) {
-                    alert("[% 'Start date is required.' | gettext %]");
-                    return false;
-                }
+              [% FOREACH room IN current_rooms %]
+                <div>
+                  <div>
+                    <input type="checkbox" name="current-room-blackout" class="partial-blackout" value="[% room.roomid %]" /><span>[% room.roomnumber %]</span>
+                  </div>
+                </div>
+              [% END # FOREACH room IN current_rooms %]
+            [% END # IF current_rooms %]
 
-                if (!validateDate(endDate)) {
-                    alert("[% 'End date is required.' | gettext %]");
-                    return false;
-                }
+            <hr>
 
-                for (var i = 0; i < rooms.length; i++) {
-                    if (rooms[i].checked) {
-                        roomChecked = true;
-                        break;
-                    }
-                }
+            [% IF current_rooms %]
+              <input type="submit" name="submit-partial-blackout" value="[% 'Add' | gettext %]" />
+            [% ELSE %]
+              <input type="submit" name="submit-partial-blackout" value="[% 'Add' | gettext %]" disabled="true" />
+            [% END # IF current_rooms %]
+          </div>
+        </form>
+      </div>
+    [% END # op == 'manage-blackouts' %]
 
-                if (!roomChecked) {
-                    alert("[% 'Please select one or more rooms.' | gettext %]");
-                    return false;
-                }
-            }
-        </script>
-        <div id="full-blackout">
-            <form action="#" name="fullBlackoutForm" method="post" onsubmit="return validateFullBlackout();">
-                <input type="hidden" name="class" value="[% CLASS %]" />
-                <input type="hidden" name="method" value="[% METHOD %]" />
-                <input type="hidden" name="op" value="manage-blackouts" />
-                <fieldset class="fieldset-auto-width">
-                    <legend>[% 'Add a blackout' | gettext %]</legend>
-                    <table>
-                        <tr>
-                            <td>
-                                <input class="datefield" name="blackout-start-date" id="blackout-start-date" size="10"
-                                    placeholder="[% 'Start' | gettext %]" required="required" />
-                                <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input class="datefield" name="blackout-end-date" id="blackout-end-date" size="10"
-                                    placeholder="[% 'End' | gettext %]" required="required" />
-                                <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>[% 'All day' | gettext %]<input type="checkbox" checked="true" disabled="true" /></td>
-                        </tr>
-                        [% IF current_rooms %]
-                        <tr>
-                            <td>
-                                <br />
-                                <b>[% 'Select room(s) to blackout' | gettext %]</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="current-room-blackout" class="full-blackout" value="0" />
-                                [% 'All rooms' | gettext %]
-                            </td>
-                        </tr>
-                        [% FOREACH room IN current_rooms %]
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="current-room-blackout" class="full-blackout"
-                                    value="[% room.roomid %]" /> [% room.roomnumber %]
-                            </td>
-                        </tr>
-                        [% END # FOREACH room IN current_rooms %]
-                        [% END # IF current_rooms %]
-                        [% IF current_rooms %]
-                        <tr>
-                            <td>
-                                <input type="submit" name="submit-full-blackout" value="[% 'Add' | gettext %]" />
-                            </td>
-                        </tr>
-                        [% ELSE %]
-                        <tr>
-                            <td>
-                                <input type="submit" name="submit-full-blackout" value="[% 'Add' | gettext %]"
-                                    disabled="true" />
-                            </td>
-                        </tr>
-                        [% END # IF current_rooms %]
-                    </table>
-                </fieldset>
-            </form>
-        </div> <!-- full-blackout -->
+  [% INCLUDE calendar.inc %]
+  <!-- Full blackout -->
+  <script type="text/javascript">
+    // <![CDATA[
 
+    $(document).ready(function () {
+        $(".datefield").prop("readOnly", true);
+    });
 
-        <script type="text/javascript">
-            function validatePartialBlackout() {
-                var blackoutDate = document.forms["partialBlackoutForm"]["blackout-date"].value;
-                var blackoutStartTime = document.forms["partialBlackoutForm"]["blackout-start-time"].value;
-                var blackoutEndTime = document.forms["partialBlackoutForm"]["blackout-end-time"].value;
-                var rooms = document.getElementsByName("current-room-blackout");
-                var roomChecked = false;
+    // http://jqueryui.com/demos/datepicker/#date-range
+    var requestdates = $("#blackout-start-date, #blackout-end-date").datepicker({
+        minDate: 0,
+        changeMonth: true,
+        numberOfMonths: 1,
+        onSelect: function (selectedDate) {
+            var option = this.id == "blackout-start-date" ? "minDate" : "maxDate",
+                instance = $(this).data("datepicker");
+            date = $.datepicker.parseDate(
+                instance.settings.dateFormat ||
+                $.datepicker._defaults.dateFormat,
+                selectedDate, instance.settings);
+            requestdates.not(this).datepicker("option", option, date);
+        }
+    });
+    // ]]>
+  </script>
 
-                if (!validateDate(blackoutDate)) {
-                    alert("Date is required.");
-                    return false;
-                }
+  <!-- Partial blackout -->
+  <script type="text/javascript">
+      // <![CDATA[
 
-                // convert date format from mm/dd/yyyy to yyyy-mm-dd
-                blackoutDate = blackoutDate.replace(/(\d\d)\/(\d\d)\/(\d{4})/, "$3-$1-$2");
+      $(document).ready(function () {
+          $(".datefield").prop("readOnly", true);
+      });
 
-                // timestamp of MySQL type DATETIME
-                var startTimestamp = blackoutDate + " " + blackoutStartTime;
-                var endTimestamp = blackoutDate + " " + blackoutEndTime;
+      // http://jqueryui.com/demos/datepicker/#date-range
+      var requestdates = $("#blackout-date").datepicker({
+          minDate: 0,
+          changeMonth: true,
+          numberOfMonths: 1,
+          onSelect: function (selectedDate) {
+              var option = this.id == "blackout-date" ? "minDate" : "maxDate",
+                  instance = $(this).data("datepicker");
+              date = $.datepicker.parseDate(
+                  instance.settings.dateFormat ||
+                  $.datepicker._defaults.dateFormat,
+                  selectedDate, instance.settings);
+              requestdates.not(this).datepicker("option", option, date);
+          }
+      });
+      // ]]>
+  </script>
 
-                // determines if invalid start/end values were entered
-                if (startTimestamp >= endTimestamp) {
-                    alert("[% 'Please select a valid start and end time!' | gettext %]");
-                    return false;
-                }
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const lmsrHeadingMain = document.getElementById('lmsr-heading-main');
+      const lmsrMenuTemplate = document.getElementById('lmsr-menu-template');
+      const lmsrMenuTemplateContent = lmsrMenuTemplate.content;
+      document.body.appendChild(lmsrMenuTemplateContent);
 
-                for (var i = 0; i < rooms.length; i++) {
-                    if (rooms[i].checked) {
-                        roomChecked = true;
-                        break;
-                    }
-                }
+      toolActionsForm = document.querySelector('form[name="tool_actions"]');
+      actionsMenu = document.querySelectorAll('.lmsr-menu-list-item');
+      actionsInput = document.querySelector('input[name="tool_actions_selection"]');
+      actionsSubmit = document.querySelector('input[name="tool-actions-submit"]');
 
-                if (!roomChecked) {
-                    alert("[% 'Please select one or more rooms.' | gettext %]");
-                    return false;
-                }
-            }
-        </script>
-        <div id="partial-blackout">
-            <form action="#" name="partialBlackoutForm" method="post" onsubmit="return validatePartialBlackout();">
-                <input type="hidden" name="class" value="[% CLASS %]" />
-                <input type="hidden" name="method" value="[% METHOD %]" />
-                <input type="hidden" name="op" value="manage-blackouts" />
-                <fieldset class="fieldset-auto-width">
-                    <legend>[% 'Add a blackout' | gettext %]</legend>
-                    <table>
-                        <tr>
-                            <td>
-                                <input class="datefield" name="blackout-date" id="blackout-date" size="10"
-                                    placeholder="Date" />
-                                <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <select name="blackout-start-time">
-                                    <option value="">[% 'From' | gettext %]</option>
-                                    <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
-                                    <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
-                                    <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
-                                    <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
-                                    <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
-                                    <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
-                                    <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
-                                    <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
-                                    <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
-                                    <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
-                                    <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
-                                    <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
-                                    <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
-                                    <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
-                                    <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
-                                    <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
-                                    <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
-                                    <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
-                                    <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
-                                    <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
-                                    <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
-                                    <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
-                                    <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
-                                    <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
-                                    <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
-                                    <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
-                                    <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
-                                    <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
-                                    <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
-                                    <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
-                                    <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
-                                    <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
-                                    <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
-                                    <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
-                                    <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
-                                    <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
-                                    <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
-                                    <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
-                                    <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
-                                    <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
-                                    <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
-                                    <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
-                                    <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
-                                    <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
-                                    <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
-                                    <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
-                                    <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
-                                    <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <select name="blackout-end-time">
-                                    <option value="">[% 'To' | gettext %]</option>
-                                    <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
-                                    <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
-                                    <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
-                                    <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
-                                    <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
-                                    <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
-                                    <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
-                                    <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
-                                    <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
-                                    <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
-                                    <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
-                                    <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
-                                    <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
-                                    <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
-                                    <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
-                                    <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
-                                    <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
-                                    <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
-                                    <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
-                                    <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
-                                    <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
-                                    <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
-                                    <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
-                                    <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
-                                    <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
-                                    <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
-                                    <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
-                                    <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
-                                    <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
-                                    <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
-                                    <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
-                                    <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
-                                    <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
-                                    <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
-                                    <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
-                                    <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
-                                    <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
-                                    <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
-                                    <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
-                                    <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
-                                    <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
-                                    <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
-                                    <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
-                                    <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
-                                    <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
-                                    <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
-                                    <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
-                                    <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>All day<input type="checkbox" disabled="true" /></td>
-                        </tr>
-                        [% IF current_rooms %]
-                        <tr>
-                            <td>
-                                <br />
-                                <b>[% 'Select room(s) to blackout' | gettext %]</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="current-room-blackout" class="partial-blackout"
-                                    value="0" /> [% 'All rooms' | gettext %]
-                            </td>
-                        </tr>
-                        [% FOREACH room IN current_rooms %]
-                        <tr>
-                            <td><input type="checkbox" name="current-room-blackout" class="partial-blackout"
-                                    value="[% room.roomid %]" /> [% room.roomnumber %]</td>
-                        </tr>
-                        [% END # FOREACH room IN current_rooms %]
-                        [% END # IF current_rooms %]
-                        [% IF current_rooms %]
-                        <tr>
-                            <td>
-                                <input type="submit" name="submit-partial-blackout" value="Add" />
-                            </td>
-                        </tr>
-                        [% ELSE %]
-                        <tr>
-                            <td>
-                                <input type="submit" name="submit-partial-blackout" value="Add" disabled="true" />
-                            </td>
-                        </tr>
-                        [% END # IF current_rooms %]
-                    </table>
-                </fieldset>
-            </form>
-        </div> <!-- partial-blackout -->
-        [% END # op == 'manage-blackouts' %]
+      toolActionsForm.addEventListener('submit', (e) => {
+        const action = document.getElementById('tools-actions-input');
+        if (action === '') { e.preventDefault(); return false; }
+      });
 
-        [% INCLUDE calendar.inc %]
-        <!-- Full blackout -->
-        <script type="text/javascript">
-            // <![CDATA[
-
-            $(document).ready(function () {
-                $(".datefield").prop("readOnly", true);
-            });
-
-            // http://jqueryui.com/demos/datepicker/#date-range
-            var requestdates = $("#blackout-start-date, #blackout-end-date").datepicker({
-                minDate: 0,
-                changeMonth: true,
-                numberOfMonths: 1,
-                onSelect: function (selectedDate) {
-                    var option = this.id == "blackout-start-date" ? "minDate" : "maxDate",
-                        instance = $(this).data("datepicker");
-                    date = $.datepicker.parseDate(
-                        instance.settings.dateFormat ||
-                        $.datepicker._defaults.dateFormat,
-                        selectedDate, instance.settings);
-                    requestdates.not(this).datepicker("option", option, date);
-                }
-            });
-            // ]]>
-        </script>
-
-        <!-- Partial blackout -->
-        <script type="text/javascript">
-            // <![CDATA[
-
-            $(document).ready(function () {
-                $(".datefield").prop("readOnly", true);
-            });
-
-            // http://jqueryui.com/demos/datepicker/#date-range
-            var requestdates = $("#blackout-date").datepicker({
-                minDate: 0,
-                changeMonth: true,
-                numberOfMonths: 1,
-                onSelect: function (selectedDate) {
-                    var option = this.id == "blackout-date" ? "minDate" : "maxDate",
-                        instance = $(this).data("datepicker");
-                    date = $.datepicker.parseDate(
-                        instance.settings.dateFormat ||
-                        $.datepicker._defaults.dateFormat,
-                        selectedDate, instance.settings);
-                    requestdates.not(this).datepicker("option", option, date);
-                }
-            });
-            // ]]>
-        </script>
-        [% INCLUDE 'intranet-bottom.inc' %]
+      actionsMenu.forEach((action) => {
+          action.addEventListener('click', (e) => {
+              actionsInput.setAttribute('value', `${e.target.dataset.value}`);
+              console.log(actionsInput.value);
+              actionsSubmit.click();
+          });
+      });
+    });
+  </script>
+[% INCLUDE 'intranet-bottom.inc' %]

@@ -31,6 +31,8 @@ use Readonly;
 use feature qw(switch);
 use DateTime;
 
+use Data::Dumper; #FIXME: REMOVE
+
 use Locale::Messages;;
 Locale::Messages->select_package('gettext_pp');
 
@@ -455,6 +457,8 @@ sub tool {
     my $op          = $cgi->param('op') || q{};
     my $tool_action = $cgi->param('tool_actions_selection');
 
+    warn Dumper(qq{params: $op --- $tool_action}); #FIXME: REMOVE
+
     # used for manage blackouts
     my $manage_blackouts_submit  = $cgi->param('manage-blackouts-submit')  || q{};    # delete existing blackout
     my $submit_full_blackout     = $cgi->param('submit-full-blackout')     || q{};    # add full day blackout(s)
@@ -466,7 +470,7 @@ sub tool {
         && $tool_action eq 'action-manage-reservations' )
     {
 
-        my $bookings = getAllBookings();
+        my $bookings = get_all_bookings();
 
         $template->param(
             op       => 'manage-reservations',
@@ -489,7 +493,7 @@ sub tool {
     }
     elsif ( $op eq 'action-selected' && $tool_action eq 'action-manage-openings' ) {
 
-        my $opening_hours = getOpeningHours(1);
+        my $opening_hours = get_opening_hours(1);
 
         $template->param(
             deleted       => -1,
@@ -504,10 +508,10 @@ sub tool {
         my $deleted    = -1;
 
         if ( $selected eq 'delete' ) {
-            $deleted = deleteOpeningHoursById($selectedId);
+            $deleted = delete_opening_hours_by_id($selectedId);
         }
 
-        my $opening_hours = getOpeningHours(1);
+        my $opening_hours = get_opening_hours(1);
 
         $template->param(
             deleted       => $deleted,
@@ -522,9 +526,9 @@ sub tool {
 
         my @days = $cgi->param('weekdays');
 
-        addOpeningHours( \@days, $starttime, $endtime );
+        add_opening_hours( \@days, $starttime, $endtime );
 
-        my $opening_hours = getOpeningHours(1);
+        my $opening_hours = get_opening_hours(1);
 
         $template->param(
             op            => $op,
@@ -540,7 +544,7 @@ sub tool {
 
             my $deleted = delete_booking_by_id($selectedId);
 
-            my $bookings = getAllBookings();
+            my $bookings = get_all_bookings();
 
             if ( $deleted == 0 ) {
                 $template->param(
