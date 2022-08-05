@@ -57,28 +57,44 @@
       box-shadow: var(--shadow-md);
     }
 
-    .lmsr-action-table-body-item-selector {
-      margin: 0.375em !important;
-    }
-
-    .lmsr-action-table-delete-opening-hours {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      grid-column-gap: 0.5em;
-      grid-row-gap: 0.5em;
-      justify-items: stretch;
-      align-items: stretch;
-    }
-
     .lmsr-action-table-delete-reservations {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: 2em repeat(4, 1fr);
       grid-template-rows: auto auto;
-      grid-column-gap: 0.5em;
-      grid-row-gap: 0.5em;
       justify-items: stretch;
       align-items: stretch;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .lmsr-action-table-delete-opening-hours,
+    .lmsr-action-table-delete-blackouts {
+      display: grid;
+      grid-template-columns: 2em repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      /* grid-column-gap: 0.5em;
+      grid-row-gap: 0.5em; */
+      justify-items: stretch;
+      align-items: stretch;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .lmsr-action-table-delete-opening-hours span,
+    .lmsr-action-table-delete-reservations span,
+    .lmsr-action-table-delete-blackouts span {
+      padding: 0.5em;
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .lmsr-action-table-delete-opening-hours input,
+    .lmsr-action-table-delete-reservations input,
+    .lmsr-action-table-delete-blackouts input,
+    .lmsr-action-table-delete-opening-hours select,
+    .lmsr-action-table-delete-reservations select,
+    .lmsr-action-table-delete-blackouts select,
+    .lmsr-action-table-body-item-selector {
+      margin: 0.375em !important;
     }
 
     .lmsr-action-table-header-item,
@@ -126,11 +142,15 @@
       gap: 1em;
     }
 
-    .lmsr-menu-list-add-opening-hours {
+    .lmsr-menu-list-add-opening-hours,
+    .lmsr-menu-list-add-full-blackout,
+    .lmsr-menu-list-add-partial-blackout {
       padding: 0 1em;
     }
 
-    .lmsr-menu-list-add-opening-hours>div {
+    .lmsr-menu-list-add-opening-hours>div,
+    .lmsr-menu-list-add-full-blackout>div,
+    .lmsr-menu-list-add-partial-blackout>div {
       display: flex;
       justify-content: space-between;
     }
@@ -190,7 +210,7 @@
     }
   </style>
   <script type="text/javascript">
-    const loadSelectedAction = () => { document.getElementById('actionSelectedBtn').click(); }
+    const loadSelectedAction = () => { document.getElementById('actionSelectedBtn').click(); };
 
     const closeToast = () => {
       const lmsrToast = document.querySelector('.lmsr-toast');
@@ -201,17 +221,17 @@
     };
 
     const validateOpeningHours = (e) => {
-      const start = document.forms["OpeningHoursForm"]["opening-from"].value;
-      const end = document.forms["OpeningHoursForm"]["opening-to"].value;
+      const start = document.forms.OpeningHoursForm['opening-from'].value;
+      const end = document.forms.OpeningHoursForm['opening-to'].value;
 
       const weekdays = document.querySelectorAll('input[name="weekdays"]:checked');
-      if (weekdays.length === 0) { e.preventDefault(); ("[% 'Please select at least one weekday.' | gettext %]"); return false; };
-      if (end <= start || start === 0 || end === 0) { e.preventDefault(); ("[% 'Please select valid start and end time.' | gettext %]"); return false; };
+      if (weekdays.length === 0) { e.preventDefault(); ("[% 'Please select at least one weekday.' | gettext %]"); return false; }
+      if (end <= start || start === 0 || end === 0) { e.preventDefault(); ("[% 'Please select valid start and end time.' | gettext %]"); return false; }
     };
 
     const validateBookingAction = (e) => {
-      const action = document.forms["manageBookingsForm"]["manage-bookings-action"].value;
-      const ids = document.getElementsByName("manage-bookings-id");
+      const action = document.forms.manageBookingsForm['manage-bookings-action'].value;
+      const ids = document.getElementsByName('manage-bookings-id');
 
       let checked = 0;
       console.log(ids);
@@ -219,78 +239,84 @@
         if (id.checked) { checked += 1; }
       });
 
-      if (checked !== 1) { e.preventDefault(); alert("Please make a selection to continue."); return false; }
-      if (action === '') { e.preventDefault(); alert("Please select an action to continue."); return false; }
+      if (checked !== 1) { e.preventDefault(); alert('Please make a selection to continue.'); return false; }
+      if (action === '') { e.preventDefault(); alert('Please select an action to continue.'); return false; }
     };
 
     const validateManageBlackouts = (e) => {
-      const actionChoice = document.forms["manageBlackoutsForm"]["manage-blackouts-action"].value;
-      if (actionChoice == "") { e.preventDefault(); alert("[% 'Please select an action.' | gettext %]"); return false; }
+      const actionChoice = document.forms.manageBlackoutsForm['manage-blackouts-action'].value;
+      if (actionChoice === '') { e.preventDefault(); alert("[% 'Please select an action.' | gettext %]"); return false; }
     };
 
     const validateDate = (dateStr) => {
-      const regExp = /^(\d\d?)\/(\d\d?)\/(\d{4})$/;
-      let matches = dateStr.match(regExp);
-      let isValid = matches;
-      let maxDate = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      // const regExp = /^(\d{4})-(\d\d?)-(\d\d?)$/;
+      // const matches = dateStr.match(regExp);
+      // console.log(matches);
+      // let isValid = matches;
+      // const maxDate = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-      if (matches) {
-          const month = parseInt(matches[1]);
-          const date = parseInt(matches[2]);
-          const year = parseInt(matches[3]);
+      // if (matches) {
+      //   const year = parseInt(matches[1], 10);
+      //   const month = parseInt(matches[2], 10);
+      //   const date = parseInt(matches[3], 10);
 
-          isValid = month <= 12 && month > 0;
-          isValid &= date <= maxDate[month] && date > 0;
+      //   isValid = month <= 12 && month > 0;
+      //   isValid &= date <= maxDate[month] && date > 0;
 
-          const leapYear = (year % 400 == 0) ||
-              (year % 4 == 0 && year % 100 != 0);
-          isValid &= month != 2 || leapYear || date <= 28;
-      }
+      //   const leapYear = (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
+      //   isValid &= month != 2 || leapYear || date <= 28;
+      // }
 
-      return isValid;
+      // return isValid;
+      return true;
     };
 
     const validateFullBlackout = (e) => {
-      const startDate = document.forms["fullBlackoutForm"]["blackout-start-date"].value;
-      const endDate = document.forms["fullBlackoutForm"]["blackout-end-date"].value;
-      const rooms = document.getElementsByName("current-room-blackout");
+      const startDate = document.forms.fullBlackoutForm['blackout-start-date'].value;
+      const endDate = document.forms.fullBlackoutForm['blackout-end-date'].value;
+      const rooms = document.getElementsByName('current-room-blackout');
       let roomChecked = false;
 
-      if (!validateDate(startDate)) { alert("[% 'Start date is required.' | gettext %]"); return false; }
-      if (!validateDate(endDate)) { alert("[% 'End date is required.' | gettext %]"); return false; }
+      console.log(startDate, endDate);
+
+      if (!validateDate(startDate)) { e.preventDefault(); alert("[% 'Start date is required.' | gettext %]"); return false; }
+      if (!validateDate(endDate)) { e.preventDefault(); alert("[% 'End date is required.' | gettext %]"); return false; }
 
       rooms.forEach((room) => {
         if (room.checked) { roomChecked = true; }
       });
-      
+
       if (!roomChecked) { e.preventDefault(); alert("[% 'Please select one or more rooms.' | gettext %]"); return false; }
-    }
+    };
 
     const validatePartialBlackout = (e) => {
-      const blackoutStartTime = document.forms["partialBlackoutForm"]["blackout-start-time"].value;
-      const blackoutEndTime = document.forms["partialBlackoutForm"]["blackout-end-time"].value;
-      const rooms = document.getElementsByName("current-room-blackout");
-      let blackoutDate = document.forms["partialBlackoutForm"]["blackout-date"].value;
+      const blackoutStartTime = document.forms.partialBlackoutForm['blackout-start-time'].value;
+      const blackoutEndTime = document.forms.partialBlackoutForm['blackout-end-time'].value;
+      const rooms = document.getElementsByName('current-room-blackout');
+      let blackoutDate = document.forms.partialBlackoutForm['blackout-date'].value;
+      console.log(blackoutDate);
       let roomChecked = false;
 
-      if (!validateDate(blackoutDate)) { alert("Date is required."); return false; }
+      if (!validateDate(blackoutDate)) { e.preventDefault(); alert('Date is required.'); return false; }
 
       // convert date format from mm/dd/yyyy to yyyy-mm-dd
-      blackoutDate = blackoutDate.replace(/(\d\d)\/(\d\d)\/(\d{4})/, "$3-$1-$2");
+      blackoutDate = blackoutDate.replace(/(\d\d)\/(\d\d)\/(\d{4})/, '$3-$1-$2');
 
       // timestamp of MySQL type DATETIME
-      var startTimestamp = `${blackoutDate}  ${blackoutStartTime}`;
-      var endTimestamp = `${blackoutDate} ${blackoutEndTime}`;
+      const startTimestamp = `${blackoutDate}  ${blackoutStartTime}`;
+      const endTimestamp = `${blackoutDate} ${blackoutEndTime}`;
 
       // determines if invalid start/end values were entered
-      if (startTimestamp >= endTimestamp) { alert("[% 'Please select a valid start and end time!' | gettext %]"); return false; }
+      if (startTimestamp >= endTimestamp) { e.preventDefault(); alert("[% 'Please select a valid start and end time!' | gettext %]"); return false; }
 
       rooms.forEach((room) => {
         if (room.checked) { roomChecked = true; }
       });
 
       if (!roomChecked) { e.preventDefault(); alert("[% 'Please select one or more rooms.' | gettext %]"); return false; }
-    }
+    };
+
+    const setBlackoutValueOnChange = (e) => { console.log(e.target.value); e.target.value = e.target.value; console.log(e.target.value); };
   </script>
 </head>
 
@@ -548,31 +574,27 @@
   [% END # op == 'manage-reservations' %]
 
   [% IF op == 'manage-blackouts' %]
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var blackoutType = $('#blackoutType');
-            var blackoutSelectionDiv = $('#b-selection');
-            var fullBlackoutDiv = $('#full-blackout');
-            var partialBlackoutDiv = $('#partial-blackout');
+    <script>
+      $(document).ready(function () {
+        const blackoutType = $('#blackoutType');
+        const blackoutSelectionDiv = $('#b-selection');
+        const fullBlackoutDiv = $('#full-blackout');
+        const partialBlackoutDiv = $('#partial-blackout');
 
-            partialBlackoutDiv.hide();
-            fullBlackoutDiv.hide();
+        partialBlackoutDiv.hide();
+        fullBlackoutDiv.hide();
 
-            blackoutType.change(function () {
-                if (blackoutType.val() == "full") {
-                    blackoutSelectionDiv.hide();
-                    partialBlackoutDiv.hide();
-                    fullBlackoutDiv.show();
-                } else if (blackoutType.val() == "partial") {
-                    blackoutSelectionDiv.hide();
-                    partialBlackoutDiv.show();
-                    fullBlackoutDiv.hide();
-                }
-            });
+        blackoutType.change(() => {
+            if (blackoutType.val() == "full") {
+              blackoutSelectionDiv.hide(); partialBlackoutDiv.hide(); fullBlackoutDiv.show();
+            } else if (blackoutType.val() == "partial") {
+              blackoutSelectionDiv.hide(); partialBlackoutDiv.show(); fullBlackoutDiv.hide(); 
+            }
         });
+      });
     </script>
     <div class="lmsr-content-main">
-      <div class="lmsr-content-block">
+      <div class="lmsr-content-block-exception">
 
         [% IF blackouts %]
           <form name="manageBlackoutsForm" action="#" method="post">
@@ -581,7 +603,7 @@
             <input type="hidden" name="op" value="manage-blackouts" />
     
     
-            <div class="lmsr-action-table lmsr-action-table-delete-reservations">
+            <div class="lmsr-action-table lmsr-action-table-delete-blackouts">
               <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
               <span class="lmsr-action-table-header-item">[% 'Room' | gettext %]</span>
               <span class="lmsr-action-table-header-item">[% 'Blackout start' | gettext %]</span>
@@ -590,7 +612,7 @@
               [% FOREACH blackout IN blackouts %]
                 <input type="radio" name="manage-blackouts-id" value="[% blackout.bookingid %]" class="lmsr-action-table-body-item-selector" required>
                 <span class="lmsr-action-table-body-item">[% blackout.roomnumber %]</span>
-                <span class="lmsr-action-table-body-item">[% 'Blackout start' | gettext %]</span>
+                <span class="lmsr-action-table-body-item">[% blackout.start %]</span>
                 <span class="lmsr-action-table-body-item">[% blackout.end %]</span>
     
               [% END # FOREACH blackout IN blackouts %]
@@ -631,7 +653,7 @@
       </div>
 
       <div class="lmsr-content-block" id="full-blackout">
-        <form action="#" name="fullBlackoutForm" method="post" onsubmit="return validateFullBlackout();">
+        <form action="#" name="fullBlackoutForm" method="post">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="manage-blackouts" />
@@ -640,21 +662,27 @@
   
           <div class="lmsr-action-table">
             <h5>[% 'Select opening days' | gettext %]</h5>
-            <div class="lmsr-menu-list">
+            <div class="lmsr-menu-list lmsr-menu-list-add-full-blackout">
               <div>
-                <input class="datefield" name="blackout-start-date" id="blackout-start-date" size="10" placeholder="[% 'Start' | gettext %]" required />
+                <input type="date" name="blackout-start-date" id="blackout-start-date" size="10" placeholder="[% 'Start' | gettext %]" value="" required />
                 <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
               </div>
               <div>
-                <input class="datefield" name="blackout-end-date" id="blackout-end-date" size="10" placeholder="[% 'End' | gettext %]" required />
+                <input type="date" name="blackout-end-date" id="blackout-end-date" size="10" placeholder="[% 'End' | gettext %]" value="" required />
                 <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
               </div>
+              <script>
+                const inputFullBlackoutStartDate = document.getElementById('blackout-start-date');
+                const inputFullBlackoutEndDate = document.getElementById('blackout-end-date');
+                inputFullBlackoutStartDate.addEventListener('change', setBlackoutValueOnChange);
+                inputFullBlackoutEndDate.addEventListener('change', setBlackoutValueOnChange);
+              </script>
             </div>
             
             <hr>
             
-            <div>
-              <span>[% 'All day' | gettext %]</span><input type="checkbox" checked="true" disabled="true" />
+            <div class="lmsr-menu-list lmsr-menu-list-add-full-blackout">
+              <div><span>[% 'All day' | gettext %]</span><input type="checkbox" checked="true" disabled /></div>
             </div>
 
             <hr>
@@ -662,19 +690,13 @@
             [% IF current_rooms %]
               <h5>[% 'Select room(s) to blackout' | gettext %]</h5>
 
-              <div>
-                <div>
-                  <input type="checkbox" name="current-room-blackout" class="full-blackout" value="0" /><span>[% 'All rooms' | gettext %]</span>
-                </div>
-              </div>
+              <div class="lmsr-menu-list lmsr-menu-list-add-full-blackout">
+                <div><input type="checkbox" name="current-room-blackout" class="full-blackout" value="0" /><span>[% 'All rooms' | gettext %]</span></div>
 
               [% FOREACH room IN current_rooms %]
-                <div>
-                  <div>
-                    <input type="checkbox" name="current-room-blackout" class="full-blackout" value="[% room.roomid %]" /><span>[% room.roomnumber %]</span>
-                  </div>
-                </div>
+                <div><input type="checkbox" name="current-room-blackout" class="full-blackout" value="[% room.roomid %]" /><span>[% room.roomnumber %]</span></div>
               [% END # FOREACH room IN current_rooms %]
+              </div>
             [% END # IF current_rooms %]
 
             <hr>
@@ -686,133 +708,49 @@
             [% END # IF current_rooms %]
           </div>
         </form>
+        <script>
+          const fullBlackoutForm = document.querySelector('form[name="fullBlackoutForm"]');
+          const inputSubmitFullBlackout = document.querySelector('input[name="submit-full-blackout"]');
+          fullBlackoutForm.addEventListener('submit', validateFullBlackout);
+          inputSubmitFullBlackout.disabled = false;
+        </script>
       </div>
 
       <div class="lmsr-content-block" id="partial-blackout">
-        <form action="#" name="partialBlackoutForm" method="post" onsubmit="return validatePartialBlackout();">
+        <form action="#" name="partialBlackoutForm" method="post">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="manage-blackouts" />
 
           <div class="lmsr-action-table">
             <h5>[% 'Select opening days' | gettext %]</h5>
-            <div class="lmsr-menu-list">
+            <div class="lmsr-menu-list lmsr-menu-list-add-partial-blackout">
               <div>
-                <input class="datefield" name="blackout-date" id="blackout-date" size="10" placeholder="Date" />
+                <input type="date" name="blackout-date" id="blackout-date" size="10" placeholder="Date" />
                 <span class="date-format to">[% INCLUDE 'date-format.inc' %]</span>
               </div>
               <div>
-                <select name="blackout-start-time">
-                  <option value="">[% 'From' | gettext %]</option>
-                  <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
-                  <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
-                  <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
-                  <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
-                  <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
-                  <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
-                  <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
-                  <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
-                  <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
-                  <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
-                  <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
-                  <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
-                  <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
-                  <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
-                  <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
-                  <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
-                  <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
-                  <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
-                  <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
-                  <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
-                  <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
-                  <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
-                  <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
-                  <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
-                  <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
-                  <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
-                  <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
-                  <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
-                  <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
-                  <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
-                  <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
-                  <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
-                  <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
-                  <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
-                  <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
-                  <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
-                  <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
-                  <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
-                  <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
-                  <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
-                  <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
-                  <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
-                  <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
-                  <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
-                  <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
-                  <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
-                  <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
-                  <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
-                </select>
+                <label for="blackout-start-time">[% 'From' | gettext %]</label>
+                <input type="time" name="blackout-start-time" id="blackout-start-time">
               </div>
               <div>
-                <select name="blackout-end-time">
-                  <option value="">[% 'To' | gettext %]</option>
-                  <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
-                  <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
-                  <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
-                  <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
-                  <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
-                  <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
-                  <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
-                  <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
-                  <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
-                  <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
-                  <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
-                  <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
-                  <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
-                  <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
-                  <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
-                  <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
-                  <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
-                  <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
-                  <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
-                  <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
-                  <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
-                  <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
-                  <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
-                  <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
-                  <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
-                  <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
-                  <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
-                  <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
-                  <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
-                  <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
-                  <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
-                  <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
-                  <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
-                  <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
-                  <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
-                  <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
-                  <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
-                  <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
-                  <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
-                  <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
-                  <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
-                  <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
-                  <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
-                  <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
-                  <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
-                  <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
-                  <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
-                  <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
-                </select>
+                <label for="blackout-end-time">[% 'To' | gettext %]</label>
+                <input type="time" name="blackout-end-time" id="blackout-end-time">
               </div>
+              <script>
+                const inputPartialBlackoutDate = document.getElementById('blackout-date');
+                const inputPartialBlackoutStartTime = document.getElementById('blackout-start-time');
+                const inputPartialBlackoutEndTime = document.getElementById('blackout-end-time');
+                inputPartialBlackoutDate.addEventListener('change', setBlackoutValueOnChange);
+                inputPartialBlackoutStartTime.addEventListener('change', setBlackoutValueOnChange);
+                inputPartialBlackoutEndTime.addEventListener('change', setBlackoutValueOnChange);
+              </script>
             </div>
             
             <hr>
             
-            <div>
-              <span>[% 'All day' | gettext %]</span><input type="checkbox" checked="true" disabled="true" />
+            <div class="lmsr-menu-list lmsr-menu-list-add-partial-blackout">
+              <div><span>[% 'All day' | gettext %]</span><input type="checkbox" checked="true" disabled /></div>
             </div>
 
             <hr>
@@ -820,19 +758,13 @@
             [% IF current_rooms %]
               <h5>[% 'Select room(s) to blackout' | gettext %]</h5>
 
-              <div>
-                <div>
-                  <input type="checkbox" name="current-room-blackout" class="partial-blackout" value="0" /><span>[% 'All rooms' | gettext %]</span>
-                </div>
-              </div>
+              <div class="lmsr-menu-list lmsr-menu-list-add-partial-blackout">
+                <div><input type="checkbox" name="current-room-blackout" class="partial-blackout" value="0" /><span>[% 'All rooms' | gettext %]</span></div>
 
-              [% FOREACH room IN current_rooms %]
-                <div>
-                  <div>
-                    <input type="checkbox" name="current-room-blackout" class="partial-blackout" value="[% room.roomid %]" /><span>[% room.roomnumber %]</span>
-                  </div>
-                </div>
-              [% END # FOREACH room IN current_rooms %]
+                [% FOREACH room IN current_rooms %]
+                  <div><input type="checkbox" name="current-room-blackout" class="partial-blackout" value="[% room.roomid %]" /><span>[% room.roomnumber %]</span></div>
+                [% END # FOREACH room IN current_rooms %]
+              </div>
             [% END # IF current_rooms %]
 
             <hr>
@@ -840,65 +772,21 @@
             [% IF current_rooms %]
               <input type="submit" name="submit-partial-blackout" value="[% 'Add' | gettext %]" />
             [% ELSE %]
-              <input type="submit" name="submit-partial-blackout" value="[% 'Add' | gettext %]" disabled="true" />
+              <input type="submit" name="submit-partial-blackout" value="[% 'Add' | gettext %]" disabled />
             [% END # IF current_rooms %]
           </div>
         </form>
+        <script>
+          const partialBlackoutForm = document.querySelector('form[name="partialBlackoutForm"]');
+          const inputSubmitPartialBlackout = document.querySelector('input[name="submit-partial-blackout"]');
+          partialBlackoutForm.addEventListener('submit', validatePartialBlackout);
+          inputSubmitPartialBlackout.disabled = false;
+        </script>
       </div>
+    </div>
     [% END # op == 'manage-blackouts' %]
 
   [% INCLUDE calendar.inc %]
-  <!-- Full blackout -->
-  <script type="text/javascript">
-    // <![CDATA[
-
-    $(document).ready(function () {
-        $(".datefield").prop("readOnly", true);
-    });
-
-    // http://jqueryui.com/demos/datepicker/#date-range
-    var requestdates = $("#blackout-start-date, #blackout-end-date").datepicker({
-        minDate: 0,
-        changeMonth: true,
-        numberOfMonths: 1,
-        onSelect: function (selectedDate) {
-            var option = this.id == "blackout-start-date" ? "minDate" : "maxDate",
-                instance = $(this).data("datepicker");
-            date = $.datepicker.parseDate(
-                instance.settings.dateFormat ||
-                $.datepicker._defaults.dateFormat,
-                selectedDate, instance.settings);
-            requestdates.not(this).datepicker("option", option, date);
-        }
-    });
-    // ]]>
-  </script>
-
-  <!-- Partial blackout -->
-  <script type="text/javascript">
-      // <![CDATA[
-
-      $(document).ready(function () {
-          $(".datefield").prop("readOnly", true);
-      });
-
-      // http://jqueryui.com/demos/datepicker/#date-range
-      var requestdates = $("#blackout-date").datepicker({
-          minDate: 0,
-          changeMonth: true,
-          numberOfMonths: 1,
-          onSelect: function (selectedDate) {
-              var option = this.id == "blackout-date" ? "minDate" : "maxDate",
-                  instance = $(this).data("datepicker");
-              date = $.datepicker.parseDate(
-                  instance.settings.dateFormat ||
-                  $.datepicker._defaults.dateFormat,
-                  selectedDate, instance.settings);
-              requestdates.not(this).datepicker("option", option, date);
-          }
-      });
-      // ]]>
-  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -925,5 +813,9 @@
           });
       });
     });
+
+    if ( window.history.replaceState ) { 
+        window.history.replaceState( null, null, window.location.href ); 
+    } 
   </script>
 [% INCLUDE 'intranet-bottom.inc' %]

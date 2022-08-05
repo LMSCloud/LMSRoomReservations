@@ -107,13 +107,14 @@ sub get_all_blackout_bookings {
     my $sth = q{};
 
     my $query = <<~"EOF";
-        SELECT bk.bookingid, r.roomnumber, DATE_FORMAT(bk.start, \"%m/%d/%Y %h:%i %p\") AS start, DATE_FORMAT(bk.end, \"%m/%d/%Y %h:%i %p\") AS end
+        SELECT bk.bookingid, r.roomnumber, DATE_FORMAT(bk.start, '%d.%m.%Y %H:%i') AS start, DATE_FORMAT(bk.end, '%d.%m.%Y %H:%i') AS end
         FROM $BOOKINGS_TABLE bk, $ROOMS_TABLE r
         WHERE bk.roomid = r.roomid
         AND bk.blackedout = 1
-        AND bk.start BETWEEN CAST(CONCAT(CURDATE(), \" 00:00:00\") AS DATETIME) AND CAST(CONCAT(DATE_ADD(CURDATE(), INTERVAL 30 DAY), \" 23:59:59\") AS DATETIME)
         ORDER BY bk.start ASC;
     EOF
+
+    # AND bk.start BETWEEN CAST(CONCAT(CURDATE(), ' 00:00:00') AS DATETIME) AND CAST(CONCAT(DATE_ADD(CURDATE(), INTERVAL 30 DAY), ' 23:59:59') AS DATETIME)
 
     $sth = $dbh->prepare($query);
     $sth->execute();

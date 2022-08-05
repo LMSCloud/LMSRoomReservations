@@ -457,8 +457,6 @@ sub tool {
     my $op          = $cgi->param('op') || q{};
     my $tool_action = $cgi->param('tool_actions_selection');
 
-    warn Dumper(qq{params: $op --- $tool_action}); #FIXME: REMOVE
-
     # used for manage blackouts
     my $manage_blackouts_submit  = $cgi->param('manage-blackouts-submit')  || q{};    # delete existing blackout
     my $submit_full_blackout     = $cgi->param('submit-full-blackout')     || q{};    # add full day blackout(s)
@@ -585,11 +583,8 @@ sub tool {
         my $blackout_end_date   = $cgi->param('blackout-end-date');
         my @rooms               = $cgi->multi_param('current-room-blackout');
 
-        my $start_date = sprintf '%3$04d-%02d-%02d', split m:/:x, $blackout_start_date;
-        my $end_date   = sprintf '%3$04d-%02d-%02d', split m:/:x, $blackout_end_date;
-
-        $start_date = $start_date . ' 00:00:00';
-        $end_date   = $end_date . ' 23:59:59';
+        my $start_date = $blackout_start_date . ' 00:00:00';
+        my $end_date   = $blackout_end_date . ' 23:59:59';
 
         my $current_user = C4::Context->userenv->{'number'};
 
@@ -606,9 +601,8 @@ sub tool {
             }
         }
         else {
-
-            for ( my $i = 0; $i < scalar @rooms; $i++ ) {
-                add_blackout_booking( $current_user, $rooms[$i], $start_date, $end_date );
+            for my $room (@rooms) {
+                add_blackout_booking( $current_user, $room, $start_date, $end_date );
             }
         }
 
@@ -648,9 +642,8 @@ sub tool {
             }
         }
         else {
-
-            for ( my $i = 0; $i < scalar @rooms; $i++ ) {
-                add_blackout_booking( $current_user, $rooms[$i], $start, $end );
+            for my $room (@rooms) {
+                add_blackout_booking( $current_user, $room, $start, $end );
             }
         }
 

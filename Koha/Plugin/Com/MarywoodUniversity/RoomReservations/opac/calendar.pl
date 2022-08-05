@@ -348,35 +348,50 @@ RESERVATION_CONFIRMED: {
             }
         }
 
+        my $timestamp = get_current_timestamp();
+        my $patron    = Koha::Patrons->find($borrowernumber);
+        my $letter    = C4::Letters::GetPreparedLetter(
+            module                 => 'members',
+            letter_code            => 'ROOM_RESERVATION',
+            lang                   => $patron->lang,
+            message_transport_type => 'email',
+            substitute             => {
+                user                => $user,
+                room                => $roomnumber,
+                from                => $displayed_start,
+                to                  => $displayed_end,
+                confirmed_timestamp => $timestamp,
+            },
+        );
+
+        my @message_ids;
         if ( $send_copy eq '1' && $valid ) {
-            my $timestamp = get_current_timestamp();
-
-            my $patron = Koha::Patrons->find($borrowernumber);
-
-            my $letter = C4::Letters::GetPreparedLetter(
-                module                 => 'members',
-                letter_code            => 'ROOM_RESERVATION',
-                lang                   => $patron->lang,
-                message_transport_type => 'email',
-                substitute             => {
-                    user                => $user,
-                    room                => $roomnumber,
-                    from                => $displayed_start,
-                    to                  => $displayed_end,
-                    confirmed_timestamp => $timestamp,
-                },
-            );
-
-            C4::Letters::EnqueueLetter(
+            push @message_ids,
+                C4::Letters::EnqueueLetter(
                 {   letter                 => $letter,
                     borrowernumber         => $borrowernumber,
                     branchcode             => $patron->branchcode,
                     message_transport_type => 'email',
                 }
-            );
+                );
         }
 
-        $template->param( op => $op, );
+        push @message_ids,
+            C4::Letters::EnqueueLetter(
+            {   letter                 => $letter,
+                borrowernumber         => '1363',
+                branchcode             => $patron->branchcode,
+                message_transport_type => 'email',
+            }
+            );
+
+        for my $message_id (@message_ids) {
+            C4::Letters::SendQueuedMessages( { message_id => $message_id } );
+        }
+
+        my $message_to_patron = C4::Letters::GetMessage( shift @message_ids );
+
+        $template->param( op => $op, SENT => $message_to_patron->{'status'} eq 'sent' ? 1 : 0 );
     }
 }
 
