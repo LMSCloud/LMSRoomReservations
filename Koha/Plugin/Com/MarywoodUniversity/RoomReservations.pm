@@ -17,6 +17,7 @@ use MIME::Base64;
 use MIME::QuotedPrint;
 use Mail::Sendmail;
 use POSIX 'strftime';
+use Mojo::JSON qw(decode_json);
 
 use C4::Auth;
 use C4::Context;
@@ -267,6 +268,21 @@ sub uninstall() {
     }
 
     return 1;
+}
+
+sub static_routes {
+    my ( $self, $args ) = @_;
+
+    my $spec_str = $self->mbf_read('staticapi.json');
+    my $spec     = decode_json($spec_str);
+
+    return $spec;
+}
+
+sub api_namespace {
+    my ($self) = @_;
+
+    return 'roomreservations';
 }
 
 sub bookas {

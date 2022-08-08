@@ -10,7 +10,8 @@
     "gulp": "^4.0.2",
     "gulp-cli": "^1.2.2",
     "gulp-github-release": "^1.1.5",
-    "gulp-run": "^1.7.1"
+    "gulp-run": "^1.7.1",
+    "rollup": "^2.77.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

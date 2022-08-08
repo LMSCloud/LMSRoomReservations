@@ -4,26 +4,9 @@
 
 [% INCLUDE 'doc-head-open.inc' %]
   <title>[% 'Koha: Room Reservations Plugin: Reserve as patron' | gettext %]</title>
+  <link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/css/main.css">
+  <script src="/api/v1/contrib/roomreservations/static/js/main.js"></script>
 [% INCLUDE 'doc-head-close.inc' %]
-  <style>
-    .avail-room {
-      text-align: center;
-    }
-
-    div#doc3>form,
-    div#doc3>div {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      width: 50%;
-      margin: 0 auto;
-    }
-
-    div#doc3>h3 {
-      margin: 0.5em 0.8em;
-    }
-  </style>
 </head>
 
 <body>
@@ -40,383 +23,219 @@
 </nav>
 
 <div id="doc3">
+  <h3>[% 'Reserve as' | gettext %] [% firstname %]&nbsp;[% surname %]</h3>
 
-    <!-- We can access our own plugins resource files using the PLUGIN_PATH variable. -->
-    <h3>[% 'Reserve as' | gettext %] [% firstname %]&nbsp;[% surname %]</h3>
+  [% IF op == '' %]
+    <div class="lmsr-content-main">
+      <div class="lmsr-content-block">
 
-    [% IF op == '' %]
-    <script type="text/javascript">
-        function validateAvailabilitySearch() {
+        <h4>[% 'Availability Search' | gettext %]</h4>
 
-            var startDate = document.forms["availabilitySearchForm"]["availability-search-start-date"].value;
-            var startTime = document.forms["availabilitySearchForm"]["availability-search-start-time"].value;
-            var endDate = document.forms["availabilitySearchForm"]["availability-search-end-date"].value;
-            var endTime = document.forms["availabilitySearchForm"]["availability-search-end-time"].value;
-            var maxCapacity = document.forms["availabilitySearchForm"]["availability-search-room-capacity"].value;
-            // populate an equipment array to iterate for validation
-            var equipments = document.getElementsByName("availability-search-selected-equipment");
+        <div class="lmsr-action-table">
+          <form name="availabilitySearchForm" method="post" action="#">
+            <div class="">
+              <input type="hidden" name="class" value="[% CLASS %]" />
+              <input type="hidden" name="method" value="[% METHOD %]" />
+              <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
+              <input type="hidden" name="op" value="availability-search-results" />
+            
+              <label>[% 'From' | gettext %]</label>
+              <div class="lmsr-data-picker">
+                <input type="date" name="availability-search-start-date" id="availability-search-start-date" size="10" placeholder="[% 'Start date' | gettext %]" />
+                <input type="time" name="availability-search-start-time" />
+              </div>
+    
+              <br>
 
-            if ( startDate == "" ) {
-                alert("[% 'Start date is required.' | gettext %]");
-                return false;
-            }
-
-            if ( startTime == "" ) {
-                alert("[% 'Start time is required.' | gettext %]");
-                return false;
-            }
-
-            if ( endDate == "" ) {
-                alert("[% 'End date is required.' | gettext %]");
-                return false;
-            }
-
-            if ( endTime == "" ) {
-                alert("[% 'End time is required.' | gettext %]");
-                return false;
-            }
-
-            if ( maxCapacity == "" ) {
-                alert("[% 'Room capacity is required.' | gettext %]");
-                return false;
-            }
-        }
-    </script>
-    <form name="availabilitySearchForm" method="post" action="#" onsubmit="return validateAvailabilitySearch()">
-        <input type="hidden" name="class" value="[% CLASS %]" />
-        <input type="hidden" name="method" value="[% METHOD %]" />
-        <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
-        <table>
-            <thead>
-                <tr>
-                    <th style="text-align:center;">[% 'Availability Search' | gettext %]</th>
-                </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                <input class ="datefield" name="availability-search-start-date" id="availability-search-start-date" size="10" placeholder="[% 'Start date' | gettext %]" />
-
-                <select name="availability-search-start-time">
-                    <option value="">[% 'Time' | gettext %]</option>
-                    <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
-                    <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
-                    <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
-                    <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
-                    <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
-                    <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
-                    <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
-                    <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
-                    <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
-                    <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
-                    <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
-                    <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
-                    <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
-                    <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
-                    <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
-                    <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
-                    <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
-                    <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
-                    <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
-                    <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
-                    <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
-                    <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
-                    <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
-                    <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
-                    <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
-                    <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
-                    <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
-                    <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
-                    <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
-                    <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
-                    <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
-                    <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
-                    <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
-                    <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
-                    <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
-                    <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
-                    <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
-                    <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
-                    <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
-                    <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
-                    <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
-                    <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
-                    <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
-                    <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
-                    <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
-                    <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
-                    <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
-                    <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
-                </select><br />
-
-                <input class ="datefield" name="availability-search-end-date" id="availability-search-end-date" size="10" placeholder="[% 'End date' | gettext %]" />
-
-                <select name="availability-search-end-time">
-                    <option value="">[% 'Time' | gettext %]</option>
-                    <option value="00:00:00">[% '12:00 AM' | gettext %]</option>
-                    <option value="00:30:00">[% '12:30 AM' | gettext %]</option>
-                    <option value="01:00:00">[% '1:00 AM' | gettext %]</option>
-                    <option value="01:30:00">[% '1:30 AM' | gettext %]</option>
-                    <option value="02:00:00">[% '2:00 AM' | gettext %]</option>
-                    <option value="02:30:00">[% '2:30 AM' | gettext %]</option>
-                    <option value="03:00:00">[% '3:00 AM' | gettext %]</option>
-                    <option value="03:30:00">[% '3:30 AM' | gettext %]</option>
-                    <option value="04:00:00">[% '4:00 AM' | gettext %]</option>
-                    <option value="04:30:00">[% '4:30 AM' | gettext %]</option>
-                    <option value="05:00:00">[% '5:00 AM' | gettext %]</option>
-                    <option value="05:30:00">[% '5:30 AM' | gettext %]</option>
-                    <option value="06:00:00">[% '6:00 AM' | gettext %]</option>
-                    <option value="06:30:00">[% '6:30 AM' | gettext %]</option>
-                    <option value="07:00:00">[% '7:00 AM' | gettext %]</option>
-                    <option value="07:30:00">[% '7:30 AM' | gettext %]</option>
-                    <option value="08:00:00">[% '8:00 AM' | gettext %]</option>
-                    <option value="08:30:00">[% '8:30 AM' | gettext %]</option>
-                    <option value="09:00:00">[% '9:00 AM' | gettext %]</option>
-                    <option value="09:30:00">[% '9:30 AM' | gettext %]</option>
-                    <option value="10:00:00">[% '10:00 AM' | gettext %]</option>
-                    <option value="10:30:00">[% '10:30 AM' | gettext %]</option>
-                    <option value="11:00:00">[% '11:00 AM' | gettext %]</option>
-                    <option value="11:30:00">[% '11:30 AM' | gettext %]</option>
-                    <option value="12:00:00">[% '12:00 PM' | gettext %]</option>
-                    <option value="12:30:00">[% '12:30 PM' | gettext %]</option>
-                    <option value="13:00:00">[% '1:00 PM' | gettext %]</option>
-                    <option value="13:30:00">[% '1:30 PM' | gettext %]</option>
-                    <option value="14:00:00">[% '2:00 PM' | gettext %]</option>
-                    <option value="14:30:00">[% '2:30 PM' | gettext %]</option>
-                    <option value="15:00:00">[% '3:00 PM' | gettext %]</option>
-                    <option value="15:30:00">[% '3:30 PM' | gettext %]</option>
-                    <option value="16:00:00">[% '4:00 PM' | gettext %]</option>
-                    <option value="16:30:00">[% '4:30 PM' | gettext %]</option>
-                    <option value="17:00:00">[% '5:00 PM' | gettext %]</option>
-                    <option value="17:30:00">[% '5:30 PM' | gettext %]</option>
-                    <option value="18:00:00">[% '6:00 PM' | gettext %]</option>
-                    <option value="18:30:00">[% '6:30 PM' | gettext %]</option>
-                    <option value="19:00:00">[% '7:00 PM' | gettext %]</option>
-                    <option value="19:30:00">[% '7:30 PM' | gettext %]</option>
-                    <option value="20:00:00">[% '8:00 PM' | gettext %]</option>
-                    <option value="20:30:00">[% '8:30 PM' | gettext %]</option>
-                    <option value="21:00:00">[% '9:00 PM' | gettext %]</option>
-                    <option value="21:30:00">[% '9:30 PM' | gettext %]</option>
-                    <option value="22:00:00">[% '10:00 PM' | gettext %]</option>
-                    <option value="22:30:00">[% '10:30 PM' | gettext %]</option>
-                    <option value="23:00:00">[% '11:00 PM' | gettext %]</option>
-                    <option value="23:30:00">[% '11:30 PM' | gettext %]</option>
-                </select><br />
-                </td>
-              </tr>
-              <tr>
-                  <td>
-                      <div class="headcount-selection" style="text-align: center;">
-                            <h3>[% 'Maximum Room Capacity' | gettext %]</h3>
-                            <select name="availability-search-room-capacity">
-                                <option value=""></option>
-                                [% FOREACH capacity IN all_room_capacities %]
-                                <option value="[% capacity.maxcapacity %]">[% capacity.maxcapacity %] [% 'people' | gettext %] </option>
-                                [% END # FOREACH capacity IN all_room_capacities %]
-                            </select>
-                      </div>
-                  </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="room-features-selection" style="text-align: center;">
-                    <h3>[% 'Room Equipment' | gettext %]</h3>
-                    [% count = 1 %]
-                    [% FOREACH equipment IN available_room_equipment %]
-                      [% equipmentname = equipment.equipmentname %]
-                      [% IF equipmentname == 'none' %]
-                          [% equipmentname = gtx.gettext('none') %]
-                      [% END %]
-                    <!-- the modulo wraps the list around to the next row with 4 pieces of equipment to a row -->
-                    [% IF count mod 4 == 0 %]
-                    <input type="checkbox" name="availability-search-selected-equipment" value="[% equipment.equipmentid %]" /> [% equipmentname %]<br />
-                    [% ELSE %]
-                    <input type="checkbox" name="availability-search-selected-equipment" value="[% equipment.equipmentid %]" /> [% equipmentname %]
-                    [% END # IF count %]
-                    [% count = count + 1 %] <!-- equal to count++ to advance the loop -->
+              <label>[% 'Until' | gettext %]</label>
+              <div class="lmsr-data-picker">
+                <input type="date" name="availability-search-end-date" id="availability-search-end-date" size="10" placeholder="[% 'End date' | gettext %]" />
+                <input type="time" name="availability-search-end-time" />
+              </div>
+    
+              <hr>
+    
+              <div class="headcount-selection lmsr-data-picker">
+                <label class="">[% 'Maximum Room Capacity' | gettext %]</label>
+                <select name="availability-search-room-capacity" class="">
+                  <option value=""></option>
+                  [% FOREACH capacity IN all_room_capacities %]
+                    <option value="[% capacity.maxcapacity %]">[% capacity.maxcapacity %] [% 'people' | gettext %] </option>
+                  [% END # FOREACH capacity IN all_room_capacities %]
+                </select>
+              </div>
+    
+              <hr>
+    
+              <div class="room-features-selection lmsr-menu-list lmsr-menu-list-get-equipment">
+                <label>[% 'Room Equipment' | gettext %]</label>
+                [% FOREACH equipment IN available_room_equipment %]
+                  [% equipmentname = equipment.equipmentname %]
+                  [% IF equipmentname == 'none' %]
+                      [% equipmentname = gtx.gettext('none') %]
+                  [% END %]
+                  <div>
+                    <input type="checkbox" name="availability-search-selected-equipment" value="[% equipment.equipmentid %]" />
                     <input type="hidden" name="availability-search-selected-equipment-name" value="[% equipmentname %]" />
-
-                    [% END # FOREACH equipment IN available_room_equipment %]
+                    <span>[% equipmentname %]</span>
                   </div>
-                </td>
-              </tr>
-              <tr>
-                  <td style="text-align: center;">
-                    <br />
-                    <input type="hidden" name="op" value="availability-search-results" />
-                    <input type="submit" value="[% 'Check Room Availability' | gettext %]">
-                  </td>
-              </tr>
-            </tbody>
-        </table>
-    </form>
-    [% ELSIF op == 'availability-search-results' %]
-        <script type="text/javascript">
-            function validateAvailabilitySearchResults() {
+                [% END # FOREACH equipment IN available_room_equipment %]
+              </div>
+    
+              <hr>
+    
+              <input name="submit-availability-search" type="submit" value="[% 'Check Room Availability' | gettext %]" disabled>
+            </div>
+          </form>
+          <script>
+            const availabilitySearchForm = document.querySelector('form[name="availabilitySearchForm"]');
+            const inputSubmitAvailabilitySearch = document.querySelector('input[name="submit-availability-search"]');
+            availabilitySearchForm.addEventListener('submit', RoomReservationBundle.validateAvailabilitySearchForBookas);
+            inputSubmitAvailabilitySearch.disabled = false;
+          </script>
+        </div>
+      </div>
+    </div>
+  [% ELSIF op == 'availability-search-results' %]
+    <form name="availabilitySearchResultsForm" method="post" action="#">
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
+      [% IF are_rooms_available == 1 %]
+        <h4>[% 'Available Rooms' | gettext %]</h4>
 
-                // populate an equipment array to iterate for validation
-                var rooms = document.getElementsByName("selected-room-id");
-                var numMatchingRooms = document.getElementsByClassName("no-rooms-match");
+        <div class="lmsr-action-table lmsr-action-table-bookas">
+          <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
+          <span class="lmsr-action-table-header-item">[% 'Room #' | gettext %]</span>
+          <span class="lmsr-action-table-header-item">[% 'Max Capacity' | gettext %]</span>
 
-                var roomChecked = false;
-                for ( var i = 0; i < rooms.length; i++ ) {
-                    if ( rooms[i].checked ) {
-                        roomChecked = true;
-                        last; // exit out of loop
-                    }
-                }
+          [% FOREACH room IN available_rooms %]
+            <input type="radio" name="selected-room-id" class="lmsr-action-table-body-item-selector" value="[% room.roomid %]">
+            <input type="hidden" name="selected-room-no" value="[% room.roomnumber %]" />
+            <span class="lmsr-action-table-body-item">[% room.roomnumber %]</span>
+            <span class="lmsr-action-table-body-item">[% room.maxcapacity %]</span>
+          [% END %]
 
-                if (numMatchingRooms.length > 0) {
-                    // do nothing
-                }
-                else {
-                    if ( !roomChecked ) {
-                        alert('[% 'Select a room to continue.' | gettext %]');
-                        return false;
-                    }
-                }
-            }
+          <input type="hidden" name="displayed-start" value="[% displayed_start %]" />
+          <input type="hidden" name="displayed-end" value="[% displayed_end %]" />
+          <input type="hidden" name="event-start-time" value="[% event_start_time %]" />
+          <input type="hidden" name="event-end-time" value="[% event_end_time %]" />
+          <input type="hidden" name="op" value="room-selection-confirmation" />
+          
+          <span class="lmsr-action-table-body-item lmsr-visibility-hidden"></span>
+          <span class="lmsr-action-table-body-item lmsr-visibility-hidden"></span>
+          <input name="submit-availability-search-results" type="submit" value="[% 'Select Room' | gettext %]" disabled/>
+        </div>
+        
+        <script>
+          const availabilitySearchResultsForm = document.querySelector('form[name="availabilitySearchResultsForm"]');
+          const inputSubmitAvailabilitySearchResults = document.querySelector('input[name="submit-availability-search-results"]');
+          availabilitySearchResultsForm.addEventListener('submit', RoomReservationBundle.validateAvailabilitySearchResultsForBookas);
+          inputSubmitAvailabilitySearchResults.disabled = false;
         </script>
-        <form method="post" action="#" onsubmit="return validateAvailabilitySearchResults()">
-        <input type="hidden" name="class" value="[% CLASS %]" />
-        <input type="hidden" name="method" value="[% METHOD %]" />
-        <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
-        [% IF are_rooms_available == 1 %]
-        <table border="2">
-            <thead>
-                <tr>
-                    <th colspan="4">[% 'Available Rooms' | gettext %]</th>
-                </tr>
-                <tr>
-                    <th>[% 'Select' | gettext %]</th>
-                    <th>[% 'Room #' | gettext %]</th>
-                    <th>[% 'Max Capacity' | gettext %]</th>
-                </tr>
-            </thead>
-            <tbody>
-                [% FOREACH room IN available_rooms %]
-                    <tr class="avail-room">
-                        <td><input type="radio" name="selected-room-id" value="[% room.roomid %]" /></td>
-                        <td>[% room.roomnumber %]</td>
-                        <input type="hidden" name="selected-room-no" value="[% room.roomnumber %]" />
-                        <td>[% room.maxcapacity %]</td>
-                    </tr>
-                [% END %]
-            </tbody>
-            <tfoot>
-                <tr>
-                    <input type="hidden" name="displayed-start" value="[% displayed_start %]" />
-                    <input type="hidden" name="displayed-end" value="[% displayed_end %]" />
-                    <input type="hidden" name="event-start-time" value="[% event_start_time %]" />
-                    <input type="hidden" name="event-end-time" value="[% event_end_time %]" />
-                    <input type="hidden" name="op" value="room-selection-confirmation" />
-                    <td></td>
-                    <td colspan="2"><input type="submit" value="[% 'Select Room' | gettext %]" /></td>
-                <tr>
-            </tfoot>
-        </table>
-        [% ELSE %]
+    </form> <!-- This may be ugly but preserves the indentation logic of the html so leave it! -->
+    
+      [% ELSE %]
         <h2 class="no-rooms-match">[% 'No rooms match your criteria!' | gettext %]</h2>
         <form method="post" action="#">
-            <input type="hidden" name="op" value="" />
-
-            <button>[% 'Click here to try another search' | gettext %]</button>
-        [% END # IF are_rooms_available == 1 %]
+          <input type="hidden" name="op" value="" />
+          <button>[% 'Click here to try another search' | gettext %]</button>
         </form>
-    [% ELSIF op == 'room-selection-confirmation' %]
-        <form method="post" action="#">
-            <input type="hidden" name="class" value="[% CLASS %]" />
-            <input type="hidden" name="method" value="[% METHOD %]" />
-            <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
-            <fieldset style="float:left;">
-                <legend>[% 'Confirmation' | gettext %]</legend>
-                <p>[% 'Name:' | gettext %] <input type="text" size="36" value="[% current_user %]" readonly="true" /></p>
-                <input type="hidden" name="confirmed-user" value="[% current_user %]" />
-                <input type="hidden" name="confirmed-user-fn" value="[% current_user_fn %]" />
-                <input type="hidden" name="confirmed-user-ln" value="[% current_user_ln %]" />
-                <p>[% 'Email:' | gettext %] <input type="text" size="36" value="[% current_user_email %]" readonly="true" /></p>
-                <input type="hidden" name="confirmed-email" value="[% current_user_email %]" />
-                [% FOREACH roomnumber IN selected_room_no %]
-                <p>[% 'Room:' | gettext %] <input type="text" size="36" value="[% roomnumber.roomnumber %]" readonly="true" /></p>
-                <input type="hidden" name="confirmed-roomnumber" value="[% roomnumber.roomnumber %]" />
-                [% END %]
-                <p style="float:right;">[% 'Time:' | gettext %] <input type="text" size="36" value="[% displayed_time %]" readonly="true" /></p>
-                <input type="hidden" name="confirmed-displayed-start" value="[% displayed_start %]" />
-                <input type="hidden" name="confirmed-displayed-end" value="[% displayed_end %]" />
-                <input type="hidden" name="confirmed-room-id" value="[% selected_room_id %]" />
-                <input type="hidden" name="confirmed-start" value="[% selected_start_time %]" />
-                <input type="hidden" name="confirmed-end" value="[% selected_end_time %]" />
-                <input type="hidden" name="op" value="reservation-confirmed" />
-                [% IF Koha.Preference('KohaAdminEmailAddress') %]
-                <!-- Checked by default -->
-                <!-- Checked by default -->
-                    <p>
-						<input type="checkbox" id="send-confirmation-copy" name="send-confirmation-copy" value="1" checked> 
-						<label for="send-confirmation-copy">[% 'Send a copy as confirmation' | gettext %]</label>
-					</p>
-                [% END # IF Koha.Preference('KohaAdminEmailAddress') %]
-                <p><input type="submit" name="confirmationSubmit" value="[% 'Confirm' | gettext %]" /><input type="submit" name="confirmationSubmit" value="[% 'Start over' | gettext %]" /></p>
-            </fieldset>
-        </form>
-    [% ELSIF op == 'reservation-confirmed' %]
-        <script type="text/javascript">
-            function close_window() {
-                close();
-            }
-        </script>
-        [% IF invalid_booking == 1 %]
-            <h1>[% 'Sorry!' | gettext %]</h1>
-            <br />
-            <h2>[% 'It appears there was a problem completing your reservation' | gettext %]
-                <br />
-                [% 'This is most likely due to someone else placing a reservation for a conflicting time slot.' | gettext %]
-            </h2>
+      [% END # IF are_rooms_available == 1 %]
+  [% ELSIF op == 'room-selection-confirmation' %]
+    <form method="post" action="#">
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
+      <h4>[% 'Confirmation' | gettext %]</h4>
 
-            <form method="post" action="#">
-                <input type="hidden" name="class" value="[% CLASS %]" />
-                <input type="hidden" name="method" value="[% METHOD %]" />
-                <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
-                <button>[% 'Click here to search again' | gettext %]</button>
-            </form>
-        [% ELSE %]
-            <h1>[% 'Congratulations! Your reservation is confirmed!' | gettext %]</h1>
-            <br />
-            [% IF SENT == '1' %]
-            <h3>[% 'An email confirmation has been sent to' | gettext %] [% patron_email %]!</h3>
-            [% END %]
-            <form method="post" action="#">
-                <input type="hidden" name="class" value="[% CLASS %]" />
-                <input type="hidden" name="method" value="[% METHOD %]" />
-                <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
-                <button onclick="close_window(); return false;">[% 'Back to patron record' | gettext %]</button>
-            </form>
-        [% END # IF invalid_booking == 1 %]
+      <div class="lmsr-action-table">
+        <label>[% 'Name:' | gettext %]</label>
+        <div class="lmsr-data-picker">
+          <input type="text" value="[% current_user %]" readonly="true" />
+        </div>
 
-    [% END %]
+        <br>
 
+        <input type="hidden" name="confirmed-user" value="[% current_user %]" />
+        <input type="hidden" name="confirmed-user-fn" value="[% current_user_fn %]" />
+        <input type="hidden" name="confirmed-user-ln" value="[% current_user_ln %]" />
+        <label>[% 'Email:' | gettext %]</label>
+        <div class="lmsr-data-picker">
+          <input type="text" value="[% current_user_email %]" readonly="true" />
+        </div>
+        <input type="hidden" name="confirmed-email" value="[% current_user_email %]" />
+
+        <br>
+        [% FOREACH roomnumber IN selected_room_no %]
+          <label>[% 'Room:' | gettext %]</label>
+          <div class="lmsr-data-picker">
+            <input type="text" value="[% roomnumber.roomnumber %]" readonly="true" />
+          </div>
+          <input type="hidden" name="confirmed-roomnumber" value="[% roomnumber.roomnumber %]" />
+
+          <br>
+        [% END %]
+        <label>[% 'Time:' | gettext %]</label> 
+        <div class="lmsr-data-picker">
+          <input type="text" value="[% displayed_time %]" readonly="true" />
+        </div>
+
+        <br>
+
+        <input type="hidden" name="confirmed-displayed-start" value="[% displayed_start %]" />
+        <input type="hidden" name="confirmed-displayed-end" value="[% displayed_end %]" />
+        <input type="hidden" name="confirmed-room-id" value="[% selected_room_id %]" />
+        <input type="hidden" name="confirmed-start" value="[% selected_start_time %]" />
+        <input type="hidden" name="confirmed-end" value="[% selected_end_time %]" />
+        <input type="hidden" name="op" value="reservation-confirmed" />
+        [% IF Koha.Preference('KohaAdminEmailAddress') %]
+          <!-- Checked by default -->
+          <input type="checkbox" id="send-confirmation-copy" name="send-confirmation-copy" value="1" checked> 
+          <label for="send-confirmation-copy">[% 'Send a copy as confirmation' | gettext %]</label>
+        [% END # IF Koha.Preference('KohaAdminEmailAddress') %]
+        
+        <hr>
+
+        <input type="submit" name="confirmationSubmit" value="[% 'Confirm' | gettext %]" />
+        <input type="submit" name="confirmationSubmit" value="[% 'Start over' | gettext %]" />
+      </div>
+    </form>
+  [% ELSIF op == 'reservation-confirmed' %]
+    <script type="text/javascript">
+        function close_window() {
+            close();
+        }
+    </script>
+    [% IF invalid_booking == 1 %]
+      <h1>[% 'Sorry!' | gettext %]</h1>
+      <br />
+      <h2>[% 'It appears there was a problem completing your reservation' | gettext %]<br />
+        [% 'This is most likely due to someone else placing a reservation for a conflicting time slot.' | gettext %]
+      </h2>
+
+      <form method="post" action="#">
+        <input type="hidden" name="class" value="[% CLASS %]" />
+        <input type="hidden" name="method" value="[% METHOD %]" />
+        <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
+        <button>[% 'Click here to search again' | gettext %]</button>
+      </form>
+    [% ELSE %]
+      <h1>[% 'Congratulations! Your reservation is confirmed!' | gettext %]</h1>
+      <br />
+      [% IF SENT == '1' %]
+        <h3>[% 'An email confirmation has been sent to' | gettext %] [% patron_email %]!</h3>
+      [% END %]
+      <form method="post" action="#">
+        <input type="hidden" name="class" value="[% CLASS %]" />
+        <input type="hidden" name="method" value="[% METHOD %]" />
+        <input type="hidden" name="borrowernumber" value="[% borrowernumber %]" />
+        <button onclick="close_window(); return false;">[% 'Back to patron record' | gettext %]</button>
+      </form>
+    [% END # IF invalid_booking == 1 %]
+
+  [% END %]
 
 [% INCLUDE 'intranet-bottom.inc' %]
 [% INCLUDE calendar.inc %]
-<script type="text/javascript">
-
-    $(document).ready(function() {
-        $(".datefield").prop("readOnly", true);
-    });
-
-    // http://jqueryui.com/demos/datepicker/#date-range
-    var requestdates = $( "#availability-search-start-date, #availability-search-end-date" ).datepicker({
-        minDate: 0,
-        changeMonth: true,
-        numberOfMonths: 1,
-        onSelect: function( selectedDate ) {
-            var option = this.id == "availability-search-start-date" ? "minDate" : "maxDate",
-                instance = $( this ).data( "datepicker" );
-                date = $.datepicker.parseDate(
-                    instance.settings.dateFormat ||
-                    $.datepicker._defaults.dateFormat,
-                    selectedDate, instance.settings );
-            requestdates.not( this ).datepicker("option", option, date);
-        }
-    });
-</script>
         

@@ -2,329 +2,24 @@
 
 [% INCLUDE 'doc-head-open.inc' %]
   <title>[% "Koha: Room Reservations Plugin: Configuration" | gettext %]</title>
+  <link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/css/main.css">
+  <script type="text/javascript" src="/api/v1/contrib/roomreservations/static/js/main.js"></script>
 [% INCLUDE 'doc-head-close.inc' %]
-  <style type="text/css">
-    :root {
-      --shadow-sm: rgba(0, 0, 0, 0.18) 0px 2px 4px;
-      --shadow-md: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
-      --shadow-lg: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-      --shadow-hv: rgba(0, 0, 0, 0.08) 0px 4px 12px;
-    }
-
-    div#doc3>form,
-    div#doc3>div {
-      display: flex;
-      flex-direction: column;
-      width: 50%;
-      margin: 0 auto;
-    }
-
-    div#doc3>h3 {
-      margin: 0.5em 0.8em;
-    }
-
-    .fieldset-auto-width {
-      text-align: center;
-      display: inline-block;
-    }
-
-    input[name="submit-opening-hours"] {
-      margin-right: 0px;
-      margin-left: auto;
-    }
-
-    .table-header-bold {
-      font-weight: bold;
-    }
-
-    .table-row-centered {
-      text-align: center;
-    }
-
-    button {
-      background: none !important;
-      color: #0000EE;
-      border: none;
-      padding: 0 !important;
-      font: inherit;
-      cursor: pointer;
-    }
-
-    .lmsr-action-table {
-      padding: 1em;
-      border: rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      box-shadow: var(--shadow-md);
-    }
-
-    .lmsr-action-table-delete-reservations {
-      display: grid;
-      grid-template-columns: 2em repeat(4, 1fr);
-      grid-template-rows: auto auto;
-      justify-items: stretch;
-      align-items: stretch;
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
-      border-right: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .lmsr-action-table-delete-opening-hours,
-    .lmsr-action-table-delete-blackouts {
-      display: grid;
-      grid-template-columns: 2em repeat(3, 1fr);
-      grid-template-rows: auto auto;
-      /* grid-column-gap: 0.5em;
-      grid-row-gap: 0.5em; */
-      justify-items: stretch;
-      align-items: stretch;
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
-      border-right: 1px solid rgba(0, 0, 0, 0.1);
-    }
-    .lmsr-action-table-delete-opening-hours span,
-    .lmsr-action-table-delete-reservations span,
-    .lmsr-action-table-delete-blackouts span {
-      padding: 0.5em;
-      border-left: 1px solid rgba(0, 0, 0, 0.1);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .lmsr-action-table-delete-opening-hours input,
-    .lmsr-action-table-delete-reservations input,
-    .lmsr-action-table-delete-blackouts input,
-    .lmsr-action-table-delete-opening-hours select,
-    .lmsr-action-table-delete-reservations select,
-    .lmsr-action-table-delete-blackouts select,
-    .lmsr-action-table-body-item-selector {
-      margin: 0.375em !important;
-    }
-
-    .lmsr-action-table-header-item,
-    .lmsr-action-table-body-item {
-      padding: 0.5em;
-    }
-
-    .lmsr-button-close,
-    .lmsr-button-close *,
-    .lmsr-button-close:disabled,
-    .lmsr-button-close:active {
-      border: none;
-      background: none;
-      color: darkslategrey;
-    }
-
-    .lmsr-content-block {
-      max-width: 300px;
-    }
-
-    .lmsr-content-main {
-      width: 50%;
-      display: flex;
-      flex-direction: column;
-      gap: 2em;
-    }
-
-    .lmsr-menu {
-      display: block !important;
-      position: absolute;
-      left: 0;
-      top: 25%;
-      width: 15% !important;
-      margin: 0.5em 0.8em;
-    }
-
-    .lmsr-menu-input,
-    .lmsr-visibility-hidden {
-      visibility: hidden;
-    }
-
-    .lmsr-menu-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1em;
-    }
-
-    .lmsr-menu-list-add-opening-hours,
-    .lmsr-menu-list-add-full-blackout,
-    .lmsr-menu-list-add-partial-blackout {
-      padding: 0 1em;
-    }
-
-    .lmsr-menu-list-add-opening-hours>div,
-    .lmsr-menu-list-add-full-blackout>div,
-    .lmsr-menu-list-add-partial-blackout>div {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .lmsr-menu-list-heading {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      padding: 0.5em 0;
-    }
-
-    .lmsr-menu-list-heading,
-    .lmsr-menu-list-item {
-      list-style-type: none;
-    }
-
-    .lmsr-menu-list-item {
-      color: #004D99;
-    }
-
-    .lmsr-menu-list-item:hover {
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    .lmsr-time-picker-add-opening-hours {
-      display: flex;
-      justify-content: space-evenly;
-    }
-
-    .lmsr-toast {
-      position: absolute;
-      top: 25%;
-      right: 1em;
-      width: 200px;
-      border-radius: 7px;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      box-shadow: var(--shadow-hv);
-    }
-
-    .lmsr-toast-body,
-    .lmsr-toast-header {
-      padding: 0.5em;
-    }
-
-    .lmsr-toast-header {
-      width: 100%;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    select,
-    input[type="submit"],
-    input[type="time"],
-    input[type="date"] {
-      border-radius: 7px;
-      border-color: rgba(0, 0, 0, 0.1);
-    }
-  </style>
-  <script type="text/javascript">
-    const loadSelectedAction = () => { document.getElementById('actionSelectedBtn').click(); };
-
-    const closeToast = () => {
-      const lmsrToast = document.querySelector('.lmsr-toast');
-      const lmsrToastButtonClose = document.querySelector('.lmsr-toast-button-close');
-      lmsrToastButtonClose.addEventListener('click', () => { lmsrToast.remove(); });
-      lmsrToastButtonClose.disabled = false;
-      window.setTimeout(() => { lmsrToast.remove(); }, 3000);
-    };
-
-    const validateOpeningHours = (e) => {
-      const start = document.forms.OpeningHoursForm['opening-from'].value;
-      const end = document.forms.OpeningHoursForm['opening-to'].value;
-
-      const weekdays = document.querySelectorAll('input[name="weekdays"]:checked');
-      if (weekdays.length === 0) { e.preventDefault(); ("[% 'Please select at least one weekday.' | gettext %]"); return false; }
-      if (end <= start || start === 0 || end === 0) { e.preventDefault(); ("[% 'Please select valid start and end time.' | gettext %]"); return false; }
-    };
-
-    const validateBookingAction = (e) => {
-      const action = document.forms.manageBookingsForm['manage-bookings-action'].value;
-      const ids = document.getElementsByName('manage-bookings-id');
-
-      let checked = 0;
-      console.log(ids);
-      ids.forEach((id) => {
-        if (id.checked) { checked += 1; }
-      });
-
-      if (checked !== 1) { e.preventDefault(); alert('Please make a selection to continue.'); return false; }
-      if (action === '') { e.preventDefault(); alert('Please select an action to continue.'); return false; }
-    };
-
-    const validateManageBlackouts = (e) => {
-      const actionChoice = document.forms.manageBlackoutsForm['manage-blackouts-action'].value;
-      if (actionChoice === '') { e.preventDefault(); alert("[% 'Please select an action.' | gettext %]"); return false; }
-    };
-
-    const validateDate = (dateStr) => {
-      // const regExp = /^(\d{4})-(\d\d?)-(\d\d?)$/;
-      // const matches = dateStr.match(regExp);
-      // console.log(matches);
-      // let isValid = matches;
-      // const maxDate = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-      // if (matches) {
-      //   const year = parseInt(matches[1], 10);
-      //   const month = parseInt(matches[2], 10);
-      //   const date = parseInt(matches[3], 10);
-
-      //   isValid = month <= 12 && month > 0;
-      //   isValid &= date <= maxDate[month] && date > 0;
-
-      //   const leapYear = (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
-      //   isValid &= month != 2 || leapYear || date <= 28;
-      // }
-
-      // return isValid;
-      return true;
-    };
-
-    const validateFullBlackout = (e) => {
-      const startDate = document.forms.fullBlackoutForm['blackout-start-date'].value;
-      const endDate = document.forms.fullBlackoutForm['blackout-end-date'].value;
-      const rooms = document.getElementsByName('current-room-blackout');
-      let roomChecked = false;
-
-      console.log(startDate, endDate);
-
-      if (!validateDate(startDate)) { e.preventDefault(); alert("[% 'Start date is required.' | gettext %]"); return false; }
-      if (!validateDate(endDate)) { e.preventDefault(); alert("[% 'End date is required.' | gettext %]"); return false; }
-
-      rooms.forEach((room) => {
-        if (room.checked) { roomChecked = true; }
-      });
-
-      if (!roomChecked) { e.preventDefault(); alert("[% 'Please select one or more rooms.' | gettext %]"); return false; }
-    };
-
-    const validatePartialBlackout = (e) => {
-      const blackoutStartTime = document.forms.partialBlackoutForm['blackout-start-time'].value;
-      const blackoutEndTime = document.forms.partialBlackoutForm['blackout-end-time'].value;
-      const rooms = document.getElementsByName('current-room-blackout');
-      let blackoutDate = document.forms.partialBlackoutForm['blackout-date'].value;
-      console.log(blackoutDate);
-      let roomChecked = false;
-
-      if (!validateDate(blackoutDate)) { e.preventDefault(); alert('Date is required.'); return false; }
-
-      // convert date format from mm/dd/yyyy to yyyy-mm-dd
-      blackoutDate = blackoutDate.replace(/(\d\d)\/(\d\d)\/(\d{4})/, '$3-$1-$2');
-
-      // timestamp of MySQL type DATETIME
-      const startTimestamp = `${blackoutDate}  ${blackoutStartTime}`;
-      const endTimestamp = `${blackoutDate} ${blackoutEndTime}`;
-
-      // determines if invalid start/end values were entered
-      if (startTimestamp >= endTimestamp) { e.preventDefault(); alert("[% 'Please select a valid start and end time!' | gettext %]"); return false; }
-
-      rooms.forEach((room) => {
-        if (room.checked) { roomChecked = true; }
-      });
-
-      if (!roomChecked) { e.preventDefault(); alert("[% 'Please select one or more rooms.' | gettext %]"); return false; }
-    };
-
-    const setBlackoutValueOnChange = (e) => { console.log(e.target.value); e.target.value = e.target.value; console.log(e.target.value); };
-  </script>
 </head>
 
 <body>
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
-<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext%]</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> &rsaquo; [% 'Room Reservations' | gettext %] &rsaquo; [% 'Tool' | gettext %]</div>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
+    <li class="breadcrumb-item"><a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a></li>
+    <li class="breadcrumb-item active"><a href="#">[% 'Room Reservations' | gettext %]</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Tool' | gettext %]</a></li>
+  </ol>
+</nav>
+
 <div id="doc3">
 
   <!-- We can access our own plugins resource files using the PLUGIN_PATH variable. -->
@@ -363,7 +58,7 @@
         // to automatically "load" the selected
         // action
         window.onload = function () {
-            loadSelectedAction();
+          RoomReservationBundle.loadSelectedAction();
         };
     </script>
     <form method="post" action="#">
@@ -400,7 +95,7 @@
                 <p>[% 'There was a problem deleting the selected opening hours. Please try again' | gettext %]</p>
               </div>
             </div>
-            <script>closeToast();</script>
+            <script>RoomReservationBundle.closeToast();</script>
           [% ELSIF deleted == 1 %]
             <div class="lmsr-toast">
               <div class="lmsr-toast-header">
@@ -414,7 +109,7 @@
                 <p>[% 'Selected opening hours deleted successfully' | gettext %]</p>
               </div>
             </div>
-            <script>closeToast();</script>
+            <script>RoomReservationBundle.closeToast();</script>
           [% END # IF deleted %]
   
           <h4>[% 'Delete opening hours' | gettext %]</h4>
@@ -486,7 +181,7 @@
         <script>
           const openingHoursForm = document.querySelector('form[name="OpeningHoursForm"]');
           const inputSubmitOpeningHours = document.querySelector('input[name="submit-opening-hours"]');
-          openingHoursForm.addEventListener('submit', validateOpeningHours);
+          openingHoursForm.addEventListener('submit', RoomReservationBundle.validateOpeningHours);
           inputSubmitOpeningHours.disabled = false;
         </script>
       </div>
@@ -514,7 +209,7 @@
                 <p>[% 'There was a problem deleting the selected booking. Please try again' | gettext %]</p>
               </div>
             </div>
-            <script>closeToast();</script>
+            <script>RoomReservationBundle.closeToast();</script>
           [% ELSIF deleted == 0 %]
             <div class="lmsr-toast">
               <div class="lmsr-toast-header">
@@ -528,7 +223,7 @@
                 <p>[% 'Selected booking deleted successfully' | gettext %]</p>
               </div>
             </div>
-            <script>closeToast();</script>
+            <script>RoomReservationBundle.closeToast();</script>
           [% END # IF deleted %]
           [% IF bookings %]
     
@@ -566,7 +261,7 @@
         <script>
           const manageBookingsForm = document.querySelector('form[name="manageBookingsForm"]');
           const inputSubmitManageBookings = document.querySelector('input[name="submit-manage-bookings"]');
-          manageBookingsForm.addEventListener('submit', validateBookingAction);
+          manageBookingsForm.addEventListener('submit', RoomReservationBundle.validateBookingAction);
           inputSubmitManageBookings.disabled = false;
         </script>
       </div>
@@ -629,7 +324,7 @@
           <script>
             const manageBlackoutsForm = document.querySelector('form[name="manageBlackoutsForm"]');
             const inputSubmitManageBlackouts = document.querySelector('input[name="manage-blackouts-submit"]');
-            manageBlackoutsForm.addEventListener('submit', validateManageBlackouts);
+            manageBlackoutsForm.addEventListener('submit', RoomReservationBundle.validateManageBlackouts);
             inputSubmitManageBlackouts.disabled = false;
           </script>
     
@@ -674,8 +369,8 @@
               <script>
                 const inputFullBlackoutStartDate = document.getElementById('blackout-start-date');
                 const inputFullBlackoutEndDate = document.getElementById('blackout-end-date');
-                inputFullBlackoutStartDate.addEventListener('change', setBlackoutValueOnChange);
-                inputFullBlackoutEndDate.addEventListener('change', setBlackoutValueOnChange);
+                inputFullBlackoutStartDate.addEventListener('change', RoomReservationBundle.setBlackoutValueOnChange);
+                inputFullBlackoutEndDate.addEventListener('change', RoomReservationBundle.setBlackoutValueOnChange);
               </script>
             </div>
             
@@ -711,7 +406,7 @@
         <script>
           const fullBlackoutForm = document.querySelector('form[name="fullBlackoutForm"]');
           const inputSubmitFullBlackout = document.querySelector('input[name="submit-full-blackout"]');
-          fullBlackoutForm.addEventListener('submit', validateFullBlackout);
+          fullBlackoutForm.addEventListener('submit', RoomReservationBundle.validateFullBlackout);
           inputSubmitFullBlackout.disabled = false;
         </script>
       </div>
@@ -741,9 +436,9 @@
                 const inputPartialBlackoutDate = document.getElementById('blackout-date');
                 const inputPartialBlackoutStartTime = document.getElementById('blackout-start-time');
                 const inputPartialBlackoutEndTime = document.getElementById('blackout-end-time');
-                inputPartialBlackoutDate.addEventListener('change', setBlackoutValueOnChange);
-                inputPartialBlackoutStartTime.addEventListener('change', setBlackoutValueOnChange);
-                inputPartialBlackoutEndTime.addEventListener('change', setBlackoutValueOnChange);
+                inputPartialBlackoutDate.addEventListener('change', RoomReservationBundle.setBlackoutValueOnChange);
+                inputPartialBlackoutStartTime.addEventListener('change', RoomReservationBundle.setBlackoutValueOnChange);
+                inputPartialBlackoutEndTime.addEventListener('change', RoomReservationBundle.setBlackoutValueOnChange);
               </script>
             </div>
             
@@ -779,7 +474,7 @@
         <script>
           const partialBlackoutForm = document.querySelector('form[name="partialBlackoutForm"]');
           const inputSubmitPartialBlackout = document.querySelector('input[name="submit-partial-blackout"]');
-          partialBlackoutForm.addEventListener('submit', validatePartialBlackout);
+          partialBlackoutForm.addEventListener('submit', RoomReservationBundle.validatePartialBlackout);
           inputSubmitPartialBlackout.disabled = false;
         </script>
       </div>
@@ -808,7 +503,6 @@
       actionsMenu.forEach((action) => {
           action.addEventListener('click', (e) => {
               actionsInput.setAttribute('value', `${e.target.dataset.value}`);
-              console.log(actionsInput.value);
               actionsSubmit.click();
           });
       });
