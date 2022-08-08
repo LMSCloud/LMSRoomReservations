@@ -142,17 +142,214 @@
     return true;
   }
 
+  function validateSavedRooms(e) {
+    const savedRoomsAction = document.forms.saved_rooms.saved_rooms_action.value;
+    if (savedRoomsAction === 'null') { e.preventDefault(); alert("[% 'Please choose an action' | gettext %]"); return false; }
+    if (savedRoomsAction === 'delete') {
+      const isConfirmedDelete = !!confirm(" [% 'Are you sure you want to remove the selected room?' %]");
+      if (isConfirmedDelete) { return true; }
+
+      e.preventDefault();
+      return false;
+    }
+
+    const rooms = document.getElementsByName('selectedRoom');
+    let roomValue = false;
+
+    rooms.forEach((room) => {
+      if (room.checked) { roomValue = true; }
+    });
+
+    if (!roomValue) { e.preventDefault(); alert("[% 'Please select a room' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateConfigActions(e) {
+    const configAction = document.forms.config_actions.config_actions_selection.value;
+    if (configAction === 'null') { e.preventDefault(); alert("[% 'Please choose an action' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateDisplayRooms(e) {
+    const rooms = document.getElementsByName('selected-displayed-room');
+    let roomChecked = false;
+
+    rooms.forEach((room) => {
+      if (room.checked) { roomChecked = true; }
+    });
+
+    if (!roomChecked) { e.preventDefault(); alert("[% 'Select a room to display its details or select another action.' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateMaxFutureDate(e) {
+    const num = document.getElementById('max-days-field').value;
+    if (Number.isNaN(num)) { e.preventDefault(); alert("[% 'Please enter a valid number!' | gettext %]"); return false; }
+    if (num === '') { e.preventDefault(); alert("[% 'Please enter a valid number!' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateMaxTime(e) {
+    const numHours = document.getElementById('max-time-hours-field').value;
+    if (numHours === 'null') { e.preventDefault(); alert("[% 'Please select a valid number!' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateLimitRestriction(e) {
+    const limitCount = document.getElementById('reservations-limit-field').value;
+    if (limitCount === 'null') { e.preventDefault(); alert('Please select a value!'); return false; }
+
+    return true;
+  }
+
+  function validateRestrictCategories(e) {
+    const numHours = document.getElementById('max-time-hours-field').value;
+    if (numHours === 'null') { e.preventDefault(); alert("[% 'Please select a valid number!' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateAddRooms(e) {
+    const roomname = document.forms.addRoomForm['add-room-roomnumber'].value;
+    const maxcapacity = document.forms.addRoomForm['add-room-maxcapacity'].value;
+    const equipment = document.getElementsByName('selected-equipment');
+
+    if (roomname === '') { e.preventDefault(); alert("[% 'Please enter a roomname' | gettext %]"); return false; }
+    if (maxcapacity === '') { e.preventDefault(); alert("[% 'Please enter a max capacity for the room' | gettext %]"); return false; }
+
+    let equipmentChecked = false;
+    equipment.forEach((item) => {
+      if (item.checked) {
+        equipmentChecked = true;
+      }
+    });
+
+    if (!equipmentChecked) { e.preventDefault(); alert("[% 'Select room equipment. If no equipment then check `none`' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateEditRooms(e) {
+    const editChoice = document.forms.editRoomsForm['edit-rooms-choice'].value;
+    if (editChoice === '') { e.preventDefault(); alert("[% 'Please select an edit action.' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateEditRoomsRoom(e) {
+    const roomname = document.forms.editRoomDetails['edit-rooms-room-roomnumber'].value;
+    const maxcapacity = document.forms.editRoomDetails['edit-rooms-room-maxcapacity'].value;
+    if (roomname === '') { e.preventDefault(); alert("[% 'Room Name cannot be blank.' | gettext %]"); return false; }
+    if (maxcapacity === '') { e.preventDefault(); alert("[% 'Max Capacity cannot be blank.' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function validateEditRoomsEquipment(e) {
+    const equipment = document.getElementsByName('edit-rooms-current-equipment');
+    let equipmentChecked = false;
+
+    equipment.forEach((item) => {
+      if (item.checked) {
+        equipmentChecked = true;
+      }
+    });
+
+    if (!equipmentChecked) { e.preventDefault(); alert("[% 'Room equipment cannot be empty. If no equipment then check `none`' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function deleteRoomConfirmation(e) {
+    const rooms = document.getElementsByName('delete-room-radio-button');
+    let roomChecked = false;
+
+    rooms.forEach((room) => {
+      if (room.checked) {
+        roomChecked = true;
+      }
+    });
+
+    if (!roomChecked) { e.preventDefault(); alert("[% 'Select a room to delete.' | gettext %]"); return false; }
+    const isConfirmedDelete = !!confirm("[% 'Are you sure you want to delete the selected room?' | gettext %]");
+    if (roomChecked && isConfirmedDelete) { return true; }
+
+    e.preventDefault();
+    return false;
+  }
+
+  function validateAddEquipment(e) {
+    const equipmentname = document.forms.addEquipment['add-equipment-text-field'].value;
+    if (equipmentname === '') { e.preventDefault(); alert("[% 'Equipment name cannot be blank.' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function editEquipmentValidation(e) {
+    const equipment = document.getElementsByName('edit-equipment-radio-button');
+    let equipmentChecked = false;
+
+    equipment.forEach((item) => {
+      if (item.checked) {
+        equipmentChecked = true;
+      }
+    });
+
+    if (!equipmentChecked) { e.preventDefault(); alert("[% 'Select equipment to edit.' | gettext %]"); return false; }
+
+    return true;
+  }
+
+  function deleteEquipmentConfirmation(e) {
+    const equipment = document.getElementsByName('delete-equipment-radio-button');
+    let equipmentChecked = false;
+
+    equipment.forEach((item) => {
+      if (item.checked) {
+        equipmentChecked = true;
+      }
+    });
+
+    if (!equipmentChecked) { e.preventDefault(); alert("[% 'Select equipment to delete.' | gettext %]"); return false; }
+
+    const isConfirmedDelete = !!confirm("[% 'Are you sure you want to delete the selected equipment?' | gettext %]");
+    if (isConfirmedDelete) { return true; }
+
+    e.preventDefault();
+    return false;
+  }
+
   exports.closeToast = closeToast;
+  exports.deleteEquipmentConfirmation = deleteEquipmentConfirmation;
+  exports.deleteRoomConfirmation = deleteRoomConfirmation;
+  exports.editEquipmentValidation = editEquipmentValidation;
   exports.loadSelectedAction = loadSelectedAction;
   exports.setBlackoutValueOnChange = setBlackoutValueOnChange;
+  exports.validateAddEquipment = validateAddEquipment;
+  exports.validateAddRooms = validateAddRooms;
   exports.validateAvailabilitySearchForBookas = validateAvailabilitySearchForBookas;
   exports.validateAvailabilitySearchResultsForBookas = validateAvailabilitySearchResultsForBookas;
   exports.validateBookingAction = validateBookingAction;
+  exports.validateConfigActions = validateConfigActions;
   exports.validateDate = validateDate;
+  exports.validateDisplayRooms = validateDisplayRooms;
+  exports.validateEditRooms = validateEditRooms;
+  exports.validateEditRoomsEquipment = validateEditRoomsEquipment;
+  exports.validateEditRoomsRoom = validateEditRoomsRoom;
   exports.validateFullBlackout = validateFullBlackout;
+  exports.validateLimitRestriction = validateLimitRestriction;
   exports.validateManageBlackouts = validateManageBlackouts;
+  exports.validateMaxFutureDate = validateMaxFutureDate;
+  exports.validateMaxTime = validateMaxTime;
   exports.validateOpeningHours = validateOpeningHours;
   exports.validatePartialBlackout = validatePartialBlackout;
+  exports.validateRestrictCategories = validateRestrictCategories;
+  exports.validateSavedRooms = validateSavedRooms;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
