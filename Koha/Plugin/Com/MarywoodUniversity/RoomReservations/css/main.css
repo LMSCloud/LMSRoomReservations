@@ -97,7 +97,10 @@ input[name="submit-opening-hours"] {
 
 select,
 input[type="time"],
-input[type="date"] {
+input[type="date"],
+input[type="number"],
+input[type="text"],
+textarea {
   border-radius: 7px;
   border-color: var(--seperator-light);
 }
@@ -109,20 +112,12 @@ input[type="date"] {
   box-shadow: var(--shadow-md);
 }
 
-.lmsr-action-table-delete-reservations {
-  display: grid;
-  grid-template-columns: 2em repeat(4, 1fr);
-  grid-template-rows: auto auto;
-  justify-items: stretch;
-  align-items: stretch;
-  border-top: 1px solid var(--seperator-light);
-  border-right: 1px solid var(--seperator-light);
-}
-
+.lmsr-action-table-bookas,
+.lmsr-action-table-delete-reservations,
 .lmsr-action-table-delete-opening-hours,
-.lmsr-action-table-delete-blackouts {
+.lmsr-action-table-delete-blackouts,
+.lmsr-action-table-display-rooms {
   display: grid;
-  grid-template-columns: 2em repeat(3, 1fr);
   grid-template-rows: auto auto;
   justify-items: stretch;
   align-items: stretch;
@@ -131,19 +126,28 @@ input[type="date"] {
 }
 
 .lmsr-action-table-bookas {
-  display: grid;
   grid-template-columns: 2em repeat(2, 1fr);
-  grid-template-rows: auto auto;
-  justify-items: stretch;
-  align-items: stretch;
-  border-top: 1px solid var(--seperator-light);
-  border-right: 1px solid var(--seperator-light);
 }
+
+.lmsr-action-table-delete-reservations {
+  grid-template-columns: 2em repeat(4, 1fr);
+}
+
+.lmsr-action-table-delete-opening-hours,
+.lmsr-action-table-delete-blackouts {
+  grid-template-columns: 2em repeat(3, 1fr);
+}
+
+.lmsr-action-table-display-rooms {
+  grid-template-columns: 2em 1fr;
+}
+
 
 .lmsr-action-table-delete-opening-hours span,
 .lmsr-action-table-delete-reservations span,
 .lmsr-action-table-delete-blackouts span,
-.lmsr-action-table-bookas span {
+.lmsr-action-table-bookas span,
+.lmsr-action-table-display-rooms span {
   padding: 0.5em;
   border-left: 1px solid var(--seperator-light);
   border-bottom: 1px solid var(--seperator-light);
@@ -153,10 +157,12 @@ input[type="date"] {
 .lmsr-action-table-delete-reservations input,
 .lmsr-action-table-delete-blackouts input,
 .lmsr-action-table-bookas input,
+.lmsr-action-table-display-rooms input,
 .lmsr-action-table-delete-opening-hours select,
 .lmsr-action-table-delete-reservations select,
 .lmsr-action-table-delete-blackouts select,
 .lmsr-action-table-bookas select,
+.lmsr-action-table-display-rooms select,
 .lmsr-action-table-body-item-selector {
   margin: 0.375em !important;
 }
@@ -222,9 +228,10 @@ input[type="date"] {
 }
 
 .lmsr-calendar-dayofmonth {
-  position: absolute;
+  position: sticky;
   top: 0.25em;
-  right: 0.25em;
+  text-align: right;
+  padding: 0 0.25em;
 }
 
 .lmsr-calendar-header {
@@ -257,13 +264,19 @@ input[type="date"] {
 }
 
 .lmsr-data-picker,
+.lmsr-number-picker,
+.lmsr-picker,
 .lmsr-time-picker-add-opening-hours {
   display: flex;
   justify-content: space-evenly;
 }
 
-.lmsr-data-picker > input,
-.lmsr-data-picker > label {
+.lmsr-data-picker,
+.lmsr-number-picker,
+.lmsr-picker > input,
+.lmsr-data-picker,
+.lmsr-number-picker,
+.lmsr-picker > label {
   flex-grow: 1;
 }
 
@@ -317,14 +330,16 @@ input[type="date"] {
 .lmsr-menu-list-add-opening-hours,
 .lmsr-menu-list-add-full-blackout,
 .lmsr-menu-list-add-partial-blackout,
-.lmsr-menu-list-get-equipment {
+.lmsr-menu-list-get-equipment,
+.lmsr-menu-list-set-max-time {
   padding: 0 1em;
 }
 
 .lmsr-menu-list-add-opening-hours > div,
 .lmsr-menu-list-add-full-blackout > div,
 .lmsr-menu-list-add-partial-blackout > div,
-.lmsr-menu-list-get-equipment > div {
+.lmsr-menu-list-get-equipment > div,
+.lmsr-menu-list-set-max-time > div {
   display: flex;
   justify-content: space-between;
 }
@@ -346,6 +361,30 @@ input[type="date"] {
 .lmsr-menu-list-item:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+
+.lmsr-number-picker,
+.lmsr-picker {
+  flex-direction: column;
+}
+
+.lmsr-number-picker:nth-child(even),
+.lmsr-picker:nth-child(even) {
+  gap: 0.5em;
+}
+
+.lmsr-pill {
+  padding: 0.375em;
+  background-color: darkslategrey;
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  line-height: 2.5em;
+}
+
+.lmsr-pill-checkbox,
+.lmsr-pill-radio {
+  white-space: nowrap;
 }
 
 .lmsr-toast {
@@ -376,6 +415,10 @@ input[type="date"] {
 
 .table-row-centered {
   text-align: center;
+}
+
+textarea {
+  width: 100%;
 }
 
 .ui-tabs.ui-widget.ui-widget-content.ui-corner-all {

@@ -1,5 +1,7 @@
 package Koha::Plugin::Com::MarywoodUniversity::RoomReservations;
 
+use 5.010;
+
 use Modern::Perl;
 
 use base qw(Koha::Plugins::Base);
@@ -32,9 +34,7 @@ use Readonly;
 use feature qw(switch);
 use DateTime;
 
-use Data::Dumper; #FIXME: REMOVE
-
-use Locale::Messages;;
+use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
 
 use Locale::Messages qw(:locale_h :libintl_h);
@@ -47,7 +47,7 @@ use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::
 use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Rooms;
 use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Times;
 
-our $VERSION = "{VERSION}";
+our $VERSION = '{VERSION}';
 
 ## Table names and associated MySQL indexes
 our $ROOMS_TABLE         = 'booking_rooms';
@@ -74,7 +74,7 @@ textdomain q{com.marywooduniversity.roomreservations};
 my $locale_path = abs_path( $self->mbf_path('translations') );
 bindtextdomain q{com.marywooduniversity.roomreservations} => $locale_path;
 
-our $metadata = {
+our $METADATA = {
     name            => get_translation('Room Reservations Plugin'),
     author          => 'Lee Jamison',
     description     => get_translation('This plugin provides a room reservation solution on both intranet and OPAC interfaces.'),
@@ -85,13 +85,13 @@ our $metadata = {
     version         => $VERSION,
 };
 
-our $valid;    # used to check if booking still valid prior to insertion of new booking
+our $VALID;    # used to check if booking still valid prior to insertion of new booking
 
 sub new {
     my ( $class, $args ) = @_;
 
     ## We need to add our metadata here so our base class can access it
-    $args->{'metadata'} = $metadata;
+    $args->{'metadata'} = $METADATA;
     $args->{'metadata'}->{'class'} = $class;
 
     ## Here, we call the 'new' method for our base class
@@ -178,7 +178,7 @@ sub install() {
         # reservations for a patron from circulation.pl
         my $IntranetUserJS = C4::Context->preference('IntranetUserJS');
 
-        $IntranetUserJS =~ s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///xgs;
+        $IntranetUserJS =~ s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///smxg;
 
         $IntranetUserJS .= <<~"EOF";
             /* JS for Koha RoomReservation Plugin
@@ -289,7 +289,7 @@ sub bookas {
 
     my ( $self, $args ) = @_;
 
-    my $cgi      = $self->{'cgi'};
+    $cgi      = $self->{'cgi'};
     my $template = $self->get_template( { file => 'bookas.tt' } );
     $template->param(
         language => C4::Languages::getlanguage($cgi) || 'en',
@@ -321,138 +321,143 @@ sub bookas {
         email          => $member_email,
     );
 
-    if ( $op eq q{} ) {
-        my $equipment = load_all_equipment();
+    given ($op) {
+        when (q{}) {
+            my $equipment = load_all_equipment();
 
-        my $capacities = load_all_max_capacities();
+            my $capacities = load_all_max_capacities();
 
-        $template->param(
-            available_room_equipment => $equipment,
-            all_room_capacities      => $capacities,
-        );
-    }
-    elsif ( $op eq 'availability-search-results' ) {
-        my $start_date = $cgi->param('availability-search-start-date');
-        my $start_time = $cgi->param('availability-search-start-time');
-
-        my $end_date = $cgi->param('availability-search-end-date');
-        my $end_time = $cgi->param('availability-search-end-time');
-
-        my $room_capacity = $cgi->param('availability-search-room-capacity');
-
-        my @equipment = $cgi->param('availability-search-selected-equipment') || ();
-
-        my $event_start = sprintf '%s %s', $start_date, $start_time;
-        my $event_end   = sprintf '%s %s', $end_date,   $end_time;
-
-        # converts '/' to '-'
-        ( my $availability_format_start_date = $start_date ) =~ s/\//\-/smxg;
-        ( my $availability_format_end_date   = $end_date )   =~ s/\//\-/smxg;
-
-        # re-arranges from MM-DD-YYYY to YYYY-MM-DD
-        ( $availability_format_start_date = $availability_format_start_date ) =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/smx;
-        ( $availability_format_end_date   = $availability_format_end_date )   =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/smx;
-
-        # used exclusively for get_available_rooms -- BUG excluding T from the DATETIME start/end field returns wrong results?
-        my $availability_format_start = sprintf '%sT%s', $availability_format_start_date, $start_time;
-        my $availability_format_end   = sprintf '%sT%s', $availability_format_end_date,   $end_time;
-
-        # generates a DateTime object from a string
-        $event_start = dt_from_string($event_start);
-        $event_end   = dt_from_string($event_end);
-
-        my $displayed_event_start = output_pref( { dt => $event_start, dateformat => 'us', timeformat => '12hr' } );
-        my $displayed_event_end   = output_pref( { dt => $event_end,   dateformat => 'us', timeformat => '12hr' } );
-
-        my $availableRooms = get_available_rooms( $availability_format_start, $availability_format_end, $room_capacity, \@equipment );
-
-        # boolean -- returns 1 (one) if true or 0 (zero) if false
-        my $roomsAreAvailable = are_any_rooms_available($availableRooms);
-
-        $template->param(
-            available_rooms     => $availableRooms,
-            are_rooms_available => $roomsAreAvailable,
-            displayed_start     => $displayed_event_start,
-            displayed_end       => $displayed_event_end,
-            event_start_time    => $event_start,
-            event_end_time      => $event_end,
-        );
-    }
-    elsif ( $op eq 'room-selection-confirmation' ) {
-        my $selected_id     = $cgi->param('selected-room-id');
-        my $displayed_start = $cgi->param('displayed-start');
-        my $displayed_end   = $cgi->param('displayed-end');
-        my $event_start     = $cgi->param('event-start-time');
-        my $event_end       = $cgi->param('event-end-time');
-
-        my $displayed_event_time = "$displayed_start - $displayed_end";
-
-        my $user = "$member_firstname $member_surname";
-
-        my $selectedRoomNumber = get_room_number_by_id($selected_id);
-
-        $template->param(
-            op                  => $op,
-            current_user        => $user,
-            current_user_email  => $member_email,
-            selected_room_id    => $selected_id,
-            selected_room_no    => $selectedRoomNumber,
-            displayed_time      => $displayed_event_time,
-            selected_start_time => $event_start,
-            selected_end_time   => $event_end,
-            displayed_start     => $displayed_start,
-            displayed_end       => $displayed_end,
-        );
-    }
-    elsif ( $op eq 'reservation-confirmed' ) {
-        my $roomid   = $cgi->param('confirmed-room-id');
-        my $start    = $cgi->param('confirmed-start');
-        my $end      = $cgi->param('confirmed-end');
-        my $sendCopy = $cgi->param('send-confirmation-copy');
-
-        #my $submitButton = $cgi->param('confirmationSubmit');
-        my $user            = $cgi->param('confirmed-user');
-        my $roomnumber      = $cgi->param('confirmed-roomnumber');
-        my $displayed_start = $cgi->param('confirmed-displayed-start');
-        my $displayed_end   = $cgi->param('confirmed-displayed-end');
-        my $patronEmail     = $cgi->param('confirmed-email');
-
-        $valid = pre_booking_availability_check( $roomid, $start, $end );
-
-        if ($valid) {
-            add_booking( $borrowernumber, $roomid, $start, $end );
-        }
-        else {
-            $template->param( invalid_booking => 1, );
-        }
-
-        if ( $sendCopy eq '1' && $valid ) {
-
-            my $timestamp = get_current_timestamp();
-
-            my $patron = Koha::Patrons->find($borrowernumber);
-
-            my $letter = C4::Letters::GetPreparedLetter(
-                module                 => 'members',
-                letter_code            => 'ROOM_RESERVATION',
-                lang                   => $patron->lang,
-                message_transport_type => 'email',
-                substitute             => {
-                    user                => $user,
-                    room                => $roomnumber,
-                    from                => $displayed_start,
-                    to                  => $displayed_end,
-                    confirmed_timestamp => $timestamp,
-                },
+            $template->param(
+                available_room_equipment => $equipment,
+                all_room_capacities      => $capacities,
             );
+        }
 
-            C4::Letters::EnqueueLetter(
-                {   letter                 => $letter,
-                    borrowernumber         => $borrowernumber,
-                    branchcode             => $patron->branchcode,
+        when ('availability-search-results') {
+            my $start_date = $cgi->param('availability-search-start-date');
+            my $start_time = $cgi->param('availability-search-start-time');
+
+            my $end_date = $cgi->param('availability-search-end-date');
+            my $end_time = $cgi->param('availability-search-end-time');
+
+            my $room_capacity = $cgi->param('availability-search-room-capacity');
+
+            my @equipment = $cgi->param('availability-search-selected-equipment') || ();
+
+            my $event_start = sprintf '%s %s', $start_date, $start_time;
+            my $event_end   = sprintf '%s %s', $end_date,   $end_time;
+
+            # converts '/' to '-'
+            ( my $availability_format_start_date = $start_date ) =~ s/\//\-/smxg;
+            ( my $availability_format_end_date   = $end_date )   =~ s/\//\-/smxg;
+
+            # re-arranges from MM-DD-YYYY to YYYY-MM-DD
+            ( $availability_format_start_date = $availability_format_start_date ) =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/smx;
+            ( $availability_format_end_date   = $availability_format_end_date )   =~ s/(\d\d)-(\d\d)-(\d\d\d\d)/$3-$1-$2/smx;
+
+            # used exclusively for get_available_rooms -- BUG excluding T from the DATETIME start/end field returns wrong results?
+            my $availability_format_start = sprintf '%sT%s', $availability_format_start_date, $start_time;
+            my $availability_format_end   = sprintf '%sT%s', $availability_format_end_date,   $end_time;
+
+            # generates a DateTime object from a string
+            $event_start = dt_from_string($event_start);
+            $event_end   = dt_from_string($event_end);
+
+            my $displayed_event_start = output_pref( { dt => $event_start, dateformat => 'us', timeformat => '12hr' } );
+            my $displayed_event_end   = output_pref( { dt => $event_end,   dateformat => 'us', timeformat => '12hr' } );
+
+            my $availableRooms = get_available_rooms( $availability_format_start, $availability_format_end, $room_capacity, \@equipment );
+
+            # boolean -- returns 1 (one) if true or 0 (zero) if false
+            my $roomsAreAvailable = are_any_rooms_available($availableRooms);
+
+            $template->param(
+                available_rooms     => $availableRooms,
+                are_rooms_available => $roomsAreAvailable,
+                displayed_start     => $displayed_event_start,
+                displayed_end       => $displayed_event_end,
+                event_start_time    => $event_start,
+                event_end_time      => $event_end,
+            );
+        }
+
+        when ('room-selection-confirmation') {
+            my $selected_id     = $cgi->param('selected-room-id');
+            my $displayed_start = $cgi->param('displayed-start');
+            my $displayed_end   = $cgi->param('displayed-end');
+            my $event_start     = $cgi->param('event-start-time');
+            my $event_end       = $cgi->param('event-end-time');
+
+            my $displayed_event_time = "$displayed_start - $displayed_end";
+
+            my $user = "$member_firstname $member_surname";
+
+            my $selectedRoomNumber = get_room_number_by_id($selected_id);
+
+            $template->param(
+                op                  => $op,
+                current_user        => $user,
+                current_user_email  => $member_email,
+                selected_room_id    => $selected_id,
+                selected_room_no    => $selectedRoomNumber,
+                displayed_time      => $displayed_event_time,
+                selected_start_time => $event_start,
+                selected_end_time   => $event_end,
+                displayed_start     => $displayed_start,
+                displayed_end       => $displayed_end,
+            );
+        }
+
+        when ('reservation-confirmed') {
+            my $roomid   = $cgi->param('confirmed-room-id');
+            my $start    = $cgi->param('confirmed-start');
+            my $end      = $cgi->param('confirmed-end');
+            my $sendCopy = $cgi->param('send-confirmation-copy');
+
+            #my $submitButton = $cgi->param('confirmationSubmit');
+            my $user            = $cgi->param('confirmed-user');
+            my $roomnumber      = $cgi->param('confirmed-roomnumber');
+            my $displayed_start = $cgi->param('confirmed-displayed-start');
+            my $displayed_end   = $cgi->param('confirmed-displayed-end');
+            my $patronEmail     = $cgi->param('confirmed-email');
+
+            $VALID = pre_booking_availability_check( $roomid, $start, $end );
+
+            if ($VALID) {
+                add_booking( $borrowernumber, $roomid, $start, $end );
+            }
+            else {
+                $template->param( invalid_booking => 1, );
+            }
+
+            if ( $sendCopy eq '1' && $VALID ) {
+
+                my $timestamp = get_current_timestamp();
+
+                my $patron = Koha::Patrons->find($borrowernumber);
+
+                my $letter = C4::Letters::GetPreparedLetter(
+                    module                 => 'members',
+                    letter_code            => 'ROOM_RESERVATION',
+                    lang                   => $patron->lang,
                     message_transport_type => 'email',
-                }
-            );
+                    substitute             => {
+                        user                => $user,
+                        room                => $roomnumber,
+                        from                => $displayed_start,
+                        to                  => $displayed_end,
+                        confirmed_timestamp => $timestamp,
+                    },
+                );
+
+                C4::Letters::EnqueueLetter(
+                    {   letter                 => $letter,
+                        borrowernumber         => $borrowernumber,
+                        branchcode             => $patron->branchcode,
+                        message_transport_type => 'email',
+                    }
+                );
+            }
         }
     }
 
@@ -463,7 +468,7 @@ sub bookas {
 sub tool {
     my ( $self, $args ) = @_;
 
-    my $cgi      = $self->{'cgi'};
+    $cgi      = $self->{'cgi'};
     my $template = $self->get_template( { file => 'tool.tt' } );
     $template->param(
         language => C4::Languages::getlanguage($cgi) || 'en',
@@ -480,76 +485,79 @@ sub tool {
     my $submit_opening_hours     = $cgi->param('submit-opening-hours')     || q{};    # add partial-day blackout
     my $submit_opening_hours_del = $cgi->param('submit-opening-hours-del') || q{};    # add partial-day blackout
 
-    if (   $op eq 'action-selected'
-        && $tool_action eq 'action-manage-reservations' )
-    {
+    if ( $op eq 'action-selected' ) {
+        given ($tool_action) {
+            when ('action-manage-reservations') {
+                my $bookings = get_all_bookings();
 
-        my $bookings = get_all_bookings();
+                $template->param(
+                    op       => 'manage-reservations',
+                    bookings => $bookings,
+                );
+            }
 
-        $template->param(
-            op       => 'manage-reservations',
-            bookings => $bookings,
-        );
+            when ('action-manage-blackouts') {
+                my $blackouts = get_all_blackout_bookings();
+
+                my $rooms = get_current_room_numbers();
+
+                $template->param(
+                    op            => 'manage-blackouts',
+                    blackouts     => $blackouts,
+                    current_rooms => $rooms,
+                );
+            }
+
+            when ('action-manage-openings') {
+                my $opening_hours = get_opening_hours(1);
+
+                $template->param(
+                    deleted       => -1,
+                    op            => 'manage-openings',
+                    opening_hours => $opening_hours,
+                );
+            }
+        }
     }
-    elsif ($op eq 'action-selected'
-        && $tool_action eq 'action-manage-blackouts' )
-    {
 
-        my $blackouts = get_all_blackout_bookings();
+    if ( $op eq 'manage-openings' ) {
+        if ( $submit_opening_hours_del ne q{} ) {
+            Readonly my $VALUE_DELETED => -1;
+            my $selected   = $cgi->param('manage-openings-action');
+            my $selectedId = $cgi->param('manage-openings-id');
+            my $deleted    = $VALUE_DELETED;
 
-        my $rooms = get_current_room_numbers();
+            if ( $selected eq 'delete' ) {
+                $deleted = delete_opening_hours_by_id($selectedId);
+            }
 
-        $template->param(
-            op            => 'manage-blackouts',
-            blackouts     => $blackouts,
-            current_rooms => $rooms,
-        );
-    }
-    elsif ( $op eq 'action-selected' && $tool_action eq 'action-manage-openings' ) {
+            my $opening_hours = get_opening_hours(1);
 
-        my $opening_hours = get_opening_hours(1);
-
-        $template->param(
-            deleted       => -1,
-            op            => 'manage-openings',
-            opening_hours => $opening_hours,
-        );
-    }
-    elsif ( $op eq 'manage-openings' && $submit_opening_hours_del ne q{} ) {
-
-        my $selected   = $cgi->param('manage-openings-action');
-        my $selectedId = $cgi->param('manage-openings-id');
-        my $deleted    = -1;
-
-        if ( $selected eq 'delete' ) {
-            $deleted = delete_opening_hours_by_id($selectedId);
+            $template->param(
+                deleted       => $deleted,
+                op            => 'manage-openings',
+                opening_hours => $opening_hours,
+            );
         }
 
-        my $opening_hours = get_opening_hours(1);
+        if ( $submit_opening_hours ne q{} ) {
+            my $starttime = $cgi->param('opening-from');
+            my $endtime   = $cgi->param('opening-to');
 
-        $template->param(
-            deleted       => $deleted,
-            op            => 'manage-openings',
-            opening_hours => $opening_hours,
-        );
+            my @days = $cgi->param('weekdays');
+
+            add_opening_hours( \@days, $starttime, $endtime );
+
+            my $opening_hours = get_opening_hours(1);
+
+            $template->param(
+                op            => $op,
+                opening_hours => $opening_hours,
+            );
+        }
     }
-    elsif ( $op eq 'manage-openings' && $submit_opening_hours ne q{} ) {
 
-        my $starttime = $cgi->param('opening-from');
-        my $endtime   = $cgi->param('opening-to');
-
-        my @days = $cgi->param('weekdays');
-
-        add_opening_hours( \@days, $starttime, $endtime );
-
-        my $opening_hours = get_opening_hours(1);
-
-        $template->param(
-            op            => $op,
-            opening_hours => $opening_hours,
-        );
-    }
-    elsif ( $op eq 'manage-reservations' ) {
+    if ( $op eq 'manage-reservations' ) {
         my $selected = $cgi->param('manage-bookings-action');
 
         my $selectedId = $cgi->param('manage-bookings-id');
@@ -576,101 +584,104 @@ sub tool {
 
         $template->param( op => $op, );
     }
-    elsif ( $op eq 'manage-blackouts' && $manage_blackouts_submit ne q{} ) {
 
-        # TODO - delete the selected blackout
+    if ( $op eq 'manage-blackouts' ) {
+        if ( $manage_blackouts_submit ne q{} ) {
 
-        my $bookingid = $cgi->param('manage-blackouts-id');
+            #TODO: delete the selected blackout
 
-        delete_booking_by_id($bookingid);
+            my $bookingid = $cgi->param('manage-blackouts-id');
 
-        my $blackouts = get_all_blackout_bookings();
-        my $rooms     = get_current_room_numbers();
+            delete_booking_by_id($bookingid);
 
-        $template->param(
-            op            => $op,
-            blackouts     => $blackouts,
-            current_rooms => $rooms,
-        );
-    }
-    elsif ( $op eq 'manage-blackouts' && $submit_full_blackout ne q{} ) {
+            my $blackouts = get_all_blackout_bookings();
+            my $rooms     = get_current_room_numbers();
 
-        my $blackout_start_date = $cgi->param('blackout-start-date');
-        my $blackout_end_date   = $cgi->param('blackout-end-date');
-        my @rooms               = $cgi->multi_param('current-room-blackout');
+            $template->param(
+                op            => $op,
+                blackouts     => $blackouts,
+                current_rooms => $rooms,
+            );
+        }
 
-        my $start_date = $blackout_start_date . ' 00:00:00';
-        my $end_date   = $blackout_end_date . ' 23:59:59';
+        if ( $submit_full_blackout ne q{} ) {
+            my $blackout_start_date = $cgi->param('blackout-start-date');
+            my $blackout_end_date   = $cgi->param('blackout-end-date');
+            my @rooms               = $cgi->multi_param('current-room-blackout');
 
-        my $current_user = C4::Context->userenv->{'number'};
+            my $start_date = $blackout_start_date . ' 00:00:00';
+            my $end_date   = $blackout_end_date . ' 23:59:59';
 
-        if ( $rooms[0] eq '0' ) {
+            my $current_user = C4::Context->userenv->{'number'};
 
-            my $room_ids = get_all_room_ids();    # IDs of all rooms in rooms table
+            if ( $rooms[0] eq '0' ) {
 
-            my @room_IDs = @{$room_ids};
+                my $room_ids = get_all_room_ids();    # IDs of all rooms in rooms table
 
-            for my $item (@room_IDs) {
-                for my $key ( keys %{$item} ) {
-                    add_blackout_booking( $current_user, $item->{$key}, $start_date, $end_date );
+                my @room_IDs = @{$room_ids};
+
+                for my $item (@room_IDs) {
+                    for my $key ( keys %{$item} ) {
+                        add_blackout_booking( $current_user, $item->{$key}, $start_date, $end_date );
+                    }
                 }
             }
-        }
-        else {
-            for my $room (@rooms) {
-                add_blackout_booking( $current_user, $room, $start_date, $end_date );
-            }
-        }
-
-        my $blackouts     = get_all_blackout_bookings();
-        my $current_rooms = get_current_room_numbers();
-
-        $template->param(
-            op            => $op,
-            blackouts     => $blackouts,
-            current_rooms => $current_rooms,
-        );
-    }
-    elsif ( $op eq 'manage-blackouts' && $submit_partial_blackout ne q{} ) {
-
-        my $blackout_date = $cgi->param('blackout-date');
-        my $start_time    = $cgi->param('blackout-start-time');
-        my $end_time      = $cgi->param('blackout-end-time');
-        my @rooms         = $cgi->multi_param('current-room-blackout');
-
-        #$blackout_date = sprintf '%3$04d-%02d-%02d', split m:/:, $blackout_date;
-
-        my $start = $blackout_date . " $start_time";
-        my $end   = $blackout_date . " $end_time";
-
-        my $current_user = C4::Context->userenv->{'number'};
-
-        if ( $rooms[0] eq '0' ) {
-
-            my $room_ids = get_all_room_ids();    # IDs of all rooms in rooms table
-
-            my @room_IDs = @{$room_ids};
-
-            for my $item (@room_IDs) {
-                for my $key ( keys %{$item} ) {
-                    add_blackout_booking( $current_user, $item->{$key}, $start, $end );
+            else {
+                for my $room (@rooms) {
+                    add_blackout_booking( $current_user, $room, $start_date, $end_date );
                 }
             }
+
+            my $blackouts     = get_all_blackout_bookings();
+            my $current_rooms = get_current_room_numbers();
+
+            $template->param(
+                op            => $op,
+                blackouts     => $blackouts,
+                current_rooms => $current_rooms,
+            );
         }
-        else {
-            for my $room (@rooms) {
-                add_blackout_booking( $current_user, $room, $start, $end );
+
+        if ( $submit_partial_blackout ne q{} ) {
+            my $blackout_date = $cgi->param('blackout-date');
+            my $start_time    = $cgi->param('blackout-start-time');
+            my $end_time      = $cgi->param('blackout-end-time');
+            my @rooms         = $cgi->multi_param('current-room-blackout');
+
+            #$blackout_date = sprintf '%3$04d-%02d-%02d', split m:/:, $blackout_date;
+
+            my $start = $blackout_date . " $start_time";
+            my $end   = $blackout_date . " $end_time";
+
+            my $current_user = C4::Context->userenv->{'number'};
+
+            if ( $rooms[0] eq '0' ) {
+
+                my $room_ids = get_all_room_ids();    # IDs of all rooms in rooms table
+
+                my @room_IDs = @{$room_ids};
+
+                for my $item (@room_IDs) {
+                    for my $key ( keys %{$item} ) {
+                        add_blackout_booking( $current_user, $item->{$key}, $start, $end );
+                    }
+                }
             }
+            else {
+                for my $room (@rooms) {
+                    add_blackout_booking( $current_user, $room, $start, $end );
+                }
+            }
+
+            my $blackouts     = get_all_blackout_bookings();
+            my $current_rooms = get_current_room_numbers();
+
+            $template->param(
+                op            => $op,
+                blackouts     => $blackouts,
+                current_rooms => $current_rooms,
+            );
         }
-
-        my $blackouts     = get_all_blackout_bookings();
-        my $current_rooms = get_current_room_numbers();
-
-        $template->param(
-            op            => $op,
-            blackouts     => $blackouts,
-            current_rooms => $current_rooms,
-        );
     }
 
     print $cgi->header( -type => 'text/html', -charset => 'utf-8' );
@@ -680,7 +691,7 @@ sub tool {
 sub configure {
     my ( $self, $args ) = @_;
 
-    my $cgi = $self->{'cgi'};
+    $cgi = $self->{'cgi'};
 
     my $template = $self->get_template( { file => 'configure.tt' } );
     $template->param(
@@ -691,119 +702,95 @@ sub configure {
     my $op = $cgi->param('op') || q{};
 
     if ( $op eq q{} ) {    # Displays currently configured rooms
-
-        $template->param(
-
-        );
+        $template->param();
     }
-    elsif ( $op eq 'action-selected' ) {
 
+    if ( $op eq 'action-selected' ) {
         my $selected = $cgi->param('config_actions_selection');
+        my $action   = q{};
 
-        my $action = q{};
-
-        if ( $selected eq 'action-select-display' ) {
-
-            $action = 'display-rooms';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-select-add' ) {
-
-            $action = 'add-rooms';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-select-edit' ) {
-
-            $action = 'edit-rooms';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-select-delete' ) {
-
-            $action = 'delete-rooms';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-select-add-equipment' ) {
-
-            $action = 'add-equipment';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-select-edit-equipment' ) {
-
-            $action = 'edit-equipment-selection';
-
-            $template->param(
-                action => $action,
-                op => $op,
-            );
-        }
-        elsif ( $selected eq 'action-select-delete-equipment' ) {
-
-            $action = 'delete-equipment';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-max-future-date' ) {
-
-            $action = 'max-future-date';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-max-time' ) {
-
-            $action = 'max-time';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-restrict-categories' ) {
-
-            $action = 'restrict-categories';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
-        }
-        elsif ( $selected eq 'action-restrict-daily-reservations-per-patron' ) {
-
-            $action = 'restrict-daily-reservations-per-patron';
-
-            $template->param(
-                action => $action,
-                op     => $op,
-            );
+        given ($selected) {
+            when ('action-select-display') {
+                $action = 'display-rooms';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-select-add') {
+                $action = 'add-rooms';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-select-edit') {
+                $action = 'edit-rooms';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-select-delete') {
+                $action = 'delete-rooms';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-select-add-equipment') {
+                $action = 'add-equipment';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-select-edit-equipment') {
+                $action = 'edit-equipment-selection';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-select-delete-equipment') {
+                $action = 'delete-equipment';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-max-future-date') {
+                $action = 'max-future-date';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-max-time') {
+                $action = 'max-time';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-restrict-categories') {
+                $action = 'restrict-categories';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
+            when ('action-restrict-daily-reservations-per-patron') {
+                $action = 'restrict-daily-reservations-per-patron';
+                $template->param(
+                    action => $action,
+                    op     => $op,
+                );
+            }
         }
     }
-    elsif ( $op eq 'restrict-daily-reservations-per-patron' ) {
 
+    if ( $op eq 'restrict-daily-reservations-per-patron' ) {
         my $limit = $cgi->param('limit-submitted') || q{};
 
         if ( $limit eq '1' ) {
@@ -824,14 +811,12 @@ sub configure {
             count_limit => $current_limit,
         );
     }
-    elsif ( $op eq 'restrict-categories' ) {
 
-        my $submitted = $cgi->param('restrict-categories-submitted') || q{};
-
+    if ( $op eq 'restrict-categories' ) {
+        my $submitted    = $cgi->param('restrict-categories-submitted') || q{};
         my $rest_message = $cgi->param('restricted-message');
 
         if ( $submitted eq '1' ) {
-
             my @restricted_categories_to_clear = $cgi->multi_param('currently-restricted-category');
 
             if ( scalar(@restricted_categories_to_clear) > 0 ) {
@@ -858,12 +843,9 @@ sub configure {
             $self->store_data( { restricted_message => $rest_message } );
         }
 
-        my $restricted = get_restricted_patron_categories();
-
-        my $searchfield = q||;
-
-        my $categories = get_patron_categories();
-
+        my $restricted         = get_restricted_patron_categories();
+        my $searchfield        = q||;
+        my $categories         = get_patron_categories();
         my $restricted_message = $self->retrieve_data('restricted_message');
 
         $template->param(
@@ -873,16 +855,15 @@ sub configure {
             restrict_message      => $restricted_message,
         );
     }
-    elsif ( $op eq 'max-time' ) {
 
+    if ( $op eq 'max-time' ) {
+        Readonly my $HOUR_IN_MINUTES => 60;
         my $submitted = $cgi->param('max-submitted') || q{};
 
         if ( $submitted eq '1' ) {
-
             my $max_time_hours   = $cgi->param('max-time-hours-field');
             my $max_time_minutes = $cgi->param('max-time-minutes-field');
-
-            my $max_time = ( $max_time_hours * 60 ) + $max_time_minutes;
+            my $max_time         = ( $max_time_hours * $HOUR_IN_MINUTES ) + $max_time_minutes;
 
             $self->store_data( { max_time => $max_time } );
         }
@@ -899,14 +880,12 @@ sub configure {
 
         );
     }
-    elsif ( $op eq 'max-future-date' ) {
 
+    if ( $op eq 'max-future-date' ) {
         my $submitted = $cgi->param('max-submitted') || q{};
 
         if ( $submitted eq '1' ) {
-
             my $max_days = $cgi->param('max-days-field');
-
             $self->store_data( { max_future_days => $max_days } );
         }
 
@@ -922,8 +901,8 @@ sub configure {
 
         );
     }
-    elsif ( $op eq 'display-rooms' ) {
 
+    if ( $op eq 'display-rooms' ) {
         my $roomnumbers = get_all_room_numbers();
 
         $template->param(
@@ -931,13 +910,10 @@ sub configure {
             roomnumbers => $roomnumbers,
         );
     }
-    elsif ( $op eq 'display-rooms-detail' ) {
-
+    if ( $op eq 'display-rooms-detail' ) {
         my $roomIdToDisplay = $cgi->param('selected-displayed-room');
-
-        my $roomDetails = get_room_details_by_id($roomIdToDisplay);
-
-        my $roomEquipment = get_room_equipment_by_id($roomIdToDisplay);
+        my $roomDetails     = get_room_details_by_id($roomIdToDisplay);
+        my $roomEquipment   = get_room_equipment_by_id($roomIdToDisplay);
 
         $template->param(
             op                      => $op,
@@ -945,8 +921,7 @@ sub configure {
             selected_room_equipment => $roomEquipment,
         );
     }
-    elsif ( $op eq 'add-rooms' ) {
-
+    if ( $op eq 'add-rooms' ) {
         my $addedRoom = $cgi->param('added-room') || q{};
 
         if ( $addedRoom eq '1' ) {
@@ -968,15 +943,14 @@ sub configure {
             all_room_numbers    => $roomNumbers,
         );
     }
-    elsif ( $op eq 'edit-rooms' ) {
 
+    if ( $op eq 'edit-rooms' ) {
         my $editing              = $cgi->param('editing')                || q{};
         my $roomDetailsUpdated   = $cgi->param('room-details-updated')   || q{};
         my $roomEquipmentUpdated = $cgi->param('room-equipment-updated') || q{};
 
         if ( $editing eq '1' ) {
             my $selectedRoomId = $cgi->param('current-rooms-edit');
-
             $template->param( selected_room_id => $selectedRoomId, );
         }
 
@@ -992,7 +966,6 @@ sub configure {
         if ( $roomEquipmentUpdated eq '1' ) {
             my $equipmentRoomId  = $cgi->param('room-equipment-updated-roomid');
             my @equipmentIdArray = $cgi->param('edit-rooms-current-equipment');
-
             update_room_equipment( $equipmentRoomId, \@equipmentIdArray );
         }
 
@@ -1003,21 +976,16 @@ sub configure {
             current_rooms => $roomNumbers,
         );
     }
-    elsif ( $op eq 'edit-rooms-selection' ) {
-
-        my $choice = $cgi->param('edit-rooms-choice') || q{};
-
+    if ( $op eq 'edit-rooms-selection' ) {
+        my $choice         = $cgi->param('edit-rooms-choice')  || q{};
         my $selectedRoomId = $cgi->param('current-rooms-edit') || q{};
-
-        my $editAction = q{};
+        my $editAction     = q{};
 
         if ( $choice eq 'room' ) {
-
             $editAction = 'edit-rooms-room';
         }
 
         if ( $choice eq 'equipment' ) {
-
             $editAction = 'edit-rooms-equipment';
         }
 
@@ -1027,24 +995,21 @@ sub configure {
             selected_room_id => $selectedRoomId,
         );
     }
-    elsif ( $op eq 'edit-rooms-room' ) {
 
+    if ( $op eq 'edit-rooms-room' ) {
         my $selectedRoomId = $cgi->param('selected-room-id') || q{};
-
-        my $roomDetails = load_room_details_to_edit_by_room_id($selectedRoomId);
+        my $roomDetails    = load_room_details_to_edit_by_room_id($selectedRoomId);
 
         $template->param(
             op           => $op,
             room_details => $roomDetails,
         );
     }
-    elsif ( $op eq 'edit-rooms-equipment' ) {
 
-        my $selectedRoomId = $cgi->param('selected-room-id') || q{};
-
-        my $roomDetails = load_room_details_to_edit_by_room_id($selectedRoomId);
-
-        my $allAvailableEquipment = loadAllEquipment();
+    if ( $op eq 'edit-rooms-equipment' ) {
+        my $selectedRoomId        = $cgi->param('selected-room-id') || q{};
+        my $roomDetails           = load_room_details_to_edit_by_room_id($selectedRoomId);
+        my $allAvailableEquipment = load_all_equipment();
 
         $template->param(
             op                      => $op,
@@ -1052,18 +1017,16 @@ sub configure {
             all_available_equipment => $allAvailableEquipment,
         );
     }
-    elsif ( $op eq 'delete-rooms' ) {
 
+    if ( $op eq 'delete-rooms' ) {
         my $delete = $cgi->param('delete') || q{};
 
         if ( $delete eq '1' ) {
             my $roomIdToDelete = $cgi->param('delete-room-radio-button');
-
             delete_room($roomIdToDelete);
         }
 
-        my $availableRooms = get_all_room_numbers_and_ids_available_to_delete();
-
+        my $availableRooms        = get_all_room_numbers_and_ids_available_to_delete();
         my $areThereRoomsToDelete = are_any_rooms_available_to_delete($availableRooms);
 
         if ( $areThereRoomsToDelete == 1 ) {
@@ -1079,19 +1042,15 @@ sub configure {
             rooms_available_to_delete => 1,
         );
     }
-    elsif ( $op eq 'add-equipment' ) {
-
+    if ( $op eq 'add-equipment' ) {
         my $insert = $cgi->param('insert') || q{};
 
         if ( $insert eq '1' ) {
             my $addedEquipment = $cgi->param('add-equipment-text-field');
-
             ## Convert to lowercase to enforce uniformity
             $addedEquipment = lc $addedEquipment;
-
             ## Enclose in single quotes for DB string compatibility
             $addedEquipment = qq{'$addedEquipment'};
-
             add_equipment($addedEquipment);
         }
 
@@ -1102,13 +1061,12 @@ sub configure {
             available_equipment => $availableEquipment,
         );
     }
-    elsif ( $op eq 'delete-equipment' ) {
 
+    if ( $op eq 'delete-equipment' ) {
         my $delete = $cgi->param('delete') || q{};
 
         if ( $delete eq '1' ) {
             my $equipmentIdToDelete = $cgi->param('delete-equipment-radio-button');
-
             delete_equipment($equipmentIdToDelete);
         }
 
@@ -1119,21 +1077,22 @@ sub configure {
             available_equipment => $availableEquipment,
         );
     }
-    elsif ( $op eq 'edit-equipment-selection' ) {
 
+    if ( $op eq 'edit-equipment-selection' ) {
         my $availableEquipment = get_all_room_equipment_names_and_ids();
 
         $template->param(
-            op => $op,
+            op                  => $op,
             available_equipment => $availableEquipment,
         );
     }
-    elsif ( $op eq 'edit-equipment' ) {
 
-		my $edit = $cgi->param('edit') || q{};
+    if ( $op eq 'edit-equipment' ) {
 
-        if ( $edit eq '1') {
-			my $editedEquipmentId = $cgi->param('edit-equipment-id');
+        my $edit = $cgi->param('edit') || q{};
+
+        if ( $edit eq '1' ) {
+            my $editedEquipmentId   = $cgi->param('edit-equipment-id');
             my $editedEquipmentName = $cgi->param('edit-equipment-text-field');
 
             ## Convert to lowercase to enforce uniformity
@@ -1142,26 +1101,25 @@ sub configure {
             ## Enclose in single quotes for DB string compatibility
             $editedEquipmentName = qq{'$editedEquipmentName'};
 
-            update_room_equipment($editedEquipmentId, $editedEquipmentName);
+            update_room_equipment( $editedEquipmentId, $editedEquipmentName );
 
             my $availableEquipment = get_all_room_equipment_names_and_ids();
 
-			$template->param(
-				op => 'edit-equipment-selection',
-				available_equipment => $availableEquipment,
-			);
+            $template->param(
+                op                  => 'edit-equipment-selection',
+                available_equipment => $availableEquipment,
+            );
         }
         else {
-			my $equipmentIdToEdit = $cgi->param('edit-equipment-radio-button');
-			my $equipmentToEdit = get_room_equipment_by_id($equipmentIdToEdit);
+            my $equipmentIdToEdit = $cgi->param('edit-equipment-radio-button');
+            my $equipmentToEdit   = get_room_equipment_by_id($equipmentIdToEdit);
 
-			$template->param(
-				op => $op,
-				equipment_to_edit => $equipmentToEdit,
-			);
-		}
+            $template->param(
+                op                => $op,
+                equipment_to_edit => $equipmentToEdit,
+            );
+        }
     }
-
 
     print $cgi->header( -type => 'text/html', -charset => 'utf-8' );
     print $template->output();

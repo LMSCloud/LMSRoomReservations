@@ -332,7 +332,7 @@ RESERVATION_CONFIRMED: {
         my $displayed_end     = $cgi->param('confirmed-displayed-end');
         my $patron_email      = $cgi->param('confirmed-email');
 
-        if ( defined $start_over_submit && ( $start_over_submit eq 'Start over' || $start_over_submit eq 'Nochmal' ) ) {
+        if ( defined $start_over_submit && ( $start_over_submit eq 'Start over' || $start_over_submit eq 'Abbrechen' ) ) {
             $op = 'availability-search';
             goto AVAILABILITY_SEARCH;
         }
@@ -391,7 +391,7 @@ RESERVATION_CONFIRMED: {
 
         my $message_to_patron = C4::Letters::GetMessage( shift @message_ids );
 
-        $template->param( op => $op, SENT => $message_to_patron->{'status'} eq 'sent' ? 1 : 0 );
+        $template->param( op => $op, SENT => $message_to_patron->{'status'} eq 'sent' ? 1 : 0, patron_email => $patron_email );
     }
 }
 

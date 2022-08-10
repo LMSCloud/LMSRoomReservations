@@ -62,14 +62,14 @@
         };
     </script>
     <form method="post" action="#">
-        <input type="hidden" name="class" value="[% CLASS %]" />
-        <input type="hidden" name="method" value="[% METHOD %]" />
-        <input type="hidden" name="op" value="[% action %]" />
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="op" value="[% action %]" />
 
-        <p>[% 'Processing...' | gettext %]</p>
-        <div style="display: none;">
-            <input type="submit" name="actionSelectedBtn" id="actionSelectedBtn" />
-        </div>
+      <p>[% 'Processing...' | gettext %]</p>
+      <div style="display: none;">
+          <input type="submit" name="actionSelectedBtn" id="actionSelectedBtn" />
+      </div>
     </form>
   [% END # op == 'action-selected' %]
 
@@ -490,14 +490,14 @@
       const lmsrMenuTemplateContent = lmsrMenuTemplate.content;
       document.body.appendChild(lmsrMenuTemplateContent);
 
-      toolActionsForm = document.querySelector('form[name="tool_actions"]');
-      actionsMenu = document.querySelectorAll('.lmsr-menu-list-item');
-      actionsInput = document.querySelector('input[name="tool_actions_selection"]');
-      actionsSubmit = document.querySelector('input[name="tool-actions-submit"]');
+      const toolActionsForm = document.querySelector('form[name="tool_actions"]');
+      const actionsMenu = document.querySelectorAll('.lmsr-menu-list-item');
+      const actionsInput = document.querySelector('input[name="tool_actions_selection"]');
+      const actionsSubmit = document.querySelector('input[name="tool-actions-submit"]');
 
       toolActionsForm.addEventListener('submit', (e) => {
-        const action = document.getElementById('tools-actions-input');
-        if (action === '') { e.preventDefault(); return false; }
+        const actionsInput = document.querySelector('input[name="tool_actions_selection"]');
+        if (actionsInput === '') { e.preventDefault(); return false; }
       });
 
       actionsMenu.forEach((action) => {
