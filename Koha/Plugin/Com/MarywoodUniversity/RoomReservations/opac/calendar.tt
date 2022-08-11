@@ -4,8 +4,8 @@
 [% USE Branches %]
 [% INCLUDE 'doc-head-open.inc' %]
 <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %][% 'Koha online' | gettext %][% END %] [% 'catalog' | gettext %] &rsaquo; [% 'Booking' | gettext %]</title>
-
 <link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/css/main.css">
+<script type="text/javascript" src="/api/v1/contrib/roomreservations/static/js/main.js"></script>
 [% INCLUDE 'doc-head-close.inc' %]
 </head>
 [% BLOCK cssinclude %][% END %]
@@ -162,42 +162,15 @@
 <script>
   const jumpToCalendarButton = document.getElementById('jump-to-calendar');
   const _calendar = document.getElementById('study-room-calendar');
-
-  jumpToCalendarButton.addEventListener('click', () => {
-    _calendar.scrollIntoView();
-  });
-
+  jumpToCalendarButton.addEventListener('click', () => { _calendar.scrollIntoView(); });
   jumpToCalendarButton.disabled = false;
 
   /* We could think about assigning dedicated configurable colors to these. */
-  const activeBookingsInCalendar = document.querySelectorAll(
-    '.lmsr-calendar-data-booking',
-  );
-
-  const getColorTextWithContrast = (element) => {
-    const ELEMENT_REFERENCE = element;
-    // Generate random RGB values
-    const red = Math.floor(Math.random() * 256 - 1);
-    const green = Math.floor(Math.random() * 256 - 1);
-    const blue = Math.floor(Math.random() * 256 - 1);
-
-    // Calculate brightness of randomized colour
-    const brightness = (red * 299 + green * 587 + blue * 114) / 1000;
-
-    // Calculate brightness of white and black text
-    const lightText = (255 * 299 + 255 * 587 + 255 * 114) / 1000;
-    const darkText = (0 * 299 + 0 * 587 + 0 * 114) / 1000;
-
-    const backgroundColor = `rgb(${red},${green},${blue})`;
-    const textColor = Math.abs(brightness - lightText) > Math.abs(brightness - darkText) ? 'rgb(255, 255, 255)' :
-      'rgb(0, 0, 0)';
-
-    return [backgroundColor, textColor];
-  };
+  const activeBookingsInCalendar = document.querySelectorAll('.lmsr-calendar-data-booking');
 
   activeBookingsInCalendar.forEach((activeBookingInCalendar) => {
     const ACTIVE_BOOKING_REFERENCE = activeBookingInCalendar;
-    const [backgroundColor, textColor] = getColorTextWithContrast();
+    const [backgroundColor, textColor] = RoomReservationBundle.getColorTextWithContrast();
     ACTIVE_BOOKING_REFERENCE.style.backgroundColor = backgroundColor;
     ACTIVE_BOOKING_REFERENCE.style.color = textColor;
   });
@@ -208,362 +181,255 @@
 <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
 
 [% ELSIF op == 'availability-search' %]
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
-    <li class="breadcrumb-item"><a href="/booking">[% 'Study Room Calendar' | gettext %]</a></li>
-    <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Availability Search' | gettext %]</a></li>
-  </ol>
-</nav>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
+      <li class="breadcrumb-item"><a href="/booking">[% 'Study Room Calendar' | gettext %]</a></li>
+      <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Availability Search' | gettext %]</a></li>
+    </ol>
+  </nav>
 
-<div class="container">
-  <h2 class="lmsr-section-heading">[% 'Book a room' | gettext %]</h2>
-  <!-- <div class="container"> -->
-  <div class="row">
-    <div class="col-12 col-sm-6" id="room-booking">
+  <div class="container">
+    <h2 class="lmsr-section-heading">[% 'Book a room' | gettext %]</h2>
+    <!-- <div class="container"> -->
+    <div class="row">
+      <div class="col-12 col-sm-6" id="room-booking">
 
-      <div class="card lmsr-card">
-        <div class="card-body">
-          <h5 class="card-title">[% 'Availability Search' | gettext %]</h5>
-          <p class="card-text">
-            <div class="container">
+        <div class="card lmsr-card">
+          <div class="card-body">
+            <h5 class="card-title">[% 'Availability Search' | gettext %]</h5>
+            <p class="card-text">
+              <div class="container">
 
-              <form name="availabilitySearchForm" method="post" action="#">
-                <div class="form-group">
-                  <input type="hidden" name="max_days" id="max_days" value="[% max_days %]" />
-                  <input type="hidden" name="max_time" id="max_time" value="[% max_time %]" />
-                  <input type="hidden" name="op" value="availability-search" />
-                  [% IF room_checked == 0 %]
-                    <div class="alert alert-info row" id="alert-room-unavailable">
-                      <button id="alert-room-unavailable-button" class="col-1" disabled>
-                        <i class="fa fa-times" aria-hidden="true"></i>
-                      </button><br>
-                      <span class="col-11"><b>[% 'Room is not available at the selected time. Please note the opening
-                          hours.' | gettext %]</b></span>
-                    </div>
-                    <script>
-                      const alertRoomUnavailable = document.getElementById('alert-room-unavailable');
-                      const alertRoomUnavailableButton = document.getElementById('alert-room-unavailable-button');
-
-                      alertRoomUnavailableButton.addEventListener('click', () => {
-                        alertRoomUnavailable.remove();
-                      });
-
-                      alertRoomUnavailableButton.disabled = false;
-                    </script>
-                  [% END %]
-
+                <form name="availabilitySearchForm" method="post" action="#">
                   <div class="form-group">
-                    <div class="form-row mb-2">
-                      <label class="col col-form-label">[% 'Start time' | gettext %]</label>
-                      <input class="form-control col" type="date" name="availability-search-start-date"
-                        id="availability-search-start-date">
-                      <input class="form-control col" type="time" name="availability-search-start-time"
-                        id="availability-search-start-time">
+                    <input type="hidden" name="max_days" id="max_days" value="[% max_days %]" />
+                    <input type="hidden" name="max_time" id="max_time" value="[% max_time %]" />
+                    <input type="hidden" name="op" value="availability-search" />
+                    [% IF room_checked == 0 %]
+                      <div class="alert alert-info row" id="alert-room-unavailable">
+                        <button id="alert-room-unavailable-button" class="col-1" disabled>
+                          <i class="fa fa-times" aria-hidden="true"></i>
+                        </button><br>
+                        <span class="col-11"><b>[% 'Room is not available at the selected time. Please note the opening
+                            hours.' | gettext %]</b></span>
+                      </div>
+                      <script>
+                        const alertRoomUnavailable = document.getElementById('alert-room-unavailable');
+                        const alertRoomUnavailableButton = document.getElementById('alert-room-unavailable-button');
+                        alertRoomUnavailableButton.addEventListener('click', () => { alertRoomUnavailable.remove(); });
+                        alertRoomUnavailableButton.disabled = false;
+                      </script>
+                    [% END %]
+
+                    <div class="form-group">
+                      <div class="form-row mb-2">
+                        <label class="col col-form-label">[% 'Start time' | gettext %]</label>
+                        <input class="form-control col" type="date" name="availability-search-start-date"
+                          id="availability-search-start-date">
+                        <input class="form-control col" type="time" name="availability-search-start-time"
+                          id="availability-search-start-time">
+                      </div>
+                      <div class="form-row">
+                        <label class="col col-form-label">[% 'End time' | gettext %]</label>
+                        <input class="form-control col" type="date" name="availability-search-end-date"
+                          id="availability-search-end-date">
+                        <input class="form-control col" type="time" name="availability-search-end-time"
+                          id="availability-search-end-time">
+                      </div>
                     </div>
-                    <div class="form-row">
-                      <label class="col col-form-label">[% 'End time' | gettext %]</label>
-                      <input class="form-control col" type="date" name="availability-search-end-date"
-                        id="availability-search-end-date">
-                      <input class="form-control col" type="time" name="availability-search-end-time"
-                        id="availability-search-end-time">
+
+                    <hr>
+
+                    <div class="headcount-selection form-group">
+                      <div class="form-row">
+                        <label class="col-sm-6 col-form-label">[% 'Select Room' | gettext %]</label>
+                        <select class="form-control col-sm-6" name="availability-search-room"
+                          id="availability-search-room">
+                          [% IF pre_selected_room %]
+                            <option value="[% pre_selected_room.roomid %]">
+                              [% pre_selected_room.roomnumber %] ([% 'max.' | gettext %] [% pre_selected_room.maxcapacity %] [% 'people' | gettext %])
+                            </option> <!-- FIXME: This needs a value -->
+                          [% ELSE %]
+                            <option value=""></option> <!-- FIXME: This needs a value --> 
+                          [% END %]
+                          [% FOREACH room IN rooms %]
+                            [% UNLESS room.roomid == pre_selected_room.roomid %]
+                              <option value="[% room.roomid %]">
+                                [% room.roomnumber %] ([% 'max.' | gettext %] [% room.maxcapacity %] [% 'people' | gettext %])
+                              </option>
+                            [% END%]
+                          [% END %]
+                        </select>
+                      </div>
                     </div>
-                  </div>
 
-                  <hr>
+                    <hr>
 
-                  <div class="headcount-selection form-group">
-                    <div class="form-row">
-                      <label class="col-sm-6 col-form-label">[% 'Select Room' | gettext %]</label>
-                      <select class="form-control col-sm-6" name="availability-search-room"
-                        id="availability-search-room">
-                        [% IF pre_selected_room %]
-                          <option value="[% pre_selected_room.roomid %]">[% pre_selected_room.roomnumber %] ([% 'max.' | gettext %] [% pre_selected_room.maxcapacity %] [% 'people' | gettext %])</option> <!-- FIXME: This needs a value -->
-                        [% ELSE %]
-                          <option value=""></option> <!-- FIXME: This needs a value --> 
-                        [% END %]
-                        [% FOREACH room IN rooms %]
-                          [% UNLESS room.roomid == pre_selected_room.roomid %]
-                            <option value="[% room.roomid %]">[% room.roomnumber %] ([% 'max.' | gettext %] [% room.maxcapacity %] [% 'people' | gettext %])</option>
-                          [% END%]
-                        [% END %]
-                      </select>
-                    </div>
-                  </div>
-
-                  <hr>
-
-                  <div class="form-group">
-                    <div class="form-row">
-                      <div class="col-sm-12">
-                        <input class="w-100 text-wrap" type="submit" name="submit-check-room-availability"
-                          value="[% 'Check Room Availability' | gettext %]" disabled>
+                    <div class="form-group">
+                      <div class="form-row">
+                        <div class="col-sm-12">
+                          <input class="w-100 text-wrap" type="submit" name="submit-check-room-availability"
+                            value="[% 'Check Room Availability' | gettext %]" disabled>
+                        </div>
                       </div>
                     </div>
                   </div>
+                </form>
+              </div> <!-- span12 -->
+            </p>
+          </div>
+        </div>
+      </div> <!-- / .span12 -->
+
+      <div class="col-12 col-sm-6">
+        <div class="card lmsr-card">
+          <div class="card-body">
+            <h5 class="card-title">[% 'Opening hours' | gettext %]</h5>
+            <p class="card-text">
+              [% FOR hour IN opening_hours %]
+                <div class="row my-3 mx-1 p-1 border rounded">
+                  <div class="col-6 col-sm-12 col-md-7 text-left text-sm-center text-md-left rounded">[% hour.day | gettext %]</div>
+                  <div class="col-6 col-sm-12 col-md-5 text-center text-sm-center text-md-left text-lg-right">[% hour.start %] - [% hour.end %]</div>
                 </div>
-              </form>
-            </div> <!-- span12 -->
-          </p>
-        </div>
-      </div>
-    </div> <!-- / .span12 -->
-
-    <div class="col-12 col-sm-6">
-      <div class="card lmsr-card">
-        <div class="card-body">
-          <h5 class="card-title">[% 'Opening hours' | gettext %]</h5>
-          <p class="card-text">
-            [% FOR hour IN opening_hours %]
-              <div class="row my-3 mx-1 p-1 border rounded">
-                <div class="col-6 col-sm-12 col-md-7 text-left text-sm-center text-md-left rounded">[% hour.day | gettext %]</div>
-                <div class="col-6 col-sm-12 col-md-5 text-center text-sm-center text-md-left text-lg-right">[% hour.start %] - [% hour.end %]</div>
-              </div>
-            [% END %]
-          </p>
-        </div>
-      </div>
-    </div>
-  </div> <!-- row-->
-
-  <br>
-
-  <h2 class="lmsr-section-heading">[% 'Available Rooms' | gettext %]</h2>
-  <div class="row">
-    [% FOR room IN rooms %]
-    <div class="col-12 col-sm-6 col-md-4">
-      <div class="card lmsr-card">
-        [% IF room.image %]
-          <img src="..." class="card-img-top" alt="...">
-        [% END %]
-        <div class="card-body">
-          <h5 class="card-title">[% room.roomnumber %]</h5>
-          [% IF room.description %]
-          <p class="card-text">[% room.description %]</p>
-          [% END %]
-          <p class="card-text">
-            <b>[% 'Max. Capacity' | gettext %]</b>&nbsp;
-            <span>[% room.maxcapacity %] [% 'Persons' | gettext %]</span>
-          </p>
-          <p class="card-text">
-            <b>[% 'Equipment' | gettext %]</b>
-            <ul class="lmsr-list mt-2">
-              [% FOR eqipment IN room.equipment %]
-                [% equipmentname = eqipment.equipmentname %]
-                [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
-                <li class="lmsr-list-item">[% equipmentname %]</li>
               [% END %]
-            </ul>
-          </p>
+            </p>
+          </div>
         </div>
       </div>
+    </div> <!-- row-->
+
+    <br>
+
+    <h2 class="lmsr-section-heading">[% 'Available Rooms' | gettext %]</h2>
+    <div class="row">
+      [% FOR room IN rooms %]
+      <div class="col-12 col-sm-6 col-md-4">
+        <div class="card lmsr-card">
+          [% IF room.image %]
+            <img src="..." class="card-img-top" alt="...">
+          [% END %]
+          <div class="card-body">
+            <h5 class="card-title">[% room.roomnumber %]</h5>
+            [% IF room.description %]
+            <p class="card-text">[% room.description %]</p>
+            [% END %]
+            <p class="card-text">
+              <b>[% 'Max. Capacity' | gettext %]</b>&nbsp;
+              <span>[% room.maxcapacity %] [% 'Persons' | gettext %]</span>
+            </p>
+            <p class="card-text">
+              <b>[% 'Equipment' | gettext %]</b>
+              <ul class="lmsr-list mt-2">
+                [% FOR eqipment IN room.equipment %]
+                  [% equipmentname = eqipment.equipmentname %]
+                  [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
+                  <li class="lmsr-list-item">[% equipmentname %]</li>
+                [% END %]
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+      [% END %]
     </div>
-    [% END %]
-  </div>
-  
-  <script>
-    const availabilitySearchForm = document.querySelector('form[name="availabilitySearchForm"]');
-    const availabilitySearchSubmitButton = document.querySelector('input[name="submit-check-room-availability"]');
-
-    availabilitySearchForm.addEventListener('submit', (e) => {
-
-      const searchForm = {
-        sd: {
-          field: document.getElementById('availability-search-start-date'),
-          value: document.getElementById('availability-search-start-date').value
-        },
-        st: {
-          field: document.getElementById('availability-search-start-time'),
-          value: document.getElementById('availability-search-start-time').value
-        },
-        ed: {
-          field: document.getElementById('availability-search-end-date'),
-          value: document.getElementById('availability-search-end-date').value
-        },
-        et: {
-          field: document.getElementById('availability-search-end-time'),
-          value: document.getElementById('availability-search-end-time').value
-        },
-        ro: {
-          field: document.getElementById('availability-search-room'),
-          value: document.getElementById('availability-search-room').value
-        },
-      };
-
-      const searchFormArray = Array.from(Object.entries(searchForm));
-
-      searchFormArray.forEach((entry) => {
-        const [, values] = entry;
-        if (values.field.classList.contains('border-danger')) {
-          values.field.classList.toggle('border-danger')
-        };
-      });
-
-      const MINUTES_TO_MILLISECONDS = 60000;
-      const MILLISECONDS_TO_HOURS = 3600000;
-
-      const maximumBookableTimeframe = parseInt(document.getElementById('max_time').value);
-      const maximumBookableTimeframeInMilliseconds = maximumBookableTimeframe !== 0 ? maximumBookableTimeframe *
-        MINUTES_TO_MILLISECONDS : 0;
-      const maximumBookableTimeframeInHours = maximumBookableTimeframeInMilliseconds !== 0 ? (
-        maximumBookableTimeframeInMilliseconds / MILLISECONDS_TO_HOURS) % 24 : 0;
-
-      const startTimestamp = `${searchForm.sd.value} ${searchForm.st.value}`;
-      const endTimestamp = `${searchForm.ed.value} ${searchForm.et.value}`;
-
-      const startTimestampInMilliseconds = Date.parse(startTimestamp);
-      const endTimestampInMilliseconds = Date.parse(endTimestamp);
-
-      const timeDifferenceInMilliseconds = endTimestampInMilliseconds - startTimestampInMilliseconds;
-
-      if (
-        timeDifferenceInMilliseconds > maximumBookableTimeframeInMilliseconds &&
-        maximumBookableTimeframeInMilliseconds > 0
-      ) {
-        let timeString = '';
-
-        if (maximumBookableTimeframeInHours > 0) {
-          timeString += `${maximumBookableTimeframeInHours} [% 'hours' | gettext %]`;
-        }
-
-        e.preventDefault();
-        alert(
-          `[% 'Selected time range exceeds maximum time allowed of' | gettext %] ${timeString}!`,
-        );
-        return false;
-      }
-
-      searchFormArray.forEach((entry) => {
-        const [, values] = entry;
-        if (values.value === '') {
-          values.field.classList.toggle('border-danger');
-        };
-      });
-
-      if (searchFormArray.some((entry) => {
-          const [, values] = entry;
-          return values.value === ''
-        })) {
-        e.preventDefault();
-        return false;
-      }
-
-      return undefined;
-    });
-
-    availabilitySearchSubmitButton.disabled = false;
-  </script>
-</div> <!-- / .container-fluid -->
+    <script>
+      const availabilitySearchForm = document.querySelector('form[name="availabilitySearchForm"]');
+      const availabilitySearchSubmitButton = document.querySelector('input[name="submit-check-room-availability"]');
+      availabilitySearchForm.addEventListener('submit', RoomReservationBundle.validateAvailabilitySearchForOPAC);
+      availabilitySearchSubmitButton.disabled = false;
+    </script>
+  </div> <!-- / .container-fluid -->
 
 <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
 
 [% ELSIF op == 'room-selection-confirmation' %]
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
-    <li class="breadcrumb-item"><a href="#">[% 'Study Room Calendar' | gettext %]</a></li>
-    <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Confirm' | gettext %]</a></li>
-  </ol>
-</nav>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
+      <li class="breadcrumb-item"><a href="#">[% 'Study Room Calendar' | gettext %]</a></li>
+      <li class="breadcrumb-item active" aria-current="page"><a href="#">[% 'Confirm' | gettext %]</a></li>
+    </ol>
+  </nav>
 
-<div class="container-fluid">
-  <form name="confirmationForm" id="confirmationForm" method="post" action="#">
-    <div class="p-3 border rounded">
-      <legend>[% 'Confirmation' | gettext %]</legend>
-      <hr>
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label" for="username">[% 'Name:' | gettext %]&nbsp;</label>
-        <div class="col-sm-10">
-          <input class="form-control" type="text" id="username" name="username" size="36" value="[% current_user %]"
-            readonly="true" />
+  <div class="container-fluid">
+    <form name="confirmationForm" id="confirmationForm" method="post" action="#">
+      <div class="p-3 border rounded">
+        <legend>[% 'Confirmation' | gettext %]</legend>
+        <hr>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="username">[% 'Name:' | gettext %]&nbsp;</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="username" name="username" size="36" value="[% current_user %]"
+              readonly="true" />
 
-          <input type="hidden" name="count-limit" id="count-limit" value="[% count_limit %]" />
-          <input type="hidden" name="user-daily-limit" id="user-daily-limit" value="[% user_daily_limit %]" />
-          <input type="hidden" name="confirmed-user" value="[% current_user %]" />
-          <input type="hidden" name="confirmed-user-fn" value="[% current_user_fn %]" />
-          <input type="hidden" name="confirmed-user-ln" value="[% current_user_ln %]" />
+            <input type="hidden" name="count-limit" id="count-limit" value="[% count_limit %]" />
+            <input type="hidden" name="user-daily-limit" id="user-daily-limit" value="[% user_daily_limit %]" />
+            <input type="hidden" name="confirmed-user" value="[% current_user %]" />
+            <input type="hidden" name="confirmed-user-fn" value="[% current_user_fn %]" />
+            <input type="hidden" name="confirmed-user-ln" value="[% current_user_ln %]" />
 
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label" for="email">[% 'Email:' | gettext %]&nbsp;</label>
-        <div class="col-sm-10">
-          <input class="form-control" type="text" id="email" name="email" size="36" value="[% current_user_email %]"
-            readonly="true" />
-
-          <input type="hidden" name="confirmed-email" value="[% current_user_email %]" />
-        </div>
-      </div>
-      [% FOREACH roomnumber IN selected_room_no %]
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label" for="room">[% 'Room:' | gettext %]&nbsp;</label>
-        <div class="col-sm-10">
-          <input class="form-control" type="text" id="room" name="room" size="36" value="[% roomnumber.roomnumber %]"
-            readonly="true" />
-
-          <input type="hidden" name="confirmed-roomnumber" value="[% roomnumber.roomnumber %]" />
-        </div>
-      </div>
-      [% END %]
-      <div class="from-group row">
-        <label class="col-sm-2 col-form-label" for="time">[% 'Time:' | gettext %]&nbsp;</label>
-        <div class="col-sm-10">
-          <input class="form-control" type="text" id="time" name="time" size="36" value="[% displayed_time %]"
-            readonly="true" />
-
-          <input type="hidden" name="confirmed-displayed-start" value="[% displayed_start %]" />
-          <input type="hidden" name="confirmed-displayed-end" value="[% displayed_end %]" />
-          <input type="hidden" name="confirmed-room-id" value="[% selected_room_id %]" />
-          <input type="hidden" name="confirmed-start" value="[% selected_start_time %]" />
-          <input type="hidden" name="confirmed-end" value="[% selected_end_time %]" />
-          <input type="hidden" name="op" value="reservation-confirmed" />
-        </div>
-      </div>
-      <hr>
-      <div class="row justify-content-between align-items-center mx-3">
-        [% IF Koha.Preference('KohaAdminEmailAddress') %]
-          <!-- Checked by default -->
-          <div class="form-group form-check col col-sm-6 mb-0">
-            <input class="form-check-input" type="checkbox" id="send-confirmation-copy" name="send-confirmation-copy"
-              value="1" checked>
-            <label class="form-check-label" for="send-confirmation-copy">[% 'Send me a copy of my confirmation' | gettext
-              %]</label>
           </div>
-        [% END # IF Koha.Preference('KohaAdminEmailAddress') %]
-        <div class="col col-sm-6 text-right">
-          <input type="submit" name="startOverSubmit" value="[% 'Start over' | gettext %]" />
-          <input type="submit" name="confirmationSubmit" value="[% 'Confirm' | gettext %]" disabled />
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="email">[% 'Email:' | gettext %]&nbsp;</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="email" name="email" size="36" value="[% current_user_email %]"
+              readonly="true" />
+
+            <input type="hidden" name="confirmed-email" value="[% current_user_email %]" />
+          </div>
+        </div>
+        [% FOREACH roomnumber IN selected_room_no %]
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="room">[% 'Room:' | gettext %]&nbsp;</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="room" name="room" size="36" value="[% roomnumber.roomnumber %]"
+              readonly="true" />
+
+            <input type="hidden" name="confirmed-roomnumber" value="[% roomnumber.roomnumber %]" />
+          </div>
+        </div>
+        [% END %]
+        <div class="from-group row">
+          <label class="col-sm-2 col-form-label" for="time">[% 'Time:' | gettext %]&nbsp;</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="time" name="time" size="36" value="[% displayed_time %]"
+              readonly="true" />
+
+            <input type="hidden" name="confirmed-displayed-start" value="[% displayed_start %]" />
+            <input type="hidden" name="confirmed-displayed-end" value="[% displayed_end %]" />
+            <input type="hidden" name="confirmed-room-id" value="[% selected_room_id %]" />
+            <input type="hidden" name="confirmed-start" value="[% selected_start_time %]" />
+            <input type="hidden" name="confirmed-end" value="[% selected_end_time %]" />
+            <input type="hidden" name="op" value="reservation-confirmed" />
+          </div>
+        </div>
+        <hr>
+        <div class="row justify-content-between align-items-center mx-3">
+          [% IF Koha.Preference('KohaAdminEmailAddress') %]
+            <!-- Checked by default -->
+            <div class="form-group form-check col col-sm-6 mb-0">
+              <input class="form-check-input" type="checkbox" id="send-confirmation-copy" name="send-confirmation-copy"
+                value="1" checked>
+              <label class="form-check-label" for="send-confirmation-copy">[% 'Send me a copy of my confirmation' | gettext
+                %]</label>
+            </div>
+          [% END # IF Koha.Preference('KohaAdminEmailAddress') %]
+          <div class="col col-sm-6 text-right">
+            <input type="submit" name="startOverSubmit" value="[% 'Start over' | gettext %]" />
+            <input type="submit" name="confirmationSubmit" value="[% 'Confirm' | gettext %]" disabled />
+          </div>
         </div>
       </div>
-    </div>
-  </form>
-
-  <script type="text/javascript">
-    const validateConfirmationForm = () => {
-      const confirmationSubmitButton = document.querySelector('input[name="confirmationSubmit"]');
+    </form>
+    <script type="text/javascript">
       const confirmationForm = document.querySelector('form[name="confirmationForm"]');
-
-      const resLimit = document.getElementById('count-limit').value;
-      const userLimit = document.getElementById('user-daily-limit').value;
-
-      console.log(resLimit, userLimit); // FIXME: Remove
-
-      confirmationForm.addEventListener('submit', (e) => {
-        if (userLimit === resLimit && userLimit > 0 && e.submitter.name === 'confirmationSubmit') {
-          e.preventDefault();
-          alert(
-            "[% 'Unable to continue!\nYou have reached the limit of daily reservations per user for today!' | gettext %]"
-          );
-          return false;
-        }
-      });
-
+      const confirmationSubmitButton = document.querySelector('input[name="confirmationSubmit"]');
+      confirmationForm.addEventListener('submit', RoomReservationBundle.validateConfirmation);
       confirmationSubmitButton.disabled = false;
-    }
-
-    validateConfirmationForm();
-  </script>
-</div> <!-- / .container-fluid -->
+    </script>
+  </div> <!-- / .container-fluid -->
 
 <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
 

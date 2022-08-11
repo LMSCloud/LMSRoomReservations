@@ -322,3 +322,123 @@ export function deleteEquipmentConfirmation(e) {
   e.preventDefault();
   return false;
 }
+
+export function validateAvailabilitySearchForOPAC(e) {
+  const searchForm = {
+    sd: {
+      field: document.getElementById('availability-search-start-date'),
+      value: document.getElementById('availability-search-start-date').value,
+    },
+    st: {
+      field: document.getElementById('availability-search-start-time'),
+      value: document.getElementById('availability-search-start-time').value,
+    },
+    ed: {
+      field: document.getElementById('availability-search-end-date'),
+      value: document.getElementById('availability-search-end-date').value,
+    },
+    et: {
+      field: document.getElementById('availability-search-end-time'),
+      value: document.getElementById('availability-search-end-time').value,
+    },
+    ro: {
+      field: document.getElementById('availability-search-room'),
+      value: document.getElementById('availability-search-room').value,
+    },
+  };
+
+  const searchFormArray = Array.from(Object.entries(searchForm));
+
+  searchFormArray.forEach((entry) => {
+    const [, values] = entry;
+    if (values.field.classList.contains('border-danger')) {
+      values.field.classList.toggle('border-danger');
+    }
+  });
+
+  const MINUTES_TO_MILLISECONDS = 60000;
+  const MILLISECONDS_TO_HOURS = 3600000;
+
+  const maximumBookableTimeframe = parseInt(document.getElementById('max_time').value, 10);
+  const maximumBookableTimeframeInMilliseconds = maximumBookableTimeframe !== 0
+    ? maximumBookableTimeframe * MINUTES_TO_MILLISECONDS
+    : 0;
+  const maximumBookableTimeframeInHours = maximumBookableTimeframeInMilliseconds !== 0 ? (
+    maximumBookableTimeframeInMilliseconds / MILLISECONDS_TO_HOURS) % 24 : 0;
+
+  const startTimestamp = `${searchForm.sd.value} ${searchForm.st.value}`;
+  const endTimestamp = `${searchForm.ed.value} ${searchForm.et.value}`;
+
+  const startTimestampInMilliseconds = Date.parse(startTimestamp);
+  const endTimestampInMilliseconds = Date.parse(endTimestamp);
+
+  const timeDifferenceInMilliseconds = endTimestampInMilliseconds - startTimestampInMilliseconds;
+
+  if (
+    timeDifferenceInMilliseconds > maximumBookableTimeframeInMilliseconds
+    && maximumBookableTimeframeInMilliseconds > 0
+  ) {
+    let timeString = '';
+
+    if (maximumBookableTimeframeInHours > 0) {
+      timeString += `${maximumBookableTimeframeInHours} [% 'hours' | gettext %]`;
+    }
+
+    e.preventDefault();
+    alert(
+      `[% 'Selected time range exceeds maximum time allowed of' | gettext %] ${timeString}!`,
+    );
+    return false;
+  }
+
+  searchFormArray.forEach((entry) => {
+    const [, values] = entry;
+    if (values.value === '') {
+      values.field.classList.toggle('border-danger');
+    }
+  });
+
+  if (searchFormArray.some((entry) => {
+    const [, values] = entry;
+    return values.value === '';
+  })) {
+    e.preventDefault();
+    return false;
+  }
+
+  return true;
+}
+
+export function getColorTextWithContrast(element) {
+  // Generate random RGB values
+  const red = Math.floor(Math.random() * 256 - 1);
+  const green = Math.floor(Math.random() * 256 - 1);
+  const blue = Math.floor(Math.random() * 256 - 1);
+
+  // Calculate brightness of randomized colour
+  const brightness = (red * 299 + green * 587 + blue * 114) / 1000;
+
+  // Calculate brightness of white and black text
+  const lightText = (255 * 299 + 255 * 587 + 255 * 114) / 1000;
+  const darkText = (0 * 299 + 0 * 587 + 0 * 114) / 1000;
+
+  const backgroundColor = `rgb(${red},${green},${blue})`;
+  const textColor = Math.abs(brightness - lightText) > Math.abs(brightness - darkText)
+    ? 'rgb(255, 255, 255)'
+    : 'rgb(0, 0, 0)';
+
+  return [backgroundColor, textColor];
+}
+
+export function validateConfirmation(e) {
+  const resLimit = document.getElementById('count-limit').value;
+  const userLimit = document.getElementById('user-daily-limit').value;
+
+  if (userLimit === resLimit && userLimit > 0 && e.submitter.name === 'confirmationSubmit') {
+    e.preventDefault();
+    alert("[% 'Unable to continue!\nYou have reached the limit of daily reservations per user for today!' | gettext %]");
+    return false;
+  }
+
+  return true;
+}
