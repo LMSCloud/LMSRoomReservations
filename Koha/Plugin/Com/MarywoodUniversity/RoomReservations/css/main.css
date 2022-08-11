@@ -23,6 +23,22 @@
   text-align: center;
 }
 
+button#jump-to-calendar {
+  position: fixed;
+  right: 1em;
+  bottom: 1em;
+  box-shadow: var(--shadow-hv);
+  z-index: 1;
+  border-radius: 50% !important;
+  padding: 1em !important;
+  line-height: 16px;
+}
+
+button#jump-to-calendar * {
+  width: 16px;
+  height: 16px;
+}
+
 div#doc3 > form,
 div#doc3 > div {
   display: flex;
@@ -64,7 +80,6 @@ input[name="book-room-btn"]:hover,
 .calendar-submit:hover,
 input[name="submit-check-room-availability"]:hover,
 input[name="confirmationSubmit"]:hover,
-button#jump-to-calendar:hover,
 .lmsr-button:hover {
   position: relative;
   top: -3px;
@@ -80,7 +95,6 @@ input[name="book-room-btn"]:active,
 .calendar-submit:active,
 input[name="submit-check-room-availability"]:active,
 input[name="confirmationSubmit"]:active,
-button#jump-to-calendar:active,
 .lmsr-button:active {
   top: 0;
   box-shadow: none;
@@ -182,11 +196,13 @@ textarea {
 }
 
 .lmsr-calendar {
-  margin: 0 auto;
+  margin: 2em auto;
   width: 100%;
-  border-radius: 12px;
-  padding: 1em 2em;
-  box-shadow: 1px 2px 4px rgb(0 0 0 / 40%);
+  border-radius: 12px 12px 11px 11px;
+  border: 1px solid var(--seperator-light);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: rgba(0, 0, 0, 0.8);
+  box-shadow: var(--shadow-md);
 }
 
 .lmsr-calendar-controls {
@@ -194,14 +210,21 @@ textarea {
   flex-direction: row;
   flex-wrap: nowrap;
   align-content: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
+  border-bottom: 2px solid var(--seperator-light);
+}
+
+.lmsr-calendar-controls-activemonth,
+.lmsr-calendar-controls-activeyear {
+  color: rgba(0, 0, 0, 0.4);
 }
 
 .lmsr-calendar-body {
   display: flex;
   flex-direction: column;
-  border: 2px solid var(--seperator-light);
+  border-top: 1px solid var(--seperator-light);
+  border-radius: 0 0 12px 12px;
 }
 
 .lmsr-calendar-foot div.lmsr-calendar-row {
@@ -234,18 +257,79 @@ textarea {
   padding: 0 0.25em;
 }
 
+.lmsr-calendar-form-inline {
+  padding-right: 1em;
+}
+
+.lmsr-calendar-form-inline {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.lmsr-calendar-form-room-card {
+  text-align: right;
+}
+
+.lmsr-calendar-form-room-card input {
+  background-color: transparent;
+  color: #0074AD;
+  text-decoration: underline;
+}
+
+.lmsr-calendar-form-room-card input:hover,
+.lmsr-calendar-form-room-card input:active {
+  position: static;
+  text-decoration: underline;
+  box-shadow: none;
+  color: rgba(0, 116, 173, 0.8);
+}
+
 .lmsr-calendar-header {
   width: 100%;
   text-align: right;
-  padding: 0 0.25em;
+  padding: 0.75em 0;
+}
+
+.lmsr-calendar-monthyear {
+  padding-left: 3em;
 }
 
 .lmsr-calendar-row {
   display: flex;
 }
 
+.lmsr-calendar-row:last-child .lmsr-calendar-data:first-child {
+  border-radius: 0 0 0 9px;
+}
+
+.lmsr-calendar-row:last-child .lmsr-calendar-data:last-child {
+border-radius: 0 0 9px 0;
+}
+
 .lmsr-calendar-vertical-separator {
   width: 90%;
+}
+
+.lmsr-calendar-weekday {
+  padding: 0.5em 0.25em;
+  border-left: 1px solid var(--seperator-light);
+  border-right: 1px solid var(--seperator-light);
+}
+
+/* .lmsr-calendar-weekday:first-child {
+  border-left: none;
+}
+
+.lmsr-calendar-weekday:last-child {
+  border-right: none;
+} */
+
+.lmsr-calendar-weekdays {}
+
+.lmsr-card {
+  box-shadow: var(--shadow-sm);
 }
 
 .lmsr-card-room {
@@ -424,4 +508,3 @@ textarea {
 .ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
   height: 100%;
 }
-

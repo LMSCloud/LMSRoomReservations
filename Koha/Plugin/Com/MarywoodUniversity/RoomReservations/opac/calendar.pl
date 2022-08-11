@@ -203,6 +203,7 @@ AVAILABILITY_SEARCH: {
         if ( $max_time eq '0' )     { $max_time     = q{}; }
 
         my $submit_check_room_availability = $cgi->param('submit-check-room-availability') || q{};
+        my $pre_selected_room_id           = $cgi->param('room-id')                        || q{};
 
         if ( $submit_check_room_availability ne q{} ) {
 
@@ -258,6 +259,8 @@ AVAILABILITY_SEARCH: {
             }
         }
         else {    # --> submit button not pressed, yet
+            my @pre_selected_room = grep { $_->{'roomid'} == $pre_selected_room_id } @{$rooms};
+
             $template->param(
                 op                       => $op,
                 room_checked             => -1,
@@ -266,6 +269,7 @@ AVAILABILITY_SEARCH: {
                 max_days                 => $max_num_days,
                 max_time                 => $max_time,
                 opening_hours            => $opening_hours,
+                pre_selected_room        => shift @pre_selected_room,
             );
         }
     }

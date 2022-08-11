@@ -40,30 +40,37 @@
             <div class="calendar-table lmsr-calendar" id="study-room-calendar">
               <div class="lmsr-calendar-head">
                 <div class="lmsr-calendar-header lmsr-calendar-controls">
-                  <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-prev-month" method="post"
-                    name="prev-month" action="#">
-                    <input type="hidden" name="selected_month" value="[% selected_month - 1 %]" />
-                    <input class="calendar-submit" type="submit" name="prev-month" value="«" />
-                  </form>
-                  <div>
+                  <div class="lmsr-calendar-monthyear">
+                    <span><strong>Current Bookings</strong></span><br>
                     <span class="lmsr-calendar-controls-activemonth">[% active_month | gettext %]</span>
                     <span class="lmsr-calendar-controls-activeyear">[% active_year %]</span>
                   </div>
-                  <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-next-month" method="post"
-                    name="next-month" action="#">
-                    <input type="hidden" name="selected_month" value="[% selected_month + 1 %]" />
-                    <input class="calendar-submit" type="submit" name="next-month" value="»" />
-                  </form>
+                  <div class="lmsr-calendar-form-inline">
+                    <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-prev-month" method="post"
+                      name="prev-month" action="#">
+                      <input type="hidden" name="selected_month" value="[% selected_month - 1 %]" />
+                      <input class="calendar-submit" type="submit" name="prev-month" value="«" />
+                    </form>
+                    <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-next-month" method="post"
+                      name="next-month" action="#">
+                      <input type="hidden" name="selected_month" value="[% selected_month + 1 %]" />
+                      <input class="calendar-submit" type="submit" name="next-month" value="»" />
+                    </form>
+                    <form class="lmsr-calendar-form" method="post" name="book-room" action="#">
+                      <input type="hidden" name="op" value="availability-search" />
+                      <input type="submit" name="book-room-btn" value="[% 'Book a Room' | gettext %]" />
+                    </form>
+                  </div>
                 </div>
-                <hr class="lmsr-calendar-vertical-seperator">
-                <div class="lmsr-calendar-row">
-                  <span class="lmsr-calendar-header">[% 'MON' | gettext %]</span>
-                  <span class="lmsr-calendar-header">[% 'TUE' | gettext %]</span>
-                  <span class="lmsr-calendar-header">[% 'WED' | gettext %]</span>
-                  <span class="lmsr-calendar-header">[% 'THU' | gettext %]</span>
-                  <span class="lmsr-calendar-header">[% 'FRI' | gettext %]</span>
-                  <span class="lmsr-calendar-header">[% 'SAT' | gettext %]</span>
-                  <span class="lmsr-calendar-header">[% 'SUN' | gettext %]</span>
+                <!-- <hr class="lmsr-calendar-vertical-seperator"> -->
+                <div class="lmsr-calendar-row lmsr-calendar-weekdays">
+                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'MON' | gettext %]</span>
+                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'TUE' | gettext %]</span>
+                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'WED' | gettext %]</span>
+                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'THU' | gettext %]</span>
+                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'FRI' | gettext %]</span>
+                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'SAT' | gettext %]</span>
+                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'SUN' | gettext %]</span>
                 </div>
               </div>
               <div class="lmsr-calendar-body">
@@ -90,14 +97,11 @@
                   [% w = w + 1 %]
                 [% END %]
               </div>
-              <hr>
+              <!-- <hr> -->
               <div class="lmsr-calendar-foot">
                 <div class="lmsr-calendar-row">
                   <div class="">
-                    <form class="lmsr-calendar-form" method="post" name="book-room" action="#">
-                      <input type="hidden" name="op" value="availability-search" />
-                      <input type="submit" name="book-room-btn" value="[% 'Book a Room' | gettext %]" />
-                    </form>
+
                   </div>
                 </div>
               </div>
@@ -109,53 +113,51 @@
         </div> <!-- col-12 -->
       </div> <!-- row -->
       <div class="row mb-2">
-        <div class="col col-sm-6">
+        <div class="col">
           <h2>[% 'Available Rooms' | gettext %]</h2>
-        </div>
-        <div class="col col-sm-6">
-          <button type="button" id="jump-to-calendar" disabled>[% 'Jump to calendar' | gettext %]</button>
         </div>
       </div>
     <div class="row">
       [% FOR room IN rooms %]
-      <div class="col-12 col-sm-6">
-        <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-          <div id="antolin-topicselect" class="ui-tabs-panel ui-widget-content ui-corner-bottom lmsr-card-room">
-            <a href="#[% room.roomid %]" class="link-collection-collapse-toggle">
-              <legend class="entrypage-legend">[% room.roomnumber %]</legend>
-            </a>
-            <div class="row-fluid link-collection-collapse-entries" id="[% room.roomid %]">
-              <div class="container">
-                <div class="border rounded p-3 mb-2 d-flex flex-column">
-                  <span class="border-bottom pb-1"><b>[% 'Max. Capacity' | gettext %]</b></span>
-                  <span class="mt-2">[% room.maxcapacity %] [% 'Persons' | gettext %]</span>
-                </div>
-                <div class="border rounded p-3 mb-2 d-flex flex-column">
-                  <span class="border-bottom pb-1"><b>[% 'Description' | gettext %]</b></span>
-                  <span class="mt-2">[% room.description %]</span>
-                </div>
-                <div class="border rounded p-3 mb-2 d-flex flex-column">
-                  <span class="border-bottom pb-1">
-                    <b>[% 'Equipment' | gettext %]</b>
-                  </span>
-                  <ul class="lmsr-list mt-2">
-                    [% FOR eqipment IN room.equipment %]
-                      [% equipmentname = eqipment.equipmentname %]
-                      [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
-                      <li class="lmsr-list-item">[% equipmentname %]</li>
-                    [% END %]
-                  </ul>
-                </div>
-              </div> <!-- span12 -->
-            </div> <!-- row-fluid -->
-          </div> <!-- div id advsearches -->
-        </div> <!-- toptabs -->
+      <div class="col-12 col-sm-6 col-md-4">
+
+        <div class="card lmsr-card">
+          [% IF room.image %]
+            <img src="..." class="card-img-top" alt="...">
+          [% END %]
+          <div class="card-body">
+            <h5 class="card-title">[% room.roomnumber %]</h5>
+            [% IF room.description %]
+            <p class="card-text">[% room.description %]</p>
+            [% END %]
+            <p class="card-text">
+              <b>[% 'Max. Capacity' | gettext %]</b>&nbsp;
+              <span>[% room.maxcapacity %] [% 'Persons' | gettext %]</span>
+            </p>
+            <p class="card-text">
+              <b>[% 'Equipment' | gettext %]</b>
+              <ul class="lmsr-list mt-2">
+                [% FOR eqipment IN room.equipment %]
+                  [% equipmentname = eqipment.equipmentname %]
+                  [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
+                  <li class="lmsr-list-item">[% equipmentname %]</li>
+                [% END %]
+              </ul>
+            </p>
+            <form class="lmsr-calendar-form lmsr-calendar-form-room-card" method="post" name="book-room" action="#">
+              <input type="hidden" name="op" value="availability-search" />
+              <input type="hidden" name="room-id" value="[% room.roomid %]">
+              <input type="submit" name="book-room-btn" value="[% 'Book this Room' | gettext %]" class="card-link"/>
+            </form>
+          </div>
+        </div>
       </div>
       [% END %]
     </div>
     <!-- / .span12 -->
 
   </div>
+  <button type="button" id="jump-to-calendar" disabled><i class="fa fa-calendar" aria-hidden="true"></i></button>
 </div> <!-- main-->
 <script>
   const jumpToCalendarButton = document.getElementById('jump-to-calendar');
@@ -219,12 +221,11 @@
   <!-- <div class="container"> -->
   <div class="row">
     <div class="col-12 col-sm-6" id="room-booking">
-      <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-        <div id="antolin-topicselect" class="ui-tabs-panel ui-widget-content ui-corner-bottom lmsr-card-room">
-          <a href="#avsearch" class="link-collection-collapse-toggle">
-            <legend class="entrypage-legend">[% 'Availability Search' | gettext %]</legend>
-          </a>
-          <div class="row-fluid link-collection-collapse-entries" id="avsearch">
+
+      <div class="card lmsr-card">
+        <div class="card-body">
+          <h5 class="card-title">[% 'Availability Search' | gettext %]</h5>
+          <p class="card-text">
             <div class="container">
 
               <form name="availabilitySearchForm" method="post" action="#">
@@ -276,10 +277,15 @@
                       <label class="col-sm-6 col-form-label">[% 'Select Room' | gettext %]</label>
                       <select class="form-control col-sm-6" name="availability-search-room"
                         id="availability-search-room">
-                        <option value=""></option> <!-- FIXME: This needs a value -->
+                        [% IF pre_selected_room %]
+                          <option value="[% pre_selected_room.roomid %]">[% pre_selected_room.roomnumber %] ([% 'max.' | gettext %] [% pre_selected_room.maxcapacity %] [% 'people' | gettext %])</option> <!-- FIXME: This needs a value -->
+                        [% ELSE %]
+                          <option value=""></option> <!-- FIXME: This needs a value --> 
+                        [% END %]
                         [% FOREACH room IN rooms %]
-                        <option value="[% room.roomid %]">[% room.roomnumber %] ([% 'max.' | gettext
-                          %] [% room.maxcapacity %] [% 'people' | gettext %])</option>
+                          [% UNLESS room.roomid == pre_selected_room.roomid %]
+                            <option value="[% room.roomid %]">[% room.roomnumber %] ([% 'max.' | gettext %] [% room.maxcapacity %] [% 'people' | gettext %])</option>
+                          [% END%]
                         [% END %]
                       </select>
                     </div>
@@ -298,68 +304,59 @@
                 </div>
               </form>
             </div> <!-- span12 -->
-          </div> <!-- row-fluid -->
-        </div> <!-- div id advsearches -->
-      </div> <!-- toptabs -->
-
+          </p>
+        </div>
+      </div>
     </div> <!-- / .span12 -->
+
     <div class="col-12 col-sm-6">
-      <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-        <div id="antolin-topicselect" class="ui-tabs-panel ui-widget-content ui-corner-bottom lmsr-card-room">
-          <a href="#open" class="link-collection-collapse-toggle">
-            <legend class="entrypage-legend">[% 'Opening hours' | gettext %]</legend>
-          </a>
-          <div class="container-fluid link-collection-collapse-entries" id="open">
+      <div class="card lmsr-card">
+        <div class="card-body">
+          <h5 class="card-title">[% 'Opening hours' | gettext %]</h5>
+          <p class="card-text">
             [% FOR hour IN opening_hours %]
-            <div class="row my-3 mx-1 p-1 border rounded">
-              <div class="col-6 col-sm-12 col-md-7 text-left text-sm-center text-md-left rounded">[% hour.day | gettext
-                %]</div>
-              <div class="col-6 col-sm-12 col-md-5 text-center text-sm-center text-md-left text-lg-right">[% hour.start
-                %] - [% hour.end %]</div>
-            </div>
+              <div class="row my-3 mx-1 p-1 border rounded">
+                <div class="col-6 col-sm-12 col-md-7 text-left text-sm-center text-md-left rounded">[% hour.day | gettext %]</div>
+                <div class="col-6 col-sm-12 col-md-5 text-center text-sm-center text-md-left text-lg-right">[% hour.start %] - [% hour.end %]</div>
+              </div>
             [% END %]
-          </div> <!-- row-fluid -->
-        </div> <!-- div id advsearches -->
-      </div> <!-- toptabs -->
+          </p>
+        </div>
+      </div>
     </div>
   </div> <!-- row-->
+
+  <br>
+
   <h2 class="lmsr-section-heading">[% 'Available Rooms' | gettext %]</h2>
   <div class="row">
     [% FOR room IN rooms %]
-    <div class="col-12 col-sm-6">
-      <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-        <div id="antolin-topicselect" class="ui-tabs-panel ui-widget-content ui-corner-bottom lmsr-card-room">
-          <a href="#[% room.roomid %]" class="link-collection-collapse-toggle">
-            <legend class="entrypage-legend">[% room.roomnumber %]</legend>
-          </a>
-          <div class="row-fluid link-collection-collapse-entries" id="[% room.roomid %]">
-            <div class="container">
-              <div class="border rounded p-3 mb-2 d-flex flex-column">
-                <span class="border-bottom pb-1"><b>[% 'Max. Capacity' | gettext %]</b></span>
-                <span class="mt-2">[% room.maxcapacity %] [% 'Persons' | gettext %]</span>
-              </div>
-              <div class="border rounded p-3 mb-2 d-flex flex-column">
-                <span class="border-bottom pb-1"><b>[% 'Description' | gettext %]</b></span>
-                <span class="mt-2">[% room.description %]</span>
-              </div>
-              <div class="border rounded p-3 mb-2 d-flex flex-column">
-                <span class="border-bottom pb-1">
-                  <b>[% 'Equipment' | gettext %]</b>
-                </span>
-                <ul class="lmsr-list mt-2">
-                  [% FOR eqipment IN room.equipment %]
-                  [% equipmentname = eqipment.equipmentname %]
-                  [% IF equipmentname == 'none' %]
-                  [% equipmentname = gtx.gettext('none') %]
-                  [% END %]
-                  <li class="lmsr-list-item">[% equipmentname %]</li>
-                  [% END %]
-                </ul>
-              </div>
-            </div> <!-- span12 -->
-          </div> <!-- row-fluid -->
-        </div> <!-- div id advsearches -->
-      </div> <!-- toptabs -->
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="card lmsr-card">
+        [% IF room.image %]
+          <img src="..." class="card-img-top" alt="...">
+        [% END %]
+        <div class="card-body">
+          <h5 class="card-title">[% room.roomnumber %]</h5>
+          [% IF room.description %]
+          <p class="card-text">[% room.description %]</p>
+          [% END %]
+          <p class="card-text">
+            <b>[% 'Max. Capacity' | gettext %]</b>&nbsp;
+            <span>[% room.maxcapacity %] [% 'Persons' | gettext %]</span>
+          </p>
+          <p class="card-text">
+            <b>[% 'Equipment' | gettext %]</b>
+            <ul class="lmsr-list mt-2">
+              [% FOR eqipment IN room.equipment %]
+                [% equipmentname = eqipment.equipmentname %]
+                [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
+                <li class="lmsr-list-item">[% equipmentname %]</li>
+              [% END %]
+            </ul>
+          </p>
+        </div>
+      </div>
     </div>
     [% END %]
   </div>
