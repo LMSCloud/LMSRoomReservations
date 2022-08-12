@@ -409,11 +409,26 @@ export function validateAvailabilitySearchForOPAC(e) {
   return true;
 }
 
-export function getColorTextWithContrast(element) {
-  // Generate random RGB values
-  const red = Math.floor(Math.random() * 256 - 1);
-  const green = Math.floor(Math.random() * 256 - 1);
-  const blue = Math.floor(Math.random() * 256 - 1);
+export function getColorTextWithContrast(color) {
+  let red = 0;
+  let green = 0;
+  let blue = 0;
+
+  if (!color) {
+    // Generate random RGB values
+    red = Math.floor(Math.random() * 256 - 1);
+    green = Math.floor(Math.random() * 256 - 1);
+    blue = Math.floor(Math.random() * 256 - 1);
+  }
+
+  if (color) {
+    [red, green, blue] = color.replace(
+      /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+      (m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`,
+    )
+      .substring(1).match(/.{2}/g)
+      .map((x) => parseInt(x, 16));
+  }
 
   // Calculate brightness of randomized colour
   const brightness = (red * 299 + green * 587 + blue * 114) / 1000;

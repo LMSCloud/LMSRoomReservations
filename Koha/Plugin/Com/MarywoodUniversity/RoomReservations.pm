@@ -78,11 +78,11 @@ bindtextdomain q{com.marywooduniversity.roomreservations} => $locale_path;
 
 our $METADATA = {
     name            => get_translation('Room Reservations Plugin'),
-    author          => 'Lee Jamison',
+    author          => 'Lee Jamison, Paul Derscheid @ LMSCloud GmbH',
     description     => get_translation('This plugin provides a room reservation solution on both intranet and OPAC interfaces.'),
     date_authored   => '2017-05-08',
     date_updated    => '1900-01-01',
-    minimum_version => '21.05',
+    minimum_version => '21.05.14.000',
     maximum_version => undef,
 };
 

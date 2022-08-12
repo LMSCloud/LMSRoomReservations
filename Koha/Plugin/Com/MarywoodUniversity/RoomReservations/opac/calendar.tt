@@ -84,7 +84,13 @@
                       <span class="lmsr-calendar-dayofmonth">&nbsp;[% current_month_cal.$n %]</span>
                         <div class="min-height lmsr-calendar-data-entry">
                           [% FOREACH booking IN booking_days.$n %]
-                            <div class="lmsr-calendar-data-booking">
+                            <div class="lmsr-calendar-data-booking"
+                            [% FOREACH room IN rooms %]
+                              [% IF room.roomnumber == booking.roomnumber %]
+                                data-color="[% room.color %]"
+                              [% END %]
+                            [% END # FOREACH %]
+                            >
                               <span class="lmsr-calendar-data-roomnumber">[% booking.roomnumber %]</span><br>
                               <span class="lmsr-calendar-data-bookedtime">([% booking.bookedtime %])</span><br />
                             </div>
@@ -169,8 +175,9 @@
   const activeBookingsInCalendar = document.querySelectorAll('.lmsr-calendar-data-booking');
 
   activeBookingsInCalendar.forEach((activeBookingInCalendar) => {
+    const color = activeBookingInCalendar.dataset.color;
     const ACTIVE_BOOKING_REFERENCE = activeBookingInCalendar;
-    const [backgroundColor, textColor] = RoomReservationBundle.getColorTextWithContrast();
+    const [backgroundColor, textColor] = RoomReservationBundle.getColorTextWithContrast(color);
     ACTIVE_BOOKING_REFERENCE.style.backgroundColor = backgroundColor;
     ACTIVE_BOOKING_REFERENCE.style.color = textColor;
   });
