@@ -373,6 +373,8 @@
               <input type="text" name="add-room-maxcapacity" size="4" maxlength="4" />
               <label for="add-room-description">[% 'Description:' | gettext %]</label>
               <input type="text" name="add-room-description"/>
+              <label for="add-room-color">[% 'Description:' | gettext %]</label>
+              <input type="color" name="add-room-color"/>
             </div>
 
             <hr>
@@ -475,6 +477,8 @@
                 <input type="text" name="edit-rooms-room-maxcapacity" size="4" maxlength="4" value="[% room.maxcapacity %]" />
                 <label>[% 'Description:' | gettext %] </label>
                 <input type="text" name="edit-rooms-room-description" value="[% room.description %]" />
+                <label>[% 'Color:' | gettext %] </label>
+                <input type="color" name="edit-rooms-room-color" value="[% room.color %]" />
               [% END # FOREACH room IN room_details %]
             </div>
             

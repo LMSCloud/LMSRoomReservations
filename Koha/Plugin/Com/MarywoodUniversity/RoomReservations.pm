@@ -31,8 +31,10 @@ use Koha::Email;
 use Koha::Patrons;
 use Encode;
 use Readonly;
-use feature qw(switch);
 use DateTime;
+use experimental qw( switch );
+
+use Data::Dumper;
 
 use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
@@ -80,9 +82,8 @@ our $METADATA = {
     description     => get_translation('This plugin provides a room reservation solution on both intranet and OPAC interfaces.'),
     date_authored   => '2017-05-08',
     date_updated    => '1900-01-01',
-    minimum_version => '3.22',
+    minimum_version => '21.05',
     maximum_version => undef,
-    version         => $VERSION,
 };
 
 our $VALID;    # used to check if booking still valid prior to insertion of new booking
@@ -91,8 +92,9 @@ sub new {
     my ( $class, $args ) = @_;
 
     ## We need to add our metadata here so our base class can access it
-    $args->{'metadata'} = $METADATA;
-    $args->{'metadata'}->{'class'} = $class;
+    $args->{'metadata'}              = $METADATA;
+    $args->{'metadata'}->{'version'} = $VERSION;
+    $args->{'metadata'}->{'class'}   = $class;
 
     ## Here, we call the 'new' method for our base class
     ## This runs some additional magic and checking
@@ -123,6 +125,7 @@ sub install() {
               `roomnumber` VARCHAR(20) NOT NULL, -- alphanumeric room identifier
               `maxcapacity` INT NOT NULL, -- maximum number of people allowed in the room
               `description` TEXT, -- room description to display in OPAC
+              `color` VARCHAR(7) -- room color to display in OPAC
             PRIMARY KEY (roomid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
@@ -244,6 +247,33 @@ sub install() {
     return 1;
 }
 
+sub intranet_head {
+    my ($self) = @_;
+
+    return;
+}
+
+sub intranet_js {
+    my ($self) = @_;
+
+    my $current_plugin_version = $self->retrieve_data('plugin_version');
+    return qq{<script>console.log('RoomReservations plugin loaded. Version $current_plugin_version');</script>};
+}
+
+sub upgrade {
+    my ( $self, $args ) = @_;
+
+    my $column_color_exists = C4::Context->dbh->do(
+        qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'color';}
+    );
+
+    if ( $column_color_exists eq '0E0') {
+        my $rv = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN color VARCHAR(7);});
+    }
+
+    return 1;
+}
+
 sub uninstall() {
     my ( $self, $args ) = @_;
 
@@ -289,7 +319,7 @@ sub bookas {
 
     my ( $self, $args ) = @_;
 
-    $cgi      = $self->{'cgi'};
+    $cgi = $self->{'cgi'};
     my $template = $self->get_template( { file => 'bookas.tt' } );
     $template->param(
         language => C4::Languages::getlanguage($cgi) || 'en',
@@ -468,7 +498,7 @@ sub bookas {
 sub tool {
     my ( $self, $args ) = @_;
 
-    $cgi      = $self->{'cgi'};
+    $cgi = $self->{'cgi'};
     my $template = $self->get_template( { file => 'tool.tt' } );
     $template->param(
         language => C4::Languages::getlanguage($cgi) || 'en',
@@ -928,10 +958,11 @@ sub configure {
             my $roomnumber        = $cgi->param('add-room-roomnumber');
             my $maxcapacity       = $cgi->param('add-room-maxcapacity');
             my $description       = $cgi->param('add-room-description');
+            my $color             = $cgi->param('add-room-color');
             my @selectedEquipment = $cgi->param('selected-equipment');
 
             ## pass @selectedEquipment by reference
-            add_room( $roomnumber, $maxcapacity, $description, \@selectedEquipment );
+            add_room( $roomnumber, $maxcapacity, $description, $color, \@selectedEquipment );
         }
 
         my $availableEquipment = get_all_room_equipment_names_and_ids();
@@ -959,8 +990,9 @@ sub configure {
             my $updatedRoomNumber  = $cgi->param('edit-rooms-room-roomnumber');
             my $updatedMaxCapacity = $cgi->param('edit-rooms-room-maxcapacity');
             my $updatedDescription = $cgi->param('edit-rooms-room-description');
+            my $updatedColor       = $cgi->param('edit-rooms-room-color');
 
-            update_room_details( $roomIdToUpdate, $updatedRoomNumber, $updatedDescription, $updatedMaxCapacity );
+            update_room_details( $roomIdToUpdate, $updatedRoomNumber, $updatedDescription, $updatedMaxCapacity, $updatedColor );
         }
 
         if ( $roomEquipmentUpdated eq '1' ) {

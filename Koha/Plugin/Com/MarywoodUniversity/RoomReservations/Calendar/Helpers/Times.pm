@@ -5,9 +5,9 @@ use warnings;
 use utf8;
 use C4::Context;
 use Readonly;
-use feature qw(switch);
 use POSIX qw(strftime);
 use Exporter qw(import);
+use experimental qw( switch );
 
 our $VERSION = '1.0.0';
 our @EXPORT  = qw(

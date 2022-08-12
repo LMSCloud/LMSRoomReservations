@@ -24,15 +24,15 @@ gulp.task(
   'build',
   () => new Promise((resolve) => {
     run(`
-              mkdir dist ;
-              cp -r Koha dist/. ;
-              sed -i -e "s/{VERSION}/${packageJson.version}/g" ${pmFilePathFullDist} ;
-              sed -i -e "s/1900-01-01/${today}/g" ${pmFilePathFullDist} ;
-              cd dist ;
-              zip -r ../${releaseFilename} ./Koha ;
-              cd .. ;
-              rm -rf dist ;
-          `).exec();
+      mkdir dist ;
+      cp -r Koha dist/. ;
+      gsed -i -e "s/{VERSION}/${packageJson.version}/g" ${pmFilePathFullDist} ;
+      gsed -i -e "s/1900-01-01/${today}/g" ${pmFilePathFullDist} ;
+      cd dist ;
+      zip -r ../${releaseFilename} ./Koha ;
+      cd .. ;
+      rm -rf dist ;
+    `).exec();
     resolve();
   }),
 );
