@@ -373,7 +373,7 @@
               <input type="text" name="add-room-maxcapacity" size="4" maxlength="4" />
               <label for="add-room-description">[% 'Description:' | gettext %]</label>
               <input type="text" name="add-room-description"/>
-              <label for="add-room-color">[% 'Description:' | gettext %]</label>
+              <label for="add-room-color">[% 'Color:' | gettext %]</label>
               <input type="color" name="add-room-color"/>
             </div>
 

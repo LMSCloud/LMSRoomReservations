@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-08-15 13:13+0200\n"
+"PO-Revision-Date: 2022-08-15 16:22+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -202,7 +202,7 @@ msgstr "Raum löschen"
 
 #: configure.tt:36
 msgid "Add room equipment"
-msgstr "Raumausstattung bearbeiten"
+msgstr "Raumausstattung hinzufügen"
 
 #: configure.tt:37
 msgid "Edit room equipment"
