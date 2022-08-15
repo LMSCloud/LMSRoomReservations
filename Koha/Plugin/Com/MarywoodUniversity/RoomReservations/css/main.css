@@ -558,14 +558,15 @@ border-radius: 0 0 9px 0;
   color: #FFFFFF;
   border: 1px solid transparent;
   border-radius: 7px;
-  /* line-height: 2.5em; */
-  margin: 0.25em;
+  line-height: 2.5em;
 }
 
 .lmsr-pill-checkbox,
 .lmsr-pill-radio {
   white-space: nowrap;
   float: left;
+  line-height: initial;
+  margin: 0.25em;
 }
 
 .lmsr-toast {
