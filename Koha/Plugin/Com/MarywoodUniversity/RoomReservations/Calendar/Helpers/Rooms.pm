@@ -444,7 +444,7 @@ sub add_room {
     my $dbh = C4::Context->dbh;
 
     ## first insert roomnumber and maxcapacity into $ROOMS_TABLE
-    $dbh->do("INSERT INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, roomcolor) VALUES ($roomnumber, $maxcapacity, $description, $color);");
+    $dbh->do("INSERT INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color) VALUES ($roomnumber, $maxcapacity, $description, $color);");
 
     foreach my $piece ( @{$equipment} ) {
 

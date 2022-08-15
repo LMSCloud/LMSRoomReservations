@@ -248,6 +248,12 @@ textarea {
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.lmsr-calendar-data::-webkit-scrollbar {
+  display: none;
 }
 
 .lmsr-calendar-dayofmonth {
