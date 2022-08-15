@@ -337,7 +337,7 @@ RESERVATION_CONFIRMED: {
         my $displayed_end     = $cgi->param('confirmed-displayed-end');
         my $patron_email      = $cgi->param('confirmed-email');
 
-        if ( defined $start_over_submit && ( $start_over_submit eq 'Start over' || $start_over_submit eq 'Abbrechen' ) ) {
+        if ( defined $start_over_submit && ( $start_over_submit eq 'Start over' || $start_over_submit ne q{} ) ) {
             $op = 'availability-search';
             goto AVAILABILITY_SEARCH;
         }
