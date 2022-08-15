@@ -297,6 +297,15 @@ textarea {
   display: none;
 }
 
+.lmsr-calendar-data-has-events {
+  -ms-overflow-style: initial;
+  scrollbar-width: initial;
+}
+
+.lmsr-calendar-data-has-events::-webkit-scrollbar {
+  all: unset;
+}
+
 .lmsr-calendar-dayofmonth {
   position: -webkit-sticky;
   position: sticky;

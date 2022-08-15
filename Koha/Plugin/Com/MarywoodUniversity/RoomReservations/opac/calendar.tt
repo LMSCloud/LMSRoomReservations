@@ -81,7 +81,7 @@
                     [% WHILE d < 7 %] 
                       [% n=w * 7 + d %] 
                       <div class="lmsr-calendar-data">
-                      <span class="lmsr-calendar-dayofmonth">&nbsp;[% current_month_cal.$n %]</span>
+                        <span class="lmsr-calendar-dayofmonth">&nbsp;[% current_month_cal.$n %]</span>
                         <div class="min-height lmsr-calendar-data-entry">
                           [% FOREACH booking IN booking_days.$n %]
                             <div class="lmsr-calendar-data-booking"
@@ -172,7 +172,14 @@
   jumpToCalendarButton.disabled = false;
 
   /* We could think about assigning dedicated configurable colors to these. */
+  const daysWithBookingsInCalendar = document.querySelectorAll('.lmsr-calendar-data-entry');
   const activeBookingsInCalendar = document.querySelectorAll('.lmsr-calendar-data-booking');
+
+  daysWithBookingsInCalendar.forEach((dayWithBookingsInCalendar) => {
+    if (dayWithBookingsInCalendar.firstElementChild) {
+      dayWithBookingsInCalendar.parentElement.classList.add('lmsr-calendar-data-has-events');
+    }
+  });
 
   activeBookingsInCalendar.forEach((activeBookingInCalendar) => {
     const color = activeBookingInCalendar.dataset.color;
