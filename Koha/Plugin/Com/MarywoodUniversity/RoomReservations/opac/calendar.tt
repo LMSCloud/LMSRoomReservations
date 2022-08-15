@@ -41,7 +41,7 @@
               <div class="lmsr-calendar-head">
                 <div class="lmsr-calendar-header lmsr-calendar-controls">
                   <div class="lmsr-calendar-monthyear">
-                    <span><strong>Current Bookings</strong></span><br>
+                    <span><strong>[% Current Bookings | gettext %]</strong></span><br>
                     <span class="lmsr-calendar-controls-activemonth">[% active_month | gettext %]</span>
                     <span class="lmsr-calendar-controls-activeyear">[% active_year %]</span>
                   </div>

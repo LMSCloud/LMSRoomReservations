@@ -1,911 +1,627 @@
 # German translations for PACKAGE package.
-# Copyright (C) 2021 THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2022 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# root <root@56ee6f0bd7d1>, 2021.
+# Paul Derscheid <paul.derscheid@lmscloud.de>, 2022.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-03-12 08:46+0100\n"
-"Last-Translator: root <root@56ee6f0bd7d1>\n"
-"Language-Team: German\n"
+"PO-Revision-Date: 2022-08-15 13:13+0200\n"
+"Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 3.1.1\n"
 
 #: bookas.tt:6
 msgid "Koha: Room Reservations Plugin: Reserve as patron"
-msgstr "Plugin für Raumreservierungen: Reserviere als Benutzer"
+msgstr "Koha: Raumreservierungsplugin: Als Benutzer:in reservieren"
 
-#: bookas.tt:19 configure.tt:76 tool.tt:37 opac/calendar.tt:47
-#: opac/calendar.tt:582 opac/calendar.tt:791 opac/calendar.tt:861
+#: bookas.tt:18 configure.tt:18 tool.tt:16 opac/calendar.tt:23
+#: opac/calendar.tt:193 opac/calendar.tt:356
 msgid "Home"
 msgstr "Start"
 
-#: bookas.tt:19 configure.tt:76 tool.tt:37
+#: bookas.tt:19 configure.tt:19 tool.tt:17
 msgid "Plugins"
 msgstr "Plugins"
 
-#: bookas.tt:19 configure.tt:76
+#: bookas.tt:20 configure.tt:20 tool.tt:18
 msgid "Room Reservations"
 msgstr "Raumreservierungen"
 
-#: bookas.tt:19
+#: bookas.tt:21 tool.tt:19
 msgid "Tool"
 msgstr "Werkzeug"
 
-#: bookas.tt:24
+#: bookas.tt:26
 msgid "Reserve as"
 msgstr "Reserviere als"
 
-#: bookas.tt:39 tool.tt:362 opac/calendar.tt:556
-msgid "Start date is required."
-msgstr "Startdatum ist erforderlich."
-
-#: bookas.tt:44 opac/calendar.tt:561
-msgid "Start time is required."
-msgstr "Startzeit ist erforderlich."
-
-#: bookas.tt:49 tool.tt:367 opac/calendar.tt:566
-msgid "End date is required."
-msgstr "Enddatum ist erforderlich."
-
-#: bookas.tt:54 opac/calendar.tt:571
-msgid "End time is required."
-msgstr "Endzeit ist erforderlich."
-
-#: bookas.tt:59 opac/calendar.tt:576
-msgid "Room capacity is required."
-msgstr "Raumkapazität ist erforderlich."
-
-#: bookas.tt:71 opac/calendar.tt:584 opac/calendar.tt:596
+#: bookas.tt:32 opac/calendar.tt:195 opac/calendar.tt:207
 msgid "Availability Search"
 msgstr "Verfügbarkeitssuche"
 
-#: bookas.tt:77 opac/calendar.tt:602
+#: bookas.tt:42 tool.tt:170 tool.tt:428
+msgid "From"
+msgstr "Von"
+
+#: bookas.tt:44
 msgid "Start date"
-msgstr "Startdatum"
+msgstr "Start-Datum"
 
-#: bookas.tt:80 bookas.tt:134 opac/calendar.tt:606 opac/calendar.tt:661
-msgid "Time"
-msgstr "Zeit"
+#: bookas.tt:50
+msgid "Until"
+msgstr "Bis"
 
-#: bookas.tt:81 bookas.tt:135 tool.tt:503 tool.tt:558 opac/calendar.tt:607
-#: opac/calendar.tt:662
-msgid "12:00 AM"
-msgstr "00:00 Uhr"
-
-#: bookas.tt:82 bookas.tt:136 tool.tt:504 tool.tt:559 opac/calendar.tt:608
-#: opac/calendar.tt:663
-msgid "12:30 AM"
-msgstr "00:30 Uhr"
-
-#: bookas.tt:83 bookas.tt:137 tool.tt:505 tool.tt:560 opac/calendar.tt:609
-#: opac/calendar.tt:664
-msgid "1:00 AM"
-msgstr "01:00 Uhr"
-
-#: bookas.tt:84 bookas.tt:138 tool.tt:506 tool.tt:561 opac/calendar.tt:610
-#: opac/calendar.tt:665
-msgid "1:30 AM"
-msgstr "01:30 Uhr"
-
-#: bookas.tt:85 bookas.tt:139 tool.tt:507 tool.tt:562 opac/calendar.tt:611
-#: opac/calendar.tt:666
-msgid "2:00 AM"
-msgstr "02:00 Uhr"
-
-#: bookas.tt:86 bookas.tt:140 tool.tt:508 tool.tt:563 opac/calendar.tt:612
-#: opac/calendar.tt:667
-msgid "2:30 AM"
-msgstr "02:30 Uhr"
-
-#: bookas.tt:87 bookas.tt:141 tool.tt:509 tool.tt:564 opac/calendar.tt:613
-#: opac/calendar.tt:668
-msgid "3:00 AM"
-msgstr "03:00 Uhr"
-
-#: bookas.tt:88 bookas.tt:142 tool.tt:510 tool.tt:565 opac/calendar.tt:614
-#: opac/calendar.tt:669
-msgid "3:30 AM"
-msgstr "03:30 Uhr"
-
-#: bookas.tt:89 bookas.tt:143 tool.tt:511 tool.tt:566 opac/calendar.tt:615
-#: opac/calendar.tt:670
-msgid "4:00 AM"
-msgstr "04:00 Uhr"
-
-#: bookas.tt:90 bookas.tt:144 tool.tt:512 tool.tt:567 opac/calendar.tt:616
-#: opac/calendar.tt:671
-msgid "4:30 AM"
-msgstr "04:30 Uhr"
-
-#: bookas.tt:91 bookas.tt:145 tool.tt:513 tool.tt:568 opac/calendar.tt:617
-#: opac/calendar.tt:672
-msgid "5:00 AM"
-msgstr "05:00 Uhr"
-
-#: bookas.tt:92 bookas.tt:146 tool.tt:514 tool.tt:569 opac/calendar.tt:618
-#: opac/calendar.tt:673
-msgid "5:30 AM"
-msgstr "05:30 Uhr"
-
-#: bookas.tt:93 bookas.tt:147 tool.tt:515 tool.tt:570 opac/calendar.tt:619
-#: opac/calendar.tt:674
-msgid "6:00 AM"
-msgstr "06:00 Uhr"
-
-#: bookas.tt:94 bookas.tt:148 tool.tt:516 tool.tt:571 opac/calendar.tt:620
-#: opac/calendar.tt:675
-msgid "6:30 AM"
-msgstr "06:30 Uhr"
-
-#: bookas.tt:95 bookas.tt:149 tool.tt:517 tool.tt:572 opac/calendar.tt:621
-#: opac/calendar.tt:676
-msgid "7:00 AM"
-msgstr "07:00 Uhr"
-
-#: bookas.tt:96 bookas.tt:150 tool.tt:518 tool.tt:573 opac/calendar.tt:622
-#: opac/calendar.tt:677
-msgid "7:30 AM"
-msgstr "07:30 Uhr"
-
-#: bookas.tt:97 bookas.tt:151 tool.tt:519 tool.tt:574 opac/calendar.tt:623
-#: opac/calendar.tt:678
-msgid "8:00 AM"
-msgstr "08:00 Uhr"
-
-#: bookas.tt:98 bookas.tt:152 tool.tt:520 tool.tt:575 opac/calendar.tt:624
-#: opac/calendar.tt:679
-msgid "8:30 AM"
-msgstr "08:30 Uhr"
-
-#: bookas.tt:99 bookas.tt:153 tool.tt:521 tool.tt:576 opac/calendar.tt:625
-#: opac/calendar.tt:680
-msgid "9:00 AM"
-msgstr "09:00 Uhr"
-
-#: bookas.tt:100 bookas.tt:154 tool.tt:522 tool.tt:577 opac/calendar.tt:626
-#: opac/calendar.tt:681
-msgid "9:30 AM"
-msgstr "09:30 Uhr"
-
-#: bookas.tt:101 bookas.tt:155 tool.tt:523 tool.tt:578 opac/calendar.tt:627
-#: opac/calendar.tt:682
-msgid "10:00 AM"
-msgstr "10:00 Uhr"
-
-#: bookas.tt:102 bookas.tt:156 tool.tt:524 tool.tt:579 opac/calendar.tt:628
-#: opac/calendar.tt:683
-msgid "10:30 AM"
-msgstr "10:30 Uhr"
-
-#: bookas.tt:103 bookas.tt:157 tool.tt:525 tool.tt:580 opac/calendar.tt:629
-#: opac/calendar.tt:684
-msgid "11:00 AM"
-msgstr "11:00 Uhr"
-
-#: bookas.tt:104 bookas.tt:158 tool.tt:526 tool.tt:581 opac/calendar.tt:630
-#: opac/calendar.tt:685
-msgid "11:30 AM"
-msgstr "11:30 Uhr"
-
-#: bookas.tt:105 bookas.tt:159 tool.tt:527 tool.tt:582 opac/calendar.tt:631
-#: opac/calendar.tt:686
-msgid "12:00 PM"
-msgstr "12:00 Uhr"
-
-#: bookas.tt:106 bookas.tt:160 tool.tt:528 tool.tt:583 opac/calendar.tt:632
-#: opac/calendar.tt:687
-msgid "12:30 PM"
-msgstr "12:30 Uhr"
-
-#: bookas.tt:107 bookas.tt:161 tool.tt:529 tool.tt:584 opac/calendar.tt:633
-#: opac/calendar.tt:688
-msgid "1:00 PM"
-msgstr "13:00 Uhr"
-
-#: bookas.tt:108 bookas.tt:162 tool.tt:530 tool.tt:585 opac/calendar.tt:634
-#: opac/calendar.tt:689
-msgid "1:30 PM"
-msgstr "13:30 Uhr"
-
-#: bookas.tt:109 bookas.tt:163 tool.tt:531 tool.tt:586 opac/calendar.tt:635
-#: opac/calendar.tt:690
-msgid "2:00 PM"
-msgstr "14:00 Uhr"
-
-#: bookas.tt:110 bookas.tt:164 tool.tt:532 tool.tt:587 opac/calendar.tt:636
-#: opac/calendar.tt:691
-msgid "2:30 PM"
-msgstr "14:30 Uhr"
-
-#: bookas.tt:111 bookas.tt:165 tool.tt:533 tool.tt:588 opac/calendar.tt:637
-#: opac/calendar.tt:692
-msgid "3:00 PM"
-msgstr "15:00 Uhr"
-
-#: bookas.tt:112 bookas.tt:166 tool.tt:534 tool.tt:589 opac/calendar.tt:638
-#: opac/calendar.tt:693
-msgid "3:30 PM"
-msgstr "15:30 Uhr"
-
-#: bookas.tt:113 bookas.tt:167 tool.tt:535 tool.tt:590 opac/calendar.tt:639
-#: opac/calendar.tt:694
-msgid "4:00 PM"
-msgstr "16:00 Uhr"
-
-#: bookas.tt:114 bookas.tt:168 tool.tt:536 tool.tt:591 opac/calendar.tt:640
-#: opac/calendar.tt:695
-msgid "4:30 PM"
-msgstr "16:30 Uhr"
-
-#: bookas.tt:115 bookas.tt:169 tool.tt:537 tool.tt:592 opac/calendar.tt:641
-#: opac/calendar.tt:696
-msgid "5:00 PM"
-msgstr "17:00 Uhr"
-
-#: bookas.tt:116 bookas.tt:170 tool.tt:538 tool.tt:593 opac/calendar.tt:642
-#: opac/calendar.tt:697
-msgid "5:30 PM"
-msgstr "17:30 Uhr"
-
-#: bookas.tt:117 bookas.tt:171 tool.tt:539 tool.tt:594 opac/calendar.tt:643
-#: opac/calendar.tt:698
-msgid "6:00 PM"
-msgstr "18:00 Uhr"
-
-#: bookas.tt:118 bookas.tt:172 tool.tt:540 tool.tt:595 opac/calendar.tt:644
-#: opac/calendar.tt:699
-msgid "6:30 PM"
-msgstr "18:30 Uhr"
-
-#: bookas.tt:119 bookas.tt:173 tool.tt:541 tool.tt:596 opac/calendar.tt:645
-#: opac/calendar.tt:700
-msgid "7:00 PM"
-msgstr "19:00 Uhr"
-
-#: bookas.tt:120 bookas.tt:174 tool.tt:542 tool.tt:597 opac/calendar.tt:646
-#: opac/calendar.tt:701
-msgid "7:30 PM"
-msgstr "19:30 Uhr"
-
-#: bookas.tt:121 bookas.tt:175 tool.tt:543 tool.tt:598 opac/calendar.tt:647
-#: opac/calendar.tt:702
-msgid "8:00 PM"
-msgstr "20:00 Uhr"
-
-#: bookas.tt:122 bookas.tt:176 tool.tt:544 tool.tt:599 opac/calendar.tt:648
-#: opac/calendar.tt:703
-msgid "8:30 PM"
-msgstr "20:30 Uhr"
-
-#: bookas.tt:123 bookas.tt:177 tool.tt:545 tool.tt:600 opac/calendar.tt:649
-#: opac/calendar.tt:704
-msgid "9:00 PM"
-msgstr "21:00 Uhr"
-
-#: bookas.tt:124 bookas.tt:178 tool.tt:546 tool.tt:601 opac/calendar.tt:650
-#: opac/calendar.tt:705
-msgid "9:30 PM"
-msgstr "21:30 Uhr"
-
-#: bookas.tt:125 bookas.tt:179 tool.tt:547 tool.tt:602 opac/calendar.tt:651
-#: opac/calendar.tt:706
-msgid "10:00 PM"
-msgstr "22:00 Uhr"
-
-#: bookas.tt:126 bookas.tt:180 tool.tt:548 tool.tt:603 opac/calendar.tt:652
-#: opac/calendar.tt:707
-msgid "10:30 PM"
-msgstr "22:30 Uhr"
-
-#: bookas.tt:127 bookas.tt:181 tool.tt:549 tool.tt:604 opac/calendar.tt:653
-#: opac/calendar.tt:708
-msgid "11:00 PM"
-msgstr "23:00 Uhr"
-
-#: bookas.tt:128 bookas.tt:182 tool.tt:550 tool.tt:605 opac/calendar.tt:654
-#: opac/calendar.tt:709
-msgid "11:30 PM"
-msgstr "23:30 Uhr"
-
-#: bookas.tt:131 opac/calendar.tt:657
+#: bookas.tt:52
 msgid "End date"
-msgstr "Enddatum"
+msgstr "End-Datum"
 
-#: bookas.tt:189 opac/calendar.tt:716
+#: bookas.tt:59
 msgid "Maximum Room Capacity"
 msgstr "Maximale Raumkapazität"
 
-#: bookas.tt:193 opac/calendar.tt:720
+#: bookas.tt:63 opac/calendar.tt:258 opac/calendar.tt:266
 msgid "people"
 msgstr "Personen"
 
-#: bookas.tt:202 opac/calendar.tt:729
+#: bookas.tt:71
 msgid "Room Equipment"
-msgstr "Raumequipment"
+msgstr "Raumaustattung"
 
-#: bookas.tt:207 configure.tt:233 configure.tt:650 configure.tt:874
-#: configure.tt:993 configure.tt:1080 opac/calendar.tt:734
+#: bookas.tt:75 configure.tt:126 configure.tt:387 configure.tt:524
+#: configure.tt:586 configure.tt:630 configure.tt:663 configure.tt:702
+#: opac/calendar.tt:148 opac/calendar.tt:333
 msgid "none"
-msgstr "keins"
+msgstr "nichts"
 
-#: bookas.tt:226 opac/calendar.tt:753
+#: bookas.tt:87 opac/calendar.tt:280
 msgid "Check Room Availability"
 msgstr "Überprüfe Raumverfügbarkeit"
 
-#: bookas.tt:253 opac/calendar.tt:784
-msgid "Select a room to continue."
-msgstr "Einen Raum um fortzufahren."
-
-#: bookas.tt:267 opac/calendar.tt:804
+#: bookas.tt:105 opac/calendar.tt:123 opac/calendar.tt:311
 msgid "Available Rooms"
 msgstr "Verfügbare Räume"
 
-#: bookas.tt:270 opac/calendar.tt:807
-msgid "Select"
-msgstr "Auswählen"
-
-#: bookas.tt:271 opac/calendar.tt:808
+#: bookas.tt:109
 msgid "Room #"
-msgstr "Raum Nr."
+msgstr "Raum"
 
-#: bookas.tt:272 opac/calendar.tt:809
+#: bookas.tt:110
 msgid "Max Capacity"
 msgstr "Max. Kapazität"
 
-#: bookas.tt:293 opac/calendar.tt:830
+#: bookas.tt:127 opac/calendar.tt:253
 msgid "Select Room"
-msgstr "Raum auswählen"
+msgstr "Wähle Raum"
 
-#: bookas.tt:298 opac/calendar.tt:835
+#: bookas.tt:139
 msgid "No rooms match your criteria!"
-msgstr "Kein Raum passt zu den Kriterien!"
+msgstr "Keine Räume entsprechen Ihren Kriterien!"
 
-#: bookas.tt:302 opac/calendar.tt:839
+#: bookas.tt:142
 msgid "Click here to try another search"
-msgstr "Klicke hier, um eine andere Suche zu probieren"
+msgstr "Klicken Sie hier, um eine neue Suche zu starten"
 
-#: bookas.tt:311 opac/calendar.tt:871
+#: bookas.tt:150 opac/calendar.tt:365
 msgid "Confirmation"
-msgstr "Bestätigun"
+msgstr "Bestätigung"
 
-#: bookas.tt:312 configure.tt:221 configure.tt:1017
-#: opac/calendar-sendconfirmation.tt:24 opac/calendar.tt:872
+#: bookas.tt:153 configure.tt:117 configure.tt:604 configure.tt:667
+#: opac/calendar-sendconfirmation.tt:24 opac/calendar.tt:368
 msgid "Name:"
 msgstr "Name:"
 
-#: bookas.tt:316 opac/calendar.tt:878
+#: bookas.tt:163 opac/calendar.tt:382
 msgid "Email:"
-msgstr "E-Mail:"
+msgstr "Email:"
 
-#: bookas.tt:319 opac/calendar-sendconfirmation.tt:26 opac/calendar.tt:881
+#: bookas.tt:171 opac/calendar-sendconfirmation.tt:26 opac/calendar.tt:392
 msgid "Room:"
 msgstr "Raum:"
 
-#: bookas.tt:322 opac/calendar.tt:884
+#: bookas.tt:179 opac/calendar.tt:402
 msgid "Time:"
 msgstr "Zeit:"
 
-#: bookas.tt:333 opac/calendar.tt:863 opac/calendar.tt:895
+#: bookas.tt:195
+msgid "Send a copy as confirmation"
+msgstr "Senden Sie mir eine Kopie als Bestätigung"
+
+#: bookas.tt:200 opac/calendar.tt:358 opac/calendar.tt:428
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: bookas.tt:333 opac/calendar.tt:895
+#: bookas.tt:201 opac/calendar.tt:427
 msgid "Start over"
-msgstr "Nochmal"
+msgstr "Neuer Versuch"
 
-#: bookas.tt:343 opac/calendar.tt:905
+#: bookas.tt:211 opac/calendar.tt:447
 msgid "Sorry!"
-msgstr "Entschuldigung!"
+msgstr "Sorry!"
 
-#: bookas.tt:345 opac/calendar.tt:907
+#: bookas.tt:213 opac/calendar.tt:448
 msgid "It appears there was a problem completing your reservation"
-msgstr "Es scheint, es gab ein Problem mit Ihrer Reservierung"
+msgstr ""
+"Es scheint, dass beim Abschluss Ihrer Reservierung ein Problem aufgetreten "
+"ist."
 
-#: bookas.tt:347 opac/calendar.tt:909
+#: bookas.tt:214 opac/calendar.tt:449
 msgid ""
 "This is most likely due to someone else placing a reservation for a "
 "conflicting time slot."
 msgstr ""
-"Dies liegt höchstwahrscheinlich daran, dass jemand anderes eine Reservierung "
-"für ein überschneidendes Zeitfenster vorgenommen hat."
+"Dies liegt vermutlich daran, dass eine andere Person eine Reservierung für "
+"denselben Zeit-Slot aufgegeben hat."
 
-#: bookas.tt:354 opac/calendar.tt:914
+#: bookas.tt:221 opac/calendar.tt:452
 msgid "Click here to search again"
-msgstr "Klicke hier, um noch einmal zu suchen"
+msgstr "Klicken Sie hier, um erneut zu suchen."
 
-#: bookas.tt:357 opac/calendar.tt:917
+#: bookas.tt:224 opac/calendar.tt:459
 msgid "Congratulations! Your reservation is confirmed!"
-msgstr "Gratulation! Ihre Reservierung ist bestätigt!"
+msgstr "Gratulation! Ihre Reservierung wurde bestätigt!"
 
-#: bookas.tt:360 opac/calendar.tt:920
+#: bookas.tt:227 opac/calendar.tt:461
 msgid "An email confirmation has been sent to"
-msgstr "Eine E-Mail Bestätigung wurde versendet an"
+msgstr "Eine Bestätigung Ihrer Buchung wurde an die folgende Adresse versandt"
 
-#: bookas.tt:366
+#: bookas.tt:233
 msgid "Back to patron record"
-msgstr "Zurück zum Benutzerdatensatz"
+msgstr "Zurück zum Nutzer:innen-Profil"
 
-#: configure.tt:4 configure.tt:81 tool.tt:4
+#: configure.tt:4 configure.tt:56 tool.tt:4
 msgid "Koha: Room Reservations Plugin: Configuration"
-msgstr "Plugin für Raumreservierungen: Konfiguration"
+msgstr "Koha: Raumreservierungsplugin: Konfiguration"
 
-#: opac/calendar.pl:47
-msgid "February"
-msgstr "Februar"
-
-#: opac/calendar.pl:47
-msgid "March"
-msgstr "März"
-
-#: configure.tt:76
+#: configure.tt:21
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: configure.tt:90 configure.tt:684
-msgid "Actions"
-msgstr "Aktionen"
-
-#: configure.tt:92 tool.tt:63
-msgid "Select an action:"
-msgstr "Eine Aktion wählen:"
-
-#: configure.tt:95
+#: configure.tt:32
 msgid "Display rooms"
 msgstr "Räume anzeigen"
 
-#: configure.tt:96
+#: configure.tt:33
 msgid "Add room"
 msgstr "Raum hinzufügen"
 
-#: configure.tt:97
+#: configure.tt:34
 msgid "Edit room"
 msgstr "Raum bearbeiten"
 
-#: configure.tt:98
+#: configure.tt:35
 msgid "Delete room"
 msgstr "Raum löschen"
 
-#: configure.tt:99
+#: configure.tt:36
 msgid "Add room equipment"
-msgstr "Raumequipment hinzufügen"
+msgstr "Raumausstattung bearbeiten"
 
-#: configure.tt:100
+#: configure.tt:37
 msgid "Edit room equipment"
-msgstr "Raumequipment bearbeiten"
+msgstr "Raumausstattung bearbeiten"
 
-#: configure.tt:101
+#: configure.tt:38
 msgid "Delete room equipment"
-msgstr "Raumequipment löschen"
+msgstr "Raumaustattung löschen"
 
-#: configure.tt:102
+#: configure.tt:39
 msgid "OPAC max future date"
-msgstr "OPAC max. Datum"
+msgstr "Maximales zukünftiges Reservierungsdatum"
 
-#: configure.tt:103
+#: configure.tt:40
 msgid "OPAC max time"
-msgstr "OPAC max. Zeit"
+msgstr "Maximaler Buchungszeitraum"
 
-#: configure.tt:104
+#: configure.tt:41
 msgid "Restrict daily reservations per patron"
-msgstr "Tägliche Reservierungen pro Benutzer begrenzen"
+msgstr "Maximale Anzahl an Reservierung pro Nutzer:in begrenzen"
 
-<<<<<<< HEAD
-#: configure.tt:104 configure.tt:513
-=======
-#: configure.tt:104 configure.tt:481
->>>>>>> 05d03c5 (add missing translation for 'none')
+#: configure.tt:42 configure.tt:283
 msgid "Restrict patron categories"
-msgstr "Auf Benutzerkategorie(n) einschränken"
+msgstr "Nutzer:innen-Kategorien einschränken"
 
-#: configure.tt:106 tool.tt:69
+#: configure.tt:51 tool.tt:44
 msgid "Continue"
-msgstr "Weiter"
+msgstr "Fortfahren"
 
-#: configure.tt:127 tool.tt:90
+#: configure.tt:72 tool.tt:69
 msgid "Processing..."
-msgstr "Arbeite..."
+msgstr "Verarbeite…"
 
-#: configure.tt:150
-msgid "Select a room to display its details or select another action."
-msgstr "Einen Raum um Details anzuzeigen oder eine andere Aktion wählen."
-
-#: configure.tt:158 configure.tt:204 configure.tt:570 configure.tt:655
-#: configure.tt:740 configure.tt:806 configure.tt:893 configure.tt:947
-#: configure.tt:1028
-msgid "Select another action"
-msgstr "Eine andere Aktion wählen"
-
-#: configure.tt:170 tool.tt:145 tool.tt:224
+#: configure.tt:89 tool.tt:234 tool.tt:303
 msgid "Room"
 msgstr "Raum"
 
-#: configure.tt:192
+#: configure.tt:95
 msgid "Show details"
 msgstr "Zeige Details"
 
-#: configure.tt:214
+#: configure.tt:110
 msgid "Select another room to display"
-msgstr "Einen anderen Raum zum bearbeiten wählen"
+msgstr "Zeigen einen anderen Raum an"
 
-#: configure.tt:221 configure.tt:985
-msgid "Name:"
-msgstr "Name:"
-
-#: configure.tt:224
+#: configure.tt:118
 msgid "Room capacity:"
 msgstr "Raumkapazität:"
 
-#: configure.tt:228 configure.tt:610 configure.tt:838
+#: configure.tt:119 configure.tt:374 configure.tt:376 configure.tt:478
+msgid "Description:"
+msgstr "Beschreibung:"
+
+#: configure.tt:121 configure.tt:383 configure.tt:520
 msgid "Equipment:"
-msgstr "Equipment:"
+msgstr "Austattung:"
 
-#: configure.tt:233 configure.tt:618 configure.tt:842 configure.tt:961
-#: configure.tt:1048
-msgid "none"
-msgstr "keins"
-
-#: configure.tt:252 configure.tt:257
-msgid "Please enter a valid number!"
-msgstr "Bitte eine Zahl eingeben!"
-
-#: configure.tt:270
+#: configure.tt:144
 msgid "Set max number days"
-msgstr "Maximale Anzahl an Tagen"
+msgstr "Setze maximale Anzahl Tage"
 
-#: configure.tt:276 configure.tt:281
+#: configure.tt:147 configure.tt:150
 msgid "Current max number days:"
-msgstr "Aktuelle max. Anzahl an Tagen:"
+msgstr "Derzeitige maximale Anzahl Tage"
 
-#: configure.tt:277
+#: configure.tt:148
 msgid "n/a"
-msgstr "nicht gesetzt"
+msgstr "k.A."
 
-#: configure.tt:286
+#: configure.tt:155
 msgid "Set max number of days:"
-msgstr "Maximale Anzahl an Tagen:"
+msgstr "Setze maximale Anzahl Tage:"
 
-#: configure.tt:292 configure.tt:378
+#: configure.tt:158 configure.tt:207
 msgid "Add restriction"
 msgstr "Beschränkung hinzufügen"
 
-#: configure.tt:307 configure.tt:468
-msgid "Please select a valid number!"
-msgstr "Bitte eine Zahl auswählen!"
-
-#: configure.tt:320
+#: configure.tt:166
 msgid "Set max time"
-msgstr "Max. Zeit"
+msgstr "Setze maximalen Buchungszeitraum"
 
-#: configure.tt:326 configure.tt:331
+#: configure.tt:177 configure.tt:186
 msgid "Current max time:"
-msgstr "Aktuelle max. Zeit:"
+msgstr "Derzeitiger maximaler Buchungszeitraum"
 
-#: configure.tt:327
+#: configure.tt:178
 msgid "n/a minutes"
-msgstr "nicht gesetzt"
+msgstr "k.A. Minuten"
 
-#: configure.tt:332 configure.tt:372
-msgid "minutes"
-msgstr "Minuten"
+#: configure.tt:187
+msgid "days"
+msgstr "Tage"
 
-#: configure.tt:340
-msgid "Set max time:"
-msgstr "Max. Zeit:"
-
-#: configure.tt:368
+#: configure.tt:188
 msgid "hours"
 msgstr "Stunden"
 
-#: configure.tt:406
+#: configure.tt:189
+msgid "minutes"
+msgstr "Minuten"
+
+#: configure.tt:196
+msgid "Set max time:"
+msgstr "Setze maximalen Buchungszeitraum"
+
+#: configure.tt:197
+msgid "Days"
+msgstr "Tage"
+
+#: configure.tt:199
+msgid "Hours"
+msgstr "Stunden"
+
+#: configure.tt:201
+msgid "Minutes"
+msgstr "Minuten"
+
+#: configure.tt:218
 msgid "Set daily reservation per patron limit"
-msgstr "Tägliches Reservierungslimit pro Kunde festlegen"
+msgstr "Setze tägliches Reservierungslimit pro Nutzer:in"
 
-#: configure.tt:412 configure.tt:417
+#: configure.tt:229 configure.tt:232
 msgid "Current limit:"
-msgstr "Aktuelles Limit:"
+msgstr "Derzeitiges Limit:"
 
-#: configure.tt:413
+#: configure.tt:230
 msgid "No Limit"
 msgstr "Kein Limit"
 
-#: configure.tt:418 configure.tt:447
+#: configure.tt:233 configure.tt:266
 msgid "reservations"
 msgstr "Reservierungen"
 
-#: configure.tt:422
+#: configure.tt:241
 msgid "Set limit:"
-msgstr "Limit festlegen:"
+msgstr "Setze Limit:"
 
-#: configure.tt:426
+#: configure.tt:244
 msgid "No limit"
 msgstr "Kein Limit"
 
-#: configure.tt:453
+#: configure.tt:272
 msgid "Add limit"
 msgstr "Limit hinzufügen"
 
-#: configure.tt:487 configure.tt:492
+#: configure.tt:296 configure.tt:300
 msgid "Restricted categories:"
-msgstr "Kategorien ohne Berechtigung:"
+msgstr "Beschränkte Nuzter:innen-Kategorien:"
 
-#: configure.tt:488
+#: configure.tt:298
 msgid "No restrictions"
-msgstr "Alle sind berechtigt"
+msgstr "Keine Beschränkungen"
 
-#: configure.tt:501
-msgid "Restrict categories:"
-msgstr "Kategorien ohne Berechtigung:"
+#: configure.tt:314
+msgid "Non-Restricted categories:"
+msgstr "Nicht-beschränkte Kategorien:"
 
-#: configure.tt:508
+#: configure.tt:324
 msgid "INVALID!"
 msgstr "Ungültig!"
 
-#: configure.tt:514
+#: configure.tt:330
 msgid "Text entered here will be displayed to restricted patrons on the OPAC"
 msgstr ""
-"Der hier eingegebene Text wird für Besucher ohne Berechtigung im OPAC "
+"Der folgende Text wird Nutzer:innen mit aktiven Beschränkungen im OPAC "
 "angezeigt"
 
-#: configure.tt:527 configure.tt:853
+#: configure.tt:337 configure.tt:535
 msgid "Update"
-msgstr "Übernehmen"
+msgstr "Updaten"
 
-#: configure.tt:544
-msgid "Please enter a roomname"
-msgstr "Bitte einen Raumnamen eingeben"
-
-#: configure.tt:549
-msgid "Please enter a max capacity for the room"
-msgstr "Bitte die max. Kapazität des Raumes eingeben"
-
-#: configure.tt:561
-msgid "Select room equipment. If no equipment then check `none`"
-msgstr ""
-"Raumequipment auswählen. Gibt es kein Equipment dann \"keins\" wählen"
-
-#: configure.tt:578 configure.tt:668 configure.tt:907
+#: configure.tt:348 configure.tt:406 configure.tt:550
 msgid "Current Rooms"
-msgstr "Aktuelle Räume"
+msgstr "Derzeitige Räume"
 
-#: configure.tt:599 configure.tt:632
+#: configure.tt:359 configure.tt:395
 msgid "Add Room"
 msgstr "Raum hinzufügen"
 
-#: configure.tt:604 configure.tt:768 configure.tt:834
-msgid "Room Number:"
-msgstr "Raum Nr:"
+#: configure.tt:370 configure.tt:474 configure.tt:516
+msgid "Room Name:"
+msgstr "Raumbezeichnung"
 
-#: configure.tt:607 configure.tt:771
+#: configure.tt:372 configure.tt:476
 msgid "Max Capacity:"
 msgstr "Max. Kapazität:"
 
-#: configure.tt:645
-msgid "Please select an edit action."
-msgstr "Eine Bearbeitungsfunktion auswählen."
+#: configure.tt:422 tool.tt:134 tool.tt:251
+msgid "Actions"
+msgstr "Aktionen"
 
-#: configure.tt:685
+#: configure.tt:423
 msgid "Edit Room"
 msgstr "Raum bearbeiten"
 
-#: configure.tt:686
+#: configure.tt:424 configure.tt:652
 msgid "Edit Equipment"
-msgstr "Equipment bearbeiten"
+msgstr "Raumaustattung bearbeiten"
 
-#: configure.tt:688
+#: configure.tt:428 configure.tt:641 configure.tt:674
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: configure.tt:712
+#: configure.tt:451
 msgid "Please wait..."
-msgstr "Bitte warten..."
+msgstr "Bitte warten…"
 
-#: configure.tt:726
-msgid "Room Number cannot be blank."
-msgstr "Raum Nr. darf nicht leer sein."
-
-#: configure.tt:731
-msgid "Max Capacity cannot be blank."
-msgstr "Max. Kapazität darf nicht leer sein."
-
-#: configure.tt:749 configure.tt:815
-msgid "Select another room to edit"
-msgstr "Einen anderen Raum zum bearbeiten auswählen"
-
-#: configure.tt:761
+#: configure.tt:462
 msgid "Edit Room Details"
 msgstr "Raumdetails bearbeiten"
 
-#: configure.tt:797
-msgid "Room equipment cannot be empty. If no equipment then check `none`"
-msgstr ""
-"Raumequipment darf nicht leer sein. Gibt es kein Equipment, dann \"keins\" "
-"auswählen"
+#: configure.tt:480
+msgid "Color:"
+msgstr "Farbe:"
 
-#: configure.tt:827
+#: configure.tt:501
+msgid "Select another room to edit"
+msgstr "Einen anderen Raum zur Bearbeitung auswählen"
+
+#: configure.tt:505
 msgid "Edit Room Equipment"
-msgstr "Raumequipment bearbeiten"
+msgstr "Raumausstattung bearbeiten"
 
-#: configure.tt:873
-msgid "Select a room to delete."
-msgstr "Einen Raum zum löschen auswählen."
-
-#: configure.tt:878
-msgid "Are you sure you want to delete the selected room?"
-msgstr "Sind Sie sicher, dass Sie den gewählten Raum löschen wollen?"
-
-#: configure.tt:886
+#: configure.tt:546
 msgid "Only rooms not linked to a booking are listed below"
-msgstr "Es werden nur Räume ohne Buchung(en) angezeigt"
+msgstr "Es werden nur Räume ohne aktive Buchung angezeigt"
 
-#: configure.tt:921 configure.tt:1059
+#: configure.tt:566 configure.tt:715 tool.tt:135 tool.tt:252
 msgid "Delete"
 msgstr "Löschen"
 
-#: configure.tt:927
+#: configure.tt:569
 msgid "No rooms available to delete!"
-msgstr "Keine Räume verfügbar zum Löschen!"
+msgstr "Es stehen keine Räume zur Löschung zur Verfügung!"
 
-#: configure.tt:938
-msgid "Equipment name cannot be blank."
-msgstr "Equipment Name darf nicht leer sein."
-
-#: configure.tt:954 configure.tt:1041
+#: configure.tt:580 configure.tt:619 configure.tt:689
 msgid "Current Equipment"
-msgstr "Aktuelles Equipment"
+msgstr "Derzeitige Raumaustattung"
 
-#: configure.tt:980
+#: configure.tt:595
 msgid "Add Equipment"
-msgstr "Equipment hinzufügen"
+msgstr "Raumaustattung hinzufügen"
 
-#: configure.tt:988
+#: configure.tt:608 tool.tt:178 tool.tt:400 tool.tt:402 tool.tt:468 tool.tt:470
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: configure.tt:1008
-msgid "Select equipment to delete."
-msgstr "Equipment zum Löschen auswählen."
-
-#: configure.tt:1013
-msgid "Are you sure you want to delete the selected equipment?"
-msgstr "Sind Sie sicher, dass Sie das gewählte Equipment löschen wollen?"
-
-#: configure.tt:1021
+#: configure.tt:685
 msgid "Only equipment not currently associated with a room is listed below"
-msgstr "Es werden nur Räume ohne Buchung(en) angezeigt"
-
-#: tool.tt:42
-msgid "Koha: Room Reservations Plugin: Tool"
-msgstr "Plugin für Raumreservierungen: Werkzeug"
-
-#: tool.tt:50
-msgid "Please select an action to continue."
-msgstr "Zum Fortsetzen eine Bearbeitungsfunktion auswählen."
-
-#: tool.tt:66
-msgid "Manage blackouts"
-msgstr "Sperrzeiten verwalten"
-
-#: tool.tt:67 tool.tt:139
-msgid "Manage reservations"
-msgstr "Reservierungen verwalten"
-
-#: tool.tt:130
-msgid "There was a problem deleting the selected booking. Please try again"
 msgstr ""
-"Es gab ein Problem beim löschen der ausgewählten Buchung. Bitte versuchen "
-"Sie es erneut"
+"Es werden nur Teile der Ausstattung angezeigt, die derzeitig nicht mit einem "
+"Raum assoziiert sind"
 
-#: tool.tt:134
-msgid "Selected booking deleted successfully"
-msgstr "Die ausgewählte Buchung wurde erfolgreich gelöscht"
+#: tool.tt:26
+msgid "Koha: Room Reservations Plugin: Tool"
+msgstr "Koha: Raumreservierungsplugin: Werkzeug"
 
-#: tool.tt:146
-msgid "Patron"
-msgstr "Benutzer"
+#: tool.tt:33
+msgid "Manage opening hours"
+msgstr "Öffnungszeiten bearbeiten"
 
-#: tool.tt:147 tool.tt:394
+#: tool.tt:34
+msgid "Manage blackouts"
+msgstr "Blackouts bearbeiten"
+
+#: tool.tt:35 tool.tt:230
+msgid "Manage reservations"
+msgstr "Reservierungen bearbeiten"
+
+#: tool.tt:95
+msgid ""
+"There was a problem deleting the selected opening hours. Please try again"
+msgstr ""
+"Bei der Löschung der ausgewählten Öffnungszeiten ist ein Problem "
+"aufgetreten. Bitte versuchen Sie es erneut"
+
+#: tool.tt:109
+msgid "Selected opening hours deleted successfully"
+msgstr "Ausgewählte Öffnungszeiten erfolgreich gelöscht"
+
+#: tool.tt:115
+msgid "Delete opening hours"
+msgstr "Öffnungszeiten löschen"
+
+#: tool.tt:119
+msgid "Day"
+msgstr "Tag"
+
+#: tool.tt:120 tool.tt:236 tool.tt:362
 msgid "Start"
 msgstr "Start"
 
-#: tool.tt:148 tool.tt:400
+#: tool.tt:121 tool.tt:237 tool.tt:366
 msgid "End"
 msgstr "Ende"
 
-#: tool.tt:167
+#: tool.tt:137 tool.tt:255
 msgid "Submit"
 msgstr "Bestätigen"
 
-#: tool.tt:173
-msgid "No bookings found!"
-msgstr "Keine Buchungen gefunden!"
+#: tool.tt:140
+msgid "No opening hours configured."
+msgstr "Es sind keine Öffnungszeiten konfiguriert."
 
-#: tool.tt:207
-msgid "Please select an action."
-msgstr "Bitte eine Aktion auswählen."
+#: tool.tt:152
+msgid "Add opening hours"
+msgstr "Öffnungszeiten hinzufügen"
 
-#: tool.tt:218
-msgid "Manage Blackouts"
-msgstr "Sperrzeiten verwalten"
+#: tool.tt:155 tool.tt:359 tool.tt:421
+msgid "Select opening days"
+msgstr "Öffnungstage auswählen"
 
-#: tool.tt:225
-msgid "Blackout start"
-msgstr "Sperrzeit Beginn"
+#: tool.tt:157
+msgid "Monday"
+msgstr "Montag"
 
-#: tool.tt:226
-msgid "Blackout end"
-msgstr "Sperrzeit Ende"
+#: tool.tt:158
+msgid "Tuesday"
+msgstr "Dienstag"
 
-#: tool.tt:252
-msgid "No upcoming blackouts scheduled!"
-msgstr "Keine kommenden Sperrzeiten terminiert!"
+#: tool.tt:159
+msgid "Wednesday"
+msgstr "Mittwoch"
 
-#: tool.tt:260 tool.tt:390 tool.tt:491
-msgid "Add a blackout"
-msgstr "Eine Sperrzeit hinzufügen"
+#: tool.tt:160
+msgid "Thursday"
+msgstr "Donnerstag"
 
-#: tool.tt:263
-msgid "How long is the blackout?"
-msgstr "Wie lang dauert die Sperrzeit?"
+#: tool.tt:161
+msgid "Friday"
+msgstr "Freitag"
 
-#: tool.tt:269
-msgid "Full day(s)"
-msgstr "Voll(e) Tag(e)"
+#: tool.tt:162
+msgid "Saturday"
+msgstr "Samstag"
 
-#: tool.tt:270
-msgid "A few hours"
-msgstr "Einige Stunden"
+#: tool.tt:163
+msgid "Sunday"
+msgstr "Sonntag"
 
-#: tool.tt:379 tool.tt:480
-msgid "Please select one or more rooms."
-msgstr "Bitte wählen Sie einen oder mehrere Räume aus."
+#: tool.tt:168
+msgid "Select opening hours"
+msgstr "Öffnungszeiten auswählen"
 
-#: tool.tt:405
-msgid "All day"
-msgstr "Voll(e) Tag(e)"
-
-#: tool.tt:411 tool.tt:616
-msgid "Select room(s) to blackout"
-msgstr "Raum/Räume auswählen um Sperrzeiten hinzuzufügen"
-
-#: tool.tt:416 tool.tt:621
-msgid "All rooms"
-msgstr "Alle Räume"
-
-#: tool.tt:468
-msgid "Please select a valid start and end time!"
-msgstr "Bitte eine gültige Start- und Endzeit eingeben!"
-
-#: tool.tt:502
-msgid "From"
-msgstr "Von"
-
-#: tool.tt:557
+#: tool.tt:172 tool.tt:432
 msgid "To"
 msgstr "Bis"
 
+#: tool.tt:209
+msgid "There was a problem deleting the selected booking. Please try again"
+msgstr ""
+"Bei der Löschung der ausgewählten Buchung ist ein Problem aufgetreten. Bitte "
+"versuchen Sie es erneut"
+
+#: tool.tt:223
+msgid "Selected booking deleted successfully"
+msgstr "Ausgewählte Buchung erfolgreich gelöscht "
+
+#: tool.tt:235
+msgid "Patron"
+msgstr "Nutzer:in"
+
+#: tool.tt:258
+msgid "No bookings found!"
+msgstr "Keine Buchungen gefunden!"
+
+#: tool.tt:304
+msgid "Blackout start"
+msgstr "Start des Blackouts"
+
+#: tool.tt:305
+msgid "Blackout end"
+msgstr "Ende des Blackouts"
+
+#: tool.tt:332
+msgid "No upcoming blackouts scheduled!"
+msgstr "Keine kommenden Blackouts gefunden!"
+
+#: tool.tt:340
+msgid "How long is the blackout?"
+msgstr "Wie lang ist der Blackout?"
+
+#: tool.tt:343
+msgid "Full day(s)"
+msgstr "Volle(r) Tag(e)"
+
+#: tool.tt:344
+msgid "A few hours"
+msgstr "Unter 24 Stunden"
+
+#: tool.tt:356
+msgid "Add a blackout"
+msgstr "Einen Blackout hinzufügen"
+
+#: tool.tt:380 tool.tt:448
+msgid "All day"
+msgstr "Ganzer Tag"
+
+#: tool.tt:386 tool.tt:454
+msgid "Select room(s) to blackout"
+msgstr "Räume für einen Blackout auswählen"
+
+#: tool.tt:389 tool.tt:457
+msgid "All rooms"
+msgstr "Alle Räume"
+
 #: opac/calendar-sendconfirmation.tt:6
 msgid "Study Room Reservation Confirmation"
-msgstr "Raumreservierungsbestättigung"
+msgstr "Bestätigung der Raumreservierung"
 
 #: opac/calendar-sendconfirmation.tt:12
 msgid "Your study room request has been completed!"
-msgstr "Ihre Raumanfrage ist abgeschlossen!"
+msgstr "Ihre Raumbuchungsanfrage wurde bestätigt!"
 
 #: opac/calendar-sendconfirmation.tt:14
 msgid ""
 "For proof of reservation, print or save this email containing the "
 "reservation details!"
-msgstr ""
-"Zum Beweis Ihrer Reservierung, drucken oder speichern sie diese E-Mail mit "
-"den Reservierungsdetails!"
+msgstr "Als Nachweis sollten Sie diese Email speichern."
 
 #: opac/calendar-sendconfirmation.tt:28
 msgid "From:"
@@ -913,7 +629,7 @@ msgstr "Von:"
 
 #: opac/calendar-sendconfirmation.tt:30
 msgid "To:"
-msgstr "Bis:"
+msgstr "An:"
 
 #: opac/calendar-sendconfirmation.tt:32
 msgid "Reservation confirmed:"
@@ -921,7 +637,7 @@ msgstr "Reservierung bestätigt:"
 
 #: opac/calendar.tt:6
 msgid "Koha online"
-msgstr "Koha Online"
+msgstr "Koha online"
 
 #: opac/calendar.tt:6
 msgid "catalog"
@@ -931,18 +647,18 @@ msgstr "Katalog"
 msgid "Booking"
 msgstr "Buchung"
 
-#: opac/calendar.tt:48 opac/calendar.tt:583 opac/calendar.tt:792
-#: opac/calendar.tt:862
+#: opac/calendar.tt:24 opac/calendar.tt:194 opac/calendar.tt:357
 msgid "Study Room Calendar"
-msgstr "Raumkalender"
+msgstr "Buchungskalender"
 
-#: opac/calendar.tt:55
+#: opac/calendar.tt:35
 msgid "You do not have permission to access this page"
-msgstr "Sie haben keine Berechtigung, um auf diese Seite zuzugreifen"
+msgstr ""
+"Sie haben nicht die notwendigen Berechtigungen um diese Seite aufzurufen"
 
-#: opac/calendar.tt:66
-msgid "SUN"
-msgstr "So"
+#: opac/calendar.tt:61
+msgid "Book a Room"
+msgstr "Einen Raum buchen"
 
 #: opac/calendar.tt:67
 msgid "MON"
@@ -968,95 +684,58 @@ msgstr "Fr"
 msgid "SAT"
 msgstr "Sa"
 
-#: opac/calendar.tt:477
-msgid "Book a Room"
+#: opac/calendar.tt:73
+msgid "SUN"
+msgstr "So"
+
+#: opac/calendar.tt:140 opac/calendar.tt:325
+msgid "Max. Capacity"
+msgstr "Max. Kapazität"
+
+#: opac/calendar.tt:141 opac/calendar.tt:326
+msgid "Persons"
+msgstr "Personen"
+
+#: opac/calendar.tt:144 opac/calendar.tt:329
+msgid "Equipment"
+msgstr "Austattung"
+
+#: opac/calendar.tt:156
+msgid "Book this Room"
+msgstr "Diesen Raum buchen"
+
+#: opac/calendar.tt:200
+msgid "Book a room"
 msgstr "Einen Raum buchen"
 
-#: opac/calendar.tt:547
-msgid "Selected time range exceeds maximum time allowed of"
-msgstr ""
-"Die ausgewählte Zeitspanne überschreitet die maximal erlaubte Zeitspanne von"
-
-#: opac/calendar.tt:551
-msgid "Please select a valid time range!"
-msgstr "Bitte eine gültige Zeitspanne auswählen!"
-
-#: opac/calendar.tt:793
-msgid "Availability Search Results"
-msgstr "Ergebnisse der Verfügbarkeitssuche"
-
-#: opac/calendar.tt:855
+#: opac/calendar.tt:221
 msgid ""
-"Unable to continue!\\nYou have reached the limit of daily reservations per "
-"user for today!"
+"Room is not available at the selected time. Please note the opening\n"
+"                            hours."
 msgstr ""
-"Sie können nicht fortfahren! Sie haben das Limit der täglichen "
-"Reservierungen pro Benutzer für heute erreicht!"
+"Dieser Raum ist zur gewählten Zeit nicht verfügbar. Bitte beachten Sie die "
+"Öffnungszeiten."
 
-#: opac/calendar.tt:924
+#: opac/calendar.tt:234
+msgid "Start time"
+msgstr "Beginn"
+
+#: opac/calendar.tt:241
+msgid "End time"
+msgstr "Ende"
+
+#: opac/calendar.tt:258 opac/calendar.tt:266
+msgid "max."
+msgstr "max."
+
+#: opac/calendar.tt:295
+msgid "Opening hours"
+msgstr "Öffnungszeiten"
+
+#: opac/calendar.tt:422
+msgid "Send me a copy of my confirmation"
+msgstr "Senden Sie mir eine Kopie meiner Reservierung zu"
+
+#: opac/calendar.tt:464
 msgid "Back to calendar"
 msgstr "Zurück zum Kalender"
-
-#: ../RoomReservations.pm:56
-msgid "Room Reservations Plugin"
-msgstr "Raumreservierungsplugin"
-
-#: ../RoomReservations.pm:58
-msgid ""
-"This plugin provides a room reservation solution on both intranet and OPAC "
-"interfaces."
-msgstr ""
-"Dieses Plugin bietet eine Raumreservierungslösung sowohl für die "
-"Dienstoberfläche als auch für den OPAC."
-
-#: ../RoomReservations.pm:149
-msgid "Reserve room as patron"
-msgstr "Reserviere Raum als Benutzer"
-
-#: opac/calendar.pl:45
-msgid "January"
-msgstr "Januar"
-
-#: opac/calendar.pl:45
-msgid "February"
-msgstr "Februar"
-
-#: opac/calendar.pl:45
-msgid "March"
-msgstr "März"
-
-#: opac/calendar.pl:45
-msgid "April"
-msgstr "April"
-
-#: opac/calendar.pl:45
-msgid "May"
-msgstr "Mai"
-
-#: opac/calendar.pl:45
-msgid "June"
-msgstr "Juni"
-
-#: opac/calendar.pl:45
-msgid "July"
-msgstr "July"
-
-#: opac/calendar.pl:45
-msgid "August"
-msgstr "August"
-
-#: opac/calendar.pl:45
-msgid "September"
-msgstr "September"
-
-#: opac/calendar.pl:45
-msgid "October"
-msgstr "Oktober"
-
-#: opac/calendar.pl:45
-msgid "November"
-msgstr "November"
-
-#: opac/calendar.pl:45
-msgid "December"
-msgstr "Dezember"
