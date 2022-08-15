@@ -27,7 +27,8 @@ button#jump-to-calendar {
   position: fixed;
   right: 1em;
   bottom: 1em;
-  box-shadow: var(--shadow-hv);
+  -webkit-box-shadow: var(--shadow-hv);
+          box-shadow: var(--shadow-hv);
   z-index: 1;
   border-radius: 50% !important;
   padding: 1em !important;
@@ -41,8 +42,13 @@ button#jump-to-calendar * {
 
 div#doc3 > form,
 div#doc3 > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   width: 50%;
   margin: 0 auto;
 }
@@ -83,7 +89,8 @@ input[name="confirmationSubmit"]:hover,
 .lmsr-button:hover {
   position: relative;
   top: -3px;
-  box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
+  -webkit-box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
+          box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
 }
 
 input[name="startOverSubmit"]:hover {
@@ -97,7 +104,8 @@ input[name="submit-check-room-availability"]:active,
 input[name="confirmationSubmit"]:active,
 .lmsr-button:active {
   top: 0;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 input[name="startOverSubmit"]:active {
@@ -123,7 +131,8 @@ textarea {
   padding: 1em;
   border: var(--seperator-light);
   border-radius: 12px;
-  box-shadow: var(--shadow-md);
+  -webkit-box-shadow: var(--shadow-md);
+          box-shadow: var(--shadow-md);
 }
 
 .lmsr-action-table-bookas,
@@ -131,28 +140,36 @@ textarea {
 .lmsr-action-table-delete-opening-hours,
 .lmsr-action-table-delete-blackouts,
 .lmsr-action-table-display-rooms {
+  display: -ms-grid;
   display: grid;
+  -ms-grid-rows: auto auto;
   grid-template-rows: auto auto;
   justify-items: stretch;
-  align-items: stretch;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
   border-top: 1px solid var(--seperator-light);
   border-right: 1px solid var(--seperator-light);
 }
 
 .lmsr-action-table-bookas {
+  -ms-grid-columns: 2em (1fr)[2];
   grid-template-columns: 2em repeat(2, 1fr);
 }
 
 .lmsr-action-table-delete-reservations {
+  -ms-grid-columns: 2em (1fr)[4];
   grid-template-columns: 2em repeat(4, 1fr);
 }
 
 .lmsr-action-table-delete-opening-hours,
 .lmsr-action-table-delete-blackouts {
+  -ms-grid-columns: 2em (1fr)[3];
   grid-template-columns: 2em repeat(3, 1fr);
 }
 
 .lmsr-action-table-display-rooms {
+  -ms-grid-columns: 2em 1fr;
   grid-template-columns: 2em 1fr;
 }
 
@@ -202,16 +219,28 @@ textarea {
   border: 1px solid var(--seperator-light);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: rgba(0, 0, 0, 0.8);
-  box-shadow: var(--shadow-md);
+  -webkit-box-shadow: var(--shadow-md);
+          box-shadow: var(--shadow-md);
 }
 
 .lmsr-calendar-controls {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-content: center;
-  justify-content: space-between;
-  align-items: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   border-bottom: 2px solid var(--seperator-light);
 }
 
@@ -221,14 +250,21 @@ textarea {
 }
 
 .lmsr-calendar-body {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   border-top: 1px solid var(--seperator-light);
   border-radius: 0 0 12px 12px;
 }
 
 .lmsr-calendar-foot div.lmsr-calendar-row {
-  justify-content: right;
+  -webkit-box-pack: right;
+      -ms-flex-pack: right;
+          justify-content: right;
 }
 
 .lmsr-calendar-data-booking {
@@ -245,8 +281,13 @@ textarea {
   max-height: 150px;
   border: 1px solid var(--seperator-light);
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   overflow-y: scroll;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
@@ -257,6 +298,7 @@ textarea {
 }
 
 .lmsr-calendar-dayofmonth {
+  position: -webkit-sticky;
   position: sticky;
   top: 0.25em;
   text-align: right;
@@ -268,9 +310,16 @@ textarea {
 }
 
 .lmsr-calendar-form-inline {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   gap: 0.5em;
 }
 
@@ -288,7 +337,8 @@ textarea {
 .lmsr-calendar-form-room-card input:active {
   position: static;
   text-decoration: underline;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
   color: rgba(0, 116, 173, 0.8);
 }
 
@@ -303,6 +353,8 @@ textarea {
 }
 
 .lmsr-calendar-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 
@@ -335,7 +387,8 @@ border-radius: 0 0 9px 0;
 .lmsr-calendar-weekdays {}
 
 .lmsr-card {
-  box-shadow: var(--shadow-sm);
+  -webkit-box-shadow: var(--shadow-sm);
+          box-shadow: var(--shadow-sm);
 }
 
 .lmsr-card-room {
@@ -348,8 +401,13 @@ border-radius: 0 0 9px 0;
 
 .lmsr-content-main {
   width: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   gap: 2em;
 }
 
@@ -357,8 +415,12 @@ border-radius: 0 0 9px 0;
 .lmsr-number-picker,
 .lmsr-picker,
 .lmsr-time-picker-add-opening-hours {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-evenly;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
 }
 
 .lmsr-data-picker,
@@ -367,7 +429,9 @@ border-radius: 0 0 9px 0;
 .lmsr-data-picker,
 .lmsr-number-picker,
 .lmsr-picker > label {
-  flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 
 .lmsr-list {
@@ -393,8 +457,12 @@ border-radius: 0 0 9px 0;
   border-width: 0 2px 2px 0;
   border-style: solid;
   border-color: #00a8a8;
-  transform-origin: bottom left;
-  transform: rotate(45deg);
+  -webkit-transform-origin: bottom left;
+      -ms-transform-origin: bottom left;
+          transform-origin: bottom left;
+  -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
 }
 
 .lmsr-menu {
@@ -412,8 +480,13 @@ border-radius: 0 0 9px 0;
 }
 
 .lmsr-menu-list {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   gap: 1em;
 }
 
@@ -430,8 +503,12 @@ border-radius: 0 0 9px 0;
 .lmsr-menu-list-add-partial-blackout > div,
 .lmsr-menu-list-get-equipment > div,
 .lmsr-menu-list-set-max-time > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .lmsr-menu-list-heading {
@@ -455,7 +532,10 @@ border-radius: 0 0 9px 0;
 
 .lmsr-number-picker,
 .lmsr-picker {
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .lmsr-number-picker:nth-child(even),
@@ -484,7 +564,8 @@ border-radius: 0 0 9px 0;
   width: 200px;
   border-radius: 7px;
   border: 1px solid var(--seperator-light);
-  box-shadow: var(--shadow-hv);
+  -webkit-box-shadow: var(--shadow-hv);
+          box-shadow: var(--shadow-hv);
 }
 
 .lmsr-toast-body,
@@ -495,8 +576,12 @@ border-radius: 0 0 9px 0;
 .lmsr-toast-header {
   width: 100%;
   border-bottom: 1px solid var(--seperator-light);
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .table-header-bold {
