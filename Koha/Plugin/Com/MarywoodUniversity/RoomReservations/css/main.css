@@ -49,12 +49,23 @@ div#doc3 > div {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  width: 50%;
-  margin: 0 auto;
 }
 
 div#doc3 > h3 {
   margin: 0.5em 0.8em;
+}
+
+#doc3 {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-template-rows: auto;
+  gap: 0 5em;
+}
+
+@media only screen and (max-width: 400px) {
+  #doc3 {
+    gap: 0 2em;
+  }
 }
 
 .calendar-submit {
@@ -409,7 +420,9 @@ border-radius: 0 0 9px 0;
 }
 
 .lmsr-content-main {
-  width: 50%;
+  grid-row: 2;
+  grid-column: 2/5;
+  /* width: 50%; */
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -441,6 +454,11 @@ border-radius: 0 0 9px 0;
   -webkit-box-flex: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;
+}
+
+#lmsr-heading-main {
+  grid-row: 1;
+  grid-column: 1/5;
 }
 
 .lmsr-list {
@@ -475,11 +493,8 @@ border-radius: 0 0 9px 0;
 }
 
 .lmsr-menu {
-  display: block !important;
-  position: absolute;
-  left: 0;
-  top: 25%;
-  width: 15% !important;
+  grid-row: 2;
+  grid-column: 1/2;
   margin: 0.5em 0.8em;
 }
 

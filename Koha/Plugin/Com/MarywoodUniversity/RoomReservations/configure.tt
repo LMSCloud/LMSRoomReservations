@@ -723,8 +723,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       const lmsrHeadingMain = document.getElementById('lmsr-heading-main');
       const lmsrMenuTemplate = document.getElementById('lmsr-menu-template');
+      const doc3 = document.getElementById('doc3');
       const lmsrMenuTemplateContent = lmsrMenuTemplate.content;
-      document.body.appendChild(lmsrMenuTemplateContent);
+      doc3.appendChild(lmsrMenuTemplateContent);
 
       const configActionsForm = document.querySelector('form[name="config_actions"]');
       const actionsMenu = document.querySelectorAll('.lmsr-menu-list-item');
