@@ -656,6 +656,10 @@ msgid "You do not have permission to access this page"
 msgstr ""
 "Sie haben nicht die notwendigen Berechtigungen um diese Seite aufzurufen"
 
+#: opac/calendar.tt:44
+msgid "Current Bookings"
+msgstr "Aktuelle Buchungen"
+
 #: opac/calendar.tt:61
 msgid "Book a Room"
 msgstr "Einen Raum buchen"
