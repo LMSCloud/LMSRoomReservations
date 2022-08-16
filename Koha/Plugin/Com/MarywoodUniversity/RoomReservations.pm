@@ -1061,17 +1061,10 @@ sub configure {
         my $availableRooms        = get_all_room_numbers_and_ids_available_to_delete();
         my $areThereRoomsToDelete = are_any_rooms_available_to_delete($availableRooms);
 
-        if ( $areThereRoomsToDelete == 1 ) {
-            $template->param( rooms_available_to_delete => 1, );
-        }
-        else {
-            $template->param( rooms_available_to_delete => 0, );
-        }
-
         $template->param(
             op                        => $op,
             available_rooms           => $availableRooms,
-            rooms_available_to_delete => 1,
+            rooms_available_to_delete => $areThereRoomsToDelete ? 1 : 0,
         );
     }
     if ( $op eq 'add-equipment' ) {

@@ -14,8 +14,8 @@ export function validateOpeningHours(e) {
   const end = document.forms.OpeningHoursForm['opening-to'].value;
 
   const weekdays = document.querySelectorAll('input[name="weekdays"]:checked');
-  if (weekdays.length === 0) { e.preventDefault(); ("[% 'Please select at least one weekday.' | gettext %]"); return false; }
-  if (end <= start || start === 0 || end === 0) { e.preventDefault(); ("[% 'Please select valid start and end time.' | gettext %]"); return false; }
+  if (weekdays.length === 0) { e.preventDefault(); alert("[% 'Please select at least one weekday.' | gettext %]"); return false; }
+  if (end <= start || start === 0 || end === 0) { e.preventDefault(); alert("[% 'Please select valid start and end time.' | gettext %]"); return false; }
 
   return true;
 }
@@ -213,11 +213,13 @@ export function validateRestrictCategories(e) {
   return true;
 }
 
-export function validateAddRooms(e) {
+export function validateAddRooms(e, rooms) {
   const roomname = document.forms.addRoomForm['add-room-roomnumber'].value;
   const maxcapacity = document.forms.addRoomForm['add-room-maxcapacity'].value;
   const equipment = document.getElementsByName('selected-equipment');
+  console.log(rooms, e);
 
+  if (rooms.some((room) => room.roomnumber === roomname)) { e.preventDefault(); alert("[% 'Roomname is already taken' | gettext %]"); return false; }
   if (roomname === '') { e.preventDefault(); alert("[% 'Please enter a roomname' | gettext %]"); return false; }
   if (maxcapacity === '') { e.preventDefault(); alert("[% 'Please enter a max capacity for the room' | gettext %]"); return false; }
 

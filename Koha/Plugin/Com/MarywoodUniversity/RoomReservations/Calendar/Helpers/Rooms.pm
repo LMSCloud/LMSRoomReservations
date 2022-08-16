@@ -444,11 +444,11 @@ sub add_room {
     my $dbh = C4::Context->dbh;
 
     ## first insert roomnumber and maxcapacity into $ROOMS_TABLE
-    $dbh->do("INSERT INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color) VALUES ($roomnumber, $maxcapacity, $description, $color);");
+    $dbh->do("INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color) VALUES ($roomnumber, $maxcapacity, $description, $color);");
 
     foreach my $piece ( @{$equipment} ) {
 
-        $dbh->do("INSERT INTO $ROOMEQUIPMENT_TABLE (roomid, equipmentid) VALUES ((SELECT roomid FROM $ROOMS_TABLE WHERE roomnumber = $roomnumber), $piece);");
+        $dbh->do("INSERT IGNORE INTO $ROOMEQUIPMENT_TABLE (roomid, equipmentid) VALUES ((SELECT roomid FROM $ROOMS_TABLE WHERE roomnumber = $roomnumber), $piece);");
     }
 
     return;

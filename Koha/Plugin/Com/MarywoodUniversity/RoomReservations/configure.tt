@@ -1,4 +1,5 @@
 [% USE gtx = Gettext('com.marywooduniversity.roomreservations', language, 'utf-8', mbf_path) %]
+[%- USE JSON.Escape; -%]
 
 [% INCLUDE 'doc-head-open.inc' %]
   <title>Plugins - [% gtx.gettext("Koha: Room Reservations Plugin: Configuration") %]</title>
@@ -79,7 +80,7 @@
   [% IF op == 'display-rooms' %]
     <div class="lmsr-content-main">
       <div class="lmsr-content-block">
-        <form name="displayRooms" method="post" action="#" onsubmit="return RoomReservationBundle.validateDisplayRooms()">
+        <form name="displayRooms" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="display-rooms-detail" />
@@ -92,9 +93,15 @@
               <span class="lmsr-action-table-body-item">[% room.roomnumber %]</span>
             [% END # FOREACH room IN roomnumbers %]
             <span class="lmsr-action-table-body-item lmsr-visibility-hidden"></span>
-            <input type="submit" name="submitSelectedDisplayedRoom" value="[% 'Show details' | gettext %]" />
+            <input type="submit" name="submitSelectedDisplayedRoom" id="submit-display-rooms" value="[% 'Show details' | gettext %]" disabled>
           </div>
         </form>
+        <script>
+          const displayRoomsForm = document.querySelector('form[name="displayRooms"]');
+          const displayRoomsFormSubmitButton = document.getElementById('submit-display-rooms');
+          displayRoomsForm.addEventListener('submit', (e) => RoomReservationBundle.validateDisplayRooms(e));
+          displayRoomsFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'display-rooms' %]
@@ -155,8 +162,14 @@
       [% 'Set max number of days:' | gettext %] 
       <input type="text" name="max-days-field" id="max-days-field" size="4" maxlength="4" />
 
-      <input type="submit" value="[% 'Add restriction' | gettext %]" />
+      <input type="submit" id="submit-max-future-date" value="[% 'Add restriction' | gettext %]" disabled>
     </form>
+    <script>
+      const maxFutureDateForm = document.querySelector('form[name="maxFutureDateForm"]');
+      const maxFutureDateFormSubmitButton = document.getElementById('submit-max-future-date');
+      maxFutureDateForm.addEventListener('submit', (e) => RoomReservationBundle.validateMaxFutureDate(e));
+      maxFutureDateFormSubmitButton.disabled = false;
+    </script>
   [% END # op == 'max-future-date' %]
 
   [% IF op == 'max-time' %]
@@ -165,7 +178,7 @@
 
         <h4>[% 'Set max time' | gettext %]</h4>
 
-        <form name="maxTimeForm" method="post" action="#" onsubmit="return RoomReservationBundle.validateMaxTime();">
+        <form name="maxTimeForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="max-time" />
@@ -204,9 +217,15 @@
 
             <hr>
                   
-            <input type="submit" value="[% 'Add restriction' | gettext %]" />
+            <input type="submit" id="submit-max-time" value="[% 'Add restriction' | gettext %]" disabled>
           </div>
         </form>
+        <script>
+          const maxTimeForm = document.querySelector('form[name="maxTimeForm"]');
+          const maxTimeFormSubmitButton = document.getElementById('submit-max-time');
+          maxTimeForm.addEventListener('submit', (e) => RoomReservationBundle.validateMaxTime(e));
+          maxTimeFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'max-time' %]
@@ -217,7 +236,7 @@
 
         <h4>[% 'Set daily reservation per patron limit' | gettext %]</h4>
 
-        <form name="restrictDailyReservationsForm" method="post" action="#" onsubmit="return RoomReservationBundle.validateLimitRestriction();">
+        <form name="restrictDailyReservationsForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="restrict-daily-reservations-per-patron" />
@@ -269,9 +288,15 @@
     
             <hr>
 
-            <input type="submit" value="[% 'Add limit' | gettext %]" />
+            <input type="submit" id="submit-restrict-daily-reservations" value="[% 'Add limit' | gettext %]" disabled>
           </div>
         </form>
+        <script>
+          const restrictDailyReservationsForm = document.querySelector('form[name="restrictDailyReservationsForm"]');
+          const restrictDailyReservationsFormSubmitButton = document.getElementById('submit-restrict-daily-reservations');
+          restrictDailyReservationsForm.addEventListener('submit', (e) => RoomReservationBundle.validateLimitRestriction(e));
+          restrictDailyReservationsFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'restrict-daily-reservations-per-patron' %]
@@ -282,7 +307,7 @@
         
         <h4>[% 'Restrict patron categories' | gettext %]</h4>
 
-        <form name="restrictCategoriesForm" method="post" action="#" onsubmit="return RoomReservationBundle.validateRestrictCategories();">
+        <form name="restrictCategoriesForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="restrict-categories" />
@@ -334,9 +359,15 @@
               <textarea name="restricted-message"></textarea>
             [% END %]
     
-            <input type="submit" value="[% 'Update' | gettext %]" />  
+            <input type="submit" id="submit-restrict-categories" value="[% 'Update' | gettext %]" disabled>  
           </div>
         </form>
+        <script>
+          const restrictCategoriesForm = document.querySelector('form[name="restrictCategoriesForm"]');
+          const restrictCategoriesFormSubmitButton = document.getElementById('submit-restrict-categories');
+          restrictCategoriesForm.addEventListener('submit', (e) => RoomReservationBundle.validateRestrictCategories(e));
+          restrictCategoriesFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'restrict-categories' %]
@@ -359,7 +390,7 @@
         <h4>[% 'Add Room' | gettext %]</h4>
 
         <!-- TODO: Display table of rooms already added -->
-        <form name="addRoomForm" method="post" action="#" onsubmit="return RoomReservationBundle.validateAddRooms()">
+        <form name="addRoomForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="add-rooms" />
@@ -380,7 +411,7 @@
             <hr>
 
             <p>
-              [% 'Equipment:' | gettext %]
+              <div>[% 'Equipment:' | gettext %]</div>
               [% FOREACH equipment IN available_equipment %]
                 [% equipmentname = equipment.equipmentname %]
                 [% IF equipmentname == 'none' %]
@@ -392,9 +423,15 @@
 
             <hr>
 
-            <input type="submit" value="[% 'Add Room' | gettext %]" />  
+            <input type="submit" id="submit-add-room" value="[% 'Add Room' | gettext %]" disabled>  
           </div>
         </form>
+        <script>
+          const addRoomForm = document.querySelector('form[name="addRoomForm"]');
+          const addRoomFormSubmitButton = document.getElementById('submit-add-room');
+          addRoomForm.addEventListener('submit', (e) => RoomReservationBundle.validateAddRooms(e, [% all_room_numbers.json %]));
+          addRoomFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'add-rooms' %]
@@ -405,7 +442,7 @@
 
         <h4>[% 'Current Rooms' | gettext %]</h4>
 
-        <form name="editRoomsForm" method="post" action="#" onsubmit="return RoomReservationBundle.validateEditRooms()">
+        <form name="editRoomsForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="edit-rooms-selection" />
@@ -425,9 +462,15 @@
             </select>
 
             <span class="lmsr-action-table-body-item lmsr-visibility-hidden"></span>
-            <input type="submit" value="[% 'Edit' | gettext %]" />
+            <input type="submit" id="submit-edit-room" value="[% 'Edit' | gettext %]" disabled>
           </div>
         </form>
+        <script>
+          const editRoomsForm = document.querySelector('form[name="editRoomsForm"]');
+          const editRoomFormSubmitButton = document.getElementById('submit-edit-room');
+          editRoomsForm.addEventListener('submit', (e) => RoomReservationBundle.validateEditRooms(e));
+          editRoomFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'edit-rooms' %]
@@ -461,7 +504,7 @@
 
         <h4>[% 'Edit Room Details' | gettext %]</h4>
 
-        <form name="editRoomDetails" method="post" action="#" onsubmit="return RoomReservationBundle.validateEditRoomsRoom()">
+        <form name="editRoomDetails" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="edit-rooms" />
@@ -484,9 +527,15 @@
             
             <hr>
 
-            <input type="submit" value="Update" />              
+            <input type="submit" id="submit-edit-room-details" value="Update" disabled>              
           </div>
         </form>
+        <script>
+          const editRoomDetailsForm = document.querySelector('form[name="editRoomDetails"]');
+          const editRoomDetailsFormSubmitButton = document.getElementById('submit-edit-room-details');
+          editRoomDetailsForm.addEventListener('submit', (e) => RoomReservationBundle.validateEditRoomsRoom(e));
+          editRoomDetailsFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # IF op == 'edit-rooms-room' %]
@@ -504,7 +553,7 @@
 
         <h4>[% 'Edit Room Equipment' | gettext %]</h4>
         
-        <form name="editRoomEquipment" method="post" action="#" onsubmit="return RoomReservationBundle.validateEditRoomsEquipment()">
+        <form name="editRoomEquipment" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="edit-rooms" />
@@ -517,7 +566,7 @@
 
               <hr>
 
-              <span><strong>[% 'Equipment:' | gettext %]</strong></span>
+              <div><strong>[% 'Equipment:' | gettext %]</strong></div>
               [% FOREACH available IN all_available_equipment %]
                   [% equipmentname = available.equipmentname %]
                   [% IF equipmentname == 'none' %]
@@ -532,9 +581,15 @@
 
             <hr>
 
-            <input type="submit" value="[% 'Update' | gettext %]" />
+            <input type="submit" id="submit-edit-room-equipment" value="[% 'Update' | gettext %]" disabled>
           </div>
         </form>
+        <script>
+          const editRoomEquipmentForm = document.querySelector('form[name="editRoomEquipment"]');
+          const editRoomEquipmentFormSubmitButton = document.getElementById('submit-edit-room-equipment');
+          editRoomEquipmentForm.addEventListener('submit', (e) => RoomReservationBundle.validateEditRoomsEquipment(e));
+          editRoomEquipmentFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # IF op == 'edit-rooms-equipment' %]
@@ -549,7 +604,7 @@
 
         <h4>[% 'Current Rooms' | gettext %]</h4>
 
-        <form method="post" action="#" onsubmit="return RoomReservationBundle.deleteRoomConfirmation()">
+        <form name="deleteRoomForm" method="post" action="#">
           [% IF rooms_available_to_delete == 1 %]
             <input type="hidden" name="class" value="[% CLASS %]" />
             <input type="hidden" name="method" value="[% METHOD %]" />
@@ -563,8 +618,14 @@
               [% END # FOREACH room IN available_rooms %]
 
               <span class="lmsr-action-table-body-item lmsr-visibility-hidden"></span>
-              <input type="submit" name="room-delete-submit" id="room-delete-submit" value="[% 'Delete' | gettext %]" />
+              <input type="submit" name="room-delete-submit" id="room-delete-submit" value="[% 'Delete' | gettext %]" disabled>
             </div>
+            <script>
+              const deleteRoomForm = document.querySelector('form[name="deleteRoomForm"]');
+              const deleteRoomFormSubmitButton = document.getElementById('room-delete-submit');
+              deleteRoomForm.addEventListener('submit', (e) => RoomReservationBundle.deleteRoomConfirmation(e));
+              deleteRoomFormSubmitButton.disabled = false;
+            </script>
           [% ELSE %]
             <h2>[% 'No rooms available to delete!' | gettext %]</h2>
           [% END %]
@@ -594,7 +655,7 @@
 
         <h4>[% 'Add Equipment' | gettext %]</h4>
 
-        <form name="addEquipment" method="post" action="#" onsubmit="return RoomReservationBundle.validateAddEquipment()">
+        <form name="addEquipment" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="add-equipment" />
@@ -605,9 +666,15 @@
 
             <hr>
 
-            <input type="submit" value="[% 'Add' | gettext %]" />
+            <input type="submit" id="submit-add-equipment" value="[% 'Add' | gettext %]" disabled>
           </div>
         </form>
+        <script>
+          const addEquipmentForm = document.querySelector('form[name="addEquipment"]');
+          const addEquipmentFormSubmitButton = document.getElementById('submit-add-equipment');
+          addEquipmentForm.addEventListener('submit', (e) => RoomReservationBundle.validateAddEquipment(e));
+          addEquipmentFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'add-equipment' %]
@@ -618,7 +685,7 @@
 
         <h4>[% 'Current Equipment' | gettext %]</h4>
 
-        <form method="post" action="#" onsubmit="return RoomReservationBundle.editEquipmentValidation()">
+        <form name="editEquipmentSelectionForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="edit-equipment" />
@@ -638,9 +705,15 @@
 
             <hr>
 
-            <input type="submit" name="equipment-edit-selection-submit" id="equipment-edit-selection-submit" value="[% 'Edit' | gettext %]" />
+            <input type="submit" name="equipment-edit-selection-submit" id="equipment-edit-selection-submit" value="[% 'Edit' | gettext %]" disabled>
           </div>
         </form>
+        <script>
+          const editEquipmentSelectionForm = document.querySelector('form[name="editEquipmentSelectionForm"]');
+          const editEquipmentSelectionFormSubmitButton = document.getElementById('equipment-edit-selection-submit');
+          editEquipmentSelectionForm.addEventListener('submit', (e) => RoomReservationBundle.editEquipmentValidation(e));
+          editEquipmentSelectionFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'edit-equipment-selection' %]
@@ -651,7 +724,7 @@
 
         <h4>[% 'Edit Equipment' | gettext %]</h4>
 
-        <form method="post" action="#">
+        <form name="editEquipmentForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="edit-equipment" />
@@ -671,7 +744,7 @@
             <hr>
 
             <input type="hidden" name="edit-equipment-id" value="[% equipment_to_edit.0.equipmentid %]" />
-            <input type="submit" value="[% 'Edit' | gettext %]" />
+            <input type="submit" id="submit-edit-equipment" value="[% 'Edit' | gettext %]">
           </div>
         </form>
       </div>
@@ -688,7 +761,7 @@
 
         <h4>[% 'Current Equipment' | gettext %]</h4>
 
-        <form method="post" action="#" onsubmit="return RoomReservationBundle.deleteEquipmentConfirmation()">
+        <form name="deleteEquipmentForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="delete-equipment" />
@@ -715,6 +788,12 @@
             <input type="submit" name="equipment-delete-submit" id="equipment-delete-submit" value="[% 'Delete' | gettext %]" />          
           </div>
         </form>
+        <script>
+          const deleteEquipmentForm = document.querySelector('form[name="deleteEquipmentForm"]');
+          const deleteEquipmentFormSubmitButton = document.getElementById('equipment-delete-submit');
+          deleteEquipmentForm.addEventListener('submit', (e) => RoomReservationBundle.deleteEquipmentConfirmation(e));
+          deleteEquipmentFormSubmitButton.disabled = false;
+        </script>
       </div>
     </div>
   [% END # op == 'delete-equipment' %]
