@@ -568,14 +568,14 @@
 
               <div><strong>[% 'Equipment:' | gettext %]</strong></div>
               [% FOREACH available IN all_available_equipment %]
-                  [% equipmentname = available.equipmentname %]
-                  [% IF equipmentname == 'none' %]
-                      [% equipmentname = gtx.gettext('none') %]
-                  [% END %]
-                  <span class="lmsr-pill lmsr-pill-checkbox">
-                    <input type="checkbox" name="edit-rooms-current-equipment" value="[% available.equipmentid %]" />&nbsp;[% equipmentname %]
-                  </span>
-                  &nbsp;
+                [% equipmentname = available.equipmentname %]
+                [% IF equipmentname == 'none' %]
+                    [% equipmentname = gtx.gettext('none') %]
+                [% END %]
+                <span class="lmsr-pill lmsr-pill-checkbox">
+                  <input type="checkbox" name="edit-rooms-current-equipment" value="[% available.equipmentid %]" />&nbsp;[% equipmentname %]
+                </span>
+                &nbsp;
               [% END # FOREACH available IN all_available_equipment %]
             [% END # FOREACH room IN room_details %]
 

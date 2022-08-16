@@ -11,6 +11,10 @@
   --shadow-lg: rgba(0, 0, 0, 0.15) 0px 2px 8px;
   --shadow-hv: rgba(0, 0, 0, 0.08) 0px 4px 12px;
 
+  --breakpoint-xs: 425px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+
   --seperator-light: rgba(0, 0, 0, 0.1);
 }
 
@@ -299,7 +303,7 @@ textarea {
 }
 
 .lmsr-calendar-data-booking {
-  margin: 0.5em 2.5em 0.5em 0.5em;
+  margin: 0.5em 0.5em 0.5em 2.5em;
   border-radius: 7px;
   padding: 0.25em;
   font-size: small;
@@ -343,6 +347,7 @@ textarea {
   top: 0.25em;
   text-align: right;
   padding: 0 0.25em;
+  text-align: left;
 }
 
 .lmsr-calendar-form-inline {
@@ -384,12 +389,12 @@ textarea {
 
 .lmsr-calendar-header {
   width: 100%;
-  text-align: right;
   padding: 0.75em 0;
 }
 
 .lmsr-calendar-monthyear {
   padding-left: 3em;
+  text-align: right;
 }
 
 .lmsr-calendar-row {
@@ -414,6 +419,7 @@ border-radius: 0 0 9px 0;
   padding: 0.5em 0.25em;
   border-left: 1px solid var(--seperator-light);
   border-right: 1px solid var(--seperator-light);
+  text-align: left;
 }
 
 /* .lmsr-calendar-weekday:first-child {
@@ -424,7 +430,9 @@ border-radius: 0 0 9px 0;
   border-right: none;
 } */
 
-.lmsr-calendar-weekdays {}
+@media only screen and (max-width: var(--breakpoint-xs)) {
+  
+}
 
 .lmsr-card {
   -webkit-box-shadow: var(--shadow-sm);
