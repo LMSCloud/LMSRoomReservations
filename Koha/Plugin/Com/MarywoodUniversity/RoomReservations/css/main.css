@@ -306,7 +306,7 @@ textarea {
   margin: 0.5em 0.5em 0.5em 2.5em;
   border-radius: 7px;
   padding: 0.25em;
-  font-size: small;
+  font-size: smaller;
   text-align: center;
 }
 
@@ -326,6 +326,9 @@ textarea {
   overflow-y: scroll;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+  flex-grow: 1;
+  flex-basis: 0;
+  transition: flex-grow 0.3s;
 }
 
 .lmsr-calendar-data::-webkit-scrollbar {
@@ -397,6 +400,39 @@ textarea {
   text-align: right;
 }
 
+.lmsr-calendar-portrait-week {
+  border-bottom: 2px solid var(--seperator-light);
+}
+
+.lmsr-calendar-portrait-day {
+  border-bottom: 1px dotted var(--seperator-light);
+}
+
+.lmsr-calendar-potrait-day-head {
+  font-weight: bolder;
+}
+
+.lmsr-calendar-potrait-day-head::after {
+  content: ".";
+}
+
+.lmsr-calendar-portrait-day-body {
+  padding: 0 0.5em;
+}
+
+.lmsr-calendar-portrait-day-booking {
+  display: flex;
+  justify-content: space-between;
+}
+
+.lmsr-calendar-potrait-day-booking-roomnumber {
+  font-style: italic;
+}
+
+.lmsr-calendar-portrait-day-booking-bookedtime {
+  font-family: monospace;
+}
+
 .lmsr-calendar-row {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -422,16 +458,41 @@ border-radius: 0 0 9px 0;
   text-align: left;
 }
 
-/* .lmsr-calendar-weekday:first-child {
-  border-left: none;
+@media only screen and (max-width: 1024px) {
+  .lmsr-calendar-data:hover {
+    flex-grow: 3;
+    transition: flex-grow 0.3s;
+  }
+
+  .lmsr-calendar-data-roomnumber,
+  .lmsr-calendar-data-bookedtime {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }
 
-.lmsr-calendar-weekday:last-child {
-  border-right: none;
-} */
+@media only screen and (max-width: calc(468px - 1px)) {
+  .lmsr-calendar-weekdays {
+    display: none;
+  }
 
-@media only screen and (max-width: var(--breakpoint-xs)) {
-  
+  .lmsr-calendar-monthyear {
+    padding-left: 1em;
+    text-align: left;
+  }
+
+  .lmsr-calendar-form-inline form.lmsr-calendar-form {
+    white-space: wrap;
+  }
+
+  .lmsr-calendar-body {
+    padding: 0.5em;
+  }
+
+  .lmsr-calendar-header {
+    font-size: small;
+  }
 }
 
 .lmsr-card {

@@ -18,6 +18,70 @@
   [% DEFAULT op = 'undef' %]
   [% IF op == 'undef' %]
   [% DEFAULT selected_month = 0 %]
+
+  <template id="lmsr-calendar-body-landscape-template">
+    [% w = 0 %]
+    [% WHILE w < 5 %] 
+      <div class="lmsr-calendar-row">
+        [% d = 0 %]
+        [% WHILE d < 7 %] 
+          [% n=w * 7 + d %] 
+          <div class="lmsr-calendar-data">
+            <span class="lmsr-calendar-dayofmonth">[% current_month_cal.$n %]</span>
+            <div class="min-height lmsr-calendar-data-entry">
+              [% FOREACH booking IN booking_days.$n %]
+                <div class="lmsr-calendar-data-booking"
+                  [% FOREACH room IN rooms %]
+                    [% IF room.roomnumber == booking.roomnumber %]
+                      data-color="[% room.color %]"
+                    [% END %]
+                  [% END # FOREACH %]
+                >
+                  <div class="lmsr-calendar-data-roomnumber">[% booking.roomnumber %]</div>
+                  <div class="lmsr-calendar-data-bookedtime">([% booking.bookedtime %])</div>
+                </div>
+              [% END # FOREACH booking IN booking_days %]
+            </div>
+          </div>
+          [% d = d + 1 %]
+        [% END %]
+      </div>
+      [% w = w + 1 %]
+    [% END %]
+  </template>
+
+  <template id="lmsr-calendar-body-portrait-template">
+    [% w = 0 %]
+    [% WHILE w < 5 %] 
+      <div class="lmsr-calendar-portrait-week">
+        [% d = 0 %]
+        [% WHILE d < 7 %]
+          [% n=w * 7 + d %] 
+          [% BREAK IF n == 31 %]
+          <div class="lmsr-calendar-portrait-day">
+            <span class="lmsr-calendar-potrait-day-head">[% current_month_cal.$n %]</span>
+            <div class="lmsr-calendar-portrait-day-body">
+              [% FOREACH booking IN booking_days.$n %]
+                <div class="lmsr-calendar-portrait-day-booking"
+                  [% FOREACH room IN rooms %]
+                    [% IF room.roomnumber == booking.roomnumber %]
+                      data-color="[% room.color %]"
+                    [% END %]
+                  [% END # FOREACH %]
+                >
+                  <div class="lmsr-calendar-portrait-day-booking-bookedtime">[% booking.bookedtime %]</div>
+                  <div class="lmsr-calendar-potrait-day-booking-roomnumber">[% booking.roomnumber %]</div>
+                </div>
+              [% END # FOREACH booking IN booking_days %]
+            </div>
+          </div>
+          [% d = d + 1 %]
+        [% END %]
+      </div>
+      [% w = w + 1 %]
+    [% END %]
+  </template>
+
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
@@ -26,169 +90,109 @@
   </nav>
 
   <div class="container">
-    <div>
-      <div class="row">
-        <span class="lmsr-admin-confirmation-mail" hidden>admin_confirmation_email: [% admin_confirmation_email %]</span><br>
-        <div class="col-12">
-          [% IF is_restricted %]
-            [% IF is_restricted_message == '' %]
-              <h1>[% 'You do not have permission to access this page' | gettext %]</h1>
-            [% ELSE %]
-              <h1>[% is_restricted_message %]</h1>
-            [% END %]
+    <div class="row">
+      <span class="lmsr-admin-confirmation-mail" hidden>admin_confirmation_email: [% admin_confirmation_email %]</span><br>
+      <div class="col-12">
+        [% IF is_restricted %]
+          [% IF is_restricted_message == '' %]
+            <h1>[% 'You do not have permission to access this page' | gettext %]</h1>
           [% ELSE %]
-            <div class="calendar-table lmsr-calendar" id="study-room-calendar">
-              <div class="lmsr-calendar-head">
-                <div class="lmsr-calendar-header lmsr-calendar-controls">
-                  <div class="lmsr-calendar-monthyear">
-                    <span><strong>[% "Current Bookings" | gettext %]</strong></span><br>
-                    <span class="lmsr-calendar-controls-activemonth">[% active_month | gettext %]</span>
-                    <span class="lmsr-calendar-controls-activeyear">[% active_year %]</span>
-                  </div>
-                  <div class="lmsr-calendar-form-inline">
-                    <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-prev-month" method="post"
-                      name="prev-month" action="#">
-                      <input type="hidden" name="selected_month" value="[% selected_month - 1 %]" />
-                      <input class="calendar-submit" type="submit" name="prev-month" value="«" />
-                    </form>
-                    <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-next-month" method="post"
-                      name="next-month" action="#">
-                      <input type="hidden" name="selected_month" value="[% selected_month + 1 %]" />
-                      <input class="calendar-submit" type="submit" name="next-month" value="»" />
-                    </form>
-                    <form class="lmsr-calendar-form" method="post" name="book-room" action="#">
-                      <input type="hidden" name="op" value="availability-search" />
-                      <input type="submit" name="book-room-btn" value="[% 'Book a Room' | gettext %]" />
-                    </form>
-                  </div>
+            <h1>[% is_restricted_message %]</h1>
+          [% END %]
+        [% ELSE %]
+          <div class="calendar-table lmsr-calendar" id="study-room-calendar">
+            <div class="lmsr-calendar-head">
+              <div class="lmsr-calendar-header lmsr-calendar-controls">
+                <div class="lmsr-calendar-monthyear">
+                  <span><strong>[% "Current Bookings" | gettext %]</strong></span><br>
+                  <span class="lmsr-calendar-controls-activemonth">[% active_month | gettext %]</span>
+                  <span class="lmsr-calendar-controls-activeyear">[% active_year %]</span>
                 </div>
-                <!-- <hr class="lmsr-calendar-vertical-seperator"> -->
-                <div class="lmsr-calendar-row lmsr-calendar-weekdays">
-                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'MON' | gettext %]</span>
-                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'TUE' | gettext %]</span>
-                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'WED' | gettext %]</span>
-                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'THU' | gettext %]</span>
-                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'FRI' | gettext %]</span>
-                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'SAT' | gettext %]</span>
-                  <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'SUN' | gettext %]</span>
+                <div class="lmsr-calendar-form-inline">
+                  <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-prev-month" method="post"
+                    name="prev-month" action="#">
+                    <input type="hidden" name="selected_month" value="[% selected_month - 1 %]" />
+                    <input class="calendar-submit" type="submit" name="prev-month" value="«" />
+                  </form>
+                  <form class="calendar-form lmsr-calendar-form lmsr-calendar-form-next-month" method="post"
+                    name="next-month" action="#">
+                    <input type="hidden" name="selected_month" value="[% selected_month + 1 %]" />
+                    <input class="calendar-submit" type="submit" name="next-month" value="»" />
+                  </form>
+                  <form class="lmsr-calendar-form" method="post" name="book-room" action="#">
+                    <input type="hidden" name="op" value="availability-search" />
+                    <input type="submit" name="book-room-btn" value="[% 'Book a Room' | gettext %]" />
+                  </form>
                 </div>
               </div>
-              <div class="lmsr-calendar-body">
-                [% w = 0 %]
-                [% WHILE w < 5 %] 
-                  <div class="lmsr-calendar-row">
-                    [% d = 0 %]
-                    [% WHILE d < 7 %] 
-                      [% n=w * 7 + d %] 
-                      <div class="lmsr-calendar-data">
-                        <span class="lmsr-calendar-dayofmonth">&nbsp;[% current_month_cal.$n %]</span>
-                        <div class="min-height lmsr-calendar-data-entry">
-                          [% FOREACH booking IN booking_days.$n %]
-                            <div class="lmsr-calendar-data-booking"
-                            [% FOREACH room IN rooms %]
-                              [% IF room.roomnumber == booking.roomnumber %]
-                                data-color="[% room.color %]"
-                              [% END %]
-                            [% END # FOREACH %]
-                            >
-                              <span class="lmsr-calendar-data-roomnumber">[% booking.roomnumber %]</span><br>
-                              <span class="lmsr-calendar-data-bookedtime">([% booking.bookedtime %])</span><br />
-                            </div>
-                          [% END # FOREACH booking IN booking_days %]
-                        </div>
-                      </div>
-                      [% d = d + 1 %]
-                    [% END %]
-                  </div>
-                  [% w = w + 1 %]
-                [% END %]
-              </div>
-              <!-- <hr> -->
-              <div class="lmsr-calendar-foot">
-                <div class="lmsr-calendar-row">
-                  <div class="">
-
-                  </div>
-                </div>
+              <div class="lmsr-calendar-row lmsr-calendar-weekdays">
+                <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'MON' | gettext %]</span>
+                <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'TUE' | gettext %]</span>
+                <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'WED' | gettext %]</span>
+                <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'THU' | gettext %]</span>
+                <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'FRI' | gettext %]</span>
+                <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'SAT' | gettext %]</span>
+                <span class="lmsr-calendar-header lmsr-calendar-weekday">[% 'SUN' | gettext %]</span>
               </div>
             </div>
-            [% IF month_is_active == 1 %]
-              <p>[% current_month_cal.count %]</p>
-            [% END # month_is_active == 1 %]
-          [% END %]
-        </div> <!-- col-12 -->
-      </div> <!-- row -->
-      <div class="row mb-2">
-        <div class="col">
-          <h2>[% 'Available Rooms' | gettext %]</h2>
-        </div>
+
+            <div class="lmsr-calendar-body"></div>
+            <button type="button" id="jump-to-calendar" disabled><i class="fa fa-calendar" aria-hidden="true"></i></button>
+            <script>RoomReservationBundle.renderCalendar();</script>
+
+          </div>
+          [% IF month_is_active == 1 %]
+            <p>[% current_month_cal.count %]</p>
+          [% END # month_is_active == 1 %]
+        [% END %]
+      </div> <!-- col-12 -->
+    </div> <!-- row -->
+
+    <div class="row mb-2">
+      <div class="col">
+        <h2>[% 'Available Rooms' | gettext %]</h2>
       </div>
+    </div>
+
     <div class="row">
       [% FOR room IN rooms %]
-      <div class="col-12 col-sm-6 col-md-4">
+        <div class="col-12 col-sm-6 col-md-4">
 
-        <div class="card lmsr-card">
-          [% IF room.image %]
-            <img src="..." class="card-img-top" alt="...">
-          [% END %]
-          <div class="card-body">
-            <h5 class="card-title">[% room.roomnumber %]</h5>
-            [% IF room.description %]
-            <p class="card-text">[% room.description %]</p>
+          <div class="card lmsr-card">
+            [% IF room.image %]
+              <img src="..." class="card-img-top" alt="...">
             [% END %]
-            <p class="card-text">
-              <b>[% 'Max. Capacity' | gettext %]</b>&nbsp;
-              <span>[% room.maxcapacity %] [% 'Persons' | gettext %]</span>
-            </p>
-            <p class="card-text">
-              <b>[% 'Equipment' | gettext %]</b>
-              <ul class="lmsr-list mt-2">
-                [% FOR eqipment IN room.equipment %]
-                  [% equipmentname = eqipment.equipmentname %]
-                  [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
-                  <li class="lmsr-list-item">[% equipmentname %]</li>
-                [% END %]
-              </ul>
-            </p>
-            <form class="lmsr-calendar-form lmsr-calendar-form-room-card" method="post" name="book-room" action="#">
-              <input type="hidden" name="op" value="availability-search" />
-              <input type="hidden" name="room-id" value="[% room.roomid %]">
-              <input type="submit" name="book-room-btn" value="[% 'Book this Room' | gettext %]" class="card-link"/>
-            </form>
+            <div class="card-body">
+              <h5 class="card-title">[% room.roomnumber %]</h5>
+              [% IF room.description %]
+              <p class="card-text">[% room.description %]</p>
+              [% END %]
+              <p class="card-text">
+                <b>[% 'Max. Capacity' | gettext %]</b>&nbsp;
+                <span>[% room.maxcapacity %] [% 'Persons' | gettext %]</span>
+              </p>
+              <p class="card-text">
+                <b>[% 'Equipment' | gettext %]</b>
+                <ul class="lmsr-list mt-2">
+                  [% FOR eqipment IN room.equipment %]
+                    [% equipmentname = eqipment.equipmentname %]
+                    [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
+                    <li class="lmsr-list-item">[% equipmentname %]</li>
+                  [% END %]
+                </ul>
+              </p>
+              <form class="lmsr-calendar-form lmsr-calendar-form-room-card" method="post" name="book-room" action="#">
+                <input type="hidden" name="op" value="availability-search" />
+                <input type="hidden" name="room-id" value="[% room.roomid %]">
+                <input type="submit" name="book-room-btn" value="[% 'Book this Room' | gettext %]" class="card-link"/>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
       [% END %]
     </div>
     <!-- / .span12 -->
-
-  </div>
-  <button type="button" id="jump-to-calendar" disabled><i class="fa fa-calendar" aria-hidden="true"></i></button>
-</div> <!-- main-->
-<script>
-  const jumpToCalendarButton = document.getElementById('jump-to-calendar');
-  const _calendar = document.getElementById('study-room-calendar');
-  jumpToCalendarButton.addEventListener('click', () => { _calendar.scrollIntoView(); });
-  jumpToCalendarButton.disabled = false;
-
-  /* We could think about assigning dedicated configurable colors to these. */
-  const daysWithBookingsInCalendar = document.querySelectorAll('.lmsr-calendar-data-entry');
-  const activeBookingsInCalendar = document.querySelectorAll('.lmsr-calendar-data-booking');
-
-  daysWithBookingsInCalendar.forEach((dayWithBookingsInCalendar) => {
-    if (dayWithBookingsInCalendar.firstElementChild) {
-      dayWithBookingsInCalendar.parentElement.classList.add('lmsr-calendar-data-has-events');
-    }
-  });
-
-  activeBookingsInCalendar.forEach((activeBookingInCalendar) => {
-    const color = activeBookingInCalendar.dataset.color;
-    const ACTIVE_BOOKING_REFERENCE = activeBookingInCalendar;
-    const [backgroundColor, textColor] = RoomReservationBundle.getColorTextWithContrast(color);
-    ACTIVE_BOOKING_REFERENCE.style.backgroundColor = backgroundColor;
-    ACTIVE_BOOKING_REFERENCE.style.color = textColor;
-  });
-</script>
+  </div> <!-- main-->
 </div>
 <!-- / .container-fluid -->
 
