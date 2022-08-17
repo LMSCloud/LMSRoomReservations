@@ -14,6 +14,49 @@
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
+<template id="lmsr-toast-template">
+  <div class="lmsr-toast">
+    <div class="lmsr-toast-header">
+      <strong>&excl;</strong>
+      <slot name="title"></slot>
+      <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
+        <span aria-hidden="true">&times;</i></span>
+      </button>
+    </div>
+    <div class="lmsr-toast-body">
+      <slot name="message"></slot>
+    </div>
+  </div>
+  <style>
+    .lmsr-toast {
+      position: absolute;
+      top: 25%;
+      right: 1em;
+      width: 200px;
+      border-radius: 7px;
+      border: 1px solid var(--seperator-light);
+      -webkit-box-shadow: var(--shadow-hv);
+              box-shadow: var(--shadow-hv);
+    }
+
+    .lmsr-toast-body,
+    .lmsr-toast-header {
+      padding: 0.5em;
+    }
+
+    .lmsr-toast-header {
+      border-bottom: 1px solid var(--seperator-light);
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+    }
+  </style>
+  <script>RoomReservationBundle.closeToast();</script>
+</template>
+
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
@@ -96,6 +139,7 @@
             <input type="submit" name="submitSelectedDisplayedRoom" id="submit-display-rooms" value="[% 'Show details' | gettext %]" disabled>
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const displayRoomsForm = document.querySelector('form[name="displayRooms"]');
           const displayRoomsFormSubmitButton = document.getElementById('submit-display-rooms');
@@ -143,7 +187,7 @@
   [% END # op == 'display-rooms-detail' %]
 
   [% IF op == 'max-future-date' %]
-    <form name="maxFutureDateForm" method="post" action="#" onsubmit="return RoomReservationBundle.validateMaxFutureDate();">
+    <form name="maxFutureDateForm" method="post" action="#">
       <input type="hidden" name="class" value="[% CLASS %]" />
       <input type="hidden" name="method" value="[% METHOD %]" />
       <input type="hidden" name="op" value="max-future-date" />
@@ -164,6 +208,7 @@
 
       <input type="submit" id="submit-max-future-date" value="[% 'Add restriction' | gettext %]" disabled>
     </form>
+    <div id="lmsr-notifications"></div>
     <script>
       const maxFutureDateForm = document.querySelector('form[name="maxFutureDateForm"]');
       const maxFutureDateFormSubmitButton = document.getElementById('submit-max-future-date');
@@ -220,6 +265,7 @@
             <input type="submit" id="submit-max-time" value="[% 'Add restriction' | gettext %]" disabled>
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const maxTimeForm = document.querySelector('form[name="maxTimeForm"]');
           const maxTimeFormSubmitButton = document.getElementById('submit-max-time');
@@ -291,6 +337,7 @@
             <input type="submit" id="submit-restrict-daily-reservations" value="[% 'Add limit' | gettext %]" disabled>
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const restrictDailyReservationsForm = document.querySelector('form[name="restrictDailyReservationsForm"]');
           const restrictDailyReservationsFormSubmitButton = document.getElementById('submit-restrict-daily-reservations');
@@ -362,6 +409,7 @@
             <input type="submit" id="submit-restrict-categories" value="[% 'Update' | gettext %]" disabled>  
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const restrictCategoriesForm = document.querySelector('form[name="restrictCategoriesForm"]');
           const restrictCategoriesFormSubmitButton = document.getElementById('submit-restrict-categories');
@@ -426,6 +474,7 @@
             <input type="submit" id="submit-add-room" value="[% 'Add Room' | gettext %]" disabled>  
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const addRoomForm = document.querySelector('form[name="addRoomForm"]');
           const addRoomFormSubmitButton = document.getElementById('submit-add-room');
@@ -465,6 +514,7 @@
             <input type="submit" id="submit-edit-room" value="[% 'Edit' | gettext %]" disabled>
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const editRoomsForm = document.querySelector('form[name="editRoomsForm"]');
           const editRoomFormSubmitButton = document.getElementById('submit-edit-room');
@@ -530,6 +580,7 @@
             <input type="submit" id="submit-edit-room-details" value="Update" disabled>              
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const editRoomDetailsForm = document.querySelector('form[name="editRoomDetails"]');
           const editRoomDetailsFormSubmitButton = document.getElementById('submit-edit-room-details');
@@ -584,6 +635,7 @@
             <input type="submit" id="submit-edit-room-equipment" value="[% 'Update' | gettext %]" disabled>
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const editRoomEquipmentForm = document.querySelector('form[name="editRoomEquipment"]');
           const editRoomEquipmentFormSubmitButton = document.getElementById('submit-edit-room-equipment');
@@ -630,6 +682,7 @@
             <h2>[% 'No rooms available to delete!' | gettext %]</h2>
           [% END %]
         </form>
+        <div id="lmsr-notifications"></div>
       </div>
     </div>
   [% END # op == 'delete-rooms' %]
@@ -669,6 +722,7 @@
             <input type="submit" id="submit-add-equipment" value="[% 'Add' | gettext %]" disabled>
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const addEquipmentForm = document.querySelector('form[name="addEquipment"]');
           const addEquipmentFormSubmitButton = document.getElementById('submit-add-equipment');
@@ -708,6 +762,7 @@
             <input type="submit" name="equipment-edit-selection-submit" id="equipment-edit-selection-submit" value="[% 'Edit' | gettext %]" disabled>
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const editEquipmentSelectionForm = document.querySelector('form[name="editEquipmentSelectionForm"]');
           const editEquipmentSelectionFormSubmitButton = document.getElementById('equipment-edit-selection-submit');
@@ -747,6 +802,7 @@
             <input type="submit" id="submit-edit-equipment" value="[% 'Edit' | gettext %]">
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
       </div>
     </div>
   [% END # op == 'edit-equipment' %]
@@ -788,6 +844,7 @@
             <input type="submit" name="equipment-delete-submit" id="equipment-delete-submit" value="[% 'Delete' | gettext %]" />          
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const deleteEquipmentForm = document.querySelector('form[name="deleteEquipmentForm"]');
           const deleteEquipmentFormSubmitButton = document.getElementById('equipment-delete-submit');

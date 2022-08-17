@@ -14,11 +14,54 @@
 [% INCLUDE 'masthead.inc' %]
 
 <div class="main">
+
+  <template id="lmsr-toast-template">
+    <div class="lmsr-toast">
+      <div class="lmsr-toast-header">
+        <strong>&excl;</strong>
+        <slot name="title"></slot>
+        <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
+          <span aria-hidden="true">&times;</i></span>
+        </button>
+      </div>
+      <div class="lmsr-toast-body">
+        <slot name="message"></slot>
+      </div>
+    </div>
+    <style>
+      .lmsr-toast {
+        position: absolute;
+        top: 25%;
+        right: 1em;
+        width: 200px;
+        border-radius: 7px;
+        border: 1px solid var(--seperator-light);
+        -webkit-box-shadow: var(--shadow-hv);
+                box-shadow: var(--shadow-hv);
+      }
+  
+      .lmsr-toast-body,
+      .lmsr-toast-header {
+        padding: 0.5em;
+      }
+  
+      .lmsr-toast-header {
+        border-bottom: 1px solid var(--seperator-light);
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+      }
+    </style>
+    <script>RoomReservationBundle.closeToast();</script>
+  </template>
   <!-- op defaults to 'undef' if template param is undef (meaning show calendar) -->
   [% DEFAULT op = 'undef' %]
   [% IF op == 'undef' %]
   [% DEFAULT selected_month = 0 %]
-
+  
   <template id="lmsr-calendar-body-landscape-template">
     [% w = 0 %]
     [% WHILE w < 5 %] 
@@ -455,6 +498,7 @@
         </div>
       </div>
     </form>
+    <div id="lmsr-notifications"></div>
     <script type="text/javascript">
       const confirmationForm = document.querySelector('form[name="confirmationForm"]');
       const confirmationSubmitButton = document.querySelector('input[name="confirmationSubmit"]');

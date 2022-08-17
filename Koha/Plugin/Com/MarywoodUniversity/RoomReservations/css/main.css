@@ -693,33 +693,6 @@ border-radius: 0 0 9px 0;
   margin: 0.25em;
 }
 
-.lmsr-toast {
-  position: absolute;
-  top: 25%;
-  right: 1em;
-  width: 200px;
-  border-radius: 7px;
-  border: 1px solid var(--seperator-light);
-  -webkit-box-shadow: var(--shadow-hv);
-          box-shadow: var(--shadow-hv);
-}
-
-.lmsr-toast-body,
-.lmsr-toast-header {
-  padding: 0.5em;
-}
-
-.lmsr-toast-header {
-  width: 100%;
-  border-bottom: 1px solid var(--seperator-light);
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-}
-
 .table-header-bold {
   font-weight: bold;
 }

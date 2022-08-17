@@ -7,9 +7,35 @@
   /* eslint-disable no-unused-vars */
   function loadSelectedAction() { document.getElementById('actionSelectedBtn').click(); }
 
+  window.customElements.define(
+    'lmsr-toast',
+    class extends HTMLElement {
+      constructor() {
+        super();
+        const template = document.getElementById('lmsr-toast-template').content;
+        const shadowRoot = this.attachShadow({ mode: 'open' });
+        shadowRoot.appendChild(template.cloneNode(true));
+      }
+    },
+  );
+
+  const prohibitFormSubmitWithMessage = ({ e, type, message }) => {
+    e.preventDefault();
+    const lmsrNotifications = document.getElementById('lmsr-notifications');
+    const lmsrToast = document.createElement('lmsr-toast', { is: 'lmsr-toast' });
+    lmsrToast.innerHTML = `
+    <strong slot="title">${type}</strong>
+    <p slot="message">${message}</p>
+  `;
+    lmsrNotifications.appendChild(lmsrToast);
+
+    return false;
+  };
+
   function closeToast() {
-    const lmsrToast = document.querySelector('.lmsr-toast');
-    const lmsrToastButtonClose = document.querySelector('.lmsr-toast-button-close');
+    const lmsrToast = document.querySelector('lmsr-toast');
+    const lmsrToastRoot = document.querySelector('lmsr-toast').shadowRoot;
+    const lmsrToastButtonClose = lmsrToastRoot.querySelector('.lmsr-toast-button-close');
     lmsrToastButtonClose.addEventListener('click', () => { lmsrToast.remove(); });
     lmsrToastButtonClose.disabled = false;
     window.setTimeout(() => { lmsrToast.remove(); }, 3000);
@@ -78,7 +104,7 @@
       if (room.checked) { roomChecked = true; }
     });
 
-    if (!roomChecked) { e.preventDefault(); alert("[% 'Please select one or more rooms.' | gettext %]"); return false; }
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum oder mehrere Räume aus.' }); }
 
     return true;
   }
@@ -98,13 +124,13 @@
     const endTimestamp = `${blackoutDate} ${blackoutEndTime}`;
 
     // determines if invalid start/end values were entered
-    if (startTimestamp >= endTimestamp) { e.preventDefault(); alert("[% 'Please select a valid start and end time!' | gettext %]"); return false; }
+    if (startTimestamp >= endTimestamp) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Start- und Endzeit an.' }); }
 
     rooms.forEach((room) => {
       if (room.checked) { roomChecked = true; }
     });
 
-    if (!roomChecked) { e.preventDefault(); alert("[% 'Please select one or more rooms.' | gettext %]"); return false; }
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum oder mehrere Räume aus.' }); }
 
     return true;
   }
@@ -118,11 +144,11 @@
     const endTime = document.forms.availabilitySearchForm['availability-search-end-time'].value;
     const maxCapacity = document.forms.availabilitySearchForm['availability-search-room-capacity'].value;
 
-    if (startDate === '') { e.preventDefault(); alert("[% 'Start date is required.' | gettext %]"); return false; }
-    if (startTime === '') { e.preventDefault(); alert("[% 'Start time is required.' | gettext %]"); return false; }
-    if (endDate === '') { e.preventDefault(); alert("[% 'End date is required.' | gettext %]"); return false; }
-    if (endTime === '') { e.preventDefault(); alert("[% 'End time is required.' | gettext %]"); return false; }
-    if (maxCapacity === '') { e.preventDefault(); alert("[% 'Room capacity is required.' | gettext %]"); return false; }
+    if (startDate === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Startdatum an.' }); }
+    if (startTime === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Startzeit an.' }); }
+    if (endDate === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Enddatum an.' }); }
+    if (endTime === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Endzeit an.' }); }
+    if (maxCapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus.' }); }
 
     return true;
   }
@@ -137,16 +163,16 @@
       }
     });
 
-    if (!roomChecked) { e.preventDefault(); alert("[% 'Select a room to continue.' | gettext %]"); return false; }
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus um fortzufahren.' }); }
 
     return true;
   }
 
   function validateSavedRooms(e) {
     const savedRoomsAction = document.forms.saved_rooms.saved_rooms_action.value;
-    if (savedRoomsAction === 'null') { e.preventDefault(); alert("[% 'Please choose an action' | gettext %]"); return false; }
+    if (savedRoomsAction === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
     if (savedRoomsAction === 'delete') {
-      const isConfirmedDelete = !!confirm(" [% 'Are you sure you want to remove the selected room?' %]");
+      const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie den ausgewählten Raum löschen möchten?');
       if (isConfirmedDelete) { return true; }
 
       e.preventDefault();
@@ -160,14 +186,14 @@
       if (room.checked) { roomValue = true; }
     });
 
-    if (!roomValue) { e.preventDefault(); alert("[% 'Please select a room' | gettext %]"); return false; }
+    if (!roomValue) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus.' }); }
 
     return true;
   }
 
   function validateConfigActions(e) {
     const configAction = document.forms.config_actions.config_actions_selection.value;
-    if (configAction === 'null') { e.preventDefault(); alert("[% 'Please choose an action' | gettext %]"); return false; }
+    if (configAction === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
 
     return true;
   }
@@ -180,36 +206,36 @@
       if (room.checked) { roomChecked = true; }
     });
 
-    if (!roomChecked) { e.preventDefault(); alert("[% 'Select a room to display its details or select another action.' | gettext %]"); return false; }
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie mindestens einen Tag aus.' }); }
 
     return true;
   }
 
   function validateMaxFutureDate(e) {
     const num = document.getElementById('max-days-field').value;
-    if (Number.isNaN(num)) { e.preventDefault(); alert("[% 'Please enter a valid number!' | gettext %]"); return false; }
-    if (num === '') { e.preventDefault(); alert("[% 'Please enter a valid number!' | gettext %]"); return false; }
+    if (Number.isNaN(num)) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
+    if (num === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
 
     return true;
   }
 
   function validateMaxTime(e) {
     const numHours = document.getElementById('max-time-hours-field').value;
-    if (numHours === 'null') { e.preventDefault(); alert("[% 'Please select a valid number!' | gettext %]"); return false; }
+    if (numHours === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
 
     return true;
   }
 
   function validateLimitRestriction(e) {
     const limitCount = document.getElementById('reservations-limit-field').value;
-    if (limitCount === 'null') { e.preventDefault(); alert('Please select a value!'); return false; }
+    if (limitCount === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Wert aus.' }); }
 
     return true;
   }
 
   function validateRestrictCategories(e) {
     const numHours = document.getElementById('max-time-hours-field').value;
-    if (numHours === 'null') { e.preventDefault(); alert("[% 'Please select a valid number!' | gettext %]"); return false; }
+    if (numHours === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
 
     return true;
   }
@@ -220,9 +246,9 @@
     const equipment = document.getElementsByName('selected-equipment');
     console.log(rooms, e);
 
-    if (rooms.some((room) => room.roomnumber === roomname)) { e.preventDefault(); alert("[% 'Roomname is already taken' | gettext %]"); return false; }
-    if (roomname === '') { e.preventDefault(); alert("[% 'Please enter a roomname' | gettext %]"); return false; }
-    if (maxcapacity === '') { e.preventDefault(); alert("[% 'Please enter a max capacity for the room' | gettext %]"); return false; }
+    if (rooms.some((room) => room.roomnumber === roomname)) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Diese Raumbezeichnung ist bereits vergeben.' }); }
+    if (roomname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Raumbezeichnung an.' }); }
+    if (maxcapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Maximalkapazität an.' }); }
 
     let equipmentChecked = false;
     equipment.forEach((item) => {
@@ -231,14 +257,14 @@
       }
     });
 
-    if (!equipmentChecked) { e.preventDefault(); alert("[% 'Select room equipment. If no equipment then check `none`' | gettext %]"); return false; }
+    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie die Raumaustattung aus. Sollte der Raum über keine Austattung verfügen, wählen Sie \'nichts\' aus.' }); }
 
     return true;
   }
 
   function validateEditRooms(e) {
     const editChoice = document.forms.editRoomsForm['edit-rooms-choice'].value;
-    if (editChoice === '') { e.preventDefault(); alert("[% 'Please select an edit action.' | gettext %]"); return false; }
+    if (editChoice === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
 
     return true;
   }
@@ -246,8 +272,8 @@
   function validateEditRoomsRoom(e) {
     const roomname = document.forms.editRoomDetails['edit-rooms-room-roomnumber'].value;
     const maxcapacity = document.forms.editRoomDetails['edit-rooms-room-maxcapacity'].value;
-    if (roomname === '') { e.preventDefault(); alert("[% 'Room Name cannot be blank.' | gettext %]"); return false; }
-    if (maxcapacity === '') { e.preventDefault(); alert("[% 'Max Capacity cannot be blank.' | gettext %]"); return false; }
+    if (roomname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Raumbezeichnung darf nicht leer sein.' }); }
+    if (maxcapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Maximalkapazität darf nicht leer sein.' }); }
 
     return true;
   }
@@ -262,7 +288,7 @@
       }
     });
 
-    if (!equipmentChecked) { e.preventDefault(); alert("[% 'Room equipment cannot be empty. If no equipment then check `none`' | gettext %]"); return false; }
+    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Raumaustattung darf nicht leer sein. Sollte der Raum über keine Austattung verfügen, geben Sie \'nichts\' an.' }); }
 
     return true;
   }
@@ -277,8 +303,8 @@
       }
     });
 
-    if (!roomChecked) { e.preventDefault(); alert("[% 'Select a room to delete.' | gettext %]"); return false; }
-    const isConfirmedDelete = !!confirm("[% 'Are you sure you want to delete the selected room?' | gettext %]");
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus, den Sie löschen möchten.' }); }
+    const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie den ausgewählten Raum löschen möchten?');
     if (roomChecked && isConfirmedDelete) { return true; }
 
     e.preventDefault();
@@ -287,7 +313,7 @@
 
   function validateAddEquipment(e) {
     const equipmentname = document.forms.addEquipment['add-equipment-text-field'].value;
-    if (equipmentname === '') { e.preventDefault(); alert("[% 'Equipment name cannot be blank.' | gettext %]"); return false; }
+    if (equipmentname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Austattungsbezeichnung darf nicht leer sein.' }); }
 
     return true;
   }
@@ -302,7 +328,7 @@
       }
     });
 
-    if (!equipmentChecked) { e.preventDefault(); alert("[% 'Select equipment to edit.' | gettext %]"); return false; }
+    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Austattung aus, die Sie bearbeiten möchten.' }); }
 
     return true;
   }
@@ -317,9 +343,9 @@
       }
     });
 
-    if (!equipmentChecked) { e.preventDefault(); alert("[% 'Select equipment to delete.' | gettext %]"); return false; }
+    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Austattung aus, die Sie löschen möchten.' }); }
 
-    const isConfirmedDelete = !!confirm("[% 'Are you sure you want to delete the selected equipment?' | gettext %]");
+    const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie die ausgewählte Raumaustattung löschen möchten?');
     if (isConfirmedDelete) { return true; }
 
     e.preventDefault();
@@ -387,11 +413,7 @@
         timeString += `${maximumBookableTimeframeInHours} [% 'hours' | gettext %]`;
       }
 
-      e.preventDefault();
-      alert(
-        `[% 'Selected time range exceeds maximum time allowed of' | gettext %] ${timeString}!`,
-      );
-      return false;
+      return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: `Die angegebene Zeitspanne übschreitet den Maximalwert: ${timeString}.` });
     }
 
     searchFormArray.forEach((entry) => {
@@ -453,9 +475,7 @@
     const userLimit = document.getElementById('user-daily-limit').value;
 
     if (userLimit === resLimit && userLimit > 0 && e.submitter.name === 'confirmationSubmit') {
-      e.preventDefault();
-      alert("[% 'Unable to continue!\nYou have reached the limit of daily reservations per user for today!' | gettext %]");
-      return false;
+      return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Sie haben die maximale Anzahl an Reservierungen für Ihr Konto für diesen Tag erreicht.' });
     }
 
     return true;

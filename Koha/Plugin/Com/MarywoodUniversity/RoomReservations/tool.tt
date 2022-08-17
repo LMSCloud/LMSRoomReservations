@@ -11,6 +11,49 @@
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
+<template id="lmsr-toast-template">
+  <div class="lmsr-toast">
+    <div class="lmsr-toast-header">
+      <strong>&excl;</strong>
+      <slot name="title"></slot>
+      <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
+        <span aria-hidden="true">&times;</i></span>
+      </button>
+    </div>
+    <div class="lmsr-toast-body">
+      <slot name="message"></slot>
+    </div>
+  </div>
+  <style>
+    .lmsr-toast {
+      position: absolute;
+      top: 25%;
+      right: 1em;
+      width: 200px;
+      border-radius: 7px;
+      border: 1px solid var(--seperator-light);
+      -webkit-box-shadow: var(--shadow-hv);
+              box-shadow: var(--shadow-hv);
+    }
+
+    .lmsr-toast-body,
+    .lmsr-toast-header {
+      padding: 0.5em;
+    }
+
+    .lmsr-toast-header {
+      border-bottom: 1px solid var(--seperator-light);
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+    }
+  </style>
+  <script>RoomReservationBundle.closeToast();</script>
+</template>
+
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
@@ -178,6 +221,7 @@
             <input type="submit" name="submit-opening-hours" value="[% 'Add' | gettext %]" disabled/>
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const openingHoursForm = document.querySelector('form[name="OpeningHoursForm"]');
           const inputSubmitOpeningHours = document.querySelector('input[name="submit-opening-hours"]');
@@ -258,6 +302,7 @@
             <h5>[% 'No bookings found!' | gettext %]</h5>
           [% END # IF bookings %]
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const manageBookingsForm = document.querySelector('form[name="manageBookingsForm"]');
           const inputSubmitManageBookings = document.querySelector('input[name="submit-manage-bookings"]');
@@ -321,6 +366,7 @@
               <input type="submit" name="manage-blackouts-submit" value="Submit" />
             </div>
           </form>
+          <div id="lmsr-notifications"></div>
           <script>
             const manageBlackoutsForm = document.querySelector('form[name="manageBlackoutsForm"]');
             const inputSubmitManageBlackouts = document.querySelector('input[name="manage-blackouts-submit"]');
@@ -403,6 +449,7 @@
             [% END # IF current_rooms %]
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const fullBlackoutForm = document.querySelector('form[name="fullBlackoutForm"]');
           const inputSubmitFullBlackout = document.querySelector('input[name="submit-full-blackout"]');
@@ -471,6 +518,7 @@
             [% END # IF current_rooms %]
           </div>
         </form>
+        <div id="lmsr-notifications"></div>
         <script>
           const partialBlackoutForm = document.querySelector('form[name="partialBlackoutForm"]');
           const inputSubmitPartialBlackout = document.querySelector('input[name="submit-partial-blackout"]');
