@@ -55,26 +55,40 @@
     [% WHILE w < 5 %] 
       <div class="lmsr-calendar-portrait-week">
         [% d = 0 %]
+        [% weekdays = [ 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So' ] %]
         [% WHILE d < 7 %]
-          [% n=w * 7 + d %] 
-          [% BREAK IF n == 31 %]
-          <div class="lmsr-calendar-portrait-day">
-            <span class="lmsr-calendar-potrait-day-head">[% current_month_cal.$n %]</span>
-            <div class="lmsr-calendar-portrait-day-body">
-              [% FOREACH booking IN booking_days.$n %]
-                <div class="lmsr-calendar-portrait-day-booking"
-                  [% FOREACH room IN rooms %]
-                    [% IF room.roomnumber == booking.roomnumber %]
-                      data-color="[% room.color %]"
-                    [% END %]
-                  [% END # FOREACH %]
-                >
-                  <div class="lmsr-calendar-portrait-day-booking-bookedtime">[% booking.bookedtime %]</div>
-                  <div class="lmsr-calendar-potrait-day-booking-roomnumber">[% booking.roomnumber %]</div>
-                </div>
-              [% END # FOREACH booking IN booking_days %]
+          [% n=w * 7 + d %]
+          [% IF w == 0 %]
+            [% wd=n %]
+          [% ELSE %]
+            [% wd=n - (w * 7) %]
+          [% END %]
+
+          [% IF current_month_cal.$n %]
+            <div class="lmsr-calendar-portrait-day">
+              <div class="lmsr-calendar-portrait-day-head">
+                <span class="lmsr-calendar-portrait-day-head-date">[% current_month_cal.$n %]</span>
+                <span class="lmsr-calendar-portrait-day-head-weekday">[% weekdays.$wd %]</span>
+              </div>
+              <div class="lmsr-calendar-portrait-day-body">
+                [% FOREACH booking IN booking_days.$n %]
+                  <div class="lmsr-calendar-portrait-day-booking">
+                    <div class="lmsr-calendar-portrait-day-booking-bookedtime">[% booking.bookedtime %]</div>
+                    <div class="lmsr-calendar-potrait-day-booking-roomnumber">
+                      <i class="fa fa-hashtag lmsr-calendar-portrait-day-booking-indicator" aria-hidden="true"
+                      [% FOREACH room IN rooms %]
+                        [% IF room.roomnumber == booking.roomnumber %]
+                          style="color: [% room.color %];"
+                        [% END %]
+                      [% END # FOREACH %]
+                    ></i>
+                      [% booking.roomnumber %]
+                    </div>
+                  </div>
+                [% END # FOREACH booking IN booking_days %]
+              </div>
             </div>
-          </div>
+          [% END %]
           [% d = d + 1 %]
         [% END %]
       </div>

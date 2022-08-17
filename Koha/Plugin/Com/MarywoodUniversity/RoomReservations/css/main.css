@@ -408,11 +408,16 @@ textarea {
   border-bottom: 1px dotted var(--seperator-light);
 }
 
-.lmsr-calendar-potrait-day-head {
+.lmsr-calendar-portrait-day-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.lmsr-calendar-portrait-day-head-date {
   font-weight: bolder;
 }
 
-.lmsr-calendar-potrait-day-head::after {
+.lmsr-calendar-portrait-day-head-date::after {
   content: ".";
 }
 
@@ -431,6 +436,12 @@ textarea {
 
 .lmsr-calendar-portrait-day-booking-bookedtime {
   font-family: monospace;
+}
+
+.lmsr-calendar-portrait-day-booking-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
 }
 
 .lmsr-calendar-row {

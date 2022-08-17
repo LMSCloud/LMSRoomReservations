@@ -477,7 +477,6 @@ export function renderCalendar() {
   jumpToCalendarButton.addEventListener('click', () => { calendar.scrollIntoView(); });
   jumpToCalendarButton.disabled = false;
 
-  /* We could think about assigning dedicated configurable colors to these. */
   const daysWithBookingsInCalendar = document.querySelectorAll('.lmsr-calendar-data-entry');
   const activeBookingsInCalendar = document.querySelectorAll('.lmsr-calendar-data-booking');
 
