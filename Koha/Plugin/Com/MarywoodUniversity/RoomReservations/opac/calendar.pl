@@ -381,14 +381,16 @@ RESERVATION_CONFIRMED: {
                 );
         }
 
-        push @message_ids,
-            C4::Letters::EnqueueLetter(
-            {   letter                 => $letter,
-                borrowernumber         => '1363',
-                branchcode             => $patron->branchcode,
-                message_transport_type => 'email',
-            }
-            );
+        if ( C4::Context->preference('ReplytoDefault') ) {
+            push @message_ids,
+                C4::Letters::EnqueueLetter(
+                {   letter                 => $letter,
+                    to_adress              => C4::Context->preference('ReplyToDefault'),
+                    branchcode             => $patron->branchcode,
+                    message_transport_type => 'email',
+                }
+                );
+        }
 
         for my $message_id (@message_ids) {
             C4::Letters::SendQueuedMessages( { message_id => $message_id } );
