@@ -1,5 +1,5 @@
 [% USE gtx = Gettext('com.marywooduniversity.roomreservations', language, 'utf-8', mbf_path) %]
-[% USE date(format = '%d/%m/%Y %H:%M', locale = 'de_DE') %]
+[% USE date(format = '%d.%m.%Y %H:%M', locale = 'de_DE') %]
 
 [% INCLUDE 'doc-head-open.inc' %]
   <title>[% "Koha: Room Reservations Plugin: Configuration" | gettext %]</title>
