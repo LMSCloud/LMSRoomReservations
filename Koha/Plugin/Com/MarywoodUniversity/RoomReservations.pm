@@ -224,7 +224,7 @@ sub install() {
 
     my $statement = <<~'EOF';
         INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
-            'members', 'ROOM_RESERVATION', "", "Raumreservierungsbenachrichtigung", 1, "Reservierung eines Raumes - <<branches.branchname>>", "email", "default", 
+            'members', 'ROOM_RESERVATION', "", "Raumreservierungsbenachrichtigung", 1, "Reservierung eines Raumes", "email", "default", 
             "<h2>Ihre Raumreservierung wurde bestätigt</h2>
             <hr>
             <h2>Ihre Angaben</h2><br>
