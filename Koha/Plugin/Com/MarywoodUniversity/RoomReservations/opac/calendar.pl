@@ -86,7 +86,7 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
     {   template_name   => $template_name,
         query           => $cgi,
         type            => 'opac',
-        authnotrequired => 0,
+        authnotrequired => $op ? 0 : 1,
         is_plugin       => 1,
     }
 );
@@ -98,6 +98,7 @@ $template->param(
 
 DEFAULT: {
     if ( !defined $op ) {
+
         Readonly my $MONTH                 => 1;
         Readonly my $LOCALTIME_BASE_YEAR   => 1900;
         Readonly my $LOCALTIME_MONTH_FIELD => 4;
@@ -150,29 +151,6 @@ DEFAULT: {
         my $month = sprintf '%02s', $mon;
         my $rooms = get_rooms_with_equipment();
 
-        my $userenv  = C4::Context->userenv;
-        my $number   = $userenv->{'number'};
-        my $patron   = Koha::Patrons->find($number);
-        my $category = $patron->category->categorycode;
-
-        my $is_restricted = is_restricted_category($category);
-
-        my $restricted_message = get_restricted_message();
-
-        if ( $is_restricted > 0 ) {
-            $template->param(
-                is_restricted         => 1,
-                is_restricted_message => $restricted_message,
-                patron_category       => $category,
-            );
-        }
-        else {
-            $template->param(
-                is_restricted   => undef,
-                patron_category => $category,
-            );
-        }
-
         $template->param(
             current_month_cal => \@month_days,
             calendar_bookings => $calendar_bookings,
@@ -190,6 +168,27 @@ DEFAULT: {
 
 AVAILABILITY_SEARCH: {
     if ( defined $op && $op eq 'availability-search' ) {
+
+        my $userenv            = C4::Context->userenv;
+        my $number             = $userenv->{'number'};
+        my $patron             = Koha::Patrons->find($number);
+        my $category           = $patron->category->categorycode;
+        my $is_restricted      = is_restricted_category($category);
+        my $restricted_message = get_restricted_message();
+
+        if ( $is_restricted > 0 ) {
+            $template->param(
+                is_restricted         => 1,
+                is_restricted_message => $restricted_message,
+                patron_category       => $category,
+            );
+        }
+        else {
+            $template->param(
+                is_restricted   => undef,
+                patron_category => $category,
+            );
+        }
 
         my $equipment     = load_all_equipment();
         my $rooms         = get_rooms_with_equipment();
@@ -382,7 +381,7 @@ RESERVATION_CONFIRMED: {
             push @message_ids,
                 C4::Letters::EnqueueLetter(
                 {   letter                 => $letter,
-                    to_adress              => C4::Context->preference('ReplyToDefault'),
+                    to_address             => C4::Context->preference('ReplytoDefault'),
                     branchcode             => $patron->branchcode,
                     message_transport_type => 'email',
                 }

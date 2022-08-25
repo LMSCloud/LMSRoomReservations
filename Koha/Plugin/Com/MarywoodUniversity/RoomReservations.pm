@@ -224,17 +224,17 @@ sub install() {
 
     my $statement = <<~'EOF';
         INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
-            'members', 'ROOM_RESERVATION', "", "Room Reservation", 1, "Study Room Reservation Confirmation", "email", "default", 
-            "<p>Your study room request has been completed!</p>
-            <p>For proof of reservation, print or save this email containing the reservation details!</p>
-
-            <hr/>
-            Name: [% user %]<br/>
-            Room: [% room %]<br/>
-            From: [% from %]<br/>
-            To: [% to %]<br/>
-            Reservation confirmed: [% confirmed_timestamp %]
-            <hr/>"
+            'members', 'ROOM_RESERVATION', "", "Raumreservierungsbenachrichtigung", 1, "Reservierung eines Raumes - <<branches.branchname>>", "email", "default", 
+            "<h2>Ihre Raumreservierung wurde bestätigt</h2>
+            <hr>
+            <h2>Ihre Angaben</h2><br>
+            <span>Name: [% user %]</span><br>
+            <span>Raum: [% room %]</span><br>
+            <span>Von: [% from %]</span><br>
+            <span>Name: [% to %]</span>
+            <hr>
+            <h2>Zeitpunkt der Bestätigung</h2>
+            <span>[% confirmed_timestamp %]</span>"
         );
     EOF
 
