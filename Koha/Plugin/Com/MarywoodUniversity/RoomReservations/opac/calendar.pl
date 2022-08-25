@@ -63,10 +63,7 @@ use Calendar::Simple;
 
 my $plugin_dir = dirname( abs_path($PROGRAM_NAME) );
 
-my @months = (
-    gettext('January'), gettext('February'), gettext('March'),     gettext('April'),   gettext('May'),      gettext('June'),
-    gettext('July'),    gettext('August'),   gettext('September'), gettext('October'), gettext('November'), gettext('December'),
-);
+my @months = qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember);
 
 my $template_name  = $plugin_dir . '/calendar.tt';
 my $template2_name = $plugin_dir . '/calendar-sendconfirmation.tt';

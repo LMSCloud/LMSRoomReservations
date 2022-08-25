@@ -34,8 +34,6 @@ use Readonly;
 use DateTime;
 use experimental qw( switch );
 
-use Data::Dumper;
-
 use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
 
@@ -263,11 +261,9 @@ sub intranet_js {
 sub upgrade {
     my ( $self, $args ) = @_;
 
-    my $column_color_exists = C4::Context->dbh->do(
-        qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'color';}
-    );
+    my $column_color_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'color';});
 
-    if ( $column_color_exists eq '0E0') {
+    if ( $column_color_exists eq '0E0' ) {
         my $rv = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN color VARCHAR(7);});
     }
 
