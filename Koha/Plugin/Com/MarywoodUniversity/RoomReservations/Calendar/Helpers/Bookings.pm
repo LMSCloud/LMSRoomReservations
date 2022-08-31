@@ -135,7 +135,7 @@ sub get_all_bookings {
     my $sth = q{};
 
     my $query = <<~"EOF";
-        SELECT bk.bookingid, r.roomnumber, b.firstname, b.surname, DATE_FORMAT(bk.start, \"%m/%d/%Y %h:%i %p\") AS start, DATE_FORMAT(bk.end, \"%m/%d/%Y %h:%i %p\") AS end
+        SELECT bk.bookingid, r.roomnumber, b.firstname, b.surname, DATE_FORMAT(bk.start, \"%d.%m.%Y %H:%i\") AS start, DATE_FORMAT(bk.end, \"%d.%m.%Y %H:%i \") AS end
         FROM borrowers b, $BOOKINGS_TABLE bk, $ROOMS_TABLE r
         WHERE b.borrowernumber = bk.borrowernumber
         AND bk.roomid = r.roomid

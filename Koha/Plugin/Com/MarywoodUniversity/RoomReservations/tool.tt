@@ -1,5 +1,4 @@
 [% USE gtx = Gettext('com.marywooduniversity.roomreservations', language, 'utf-8', mbf_path) %]
-[% USE date(format = '%d.%m.%Y %H:%M', locale = 'de_DE') %]
 
 [% INCLUDE 'doc-head-open.inc' %]
   <title>[% "Koha: Room Reservations Plugin: Configuration" | gettext %]</title>
@@ -285,8 +284,8 @@
                 <input type="radio" name="manage-bookings-id" value="[% booking.bookingid %]" class="lmsr-action-table-body-item-selector">
                 <span class="lmsr-action-table-body-item">[% booking.roomnumber %]</span>
                 <span class="lmsr-action-table-body-item">[% booking.firstname %] [% booking.surname %]</span>
-                <span class="lmsr-action-table-body-item">[% date.format(DateTime(from_string => booking.start, pattern => '%D %I%M %P', time_zone => 'Europe/Berlin')) %]</span>
-                <span class="lmsr-action-table-body-item">[% date.format(DateTime(from_string => booking.end, pattern => '%D %I%M %P', time_zone => 'Europe/Berlin')) %]</span>
+                <span class="lmsr-action-table-body-item">[% booking.start %]</span>
+                <span class="lmsr-action-table-body-item">[% booking.end %]</span>
               [% END %]
     
               <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
