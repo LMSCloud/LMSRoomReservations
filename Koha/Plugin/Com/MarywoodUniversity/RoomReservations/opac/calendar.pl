@@ -44,6 +44,7 @@ use POSIX qw( floor );
 use DateTime;
 use Readonly;
 use experimental qw( switch );
+use List::MoreUtils qw( firstidx );
 
 use CGI qw ( -utf8 );
 
@@ -162,6 +163,7 @@ DEFAULT: {
             plugin_dir        => $plugin_dir,
             rooms             => $rooms,
             selected_month    => $selected_month,
+            offset            => firstidx { $_ eq '1' } @month_days,
         );
     }
 }

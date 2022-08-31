@@ -63,17 +63,19 @@
   [% IF op == 'undef' %]
   [% DEFAULT selected_month = 0 %]
   
+
   <template id="lmsr-calendar-body-landscape-template">
     [% w = 0 %]
     [% WHILE w < 5 %] 
       <div class="lmsr-calendar-row">
         [% d = 0 %]
         [% WHILE d < 7 %] 
-          [% n=w * 7 + d %] 
+          [% n=w * 7 + d %]
+          [% n_offset_by = n - offset %]
           <div class="lmsr-calendar-data">
             <span class="lmsr-calendar-dayofmonth">[% current_month_cal.$n %]</span>
             <div class="min-height lmsr-calendar-data-entry">
-              [% FOREACH booking IN booking_days.$n %]
+              [% FOREACH booking IN booking_days.$n_offset_by %]
                 <div class="lmsr-calendar-data-booking"
                   [% FOREACH room IN rooms %]
                     [% IF room.roomnumber == booking.roomnumber %]
@@ -102,6 +104,7 @@
         [% weekdays = [ 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So' ] %]
         [% WHILE d < 7 %]
           [% n=w * 7 + d %]
+          [% n_offset_by = n - offset %]
           [% IF w == 0 %]
             [% wd=n %]
           [% ELSE %]
@@ -115,7 +118,7 @@
                 <span class="lmsr-calendar-portrait-day-head-weekday">[% weekdays.$wd %]</span>
               </div>
               <div class="lmsr-calendar-portrait-day-body">
-                [% FOREACH booking IN booking_days.$n %]
+                [% FOREACH booking IN booking_days.$n_offset_by %]
                   <div class="lmsr-calendar-portrait-day-booking">
                     <div class="lmsr-calendar-portrait-day-booking-bookedtime">[% booking.bookedtime %]</div>
                     <div class="lmsr-calendar-potrait-day-booking-roomnumber">
@@ -286,8 +289,7 @@
                           <button id="alert-room-unavailable-button" class="col-1" disabled>
                             <i class="fa fa-times" aria-hidden="true"></i>
                           </button><br>
-                          <span class="col-11"><b>[% 'Room is not available at the selected time. Please note the opening
-                              hours.' | gettext %]</b></span>
+                          <span class="col-11"><b>[% 'Room is not available at the selected time. Please note the opening hours.' | gettext %]</b></span>
                         </div>
                         <script>
                           const alertRoomUnavailable = document.getElementById('alert-room-unavailable');
