@@ -22,6 +22,7 @@
   const prohibitFormSubmitWithMessage = ({ e, type, message }) => {
     e.preventDefault();
     const lmsrNotifications = document.getElementById('lmsr-notifications');
+    lmsrNotifications.innerHTML = '';
     const lmsrToast = document.createElement('lmsr-toast', { is: 'lmsr-toast' });
     lmsrToast.innerHTML = `
     <strong slot="title">${type}</strong>
@@ -410,7 +411,7 @@
       let timeString = '';
 
       if (maximumBookableTimeframeInHours > 0) {
-        timeString += `${maximumBookableTimeframeInHours} [% 'hours' | gettext %]`;
+        timeString += `${maximumBookableTimeframeInHours} Stunde(n)`;
       }
 
       return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: `Die angegebene Zeitspanne übschreitet den Maximalwert: ${timeString}.` });

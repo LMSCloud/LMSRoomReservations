@@ -30,8 +30,8 @@
     </div>
     <style>
       .lmsr-toast {
-        position: absolute;
-        top: 25%;
+        position: fixed;
+        bottom: 1em;
         right: 1em;
         width: 200px;
         border-radius: 7px;
@@ -358,6 +358,8 @@
             </div>
           </div>
         </div> <!-- / .span12 -->
+
+        <div id="lmsr-notifications"></div>
 
         <div class="col-12 col-sm-6">
           <div class="card lmsr-card">
