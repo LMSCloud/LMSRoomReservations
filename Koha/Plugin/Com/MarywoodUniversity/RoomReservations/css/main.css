@@ -693,6 +693,52 @@ border-radius: 0 0 9px 0;
   margin: 0.25em;
 }
 
+.lmsr-toast {
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+  width: 200px;
+  border-radius: 7px;
+  border: 1px solid var(--seperator-light);
+  -webkit-box-shadow: var(--shadow-hv);
+          box-shadow: var(--shadow-hv);
+}
+
+.lmsr-toast-body {
+  border-radius: 0 0 7px 7px;
+}
+
+.lmsr-toast-body,
+.lmsr-toast-header {
+  padding: 0.5em;
+  background-color: white;
+}
+
+.lmsr-toast-button-close {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+}
+
+.lmsr-toast-button-close:hover {
+  background: crimson;
+}
+
+.lmsr-toast-button-close:hover span {
+  color: white
+}
+
+.lmsr-toast-header {
+  border-bottom: 1px solid var(--seperator-light);
+  border-radius: 7px 7px 0 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
 .table-header-bold {
   font-weight: bold;
 }
