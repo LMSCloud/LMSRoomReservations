@@ -26,6 +26,10 @@
   </div>
   <style>
     @import url('/api/v1/contrib/roomreservations/static/css/main.css');
+    .lmsr-toast {
+      bottom: 3.5em;
+      right: 1em;
+    }
   </style>
   <script>RoomReservationBundle.closeToast();</script>
 </template>

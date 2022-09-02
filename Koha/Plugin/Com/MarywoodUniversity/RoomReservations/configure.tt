@@ -6,8 +6,6 @@
   <link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/css/main.css">
   <script type="text/javascript" src="/api/v1/contrib/roomreservations/static/js/main.js"></script>
 [% INCLUDE 'doc-head-close.inc' %]
-
-
 </head>
 
 <body>
@@ -29,6 +27,10 @@
   </div>
   <style>
     @import url('/api/v1/contrib/roomreservations/static/css/main.css');
+    .lmsr-toast {
+      bottom: 3.5em;
+      right: 1em;
+    }
   </style>
   <script>RoomReservationBundle.closeToast();</script>
 </template>
