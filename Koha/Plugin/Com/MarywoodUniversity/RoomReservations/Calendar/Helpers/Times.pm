@@ -90,7 +90,7 @@ sub get_confirmed_calendar_bookings_by_month_and_year {
         FROM $ROOMS_TABLE AS r, $BOOKINGS_TABLE AS b WHERE r.roomid = b.roomid
         AND $month BETWEEN DATE_FORMAT(b.start, "%c") AND DATE_FORMAT(b.end, "%c")
         AND $year BETWEEN DATE_FORMAT(b.start, "%Y") AND DATE_FORMAT(b.end, "%Y")
-        ORDER BY b.roomid ASC, start ASC
+        ORDER BY bookedtime ASC, start ASC
     EOF
 
     $sth = $dbh->prepare($query);

@@ -140,9 +140,19 @@ DEFAULT: {
             $dt->set( day => $month_day );
 
             for my $booking ( @{$calendar_bookings} ) {
-                $dt_start->set( day => $booking->{'monthdate_start'}, month => $booking->{'month_start'}, year => $booking->{'year_start'} );
-                $dt_end->set( day => $booking->{'monthdate_end'}, month => $booking->{'month_end'}, year => $booking->{'year_end'} );
-                if ( DateTime->compare( $dt, $dt_start ) >= 0 && DateTime->compare( $dt, $dt_end ) <= 0 ) {
+                $dt_start->set(
+                    day   => $booking->{'monthdate_start'},
+                    month => $booking->{'month_start'},
+                    year  => $booking->{'year_start'}
+                );
+                $dt_end->set(
+                    day   => $booking->{'monthdate_end'},
+                    month => $booking->{'month_end'},
+                    year  => $booking->{'year_end'}
+                );
+                if (   DateTime->compare( $dt, $dt_start ) >= 0
+                    && DateTime->compare( $dt, $dt_end ) <= 0 )
+                {
                     push @bookings, $booking;
                 }
             }
