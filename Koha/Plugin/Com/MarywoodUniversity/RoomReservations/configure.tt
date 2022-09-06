@@ -432,6 +432,8 @@
               <input type="text" name="add-room-description"/>
               <label for="add-room-color">[% 'Color:' | gettext %]</label>
               <input type="color" name="add-room-color"/>
+              <label for="add-room-image">[% 'Image:' | gettext %]</label>
+              <input type="text" name="add-room-image"/>
             </div>
 
             <hr>
@@ -550,6 +552,8 @@
                 <input type="text" name="edit-rooms-room-description" value="[% room.description %]" />
                 <label>[% 'Color:' | gettext %] </label>
                 <input type="color" name="edit-rooms-room-color" value="[% room.color %]" />
+                <label>[% 'Image:' | gettext %] </label>
+                <input type="text" name="edit-rooms-room-image" value="[% room.image %]" />
               [% END # FOREACH room IN room_details %]
             </div>
             

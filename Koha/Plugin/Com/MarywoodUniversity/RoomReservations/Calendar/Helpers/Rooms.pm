@@ -434,17 +434,18 @@ sub delete_room {
 
 sub add_room {
 
-    my ( $roomnumber, $maxcapacity, $description, $color, $equipment ) = @_;
+    my ( $roomnumber, $maxcapacity, $description, $color, $image, $equipment ) = @_;
 
     ## make $roomnumber SQL-friendly by surrounding with single quotes
     $roomnumber  = qq{'$roomnumber'};
     $description = qq{'$description'};
     $color       = qq{'$color'};
+    $image       = qq{'$image'};
 
     my $dbh = C4::Context->dbh;
 
     ## first insert roomnumber and maxcapacity into $ROOMS_TABLE
-    $dbh->do("INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color) VALUES ($roomnumber, $maxcapacity, $description, $color);");
+    $dbh->do("INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image) VALUES ($roomnumber, $maxcapacity, $description, $color, $image);");
 
     foreach my $piece ( @{$equipment} ) {
 
@@ -481,18 +482,19 @@ sub load_room_details_to_edit_by_room_id {
 
 sub update_room_details {
 
-    my ( $roomid, $roomnumber, $description, $maxcapacity, $color ) = @_;
+    my ( $roomid, $roomnumber, $description, $maxcapacity, $color, $image ) = @_;
 
     $roomnumber  = qq{'$roomnumber'};
     $description = qq{'$description'};
     $color       = qq{'$color'};
+    $image       = qq{'$image'};
 
     ## load access to database
     my $dbh = C4::Context->dbh;
 
     my $query = <<~"EOF";
         UPDATE $ROOMS_TABLE
-        SET roomnumber = $roomnumber, maxcapacity = $maxcapacity, description = $description, color = $color
+        SET roomnumber = $roomnumber, maxcapacity = $maxcapacity, description = $description, color = $color, image = $image
         WHERE roomid = $roomid;
     EOF
 

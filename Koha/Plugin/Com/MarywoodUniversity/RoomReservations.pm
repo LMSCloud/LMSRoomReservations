@@ -123,7 +123,8 @@ sub install() {
               `roomnumber` VARCHAR(20) NOT NULL, -- alphanumeric room identifier
               `maxcapacity` INT NOT NULL, -- maximum number of people allowed in the room
               `description` TEXT, -- room description to display in OPAC
-              `color` VARCHAR(7) -- room color to display in OPAC
+              `color` VARCHAR(7), -- room color to display in OPAC
+              `image` TEXT, -- room image to display in OPAC
             PRIMARY KEY (roomid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
@@ -265,6 +266,12 @@ sub upgrade {
 
     if ( $column_color_exists eq '0E0' ) {
         my $rv = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN color VARCHAR(7);});
+    }
+
+    my $column_image_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'image';});
+
+    if ( $column_image_exists eq '0E0' ) {
+        my $rv = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN image TEXT;});
     }
 
     return 1;
@@ -955,10 +962,11 @@ sub configure {
             my $maxcapacity       = $cgi->param('add-room-maxcapacity');
             my $description       = $cgi->param('add-room-description');
             my $color             = $cgi->param('add-room-color');
+            my $image             = $cgi->param('add-room-image');
             my @selectedEquipment = $cgi->param('selected-equipment');
 
             ## pass @selectedEquipment by reference
-            add_room( $roomnumber, $maxcapacity, $description, $color, \@selectedEquipment );
+            add_room( $roomnumber, $maxcapacity, $description, $color, $image, \@selectedEquipment );
         }
 
         my $availableEquipment = get_all_room_equipment_names_and_ids();
@@ -987,8 +995,9 @@ sub configure {
             my $updatedMaxCapacity = $cgi->param('edit-rooms-room-maxcapacity');
             my $updatedDescription = $cgi->param('edit-rooms-room-description');
             my $updatedColor       = $cgi->param('edit-rooms-room-color');
+            my $updatedImage       = $cgi->param('edit-rooms-room-image');
 
-            update_room_details( $roomIdToUpdate, $updatedRoomNumber, $updatedDescription, $updatedMaxCapacity, $updatedColor );
+            update_room_details( $roomIdToUpdate, $updatedRoomNumber, $updatedDescription, $updatedMaxCapacity, $updatedColor, $updatedImage );
         }
 
         if ( $roomEquipmentUpdated eq '1' ) {

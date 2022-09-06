@@ -509,6 +509,12 @@ border-radius: 0 0 9px 0;
 .lmsr-card {
   -webkit-box-shadow: var(--shadow-sm);
           box-shadow: var(--shadow-sm);
+  margin: 1em 0;
+}
+
+.lmsr-card > img.card-img-top {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .lmsr-card-room {
@@ -557,6 +563,10 @@ border-radius: 0 0 9px 0;
   -webkit-box-flex: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;
+}
+
+lmsr-equipment-selection {
+  display: block;
 }
 
 #lmsr-heading-main {

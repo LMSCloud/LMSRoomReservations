@@ -1,4 +1,5 @@
 [% USE gtx = Gettext('com.marywooduniversity.roomreservations', language, 'utf-8', mbf_path) %]
+[%- USE JSON.Escape; -%]
 
 [% USE Koha %]
 [% USE Branches %]
@@ -188,7 +189,7 @@
 
           <div class="card lmsr-card">
             [% IF room.image %]
-              <img src="..." class="card-img-top" alt="...">
+              <img src="[% room.image %]" class="card-img-top" alt="[% room.roomnumber %]">
             [% END %]
             <div class="card-body">
               <h5 class="card-title">[% room.roomnumber %]</h5>
@@ -227,6 +228,15 @@
 <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
 
 [% ELSIF op == 'availability-search' %]
+
+  <template id="lmsr-equipment-selection-template" class="form-check">
+    <slot name="lmsr-check-input"></slot>
+    <slot name="lmsr-check-label"></slot>
+    <style>
+      @import url('/api/v1/contrib/roomreservations/static/css/main.css');
+    </style>
+  </template>
+
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
@@ -301,7 +311,7 @@
                             [% IF pre_selected_room %]
                               <option value="[% pre_selected_room.roomid %]">
                                 [% pre_selected_room.roomnumber %] ([% 'max.' | gettext %] [% pre_selected_room.maxcapacity %] [% 'people' | gettext %])
-                              </option> <!-- FIXME: This needs a value -->
+                              </option>
                             [% ELSE %]
                               <option value=""></option> <!-- FIXME: This needs a value --> 
                             [% END %]
@@ -313,6 +323,15 @@
                               [% END%]
                             [% END %]
                           </select>
+                        </div>
+                      </div>
+
+                      <hr>
+
+                      <div class="equipment-selection form-group">
+                        <div class="form-row">
+                          <label class="col-sm-6 col-form-label">[% 'Select Equipment' | gettext %]</label>
+                          <div id="lmsr-equipment-selection" class="col-sm-6"></div>
                         </div>
                       </div>
 
@@ -361,7 +380,7 @@
         <div class="col-12 col-sm-6 col-md-4">
           <div class="card lmsr-card">
             [% IF room.image %]
-              <img src="..." class="card-img-top" alt="...">
+              <img src="[% room.image %]" class="card-img-top" alt="[% room.roomnumber %]">
             [% END %]
             <div class="card-body">
               <h5 class="card-title">[% room.roomnumber %]</h5>
@@ -390,8 +409,17 @@
       <script>
         const availabilitySearchForm = document.querySelector('form[name="availabilitySearchForm"]');
         const availabilitySearchSubmitButton = document.querySelector('input[name="submit-check-room-availability"]');
-        availabilitySearchForm.addEventListener('submit', RoomReservationBundle.validateAvailabilitySearchForOPAC);
+        const availabilitySearchRoomSelect = document.getElementById('availability-search-room');
+        const lmsrEquipmentSelectionEntryPoint = document.getElementById('lmsr-equipment-selection');
+        const rooms = [% rooms.json %];
+        availabilitySearchForm.addEventListener('submit', (e) => RoomReservationBundle.validateAvailabilitySearchForOPAC(e));
         availabilitySearchSubmitButton.disabled = false;
+        document.addEventListener('DOMContentLoaded', () => {
+          RoomReservationBundle.getEquipmentBySelectedRoom({ rooms, lmsrEquipmentSelectionEntryPoint });
+          availabilitySearchRoomSelect.addEventListener('change', () => {
+            RoomReservationBundle.getEquipmentBySelectedRoom({ rooms, lmsrEquipmentSelectionEntryPoint });
+          });
+        });
       </script>
     [% END %]
   </div> <!-- / .container-fluid -->
@@ -482,7 +510,7 @@
     <script type="text/javascript">
       const confirmationForm = document.querySelector('form[name="confirmationForm"]');
       const confirmationSubmitButton = document.querySelector('input[name="confirmationSubmit"]');
-      confirmationForm.addEventListener('submit', RoomReservationBundle.validateConfirmation);
+      confirmationForm.addEventListener('submit', (e) => RoomReservationBundle.validateConfirmation(e));
       confirmationSubmitButton.disabled = false;
     </script>
   </div> <!-- / .container-fluid -->

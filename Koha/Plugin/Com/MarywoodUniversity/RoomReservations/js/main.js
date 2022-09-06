@@ -4,15 +4,28 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.RoomReservationBundle = {}));
 })(this, (function (exports) { 'use strict';
 
+  /* eslint-disable max-classes-per-file */
   /* eslint-disable no-unused-vars */
   function loadSelectedAction() { document.getElementById('actionSelectedBtn').click(); }
 
-  window.customElements.define(
+  const customElementsRegistry = window.customElements;
+  customElementsRegistry.define(
     'lmsr-toast',
     class extends HTMLElement {
       constructor() {
         super();
         const template = document.getElementById('lmsr-toast-template').content;
+        const shadowRoot = this.attachShadow({ mode: 'open' });
+        shadowRoot.appendChild(template.cloneNode(true));
+      }
+    },
+  );
+  customElementsRegistry.define(
+    'lmsr-equipment-selection',
+    class extends HTMLElement {
+      constructor() {
+        super();
+        const template = document.getElementById('lmsr-equipment-selection-template').content;
         const shadowRoot = this.attachShadow({ mode: 'open' });
         shadowRoot.appendChild(template.cloneNode(true));
       }
@@ -42,13 +55,29 @@
     window.setTimeout(() => { lmsrToast.remove(); }, 3000);
   }
 
+  function getEquipmentBySelectedRoom({ rooms, lmsrEquipmentSelectionEntryPoint }) {
+    const lmsrEquipmentSelection = document.getElementById('lmsr-equipment-selection');
+    lmsrEquipmentSelection.innerHTML = '';
+    const [selectedRoom] = document.getElementById('availability-search-room').selectedOptions;
+    const roomData = rooms.find((room) => room.roomnumber === selectedRoom.text.replace(/\(.*\)/, '').trim());
+    roomData.equipment.forEach((item) => {
+      const lmsrEquipmentSelectionCheckForm = document.createElement('lmsr-equipment-selection', { is: 'lmsr-equipment-selection' });
+      const itemMachineReadable = item.equipmentname.replace(' ', '_');
+      lmsrEquipmentSelectionCheckForm.innerHTML = `
+      <input slot="lmsr-check-input" type="checkbox" value="" id="${itemMachineReadable}">
+      <label slot="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
+    `;
+      lmsrEquipmentSelectionEntryPoint.appendChild(lmsrEquipmentSelectionCheckForm);
+    });
+  }
+
   function validateOpeningHours(e) {
     const start = document.forms.OpeningHoursForm['opening-from'].value;
     const end = document.forms.OpeningHoursForm['opening-to'].value;
 
     const weekdays = document.querySelectorAll('input[name="weekdays"]:checked');
-    if (weekdays.length === 0) { e.preventDefault(); alert("[% 'Please select at least one weekday.' | gettext %]"); return false; }
-    if (end <= start || start === 0 || end === 0) { e.preventDefault(); alert("[% 'Please select valid start and end time.' | gettext %]"); return false; }
+    if (weekdays.length === 0) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie mindestens einen Wochentag aus.' }); }
+    if (end <= start || start === 0 || end === 0) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine gültige Start- und Endzeit aus.' }); }
 
     return true;
   }
@@ -61,15 +90,15 @@
       if (id.checked) { checked += 1; }
     });
 
-    if (checked !== 1) { e.preventDefault(); alert('Please make a selection to continue.'); return false; }
-    if (action === '') { e.preventDefault(); alert('Please select an action to continue.'); return false; }
+    if (checked !== 1) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
+    if (action === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
 
     return true;
   }
 
   function validateManageBlackouts(e) {
     const actionChoice = document.forms.manageBlackoutsForm['manage-blackouts-action'].value;
-    if (actionChoice === '') { e.preventDefault(); alert("[% 'Please select an action.' | gettext %]"); return false; }
+    if (actionChoice === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
 
     return true;
   }
@@ -522,6 +551,7 @@
   exports.deleteRoomConfirmation = deleteRoomConfirmation;
   exports.editEquipmentValidation = editEquipmentValidation;
   exports.getColorTextWithContrast = getColorTextWithContrast;
+  exports.getEquipmentBySelectedRoom = getEquipmentBySelectedRoom;
   exports.loadSelectedAction = loadSelectedAction;
   exports.renderCalendar = renderCalendar;
   exports.setBlackoutValueOnChange = setBlackoutValueOnChange;

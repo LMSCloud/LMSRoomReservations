@@ -205,7 +205,7 @@
         <script>
           const openingHoursForm = document.querySelector('form[name="OpeningHoursForm"]');
           const inputSubmitOpeningHours = document.querySelector('input[name="submit-opening-hours"]');
-          openingHoursForm.addEventListener('submit', RoomReservationBundle.validateOpeningHours);
+          openingHoursForm.addEventListener('submit', (e) => RoomReservationBundle.validateOpeningHours(e));
           inputSubmitOpeningHours.disabled = false;
         </script>
       </div>
@@ -286,7 +286,7 @@
         <script>
           const manageBookingsForm = document.querySelector('form[name="manageBookingsForm"]');
           const inputSubmitManageBookings = document.querySelector('input[name="submit-manage-bookings"]');
-          manageBookingsForm.addEventListener('submit', RoomReservationBundle.validateBookingAction);
+          manageBookingsForm.addEventListener('submit', (e) => RoomReservationBundle.validateBookingAction(e));
           inputSubmitManageBookings.disabled = false;
         </script>
       </div>
@@ -350,7 +350,7 @@
           <script>
             const manageBlackoutsForm = document.querySelector('form[name="manageBlackoutsForm"]');
             const inputSubmitManageBlackouts = document.querySelector('input[name="manage-blackouts-submit"]');
-            manageBlackoutsForm.addEventListener('submit', RoomReservationBundle.validateManageBlackouts);
+            manageBlackoutsForm.addEventListener('submit', (e) => RoomReservationBundle.validateManageBlackouts(e));
             inputSubmitManageBlackouts.disabled = false;
           </script>
     
@@ -433,7 +433,7 @@
         <script>
           const fullBlackoutForm = document.querySelector('form[name="fullBlackoutForm"]');
           const inputSubmitFullBlackout = document.querySelector('input[name="submit-full-blackout"]');
-          fullBlackoutForm.addEventListener('submit', RoomReservationBundle.validateFullBlackout);
+          fullBlackoutForm.addEventListener('submit', (e) => RoomReservationBundle.validateFullBlackout(e));
           inputSubmitFullBlackout.disabled = false;
         </script>
       </div>
@@ -502,7 +502,7 @@
         <script>
           const partialBlackoutForm = document.querySelector('form[name="partialBlackoutForm"]');
           const inputSubmitPartialBlackout = document.querySelector('input[name="submit-partial-blackout"]');
-          partialBlackoutForm.addEventListener('submit', RoomReservationBundle.validatePartialBlackout);
+          partialBlackoutForm.addEventListener('submit', (e) => RoomReservationBundle.validatePartialBlackout(e));
           inputSubmitPartialBlackout.disabled = false;
         </script>
       </div>
