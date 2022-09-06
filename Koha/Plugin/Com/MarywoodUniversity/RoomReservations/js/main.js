@@ -60,7 +60,7 @@
     lmsrEquipmentSelection.innerHTML = '';
     const [selectedRoom] = document.getElementById('availability-search-room').selectedOptions;
     const roomData = rooms.find((room) => room.roomnumber === selectedRoom.text.replace(/\(.*\)/, '').trim());
-    roomData.equipment.forEach((item) => {
+    roomData?.equipment.forEach((item) => {
       const lmsrEquipmentSelectionCheckForm = document.createElement('lmsr-equipment-selection', { is: 'lmsr-equipment-selection' });
       const itemMachineReadable = item.equipmentname.replace(' ', '_');
       lmsrEquipmentSelectionCheckForm.innerHTML = `
