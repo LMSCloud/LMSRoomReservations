@@ -1,10 +1,15 @@
 package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Bookings;
 
+use 5.010;
+
 use strict;
 use warnings;
 use utf8;
 use C4::Context;
 use Exporter qw(import);
+use Time::Piece;
+
+use Data::Dumper;
 
 our $VERSION = '1.0.0';
 our @EXPORT  = qw(
@@ -16,8 +21,9 @@ our @EXPORT  = qw(
     get_all_bookings
 );
 
-my $ROOMS_TABLE    = 'booking_rooms';
-my $BOOKINGS_TABLE = 'bookings';
+my $ROOMS_TABLE              = 'booking_rooms';
+my $BOOKINGS_TABLE           = 'bookings';
+my $BOOKINGS_EQUIPMENT_TABLE = 'booking_bookings_equipment';
 
 sub pre_booking_availability_check {
     my ( $roomid, $start, $end ) = @_;
@@ -48,16 +54,36 @@ sub pre_booking_availability_check {
 
 sub add_booking {
 
-    my ( $borrowernumber, $roomid, $start, $end ) = @_;
+    my ( $borrowernumber, $roomid, $start, $end, @equipment ) = @_;
 
-    my $dbh = C4::Context->dbh;
+    my $timestamp = localtime->strftime('%Y-%m-%d %H:%M:%S');
+    my $dbh       = C4::Context->dbh;
+    my $sth       = q{};
 
     my $statement = <<~"EOF";
-        INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end)
-        VALUES ($borrowernumber, $roomid, '$start', '$end');
+        INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end, created)
+        VALUES ($borrowernumber, $roomid, '$start', '$end', '$timestamp');
     EOF
 
-    $dbh->do($statement);
+    $sth = $dbh->prepare($statement);
+    $sth->execute();
+
+    my $query_for_last_inserted_id = qq{SELECT bookingid FROM $BOOKINGS_TABLE WHERE created = ?;};
+    $sth = $dbh->prepare($query_for_last_inserted_id);
+    $sth->execute($timestamp);
+
+    my $last_inserted_row = $sth->fetchrow_hashref();
+    my $last_insert_id    = $last_inserted_row->{'bookingid'};
+
+    for my $item (@equipment) {
+        my $statement_insert_item = <<~"EOF";
+            INSERT INTO $BOOKINGS_EQUIPMENT_TABLE (bookingid, equipmentid)
+            VALUES (?, ?);
+        EOF
+
+        $sth = $dbh->prepare($statement_insert_item);
+        $sth->execute( $last_insert_id, $item );
+    }
 
     return;
 }
@@ -87,12 +113,13 @@ sub delete_booking_by_id {
 sub add_blackout_booking {
 
     my ( $borrowernumber, $roomid, $start, $end ) = @_;
+    my $timestamp = localtime->strftime('%Y-%m-%d %H:%M:%S');
 
     my $dbh = C4::Context->dbh;
 
     my $statement = <<~"EOF";
-        INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end, blackedout)
-        VALUES ($borrowernumber, $roomid, '$start', '$end', 1);
+        INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end, blackedout, created)
+        VALUES ($borrowernumber, $roomid, '$start', '$end', 1, '$timestamp');
     EOF
 
     $dbh->do($statement);
@@ -113,8 +140,6 @@ sub get_all_blackout_bookings {
         AND bk.blackedout = 1
         ORDER BY bk.start ASC;
     EOF
-
-    # AND bk.start BETWEEN CAST(CONCAT(CURDATE(), ' 00:00:00') AS DATETIME) AND CAST(CONCAT(DATE_ADD(CURDATE(), INTERVAL 30 DAY), ' 23:59:59') AS DATETIME)
 
     $sth = $dbh->prepare($query);
     $sth->execute();

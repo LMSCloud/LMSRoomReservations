@@ -4,6 +4,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.RoomReservationBundle = {}));
 })(this, (function (exports) { 'use strict';
 
+  /* eslint-disable max-len */
   /* eslint-disable max-classes-per-file */
   /* eslint-disable no-unused-vars */
   function loadSelectedAction() { document.getElementById('actionSelectedBtn').click(); }
@@ -55,7 +56,7 @@
     window.setTimeout(() => { lmsrToast.remove(); }, 3000);
   }
 
-  function getEquipmentBySelectedRoom({ rooms, lmsrEquipmentSelectionEntryPoint }) {
+  function getEquipmentBySelectedRoom({ rooms, equipment, lmsrEquipmentSelectionEntryPoint }) {
     const lmsrEquipmentSelection = document.getElementById('lmsr-equipment-selection');
     lmsrEquipmentSelection.innerHTML = '';
     const [selectedRoom] = document.getElementById('availability-search-room').selectedOptions;
@@ -63,11 +64,25 @@
     roomData?.equipment.forEach((item) => {
       const lmsrEquipmentSelectionCheckForm = document.createElement('lmsr-equipment-selection', { is: 'lmsr-equipment-selection' });
       const itemMachineReadable = item.equipmentname.replace(' ', '_');
+      const itemId = (equipment.find((_item) => _item.equipmentname === item.equipmentname)).equipmentid;
       lmsrEquipmentSelectionCheckForm.innerHTML = `
-      <input slot="lmsr-check-input" type="checkbox" value="" id="${itemMachineReadable}">
-      <label slot="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
+      <input slot="lmsr-check-input" class="lmsr-check-input" type="checkbox" value="${itemId}" id="${itemMachineReadable}">
+      <label slot="lmsr-check-label" class="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
     `;
       lmsrEquipmentSelectionEntryPoint.appendChild(lmsrEquipmentSelectionCheckForm);
+    });
+  }
+
+  function getCheckedOptions({ elements, hiddenInputReference }) {
+    const hiddenInput = document.getElementById(hiddenInputReference);
+    const options = document.querySelectorAll(elements);
+    options.forEach((option) => {
+      option.addEventListener('change', () => {
+        const checkedOptions = Array.from(options).reduce((accumulator, _option) => {
+          if (_option.checked) { accumulator.push(_option.value); } return accumulator;
+        }, []);
+        hiddenInput.value = checkedOptions;
+      });
     });
   }
 
@@ -550,6 +565,7 @@
   exports.deleteEquipmentConfirmation = deleteEquipmentConfirmation;
   exports.deleteRoomConfirmation = deleteRoomConfirmation;
   exports.editEquipmentValidation = editEquipmentValidation;
+  exports.getCheckedOptions = getCheckedOptions;
   exports.getColorTextWithContrast = getColorTextWithContrast;
   exports.getEquipmentBySelectedRoom = getEquipmentBySelectedRoom;
   exports.loadSelectedAction = loadSelectedAction;

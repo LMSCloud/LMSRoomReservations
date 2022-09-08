@@ -330,6 +330,7 @@
 
                       <div class="equipment-selection form-group">
                         <div class="form-row">
+                          <input type="hidden" name="availability-search-equipment" id="availability-search-equipment" value="">
                           <label class="col-sm-6 col-form-label">[% 'Select Equipment' | gettext %]</label>
                           <div id="lmsr-equipment-selection" class="col-sm-6"></div>
                         </div>
@@ -394,8 +395,8 @@
               <p class="card-text">
                 <b>[% 'Equipment' | gettext %]</b>
                 <ul class="lmsr-list mt-2">
-                  [% FOR eqipment IN room.equipment %]
-                    [% equipmentname = eqipment.equipmentname %]
+                  [% FOR equipment IN room.equipment %]
+                    [% equipmentname = equipment.equipmentname %]
                     [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
                     <li class="lmsr-list-item">[% equipmentname %]</li>
                   [% END %]
@@ -412,12 +413,15 @@
         const availabilitySearchRoomSelect = document.getElementById('availability-search-room');
         const lmsrEquipmentSelectionEntryPoint = document.getElementById('lmsr-equipment-selection');
         const rooms = [% rooms.json %];
+        const equipment = [% available_room_equipment.json %];
         availabilitySearchForm.addEventListener('submit', (e) => RoomReservationBundle.validateAvailabilitySearchForOPAC(e));
         availabilitySearchSubmitButton.disabled = false;
         document.addEventListener('DOMContentLoaded', () => {
-          RoomReservationBundle.getEquipmentBySelectedRoom({ rooms, lmsrEquipmentSelectionEntryPoint });
+          RoomReservationBundle.getEquipmentBySelectedRoom({ rooms, equipment, lmsrEquipmentSelectionEntryPoint });
+          RoomReservationBundle.getCheckedOptions({ elements: '.lmsr-check-input', hiddenInputReference: 'availability-search-equipment' });
           availabilitySearchRoomSelect.addEventListener('change', () => {
-            RoomReservationBundle.getEquipmentBySelectedRoom({ rooms, lmsrEquipmentSelectionEntryPoint });
+            RoomReservationBundle.getEquipmentBySelectedRoom({ rooms, equipment, lmsrEquipmentSelectionEntryPoint });
+            RoomReservationBundle.getCheckedOptions({ elements: '.lmsr-check-input', hiddenInputReference: 'availability-search-equipment' });
           });
         });
       </script>
@@ -464,17 +468,17 @@
           </div>
         </div>
         [% FOREACH roomnumber IN selected_room_no %]
-        <div class="form-group row">
-          <label class="col-sm-2 col-form-label" for="room">[% 'Room:' | gettext %]&nbsp;</label>
-          <div class="col-sm-10">
-            <input class="form-control" type="text" id="room" name="room" size="36" value="[% roomnumber.roomnumber %]"
-              readonly="true" />
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="room">[% 'Room:' | gettext %]&nbsp;</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="room" name="room" size="36" value="[% roomnumber.roomnumber %]"
+                readonly="true" />
 
-            <input type="hidden" name="confirmed-roomnumber" value="[% roomnumber.roomnumber %]" />
+              <input type="hidden" name="confirmed-roomnumber" value="[% roomnumber.roomnumber %]" />
+            </div>
           </div>
-        </div>
         [% END %]
-        <div class="from-group row">
+        <div class="form-group row">
           <label class="col-sm-2 col-form-label" for="time">[% 'Time:' | gettext %]&nbsp;</label>
           <div class="col-sm-10">
             <input class="form-control" type="text" id="time" name="time" size="36" value="[% displayed_time %]"
@@ -486,6 +490,16 @@
             <input type="hidden" name="confirmed-start" value="[% selected_start_time %]" />
             <input type="hidden" name="confirmed-end" value="[% selected_end_time %]" />
             <input type="hidden" name="op" value="reservation-confirmed" />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="equipment">[% 'Equipment:' | gettext %]&nbsp;</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="equipment" name="equipment" size="36" value="" 
+              readonly="true" />
+
+            <input type="hidden" name="confirmed-equipment-ids" 
+              value="[% FOREACH equipment_id IN equipment_ids %][% equipment_id %],[% END %]" />
           </div>
         </div>
         <hr>
@@ -510,8 +524,18 @@
     <script type="text/javascript">
       const confirmationForm = document.querySelector('form[name="confirmationForm"]');
       const confirmationSubmitButton = document.querySelector('input[name="confirmationSubmit"]');
+      const equipmentInput = document.getElementById('equipment');
+      const equipmentLookup = [% available_room_equipment.json %];
+      const selectedEquipmentIds = [% equipment_ids.json %].map(Number);
       confirmationForm.addEventListener('submit', (e) => RoomReservationBundle.validateConfirmation(e));
       confirmationSubmitButton.disabled = false;
+      equipmentInput.value = (
+        equipmentLookup
+          .reduce((accumulator, item) => {
+            if (selectedEquipmentIds.includes(item.equipmentid)) { accumulator.push(item.equipmentname); }; return accumulator; }
+          ,[])
+          .reduce((accumulator, item) => `${accumulator}${item}, `, '')
+      ).slice(0, -2);
     </script>
   </div> <!-- / .container-fluid -->
 

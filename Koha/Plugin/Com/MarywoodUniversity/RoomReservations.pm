@@ -50,16 +50,18 @@ use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::
 our $VERSION = '{VERSION}';
 
 ## Table names and associated MySQL indexes
-our $ROOMS_TABLE         = 'booking_rooms';
-our $ROOMS_INDEX         = 'bookingrooms_idx';
-our $BOOKINGS_TABLE      = 'bookings';
-our $BOOKINGS_INDEX      = 'bookingbookings_idx';
-our $EQUIPMENT_TABLE     = 'booking_equipment';
-our $EQUIPMENT_INDEX     = 'bookingequipment_idx';
-our $ROOMEQUIPMENT_TABLE = 'booking_room_equipment';
-our $ROOMEQUIPMENT_INDEX = 'bookingroomequipment_idx';
-our $OPENING_HOURS_TABLE = 'booking_opening_hours';
-our $OPENING_HOURS_INDEX = 'booking_opening_idx';
+our $ROOMS_TABLE              = 'booking_rooms';
+our $ROOMS_INDEX              = 'bookingrooms_idx';
+our $BOOKINGS_TABLE           = 'bookings';
+our $BOOKINGS_INDEX           = 'bookingbookings_idx';
+our $EQUIPMENT_TABLE          = 'booking_equipment';
+our $EQUIPMENT_INDEX          = 'bookingequipment_idx';
+our $ROOMEQUIPMENT_TABLE      = 'booking_room_equipment';
+our $ROOMEQUIPMENT_INDEX      = 'bookingroomequipment_idx';
+our $OPENING_HOURS_TABLE      = 'booking_opening_hours';
+our $OPENING_HOURS_INDEX      = 'booking_opening_idx';
+our $BOOKINGS_EQUIPMENT_TABLE = 'booking_bookings_equipment';
+our $BOOKINGS_EQUIPMENT_INDEX = 'booking_bookings_equipment_idx';
 
 # set locale settings for gettext
 my $self = new('Koha::Plugin::Com::MarywoodUniversity::RoomReservations');
@@ -136,7 +138,9 @@ sub install() {
               `roomid` INT NOT NULL, -- foreign key; $ROOMS_TABLE table
               `start` DATETIME NOT NULL, -- start date/time of booking
               `end` DATETIME NOT NULL, -- end date/time of booking
-              `blackedout` TINYINT(1) NOT NULL DEFAULT 0,
+              `blackedout` TINYINT(1) NOT NULL DEFAULT 0, -- shows blackouts if true
+              `created` TIMESTAMP DEFAULT NULL, -- creation date
+              `updated_at` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP, -- date on which a booking has been updated
               PRIMARY KEY (bookingid),
               CONSTRAINT calendar_icfk FOREIGN KEY (roomid) REFERENCES $ROOMS_TABLE(roomid),
               CONSTRAINT calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
@@ -171,6 +175,16 @@ sub install() {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
         qq{CREATE INDEX $ROOMEQUIPMENT_INDEX ON $ROOMEQUIPMENT_TABLE(roomid, equipmentid);},
+        <<~"EOF",
+            CREATE TABLE $BOOKINGS_EQUIPMENT_TABLE (
+                `bookingid` INT NOT NULL,
+                `equipmentid` INT NOT NULL,
+                PRIMARY KEY (bookingid, equipmentid),
+                CONSTRAINT bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES $BOOKINGS_TABLE(bookingid),
+                CONSTRAINT bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT_TABLE(equipmentid)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+        EOF
+        qq{CREATE INDEX $BOOKINGS_EQUIPMENT_INDEX ON $BOOKINGS_EQUIPMENT_TABLE(bookingid, equipmentid);},
         qq{INSERT INTO $EQUIPMENT_TABLE (equipmentname) VALUES ('none');},
     );
 
@@ -228,13 +242,16 @@ sub install() {
             'members', 'ROOM_RESERVATION', "", "Raumreservierungsbenachrichtigung", 1, "Reservierung eines Raumes", "email", "default", 
             "<h2>Ihre Raumreservierung wurde bestätigt</h2>
             <hr>
-            <h2>Ihre Angaben</h2><br>
+            <h3>Ihre Angaben</h3>
             <span>Name: [% user %]</span><br>
             <span>Raum: [% room %]</span><br>
             <span>Von: [% from %]</span><br>
             <span>Name: [% to %]</span>
             <hr>
-            <h2>Zeitpunkt der Bestätigung</h2>
+            <h3>Ihre gebuchte Ausstattung</h3>
+            <span>[% booked_equipment %]</span>
+            <hr>
+            <h3>Zeitpunkt der Bestätigung</h3>
             <span>[% confirmed_timestamp %]</span>"
         );
     EOF
@@ -263,15 +280,44 @@ sub upgrade {
     my ( $self, $args ) = @_;
 
     my $column_color_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'color';});
-
     if ( $column_color_exists eq '0E0' ) {
-        my $rv = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN color VARCHAR(7);});
+        my $rv_color = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN color VARCHAR(7);});
     }
 
     my $column_image_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'image';});
-
     if ( $column_image_exists eq '0E0' ) {
-        my $rv = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN image TEXT;});
+        my $rv_image = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN image TEXT;});
+    }
+
+    my $column_created_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$BOOKINGS_TABLE' AND COLUMN_NAME = 'created';});
+    if ( $column_created_exists eq '0E0' ) {
+        my $rv_created = C4::Context->dbh->do(qq{ALTER TABLE $BOOKINGS_TABLE ADD COLUMN created TIMESTAMP NULL;});
+    }
+
+    my $column_updated_at_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$BOOKINGS_TABLE' AND COLUMN_NAME = 'updated_at';});
+    if ( $column_updated_at_exists eq '0E0' ) {
+        my $rv_updated_at = C4::Context->dbh->do(qq{ALTER TABLE $BOOKINGS_TABLE ADD COLUMN updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP;});
+    }
+
+    my $table_bookings_equipment_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$BOOKINGS_EQUIPMENT_TABLE';});
+    if ( $table_bookings_equipment_exists eq '0E0' ) {
+        my @statements = (
+            <<~"EOF",
+                CREATE TABLE $BOOKINGS_EQUIPMENT_TABLE (
+                    `bookingid` INT NOT NULL, 
+                    `equipmentid` INT NOT NULL, 
+                    PRIMARY KEY (bookingid, equipmentid), 
+                    CONSTRAINT bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES $BOOKINGS_TABLE(bookingid), 
+                    CONSTRAINT bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT_TABLE(equipmentid)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+            EOF
+            qq{CREATE INDEX $BOOKINGS_EQUIPMENT_INDEX ON $BOOKINGS_EQUIPMENT_TABLE(bookingid, equipmentid);}
+        );
+
+        for my $statement (@statements) {
+            my $sth = C4::Context->dbh->prepare($statement);
+            $sth->execute or croak C4::Context->dbh->errstr;
+        }
     }
 
     return 1;

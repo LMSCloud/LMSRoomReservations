@@ -44,6 +44,7 @@ use POSIX qw( floor );
 use DateTime;
 use Readonly;
 use experimental qw( switch );
+use List::Util qw(any);
 use List::MoreUtils qw( firstidx );
 
 use CGI qw ( -utf8 );
@@ -224,6 +225,10 @@ AVAILABILITY_SEARCH: {
             my $end_datetime      = dt_from_string( sprintf '%s %s', $end_date,   $end_time );
             my $room_id           = $cgi->param('availability-search-room');
             my $is_room_available = get_room_availability( $room_id, $start_datetime, $end_datetime );
+            my @equipment_ids =
+                $cgi->param('availability-search-equipment')
+                ? split /,/smx, $cgi->param('availability-search-equipment')
+                : ();
 
             if ($is_room_available) {    # --> go to confirmation page
                 my $displayed_start          = output_pref( { dt => $start_datetime, } );
@@ -239,20 +244,22 @@ AVAILABILITY_SEARCH: {
                 my $current_user_daily_limit = get_daily_reservation_limit_of_patron( $user_bn, $start_date );
 
                 $template->param(
-                    op                  => 'room-selection-confirmation',
-                    current_user        => $user,
-                    current_user_fn     => $user_fn,
-                    current_user_ln     => $user_ln,
-                    current_user_email  => $email,
-                    selected_room_id    => $room_id,
-                    selected_room_no    => $selected_room_number,
-                    displayed_time      => $displayed_event_time,
-                    selected_start_time => $start_datetime,
-                    selected_end_time   => $end_datetime,
-                    displayed_start     => $displayed_start,
-                    displayed_end       => $displayed_end,
-                    count_limit         => $count_limit,
-                    user_daily_limit    => $current_user_daily_limit,
+                    op                       => 'room-selection-confirmation',
+                    current_user             => $user,
+                    current_user_fn          => $user_fn,
+                    current_user_ln          => $user_ln,
+                    current_user_email       => $email,
+                    selected_room_id         => $room_id,
+                    selected_room_no         => $selected_room_number,
+                    displayed_time           => $displayed_event_time,
+                    selected_start_time      => $start_datetime,
+                    selected_end_time        => $end_datetime,
+                    displayed_start          => $displayed_start,
+                    displayed_end            => $displayed_end,
+                    count_limit              => $count_limit,
+                    user_daily_limit         => $current_user_daily_limit,
+                    equipment_ids            => \@equipment_ids,
+                    available_room_equipment => $equipment,
                 );
             }
             else {    # --> room is not available: print warning
@@ -292,8 +299,7 @@ ROOM_SELECTION_CONFIRMATION: {
         my $displayed_end   = $cgi->param('displayed-end');
         my $event_start     = $cgi->param('event-start-time');
         my $event_end       = $cgi->param('event-end-time');
-
-        my $start_date = $cgi->param('start-date');
+        my $start_date      = $cgi->param('start-date');
 
         my $displayed_event_time = "$displayed_start - $displayed_end";
 
@@ -301,13 +307,10 @@ ROOM_SELECTION_CONFIRMATION: {
         my $user_ln = C4::Context->userenv->{'surname'}   || q{};
         my $user_bn = C4::Context->userenv->{'number'};
 
-        my $user  = "$user_fn $user_ln";
-        my $email = C4::Context->userenv->{'emailaddress'};
-
-        my $selected_room_number = get_room_number_by_id($selected_id);
-
-        my $count_limit = get_daily_reservation_limit();
-
+        my $user                     = "$user_fn $user_ln";
+        my $email                    = C4::Context->userenv->{'emailaddress'};
+        my $selected_room_number     = get_room_number_by_id($selected_id);
+        my $count_limit              = get_daily_reservation_limit();
         my $current_user_daily_limit = get_daily_reservation_limit_of_patron( $user_bn, $start_date );
 
         $template->param(
@@ -344,6 +347,10 @@ RESERVATION_CONFIRMED: {
         my $displayed_start   = $cgi->param('confirmed-displayed-start');
         my $displayed_end     = $cgi->param('confirmed-displayed-end');
         my $patron_email      = $cgi->param('confirmed-email');
+        my @equipment =
+            $cgi->param('confirmed-equipment-ids')
+            ? split /,/smx, $cgi->param('confirmed-equipment-ids')
+            : ();
 
         if ( defined $start_over_submit && ( $start_over_submit eq 'Start over' || $start_over_submit ne q{} ) ) {
             $op = 'availability-search';
@@ -354,11 +361,17 @@ RESERVATION_CONFIRMED: {
             $valid = pre_booking_availability_check( $roomid, $start, $end );
 
             if ($valid) {
-                add_booking( $borrowernumber, $roomid, $start, $end );
+                add_booking( $borrowernumber, $roomid, $start, $end, @equipment );
             }
             else {
                 $template->param( invalid_booking => 1, );
             }
+        }
+
+        my $available_room_equipment = load_all_equipment();
+        my @equipment_names;
+        for my $available_item ($available_room_equipment->@*) {
+            push @equipment_names, $available_item->{'equipmentname'} if any { $_ == $available_item->{'equipmentid'} } @equipment;
         }
 
         my $timestamp = get_current_timestamp();
@@ -374,6 +387,7 @@ RESERVATION_CONFIRMED: {
                 from                => $displayed_start,
                 to                  => $displayed_end,
                 confirmed_timestamp => $timestamp,
+                booked_equipment    => join q{, }, @equipment_names,
             },
         );
 

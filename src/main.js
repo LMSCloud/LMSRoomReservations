@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-unused-vars */
 export function loadSelectedAction() { document.getElementById('actionSelectedBtn').click(); }
@@ -49,7 +50,7 @@ export function closeToast() {
   window.setTimeout(() => { lmsrToast.remove(); }, 3000);
 }
 
-export function getEquipmentBySelectedRoom({ rooms, lmsrEquipmentSelectionEntryPoint }) {
+export function getEquipmentBySelectedRoom({ rooms, equipment, lmsrEquipmentSelectionEntryPoint }) {
   const lmsrEquipmentSelection = document.getElementById('lmsr-equipment-selection');
   lmsrEquipmentSelection.innerHTML = '';
   const [selectedRoom] = document.getElementById('availability-search-room').selectedOptions;
@@ -57,11 +58,25 @@ export function getEquipmentBySelectedRoom({ rooms, lmsrEquipmentSelectionEntryP
   roomData?.equipment.forEach((item) => {
     const lmsrEquipmentSelectionCheckForm = document.createElement('lmsr-equipment-selection', { is: 'lmsr-equipment-selection' });
     const itemMachineReadable = item.equipmentname.replace(' ', '_');
+    const itemId = (equipment.find((_item) => _item.equipmentname === item.equipmentname)).equipmentid;
     lmsrEquipmentSelectionCheckForm.innerHTML = `
-      <input slot="lmsr-check-input" type="checkbox" value="" id="${itemMachineReadable}">
-      <label slot="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
+      <input slot="lmsr-check-input" class="lmsr-check-input" type="checkbox" value="${itemId}" id="${itemMachineReadable}">
+      <label slot="lmsr-check-label" class="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
     `;
     lmsrEquipmentSelectionEntryPoint.appendChild(lmsrEquipmentSelectionCheckForm);
+  });
+}
+
+export function getCheckedOptions({ elements, hiddenInputReference }) {
+  const hiddenInput = document.getElementById(hiddenInputReference);
+  const options = document.querySelectorAll(elements);
+  options.forEach((option) => {
+    option.addEventListener('change', () => {
+      const checkedOptions = Array.from(options).reduce((accumulator, _option) => {
+        if (_option.checked) { accumulator.push(_option.value); } return accumulator;
+      }, []);
+      hiddenInput.value = checkedOptions;
+    });
   });
 }
 
