@@ -567,11 +567,13 @@ sub tool {
     if ( $op eq 'action-selected' ) {
         given ($tool_action) {
             when ('action-manage-reservations') {
-                my $bookings = get_all_bookings();
+                my $bookings  = get_all_bookings();
+                my $equipment = load_all_equipment();
 
                 $template->param(
-                    op       => 'manage-reservations',
-                    bookings => $bookings,
+                    op        => 'manage-reservations',
+                    bookings  => $bookings,
+                    equipment => $equipment,
                 );
             }
 
@@ -643,20 +645,23 @@ sub tool {
 
         if ( $selected eq 'delete' ) {
 
-            my $deleted = delete_booking_by_id($selectedId);
-
-            my $bookings = get_all_bookings();
+            my $deleted   = delete_booking_by_id($selectedId);
+            my $bookings  = get_all_bookings();
+            my $equipment = load_all_equipment();
 
             if ( $deleted == 0 ) {
                 $template->param(
-                    deleted  => 1,
-                    bookings => $bookings,
+                    deleted   => 1,
+                    bookings  => $bookings,
+                    equipment => $equipment,
+
                 );
             }
             else {
                 $template->param(
-                    deleted  => 0,
-                    bookings => $bookings,
+                    deleted   => 0,
+                    bookings  => $bookings,
+                    equipment => $equipment,
                 );
             }
         }

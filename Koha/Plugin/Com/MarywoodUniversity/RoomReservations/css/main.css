@@ -193,8 +193,8 @@ textarea {
 }
 
 .lmsr-action-table-delete-reservations {
-  -ms-grid-columns: 2em (1fr)[4];
-  grid-template-columns: 2em repeat(4, 1fr);
+  -ms-grid-columns: 2em (1fr)[5];
+  grid-template-columns: 2em repeat(5, 1fr);
 }
 
 .lmsr-action-table-delete-opening-hours,

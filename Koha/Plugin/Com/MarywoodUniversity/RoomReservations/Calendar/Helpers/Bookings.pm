@@ -9,8 +9,6 @@ use C4::Context;
 use Exporter qw(import);
 use Time::Piece;
 
-use Data::Dumper;
-
 our $VERSION = '1.0.0';
 our @EXPORT  = qw(
     pre_booking_availability_check
@@ -164,19 +162,44 @@ sub get_all_bookings {
         FROM borrowers b, $BOOKINGS_TABLE bk, $ROOMS_TABLE r
         WHERE b.borrowernumber = bk.borrowernumber
         AND bk.roomid = r.roomid
-        ORDER BY bk.roomid ASC, bk.start DESC;
+        ORDER BY r.roomnumber ASC, bk.start ASC;
     EOF
 
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allBookings;
-
+    my @all_bookings;
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allBookings, $row;
+        push @all_bookings, $row;
     }
 
-    return \@allBookings;
+    my $query_booked_equipment = qq{SELECT * FROM $BOOKINGS_EQUIPMENT_TABLE;};
+
+    $sth = $dbh->prepare($query_booked_equipment);
+    $sth->execute();
+
+    my @booked_equipment;
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @booked_equipment, $row;
+    }
+
+    my $booked_equipment_by_id = {};
+    for my $booked_item (@booked_equipment) {
+        if ( !( exists $booked_equipment_by_id->{ $booked_item->{'bookingid'} } ) ) {
+            $booked_equipment_by_id->{ $booked_item->{'bookingid'} } = [ $booked_item->{'equipmentid'} ];
+        }
+        else {
+            push @{ $booked_equipment_by_id->{ $booked_item->{'bookingid'} } }, $booked_item->{'equipmentid'};
+        }
+    }
+
+    for my $booking (@all_bookings) {
+        if ( exists $booked_equipment_by_id->{ $booking->{'bookingid'} } ) {
+            $booking->{'equipment'} = $booked_equipment_by_id->{ $booking->{'bookingid'} };
+        }
+    }
+
+    return \@all_bookings;
 }
 
 1;

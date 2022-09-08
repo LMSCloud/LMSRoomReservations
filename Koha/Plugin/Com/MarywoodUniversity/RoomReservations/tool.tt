@@ -1,4 +1,5 @@
 [% USE gtx = Gettext('com.marywooduniversity.roomreservations', language, 'utf-8', mbf_path) %]
+[%- USE JSON.Escape; -%]
 
 [% INCLUDE 'doc-head-open.inc' %]
   <title>[% "Koha: Room Reservations Plugin: Configuration" | gettext %]</title>
@@ -259,6 +260,7 @@
               <span class="lmsr-action-table-header-item">[% 'Patron' | gettext %]</span>
               <span class="lmsr-action-table-header-item">[% 'Start' | gettext %]</span>
               <span class="lmsr-action-table-header-item">[% 'End' | gettext %]</span>
+              <span class="lmsr-action-table-header-item">[% 'Equipment' | gettext %]</span>
     
               [% FOREACH booking IN bookings %]
                 <input type="radio" name="manage-bookings-id" value="[% booking.bookingid %]" class="lmsr-action-table-body-item-selector">
@@ -266,8 +268,18 @@
                 <span class="lmsr-action-table-body-item">[% booking.firstname %] [% booking.surname %]</span>
                 <span class="lmsr-action-table-body-item">[% booking.start %]</span>
                 <span class="lmsr-action-table-body-item">[% booking.end %]</span>
+                <span class="lmsr-action-table-body-item">
+                  [% FOREACH item IN equipment %]
+                    [% FOREACH booked_item IN booking.equipment %]
+                      [% IF item.equipmentid == booked_item %]
+                        [% item.equipmentname %][% UNLESS loop.last %],&nbsp;[% END %]
+                      [% END %]
+                    [% END %]
+                  [% END %]
+                </span>
               [% END %]
     
+              <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
               <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
               <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
               <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
@@ -275,6 +287,7 @@
                 <option value="">[% 'Actions' | gettext %]</option>
                 <option value="delete">[% 'Delete' | gettext %]</option>
               </select>
+
 
               <input type="submit" name="submit-manage-bookings" value="[% 'Submit' | gettext %]" disabled/>
             </div>
