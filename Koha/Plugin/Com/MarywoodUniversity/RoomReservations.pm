@@ -307,7 +307,7 @@ sub upgrade {
                     `bookingid` INT NOT NULL, 
                     `equipmentid` INT NOT NULL, 
                     PRIMARY KEY (bookingid, equipmentid), 
-                    CONSTRAINT bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES $BOOKINGS_TABLE(bookingid) ON DELETE CASCADE, 
+                    CONSTRAINT bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES $BOOKINGS_TABLE(bookingid) ON DELETE CASCADE,
                     CONSTRAINT bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT_TABLE(equipmentid) ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
             EOF
