@@ -1,7 +1,7 @@
 {
   "name": "koha-plugin-room-reservations",
-  "version": "3.2.3",
-  "previous_version": "3.2.2",
+  "version": "3.2.4",
+  "previous_version": "3.2.3",
   "description": "Koha Room Reservations Plugin, modified by LMSCloud GmbH",
   "devDependencies": {
     "eslint": "^8.20.0",

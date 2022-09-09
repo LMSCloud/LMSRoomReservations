@@ -213,7 +213,7 @@ sub get_available_rooms {
     if ( @{$equipment} > 0 ) {
 
         # counts number of elements
-        my $totalElements = scalar @{$equipment};
+        my $total_elements = scalar @{$equipment};
 
         $query .= <<~"EOF";
             AND roomid IN 
@@ -223,16 +223,14 @@ sub get_available_rooms {
         EOF
 
         foreach my $piece ( @{$equipment} ) {
-
-            if ( --$totalElements == 0 ) {
-
+            if ( --$total_elements == 0 ) {
                 $query .= " equipmentid = $piece)";
             }
             else {
                 $query .= " equipmentid = $piece AND";
             }
 
-            $totalElements--;
+            $total_elements--;
         }
     }
 
@@ -241,13 +239,13 @@ sub get_available_rooms {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allAvailableRooms;
+    my @all_available_rooms;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allAvailableRooms, $row;
+        push @all_available_rooms, $row;
     }
 
-    return \@allAvailableRooms;
+    return \@all_available_rooms;
 }
 
 sub load_all_max_capacities {
@@ -266,13 +264,13 @@ sub load_all_max_capacities {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allMaxCapacities;
+    my @all_max_capacities;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allMaxCapacities, $row;
+        push @all_max_capacities, $row;
     }
 
-    return \@allMaxCapacities;
+    return \@all_max_capacities;
 }
 
 ## Used in display-rooms
@@ -292,13 +290,13 @@ sub get_all_room_numbers {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allRooms;
+    my @all_rooms;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allRooms, $row;
+        push @all_rooms, $row;
     }
 
-    return \@allRooms;
+    return \@all_rooms;
 }
 
 sub get_room_details_by_id {
@@ -321,13 +319,13 @@ sub get_room_details_by_id {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @selectedRoomDetails;
+    my @selected_room_details;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @selectedRoomDetails, $row;
+        push @selected_room_details, $row;
     }
 
-    return \@selectedRoomDetails;
+    return \@selected_room_details;
 }
 
 sub get_all_room_numbers_and_ids_available_to_delete {
@@ -346,13 +344,13 @@ sub get_all_room_numbers_and_ids_available_to_delete {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allRoomNumbersAndIds;
+    my @all_room_numbers_and_ids;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allRoomNumbersAndIds, $row;
+        push @all_room_numbers_and_ids, $row;
     }
 
-    return \@allRoomNumbersAndIds;
+    return \@all_room_numbers_and_ids;
 }
 
 sub get_current_room_numbers {
@@ -369,13 +367,13 @@ sub get_current_room_numbers {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allRoomNumbers;
+    my @all_room_numbers;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allRoomNumbers, $row;
+        push @all_room_numbers, $row;
     }
 
-    return \@allRoomNumbers;
+    return \@all_room_numbers;
 }
 
 sub get_all_room_ids {
@@ -392,13 +390,13 @@ sub get_all_room_ids {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allRoomIds;
+    my @all_room_ids;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allRoomIds, $row;
+        push @all_room_ids, $row;
     }
 
-    return \@allRoomIds;
+    return \@all_room_ids;
 }
 
 sub count_rooms {
@@ -436,22 +434,32 @@ sub delete_room {
 
 sub add_room {
 
-    my ( $roomnumber, $maxcapacity, $description, $color, $image, $equipment ) = @_;
+    # roomnumber, maxcapacity, description, color, image, equipment
+    my ($args) = @_;
 
     ## make $roomnumber SQL-friendly by surrounding with single quotes
-    $roomnumber  = qq{'$roomnumber'};
-    $description = qq{'$description'};
-    $color       = qq{'$color'};
-    $image       = qq{'$image'};
+    my $roomnumber  = qq{'$args->{'roomnumber'}'};
+    my $description = qq{'$args->{'description'}'};
+    my $color       = qq{'$args->{'color'}'};
+    my $image       = qq{'$args->{'image'}'};
 
     my $dbh = C4::Context->dbh;
 
     ## first insert roomnumber and maxcapacity into $ROOMS_TABLE
-    $dbh->do("INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image) VALUES ($roomnumber, $maxcapacity, $description, $color, $image);");
+    $dbh->do(
+        <<~"EOF"
+            INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image) 
+            VALUES ($roomnumber, $args->{'maxcapacity'}, $description, $color, $image);
+        EOF
+    );
 
-    foreach my $piece ( @{$equipment} ) {
-
-        $dbh->do("INSERT IGNORE INTO $ROOMEQUIPMENT_TABLE (roomid, equipmentid) VALUES ((SELECT roomid FROM $ROOMS_TABLE WHERE roomnumber = $roomnumber), $piece);");
+    foreach my $piece ( @{ $args->{'selected_equipment'} } ) {
+        $dbh->do(
+            <<~"EOF"
+                INSERT IGNORE INTO $ROOMEQUIPMENT_TABLE (roomid, equipmentid)
+                VALUES ((SELECT roomid FROM $ROOMS_TABLE WHERE roomnumber = $roomnumber), $piece);
+            EOF
+        );
     }
 
     return;
@@ -473,31 +481,32 @@ sub load_room_details_to_edit_by_room_id {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @roomDetails;
+    my @room_details;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @roomDetails, $row;
+        push @room_details, $row;
     }
 
-    return \@roomDetails;
+    return \@room_details;
 }
 
 sub update_room_details {
 
-    my ( $roomid, $roomnumber, $description, $maxcapacity, $color, $image ) = @_;
+    # roomid, roomnumber, description, maxcapacity, color, image
+    my ($args) = @_;
 
-    $roomnumber  = qq{'$roomnumber'};
-    $description = qq{'$description'};
-    $color       = qq{'$color'};
-    $image       = qq{'$image'};
+    my $roomnumber  = qq{'$args->{'updated_room_number'}'};
+    my $description = qq{'$args->{'updated_description'}'};
+    my $color       = qq{'$args->{'updated_color'}'};
+    my $image       = qq{'$args->{'updated_image'}'};
 
     ## load access to database
     my $dbh = C4::Context->dbh;
 
     my $query = <<~"EOF";
         UPDATE $ROOMS_TABLE
-        SET roomnumber = $roomnumber, maxcapacity = $maxcapacity, description = $description, color = $color, image = $image
-        WHERE roomid = $roomid;
+        SET roomnumber = $roomnumber, maxcapacity = $args->{'updated_max_capacity'}, description = $description, color = $color, image = $image
+        WHERE roomid = $args->{'room_id_to_update'};
     EOF
 
     $dbh->do($query);

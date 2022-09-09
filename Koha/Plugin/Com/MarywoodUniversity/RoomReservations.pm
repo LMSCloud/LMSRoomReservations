@@ -1009,15 +1009,23 @@ sub configure {
         my $addedRoom = $cgi->param('added-room') || q{};
 
         if ( $addedRoom eq '1' ) {
-            my $roomnumber        = $cgi->param('add-room-roomnumber');
-            my $maxcapacity       = $cgi->param('add-room-maxcapacity');
-            my $description       = $cgi->param('add-room-description');
-            my $color             = $cgi->param('add-room-color');
-            my $image             = $cgi->param('add-room-image');
-            my @selectedEquipment = $cgi->param('selected-equipment');
+            my $roomnumber         = $cgi->param('add-room-roomnumber');
+            my $maxcapacity        = $cgi->param('add-room-maxcapacity');
+            my $description        = $cgi->param('add-room-description');
+            my $color              = $cgi->param('add-room-color');
+            my $image              = $cgi->param('add-room-image');
+            my @selected_equipment = $cgi->param('selected-equipment');
 
             ## pass @selectedEquipment by reference
-            add_room( $roomnumber, $maxcapacity, $description, $color, $image, \@selectedEquipment );
+            add_room(
+                {   roomnumber         => $roomnumber,
+                    maxcapacity        => $maxcapacity,
+                    description        => $description,
+                    color              => $color,
+                    image              => $image,
+                    selected_equipment => \@selected_equipment
+                }
+            );
         }
 
         my $availableEquipment = get_all_room_equipment_names_and_ids();
@@ -1041,14 +1049,22 @@ sub configure {
         }
 
         if ( $roomDetailsUpdated eq '1' ) {
-            my $roomIdToUpdate     = $cgi->param('room-details-updated-roomid');
-            my $updatedRoomNumber  = $cgi->param('edit-rooms-room-roomnumber');
-            my $updatedMaxCapacity = $cgi->param('edit-rooms-room-maxcapacity');
-            my $updatedDescription = $cgi->param('edit-rooms-room-description');
-            my $updatedColor       = $cgi->param('edit-rooms-room-color');
-            my $updatedImage       = $cgi->param('edit-rooms-room-image');
+            my $room_id_to_update    = $cgi->param('room-details-updated-roomid');
+            my $updated_room_number  = $cgi->param('edit-rooms-room-roomnumber');
+            my $updated_description  = $cgi->param('edit-rooms-room-description');
+            my $updated_max_capacity = $cgi->param('edit-rooms-room-maxcapacity');
+            my $updated_color        = $cgi->param('edit-rooms-room-color');
+            my $updated_image        = $cgi->param('edit-rooms-room-image');
 
-            update_room_details( $roomIdToUpdate, $updatedRoomNumber, $updatedDescription, $updatedMaxCapacity, $updatedColor, $updatedImage );
+            update_room_details(
+                {   room_id_to_update    => $room_id_to_update,
+                    updated_room_number  => $updated_room_number,
+                    updated_description  => $updated_description,
+                    updated_max_capacity => $updated_max_capacity,
+                    updated_color        => $updated_color,
+                    updated_image        => $updated_image
+                }
+            );
         }
 
         if ( $roomEquipmentUpdated eq '1' ) {

@@ -138,7 +138,8 @@ sub get_all_blackout_bookings {
     my $sth = q{};
 
     my $query = <<~"EOF";
-        SELECT bk.bookingid, r.roomnumber, DATE_FORMAT(bk.start, '%d.%m.%Y %H:%i') AS start, DATE_FORMAT(bk.end, '%d.%m.%Y %H:%i') AS end
+        SELECT bk.bookingid, r.roomnumber,
+        DATE_FORMAT(bk.start, '%d.%m.%Y %H:%i') AS start, DATE_FORMAT(bk.end, '%d.%m.%Y %H:%i') AS end
         FROM $BOOKINGS_TABLE bk, $ROOMS_TABLE r
         WHERE bk.roomid = r.roomid
         AND bk.blackedout = 1
@@ -148,13 +149,13 @@ sub get_all_blackout_bookings {
     $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @allBlackedoutBookings;
+    my @all_blackedout_bookings;
 
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push @allBlackedoutBookings, $row;
+        push @all_blackedout_bookings, $row;
     }
 
-    return \@allBlackedoutBookings;
+    return \@all_blackedout_bookings;
 }
 
 sub get_all_bookings {
@@ -164,7 +165,8 @@ sub get_all_bookings {
     my $sth = q{};
 
     my $query = <<~"EOF";
-        SELECT bk.bookingid, r.roomnumber, b.firstname, b.surname, DATE_FORMAT(bk.start, \"%d.%m.%Y %H:%i\") AS start, DATE_FORMAT(bk.end, \"%d.%m.%Y %H:%i \") AS end
+        SELECT bk.bookingid, r.roomnumber, b.firstname, b.surname,
+        DATE_FORMAT(bk.start, \"%d.%m.%Y %H:%i\") AS start, DATE_FORMAT(bk.end, \"%d.%m.%Y %H:%i \") AS end
         FROM borrowers b, $BOOKINGS_TABLE bk, $ROOMS_TABLE r
         WHERE b.borrowernumber = bk.borrowernumber
         AND bk.roomid = r.roomid
