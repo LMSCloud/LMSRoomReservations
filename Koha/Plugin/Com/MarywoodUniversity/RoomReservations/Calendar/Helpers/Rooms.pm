@@ -1,5 +1,7 @@
 package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Rooms;
 
+use 5.010;
+
 use strict;
 use warnings;
 use utf8;

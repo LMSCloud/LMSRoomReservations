@@ -114,13 +114,19 @@ sub add_blackout_booking {
     my $timestamp = localtime->strftime('%Y-%m-%d %H:%M:%S');
 
     my $dbh = C4::Context->dbh;
+    my $sth = q{};
 
-    my $statement = <<~"EOF";
-        INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end, blackedout, created)
-        VALUES ($borrowernumber, $roomid, '$start', '$end', 1, '$timestamp');
-    EOF
+    my @statements = (
+        <<~"EOF",
+            INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end, blackedout, created)
+            VALUES ($borrowernumber, $roomid, '$start', '$end', 1, '$timestamp');
+        EOF
+    );
 
-    $dbh->do($statement);
+    for my $statement (@statements) {
+        $sth->prepare($statement);
+        $sth->execute();
+    }
 
     return;
 }
