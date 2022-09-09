@@ -448,7 +448,7 @@ sub add_room {
     ## first insert roomnumber and maxcapacity into $ROOMS_TABLE
     $dbh->do(
         <<~"EOF"
-            INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image) 
+            INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image)
             VALUES ($roomnumber, $args->{'maxcapacity'}, $description, $color, $image);
         EOF
     );
