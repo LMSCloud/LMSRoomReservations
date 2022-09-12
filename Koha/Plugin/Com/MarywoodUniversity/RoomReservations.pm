@@ -214,9 +214,10 @@ sub install() {
                     if (data) {
                         var regExp = /\(([^)]+)\)/;
                         var matches = regExp.exec(data);
-                        var cardnumber = matches[1];
-
-                        \$('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter(\$('#addnewmessageLabel'));
+                        if (matches) {
+                            var cardnumber = matches[1];
+                            \$('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter(\$('#addnewmessageLabel'));
+                        }
                     }
                 }
             });
@@ -345,12 +346,18 @@ sub uninstall() {
         qq{DROP TABLE IF EXISTS $ROOMEQUIPMENT_TABLE;},
         qq{DROP TABLE IF EXISTS $EQUIPMENT_TABLE;},
         qq{DROP TABLE IF EXISTS $ROOMS_TABLE;},
+        qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT_TABLE;},
     );
 
     for (@uninstaller_statements) {
         my $sth = C4::Context->dbh->prepare($_);
         $sth->execute or croak C4::Context->dbh->errstr;
     }
+
+    my $IntranetUserJS = C4::Context->preference('IntranetUserJS');
+    $IntranetUserJS =~ s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///smxg;
+
+    C4::Context->set_preference( 'IntranetUserJS', $IntranetUserJS );
 
     return 1;
 }
