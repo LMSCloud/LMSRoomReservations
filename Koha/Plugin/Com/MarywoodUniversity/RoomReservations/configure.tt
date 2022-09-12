@@ -440,7 +440,12 @@
               <label for="add-room-image">[% 'Image:' | gettext %]</label>
               <input type="text" name="add-room-image"/>
               <label for="add-room-branch">[% 'Branch:' | gettext %]</label>
-              <input type="text" name="add-room-branch"/>
+              <select name="add-room-branch" id="add-room-branch">
+                <option value="[% room.branch %]">[% room.branch %]</option>
+                [% FOREACH branch IN branches %]
+                  <option value="[% branch.branchname %]">[% branch.branchname %]</option>
+                [% END %]
+              </select>
             </div>
 
             <hr>
@@ -562,7 +567,12 @@
                 <label>[% 'Image:' | gettext %] </label>
                 <input type="text" name="edit-rooms-room-image" value="[% room.image %]" />
                 <label>[% 'Branch:' | gettext %] </label>
-                <input type="text" name="edit-rooms-room-branch" value="[% room.branch %]" />
+                <select name="edit-rooms-room-branch" id="edit-rooms-room-branch">
+                    <option value="[% room.branch %]">[% room.branch %]</option>
+                  [% FOREACH branch IN branches %]
+                    <option value="[% branch.branchname %]">[% branch.branchname %]</option>
+                  [% END %]
+                </select>
               [% END # FOREACH room IN room_details %]
             </div>
             

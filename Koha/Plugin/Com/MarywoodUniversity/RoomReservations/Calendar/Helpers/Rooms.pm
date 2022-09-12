@@ -28,6 +28,7 @@ our @EXPORT  = qw(
     load_room_details_to_edit_by_room_id
     update_room_details
     are_any_rooms_available_to_delete
+    get_branches
 );
 
 my $ROOMS_TABLE         = 'booking_rooms';
@@ -527,4 +528,22 @@ sub are_any_rooms_available_to_delete {
         return 0;
     }
 }
+
+sub get_branches {
+
+    my $dbh   = C4::Context->dbh;
+    my $sth   = q{};
+    my $query = q{SELECT branchname FROM branches;};
+
+    $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @branches;
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        push @branches, $row;
+    }
+
+    return \@branches;
+}
+
 1;

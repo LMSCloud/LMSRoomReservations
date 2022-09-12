@@ -1036,27 +1036,29 @@ sub configure {
             );
         }
 
-        my $availableEquipment = get_all_room_equipment_names_and_ids();
-        my $roomNumbers        = get_current_room_numbers();
+        my $available_equipment = get_all_room_equipment_names_and_ids();
+        my $room_numbers        = get_current_room_numbers();
+        my $branches            = get_branches();
 
         $template->param(
             op                  => $op,
-            available_equipment => $availableEquipment,
-            all_room_numbers    => $roomNumbers,
+            available_equipment => $available_equipment,
+            all_room_numbers    => $room_numbers,
+            branches            => $branches,
         );
     }
 
     if ( $op eq 'edit-rooms' ) {
-        my $editing              = $cgi->param('editing')                || q{};
-        my $roomDetailsUpdated   = $cgi->param('room-details-updated')   || q{};
-        my $roomEquipmentUpdated = $cgi->param('room-equipment-updated') || q{};
+        my $editing                = $cgi->param('editing')                || q{};
+        my $room_details_updated   = $cgi->param('room-details-updated')   || q{};
+        my $room_equipment_updated = $cgi->param('room-equipment-updated') || q{};
 
         if ( $editing eq '1' ) {
-            my $selectedRoomId = $cgi->param('current-rooms-edit');
-            $template->param( selected_room_id => $selectedRoomId, );
+            my $selected_room_id = $cgi->param('current-rooms-edit');
+            $template->param( selected_room_id => $selected_room_id, );
         }
 
-        if ( $roomDetailsUpdated eq '1' ) {
+        if ( $room_details_updated eq '1' ) {
             my $room_id_to_update    = $cgi->param('room-details-updated-roomid');
             my $updated_room_number  = $cgi->param('edit-rooms-room-roomnumber');
             my $updated_description  = $cgi->param('edit-rooms-room-description');
@@ -1077,58 +1079,62 @@ sub configure {
             );
         }
 
-        if ( $roomEquipmentUpdated eq '1' ) {
-            my $equipmentRoomId  = $cgi->param('room-equipment-updated-roomid');
-            my @equipmentIdArray = $cgi->param('edit-rooms-current-equipment');
-            update_room_equipment( $equipmentRoomId, \@equipmentIdArray );
+        if ( $room_equipment_updated eq '1' ) {
+            my $equipment_room_id  = $cgi->param('room-equipment-updated-roomid');
+            my @equipment_id_array = $cgi->param('edit-rooms-current-equipment');
+            update_room_equipment( $equipment_room_id, \@equipment_id_array );
         }
 
-        my $roomNumbers = get_all_room_numbers();
+        my $room_numbers = get_all_room_numbers();
 
         $template->param(
             op            => $op,
-            current_rooms => $roomNumbers,
+            current_rooms => $room_numbers,
         );
     }
+
     if ( $op eq 'edit-rooms-selection' ) {
-        my $choice         = $cgi->param('edit-rooms-choice')  || q{};
-        my $selectedRoomId = $cgi->param('current-rooms-edit') || q{};
-        my $editAction     = q{};
+        my $choice           = $cgi->param('edit-rooms-choice')  || q{};
+        my $selected_room_id = $cgi->param('current-rooms-edit') || q{};
+        my $edit_action      = q{};
 
         if ( $choice eq 'room' ) {
-            $editAction = 'edit-rooms-room';
+            $edit_action = 'edit-rooms-room';
         }
 
         if ( $choice eq 'equipment' ) {
-            $editAction = 'edit-rooms-equipment';
+            $edit_action = 'edit-rooms-equipment';
         }
 
         $template->param(
             op               => $op,
-            edit_action      => $editAction,
-            selected_room_id => $selectedRoomId,
+            edit_action      => $edit_action,
+            selected_room_id => $selected_room_id,
         );
     }
 
     if ( $op eq 'edit-rooms-room' ) {
-        my $selectedRoomId = $cgi->param('selected-room-id') || q{};
-        my $roomDetails    = load_room_details_to_edit_by_room_id($selectedRoomId);
+        my $selected_room_id = $cgi->param('selected-room-id') || q{};
+        my $room_details     = load_room_details_to_edit_by_room_id($selected_room_id);
+        my $branches         = get_branches();
 
         $template->param(
             op           => $op,
-            room_details => $roomDetails,
+            room_details => $room_details,
+            branches     => $branches,
+
         );
     }
 
     if ( $op eq 'edit-rooms-equipment' ) {
-        my $selectedRoomId        = $cgi->param('selected-room-id') || q{};
-        my $roomDetails           = load_room_details_to_edit_by_room_id($selectedRoomId);
-        my $allAvailableEquipment = load_all_equipment();
+        my $selected_room_id        = $cgi->param('selected-room-id') || q{};
+        my $room_details            = load_room_details_to_edit_by_room_id($selected_room_id);
+        my $all_available_equipment = load_all_equipment();
 
         $template->param(
             op                      => $op,
-            room_details            => $roomDetails,
-            all_available_equipment => $allAvailableEquipment,
+            room_details            => $room_details,
+            all_available_equipment => $all_available_equipment,
         );
     }
 

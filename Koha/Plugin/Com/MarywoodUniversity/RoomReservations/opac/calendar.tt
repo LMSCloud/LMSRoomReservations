@@ -39,7 +39,6 @@
   [% IF op == 'undef' %]
   [% DEFAULT selected_month = 0 %]
   
-
   <template id="lmsr-calendar-body-landscape-template">
     [% w = 0 %]
     [% WHILE w < 5 %] 
@@ -50,20 +49,22 @@
           [% n_offset_by = n - offset %]
           <div class="lmsr-calendar-data">
             <span class="lmsr-calendar-dayofmonth">[% current_month_cal.$n %]</span>
-            <div class="min-height lmsr-calendar-data-entry">
-              [% FOREACH booking IN booking_days.$n_offset_by %]
-                <div class="lmsr-calendar-data-booking"
-                  [% FOREACH room IN rooms %]
-                    [% IF room.roomnumber == booking.roomnumber %]
-                      data-color="[% room.color %]"
-                    [% END %]
-                  [% END # FOREACH %]
-                >
-                  <div class="lmsr-calendar-data-roomnumber">[% booking.roomnumber %]</div>
-                  <div class="lmsr-calendar-data-bookedtime">([% booking.bookedtime %])</div>
-                </div>
-              [% END # FOREACH booking IN booking_days %]
-            </div>
+            [% UNLESS n - offset < 0 %]
+              <div class="min-height lmsr-calendar-data-entry">
+                [% FOREACH booking IN booking_days.$n_offset_by %]
+                  <div class="lmsr-calendar-data-booking"
+                    [% FOREACH room IN rooms %]
+                      [% IF room.roomnumber == booking.roomnumber %]
+                        data-color="[% room.color %]"
+                      [% END %]
+                    [% END # FOREACH %]
+                  >
+                    <div class="lmsr-calendar-data-roomnumber">[% booking.roomnumber %]</div>
+                    <div class="lmsr-calendar-data-bookedtime">([% booking.bookedtime %])</div>
+                  </div>
+                [% END # FOREACH booking IN booking_days %]
+              </div>
+            [% END %]
           </div>
           [% d = d + 1 %]
         [% END %]
