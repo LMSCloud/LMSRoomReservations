@@ -368,6 +368,10 @@
                   </div>
                 [% END %]
               </p>
+              <hr>
+              <p class="card-text">
+                
+              </p>
             </div>
           </div>
         </div>

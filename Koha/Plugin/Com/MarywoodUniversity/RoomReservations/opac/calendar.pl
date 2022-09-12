@@ -229,6 +229,7 @@ AVAILABILITY_SEARCH: {
                 $cgi->param('availability-search-equipment')
                 ? split /,/smx, $cgi->param('availability-search-equipment')
                 : ();
+            my $blackout_bookings = get_all_blackout_bookings();
 
             if ($is_room_available) {    # --> go to confirmation page
                 my $displayed_start          = output_pref( { dt => $start_datetime, } );
@@ -286,6 +287,7 @@ AVAILABILITY_SEARCH: {
                 max_time                 => $max_time,
                 opening_hours            => $opening_hours,
                 pre_selected_room        => shift @pre_selected_room,
+                blackout_bookings        => $blackout_bookings;
             );
         }
     }
@@ -370,7 +372,7 @@ RESERVATION_CONFIRMED: {
 
         my $available_room_equipment = load_all_equipment();
         my @equipment_names;
-        for my $available_item ($available_room_equipment->@*) {
+        for my $available_item ( $available_room_equipment->@* ) {
             push @equipment_names, $available_item->{'equipmentname'} if any { $_ == $available_item->{'equipmentid'} } @equipment;
         }
 
@@ -387,7 +389,8 @@ RESERVATION_CONFIRMED: {
                 from                => $displayed_start,
                 to                  => $displayed_end,
                 confirmed_timestamp => $timestamp,
-                booked_equipment    => join q{, }, @equipment_names,
+                booked_equipment    => join q{, },
+                @equipment_names,
             },
         );
 
