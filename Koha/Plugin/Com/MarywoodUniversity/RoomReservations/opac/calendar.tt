@@ -178,6 +178,23 @@
       </div> <!-- col-12 -->
     </div> <!-- row -->
 
+    <div class="row mb-1">
+      <div class="col">
+        <p class="text-secondary">[% 'Confine your search for available dates by selecting rooms.' | gettext %]</p>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col">
+        <ul class="lmsr-calendar-room-confinement">
+          [% FOREACH room IN rooms %]
+            <li class="lmsr-calendar-room-confinement-item" data-active="false">[% room.roomnumber %]</li>
+          [% END %]
+        </ul>
+      </div>
+    </div>
+    <script>RoomReservationBundle.hydrateRoomConfinement();</script>
+
     <div class="row mb-2">
       <div class="col">
         <h2>[% 'Available Rooms' | gettext %]</h2>
@@ -204,8 +221,8 @@
               <p class="card-text">
                 <b>[% 'Equipment' | gettext %]</b>
                 <ul class="lmsr-list mt-2">
-                  [% FOR eqipment IN room.equipment %]
-                    [% equipmentname = eqipment.equipmentname %]
+                  [% FOR equipment IN room.equipment %]
+                    [% equipmentname = equipment.equipmentname %]
                     [% IF equipmentname == 'none' %][% equipmentname = gtx.gettext('none') %][% END %]
                     <li class="lmsr-list-item">[% equipmentname %]</li>
                   [% END %]

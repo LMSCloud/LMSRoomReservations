@@ -121,7 +121,8 @@ input[name="book-room-btn"]:hover,
 .calendar-submit:hover,
 input[name="submit-check-room-availability"]:hover,
 input[name="confirmationSubmit"]:hover,
-.lmsr-button:hover {
+.lmsr-button:hover,
+.lmsr-calendar-room-confinement-item:hover {
   position: relative;
   top: -3px;
   -webkit-box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
@@ -137,7 +138,8 @@ input[name="book-room-btn"]:active,
 .calendar-submit:active,
 input[name="submit-check-room-availability"]:active,
 input[name="confirmationSubmit"]:active,
-.lmsr-button:active {
+.lmsr-button:active,
+.lmsr-calendar-room-confinement-item:active {
   top: 0;
   -webkit-box-shadow: none;
           box-shadow: none;
@@ -442,6 +444,31 @@ textarea {
   width: 16px;
   height: 16px;
   border-radius: 50%;
+}
+
+.lmsr-calendar-room-confinement {
+  list-style-type: none;
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.lmsr-calendar-room-confinement-item {
+  padding: 1em;
+  border: 1px solid dodgerblue;
+  border-radius: 12px;
+  background: dodgerblue;
+  color: white;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.lmsr-calendar-room-confinement-item[data-active="true"] {
+  background: floralwhite;
+  color: dodgerblue;
 }
 
 .lmsr-calendar-row {
