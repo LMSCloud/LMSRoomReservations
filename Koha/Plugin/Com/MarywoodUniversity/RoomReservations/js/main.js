@@ -86,6 +86,35 @@
     });
   }
 
+  function getBlackoutsBySelectedRoom({ entryPoint, blackouts }) {
+    const entryPointRef = document.getElementById(entryPoint);
+    entryPointRef.innerHTML = '';
+    let [selectedRoom] = document.getElementById('availability-search-room').selectedOptions;
+    selectedRoom = selectedRoom.text.replace(/\(.*\)/, '').trim();
+    const blackoutsForSelectedRoom = blackouts.reduce((accumulator, blackout) => {
+      if (blackout.roomnumber === selectedRoom) { accumulator.push(blackout); }
+      return accumulator;
+    }, []);
+    if (blackoutsForSelectedRoom.length === 0) {
+      const blackoutInfo = document.createElement('span');
+      blackoutInfo.classList.add('row', 'mx-1', 'p-1');
+      blackoutInfo.textContent = 'Für diesen Raum existieren derzeit keine Sperrzeiten.';
+      entryPointRef.appendChild(blackoutInfo);
+      return;
+    }
+    blackoutsForSelectedRoom.forEach((blackout) => {
+      const blackoutElement = document.createElement('div');
+      blackoutElement.classList.add('row', 'my-3', 'mx-1', 'p-1', 'border', 'rounded', 'text-center');
+      [blackout.start, '-', blackout.end].forEach((item) => {
+        const span = document.createElement('div');
+        span.classList.add('text-nowrap', 'col-12', 'col-xl-4');
+        span.textContent = item;
+        blackoutElement.appendChild(span);
+      });
+      entryPointRef.appendChild(blackoutElement);
+    });
+  }
+
   function validateOpeningHours(e) {
     const start = document.forms.OpeningHoursForm['opening-from'].value;
     const end = document.forms.OpeningHoursForm['opening-to'].value;
@@ -565,13 +594,21 @@
     const roomConfinementItems = document.querySelectorAll('.lmsr-calendar-room-confinement-item');
     const bookings = document.querySelectorAll('.lmsr-calendar-data-booking');
 
-    const toggleVisibility = (e) => {
+    const resetVisibility = (e) => {
       roomConfinementItems.forEach((roomConfinementItem) => {
-        if (!(roomConfinementItem.textContent.trim() === e.target.textContent.trim())) {
+        if (roomConfinementItem.textContent.trim() !== e.target.textContent.trim()) {
           const ref = roomConfinementItem;
           ref.dataset.active = 'false';
         }
       });
+      bookings.forEach((booking) => {
+        const ref = booking;
+        ref.style.display = 'block';
+      });
+    };
+
+    const toggleVisibility = (e) => {
+      resetVisibility(e);
       const state = e.target.dataset.active === 'true';
       e.target.dataset.active = !state;
       bookings.forEach((booking) => {
@@ -597,6 +634,7 @@
   exports.deleteEquipmentConfirmation = deleteEquipmentConfirmation;
   exports.deleteRoomConfirmation = deleteRoomConfirmation;
   exports.editEquipmentValidation = editEquipmentValidation;
+  exports.getBlackoutsBySelectedRoom = getBlackoutsBySelectedRoom;
   exports.getCheckedOptions = getCheckedOptions;
   exports.getColorTextWithContrast = getColorTextWithContrast;
   exports.getEquipmentBySelectedRoom = getEquipmentBySelectedRoom;
