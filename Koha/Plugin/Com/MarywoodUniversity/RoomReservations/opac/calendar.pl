@@ -229,7 +229,6 @@ AVAILABILITY_SEARCH: {
                 $cgi->param('availability-search-equipment')
                 ? split /,/smx, $cgi->param('availability-search-equipment')
                 : ();
-            my $blackout_bookings = get_all_blackout_bookings();
 
             if ($is_room_available) {    # --> go to confirmation page
                 my $displayed_start          = output_pref( { dt => $start_datetime, } );
@@ -277,6 +276,7 @@ AVAILABILITY_SEARCH: {
         }
         else {    # --> submit button not pressed, yet
             my @pre_selected_room = grep { $_->{'roomid'} == $pre_selected_room_id } @{$rooms};
+            my $blackout_bookings = get_all_blackout_bookings();
 
             $template->param(
                 op                       => $op,
@@ -287,7 +287,7 @@ AVAILABILITY_SEARCH: {
                 max_time                 => $max_time,
                 opening_hours            => $opening_hours,
                 pre_selected_room        => shift @pre_selected_room,
-                blackout_bookings        => $blackout_bookings;
+                blackout_bookings        => $blackout_bookings,
             );
         }
     }

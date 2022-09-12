@@ -147,6 +147,11 @@
             <p><strong>[% 'Room capacity:' | gettext %]</strong>&nbsp;<span>[% room.maxcapacity %]</span></p>
             <p><strong>[% 'Description:' | gettext %]</strong>&nbsp;<span>[% room.description %]</span></p>
             <p>
+              <strong>[% 'Color:' | gettext %]</strong>&nbsp;
+              <span style="height: 1em; width: 1em; border-radius: 50%; display: inline-block; background: [% room.color %];"></span>
+            </p>
+            <p><strong>[% 'Branch:' | gettext %]</strong>&nbsp;<span>[% room.branch %]</span></p>
+            <p>
               <strong>[% 'Equipment:' | gettext %]</strong>
               &nbsp;
               [% FOREACH item IN selected_room_equipment %]
@@ -434,6 +439,8 @@
               <input type="color" name="add-room-color"/>
               <label for="add-room-image">[% 'Image:' | gettext %]</label>
               <input type="text" name="add-room-image"/>
+              <label for="add-room-branch">[% 'Branch:' | gettext %]</label>
+              <input type="text" name="add-room-branch"/>
             </div>
 
             <hr>
@@ -554,6 +561,8 @@
                 <input type="color" name="edit-rooms-room-color" value="[% room.color %]" />
                 <label>[% 'Image:' | gettext %] </label>
                 <input type="text" name="edit-rooms-room-image" value="[% room.image %]" />
+                <label>[% 'Branch:' | gettext %] </label>
+                <input type="text" name="edit-rooms-room-branch" value="[% room.branch %]" />
               [% END # FOREACH room IN room_details %]
             </div>
             

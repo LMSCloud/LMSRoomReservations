@@ -127,6 +127,7 @@ sub install() {
               `description` TEXT, -- room description to display in OPAC
               `color` VARCHAR(7), -- room color to display in OPAC
               `image` TEXT, -- room image to display in OPAC
+              `branch` VARCHAR(255) -- branch that contains the room
             PRIMARY KEY (roomid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
@@ -318,6 +319,11 @@ sub upgrade {
             my $sth = C4::Context->dbh->prepare($statement);
             $sth->execute or croak C4::Context->dbh->errstr;
         }
+    }
+
+    my $column_branch_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'branch';});
+    if ( $column_branch_exists eq '0E0' ) {
+        my $rv_branch = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN branch VARCHAR(255);});
     }
 
     return 1;
@@ -995,14 +1001,14 @@ sub configure {
         );
     }
     if ( $op eq 'display-rooms-detail' ) {
-        my $roomIdToDisplay = $cgi->param('selected-displayed-room');
-        my $roomDetails     = get_room_details_by_id($roomIdToDisplay);
-        my $roomEquipment   = get_room_equipment_by_id($roomIdToDisplay);
+        my $room_id_to_display = $cgi->param('selected-displayed-room');
+        my $room_details       = get_room_details_by_id($room_id_to_display);
+        my $room_equipment     = get_room_equipment_by_id($room_id_to_display);
 
         $template->param(
             op                      => $op,
-            selected_room_details   => $roomDetails,
-            selected_room_equipment => $roomEquipment,
+            selected_room_details   => $room_details,
+            selected_room_equipment => $room_equipment,
         );
     }
     if ( $op eq 'add-rooms' ) {
@@ -1014,6 +1020,7 @@ sub configure {
             my $description        = $cgi->param('add-room-description');
             my $color              = $cgi->param('add-room-color');
             my $image              = $cgi->param('add-room-image');
+            my $branch             = $cgi->param('add-room-branch');
             my @selected_equipment = $cgi->param('selected-equipment');
 
             ## pass @selectedEquipment by reference
@@ -1023,6 +1030,7 @@ sub configure {
                     description        => $description,
                     color              => $color,
                     image              => $image,
+                    branch             => $branch,
                     selected_equipment => \@selected_equipment
                 }
             );
@@ -1055,6 +1063,7 @@ sub configure {
             my $updated_max_capacity = $cgi->param('edit-rooms-room-maxcapacity');
             my $updated_color        = $cgi->param('edit-rooms-room-color');
             my $updated_image        = $cgi->param('edit-rooms-room-image');
+            my $updated_branch       = $cgi->param('edit-rooms-room-branch');
 
             update_room_details(
                 {   room_id_to_update    => $room_id_to_update,
@@ -1062,7 +1071,8 @@ sub configure {
                     updated_description  => $updated_description,
                     updated_max_capacity => $updated_max_capacity,
                     updated_color        => $updated_color,
-                    updated_image        => $updated_image
+                    updated_image        => $updated_image,
+                    updated_branch       => $updated_branch
                 }
             );
         }

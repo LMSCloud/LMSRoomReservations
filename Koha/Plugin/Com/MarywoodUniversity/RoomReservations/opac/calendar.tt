@@ -210,6 +210,10 @@
                   [% END %]
                 </ul>
               </p>
+              <p class="card-text">
+                <b>[% 'Branch' | gettext %]</b>
+                <span>[% room.branch %]</span>
+              </p>
               <form class="lmsr-calendar-form lmsr-calendar-form-room-card" method="post" name="book-room" action="#">
                 <input type="hidden" name="op" value="availability-search" />
                 <input type="hidden" name="room-id" value="[% room.roomid %]">
@@ -370,7 +374,7 @@
               </p>
               <hr>
               <p class="card-text">
-                
+
               </p>
             </div>
           </div>
@@ -405,6 +409,10 @@
                     <li class="lmsr-list-item">[% equipmentname %]</li>
                   [% END %]
                 </ul>
+              </p>
+              <p class="card-text">
+                <b>[% 'Branch' | gettext %]</b>
+                <span>[% room.branch %]</span>
               </p>
             </div>
           </div>

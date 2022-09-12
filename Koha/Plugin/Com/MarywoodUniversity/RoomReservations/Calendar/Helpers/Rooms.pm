@@ -301,18 +301,18 @@ sub get_all_room_numbers {
 
 sub get_room_details_by_id {
 
-    my ($selectedRoomId) = @_;
+    my ($selected_room_id) = @_;
 
     my $dbh = C4::Context->dbh;
     my $sth = q{};
 
     ## Note: GROUP BY is used to prevent duplication of rows in next step
     my $query = <<~"EOF";
-        SELECT r.roomnumber, r.maxcapacity, r.description, e.equipmentname
+        SELECT r.roomnumber, r.maxcapacity, r.description, r.color, r.branch, e.equipmentname
         FROM $ROOMS_TABLE AS r, $EQUIPMENT_TABLE AS e, $ROOMEQUIPMENT_TABLE AS re
         WHERE r.roomid = re.roomid
         AND   e.equipmentid = re.equipmentid
-        AND r.roomid = $selectedRoomId
+        AND r.roomid = $selected_room_id
         GROUP BY r.roomnumber;
     EOF
 
@@ -442,14 +442,15 @@ sub add_room {
     my $description = qq{'$args->{'description'}'};
     my $color       = qq{'$args->{'color'}'};
     my $image       = qq{'$args->{'image'}'};
+    my $branch      = qq{'$args->{'branch'}'};
 
     my $dbh = C4::Context->dbh;
 
     ## first insert roomnumber and maxcapacity into $ROOMS_TABLE
     $dbh->do(
         <<~"EOF"
-            INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image)
-            VALUES ($roomnumber, $args->{'maxcapacity'}, $description, $color, $image);
+            INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image, branch)
+            VALUES ($roomnumber, $args->{'maxcapacity'}, $description, $color, $image, $branch);
         EOF
     );
 
@@ -499,13 +500,14 @@ sub update_room_details {
     my $description = qq{'$args->{'updated_description'}'};
     my $color       = qq{'$args->{'updated_color'}'};
     my $image       = qq{'$args->{'updated_image'}'};
+    my $branch      = qq{'$args->{'updated_branch'}'};
 
     ## load access to database
     my $dbh = C4::Context->dbh;
 
     my $query = <<~"EOF";
         UPDATE $ROOMS_TABLE
-        SET roomnumber = $roomnumber, maxcapacity = $args->{'updated_max_capacity'}, description = $description, color = $color, image = $image
+        SET roomnumber = $roomnumber, maxcapacity = $args->{'updated_max_capacity'}, description = $description, color = $color, image = $image, branch = $branch
         WHERE roomid = $args->{'room_id_to_update'};
     EOF
 
