@@ -239,26 +239,46 @@ sub install() {
         }
     }
 
-    my $statement = <<~'EOF';
-        INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
-            'members', 'ROOM_RESERVATION', "", "Raumreservierungsbenachrichtigung", 1, "Reservierung eines Raumes", "email", "default", 
-            "<h2>Ihre Raumreservierung wurde bestätigt</h2>
-            <hr>
-            <h3>Ihre Angaben</h3>
-            <span>Name: [% user %]</span><br>
-            <span>Raum: [% room %]</span><br>
-            <span>Von: [% from %]</span><br>
-            <span>Name: [% to %]</span>
-            <hr>
-            <h3>Ihre gebuchte Ausstattung</h3>
-            <span>[% booked_equipment %]</span>
-            <hr>
-            <h3>Zeitpunkt der Bestätigung</h3>
-            <span>[% confirmed_timestamp %]</span>"
-        );
-    EOF
+    my $sth = q{};
+    my $dbh = C4::Context->dbh;
 
-    C4::Context->dbh->do($statement);
+    my @statements = (
+        <<~'EOF',
+            INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
+                'members', 'ROOM_RESERVATION', "", "Raumreservierungsbenachrichtigung", 1, "Reservierung eines Raumes", "email", "default", 
+                "<h2>Ihre Raumreservierung wurde bestätigt</h2>
+                <hr>
+                <h3>Ihre Angaben</h3>
+                <span>Name: [% user %]</span><br>
+                <span>Raum: [% room %]</span><br>
+                <span>Von: [% from %]</span><br>
+                <span>Bis: [% to %]</span>
+                <hr>
+                <h3>Ihre gebuchte Ausstattung</h3>
+                <span>[% booked_equipment %]</span>
+                <hr>
+                <h3>Zeitpunkt der Bestätigung</h3>
+                <span>[% confirmed_timestamp %]</span>"
+            );
+        EOF
+        <<~'EOF',
+            INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
+                'members', 'ROOM_CANCELLATION', "", "Raumreservierungsstornierungsbenachrichtigung", 1, "Storinierung der Reservierung eines Raumes", "email", "default",
+                "<h2>Ihre Raumreservierung wurde storniert</h2>
+                <p>Es tut uns Leid, Sie darüber informieren zu müssen, dass Ihre Reservierung storniert werden musste.</p>
+                <hr>
+                <h3>Ihre Angaben</h3>
+                <span>Raum: [% room %]</span><br>
+                <span>Von: [% from %]</span><br>
+                <span>Bis: [% to %]</span>"
+            );
+        EOF
+    );
+
+    for my $statement (@statements) {
+        $sth = $dbh->prepare($statement);
+        $sth->execute();
+    }
 
     $self->store_data( { plugin_version => $VERSION } );    # used when upgrading to newer version
 

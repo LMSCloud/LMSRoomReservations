@@ -55,3 +55,50 @@ from Koha/Plugin/Com/MarywoodUniversity/RoomReservations to update com.marywoodu
 5) Move the .mo file to `Koha/Plugin/Com/MarywoodUniversity/RoomReservations/translations/fr/LC_MESSAGES/com.marywooduniversity.roomreservations.mo`
 6) Send us the .po and .mo files! If you know how, you can submit a pull request on GitHub!
 
+# Additional Info
+
+This plugin expects two message templates!
+
+On a clean install, these will be inserted into the database. But.. Since you most likely want to edit the messages to your patrons to look a little more 'branded' and even chique, you'll have to generate these yourself, if you just do an upgrade.
+
+The letter codes are **ROOM_RESERVATION** and **ROOM_CANCELLATION**.
+
+This is what gets inserted into the DB on a fresh install:
+
+__ROOM_RESERVATION__
+
+```sql
+INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
+    'members', 'ROOM_RESERVATION', "", "Raumreservierungsbenachrichtigung", 1, "Reservierung eines Raumes", "email", "default", 
+    "<h2>Ihre Raumreservierung wurde bestätigt</h2>
+    <hr>
+    <h3>Ihre Angaben</h3>
+    <span>Name: [% user %]</span><br>
+    <span>Raum: [% room %]</span><br>
+    <span>Von: [% from %]</span><br>
+    <span>Bis: [% to %]</span>
+    <hr>
+    <h3>Ihre gebuchte Ausstattung</h3>
+    <span>[% booked_equipment %]</span>
+    <hr>
+    <h3>Zeitpunkt der Bestätigung</h3>
+    <span>[% confirmed_timestamp %]</span>"
+);
+```
+
+__ROOM_CANCELLATION__
+
+```sql
+INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
+    'members', 'ROOM_CANCELLATION', "", "Raumreservierungsstornierungsbenachrichtigung", 1, "Storinierung der Reservierung eines Raumes", "email", "default",
+    "<h2>Ihre Raumreservierung wurde storniert</h2>
+    <p>Es tut uns Leid, Sie darüber informieren zu müssen, dass Ihre Reservierung storniert werden musste.</p>
+    <hr>
+    <h3>Ihre Angaben</h3>
+    <span>Raum: [% room %]</span><br>
+    <span>Von: [% from %]</span><br>
+    <span>Bis: [% to %]</span>"
+);
+```
+
+Just remember to insert these if you're wondering why no mails reach their respective targets.

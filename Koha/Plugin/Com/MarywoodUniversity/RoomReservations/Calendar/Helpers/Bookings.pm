@@ -6,8 +6,10 @@ use strict;
 use warnings;
 use utf8;
 use C4::Context;
+use C4::Letters;
 use Exporter qw(import);
 use Time::Piece;
+use Koha::Patrons;
 
 our $VERSION = '1.0.0';
 our @EXPORT  = qw(
@@ -88,22 +90,76 @@ sub add_booking {
 
 sub delete_booking_by_id {
 
-    my ($bookingId) = @_;
+    my ($booking_id) = @_;
 
     my $dbh = C4::Context->dbh;
 
-    my $sth = q{};
+    my $sth_query     = q{};
+    my $sth_statement = q{};
 
-    my $query = qq{DELETE FROM bookings WHERE bookingid = $bookingId;};
+    my $query = <<~"EOF";
+        SELECT b.borrowernumber, r.roomnumber,
+        DATE_FORMAT(b.start, '%d.%m.%Y %H:%i') AS start, DATE_FORMAT(b.end, '%d.%m.%Y %H:%i') AS end
+        FROM $BOOKINGS_TABLE b, $ROOMS_TABLE r
+        WHERE b.roomid = r.roomid
+        AND b.bookingid = ?;
+    EOF
+    my $statement = qq{DELETE FROM $BOOKINGS_TABLE WHERE bookingid = ?;};
 
-    $sth = $dbh->prepare($query);
+    $sth_query = $dbh->prepare($query);
+    $sth_query->execute($booking_id);
 
-    my $count = $sth->execute();
+    my @bookings;
+    while ( my $row = $sth_query->fetchrow_hashref() ) {
+        push @bookings, $row;
+    }
+
+    my $booking = shift @bookings;
+
+    $sth_statement = $dbh->prepare($statement);
+    my $count = $sth_statement->execute($booking_id);
 
     if ( $count == 0 ) {    # no row(s) affected
         return 0;
     }
     else {                  # sucessfully deleted row(s)
+        my $patron = Koha::Patrons->find( $booking->{'borrowernumber'} );
+        my $letter = C4::Letters::GetPreparedLetter(
+            module                 => 'members',
+            letter_code            => 'ROOM_CANCELLATION',
+            lang                   => $patron->lang,
+            message_transport_type => 'email',
+            substitute             => {
+                room => $booking->{'roomnumber'},
+                from => $booking->{'start'},
+                to   => $booking->{'end'},
+            },
+        );
+
+        my @message_ids;
+        push @message_ids,
+            C4::Letters::EnqueueLetter(
+            {   letter                 => $letter,
+                borrowernumber         => $booking->{'borrowernumber'},
+                branchcode             => $patron->branchcode,
+                message_transport_type => 'email',
+            }
+            );
+
+        if ( C4::Context->preference('ReplytoDefault') ) {
+            push @message_ids,
+                C4::Letters::EnqueueLetter(
+                {   letter                 => $letter,
+                    to_address             => C4::Context->preference('ReplytoDefault'),
+                    branchcode             => $patron->branchcode,
+                    message_transport_type => 'email',
+                }
+                );
+        }
+
+        for my $message_id (@message_ids) {
+            C4::Letters::SendQueuedMessages( { message_id => $message_id } );
+        }
         return 1;
     }
 }
