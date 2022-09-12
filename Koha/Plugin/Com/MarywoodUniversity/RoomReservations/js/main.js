@@ -566,11 +566,17 @@
     const bookings = document.querySelectorAll('.lmsr-calendar-data-booking');
 
     const toggleVisibility = (e) => {
+      roomConfinementItems.forEach((roomConfinementItem) => {
+        if (!(roomConfinementItem.textContent.trim() === e.target.textContent.trim())) {
+          const ref = roomConfinementItem;
+          ref.dataset.active = 'false';
+        }
+      });
       const state = e.target.dataset.active === 'true';
       e.target.dataset.active = !state;
       bookings.forEach((booking) => {
         const ref = booking;
-        if (booking.firstElementChild.textContent.trim() === e.target.textContent.trim()) {
+        if (!(booking.firstElementChild.textContent.trim() === e.target.textContent.trim())) {
           ref.style.display = state ? 'block' : 'none';
         }
       });
