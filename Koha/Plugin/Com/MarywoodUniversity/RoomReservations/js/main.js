@@ -630,6 +630,17 @@
     });
   }
 
+  function notifyOnSubmitWithMessage({ type, message }) {
+    const lmsrNotifications = document.getElementById('lmsr-notifications');
+    lmsrNotifications.innerHTML = '';
+    const lmsrToast = document.createElement('lmsr-toast', { is: 'lmsr-toast' });
+    lmsrToast.innerHTML = `
+    <strong slot="title">${type}</strong>
+    <p slot="message">${message}</p>
+  `;
+    lmsrNotifications.appendChild(lmsrToast);
+  }
+
   exports.closeToast = closeToast;
   exports.deleteEquipmentConfirmation = deleteEquipmentConfirmation;
   exports.deleteRoomConfirmation = deleteRoomConfirmation;
@@ -640,6 +651,7 @@
   exports.getEquipmentBySelectedRoom = getEquipmentBySelectedRoom;
   exports.hydrateRoomConfinement = hydrateRoomConfinement;
   exports.loadSelectedAction = loadSelectedAction;
+  exports.notifyOnSubmitWithMessage = notifyOnSubmitWithMessage;
   exports.renderCalendar = renderCalendar;
   exports.setBlackoutValueOnChange = setBlackoutValueOnChange;
   exports.validateAddEquipment = validateAddEquipment;

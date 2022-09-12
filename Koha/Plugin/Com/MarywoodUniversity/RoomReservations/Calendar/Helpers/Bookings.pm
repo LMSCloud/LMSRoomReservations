@@ -124,7 +124,7 @@ sub add_blackout_booking {
     );
 
     for my $statement (@statements) {
-        $sth->prepare($statement);
+        $sth = $dbh->prepare($statement);
         $sth->execute();
     }
 

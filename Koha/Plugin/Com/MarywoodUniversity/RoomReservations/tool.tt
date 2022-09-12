@@ -222,33 +222,19 @@
           <input type="hidden" name="method" value="[% METHOD %]" />
           <input type="hidden" name="op" value="manage-reservations" />
           [% IF deleted == 1 %]
-            <div class="lmsr-toast">
-              <div class="lmsr-toast-header">
-                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                <strong>Warning</strong>
-                <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
-                  <span aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></span>
-                </button>
-              </div>
-              <div class="lmsr-toast-body">
-                <p>[% 'There was a problem deleting the selected booking. Please try again' | gettext %]</p>
-              </div>
-            </div>
-            <script>RoomReservationBundle.closeToast();</script>
+            <div id="lmsr-notifications"></div>
+            <script>
+              RoomReservationBundle.notifyOnSubmitWithMessage(
+                { type: 'Fehler', message: "[% 'There was a problem deleting the selected booking. Please try again' | gettext %]"}
+              );
+            </script>
           [% ELSIF deleted == 0 %]
-            <div class="lmsr-toast">
-              <div class="lmsr-toast-header">
-                <i class="fa fa-check" aria-hidden="true"></i>
-                <strong>Success</strong>
-                <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
-                  <span aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></span>
-                </button>
-              </div>
-              <div class="lmsr-toast-body">
-                <p>[% 'Selected booking deleted successfully' | gettext %]</p>
-              </div>
-            </div>
-            <script>RoomReservationBundle.closeToast();</script>
+            <div id="lmsr-notifications"></div>
+            <script>
+              RoomReservationBundle.notifyOnSubmitWithMessage(
+                { type: 'Erfolg', message: "[% 'Selected booking deleted successfully' | gettext %]"}
+              );
+            </script>
           [% END # IF deleted %]
           [% IF bookings %]
     
