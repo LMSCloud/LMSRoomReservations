@@ -16,6 +16,9 @@
   --breakpoint-md: 1024px;
 
   --seperator-light: rgba(0, 0, 0, 0.1);
+
+  --system-ui: system, -apple-system, ".SFNSText-Regular", "San Francisco",
+    "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
 }
 
 .fieldset-auto-width {
@@ -39,7 +42,7 @@ button#jump-to-calendar {
   right: 1em;
   bottom: 1em;
   -webkit-box-shadow: var(--shadow-hv);
-          box-shadow: var(--shadow-hv);
+  box-shadow: var(--shadow-hv);
   z-index: 1;
   border-radius: 50% !important;
   padding: 1em !important;
@@ -51,6 +54,10 @@ button#jump-to-calendar * {
   height: 16px;
 }
 
+div#doc3 {
+  font-family: var(--system-ui);
+}
+
 div#doc3 > form,
 div#doc3 > div {
   display: -webkit-box;
@@ -58,8 +65,8 @@ div#doc3 > div {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 div#doc3 > h3 {
@@ -126,7 +133,7 @@ input[name="confirmationSubmit"]:hover,
   position: relative;
   top: -3px;
   -webkit-box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
-          box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
+  box-shadow: 1px 2px 4px rgb(0 0 0 / 20%);
 }
 
 input[name="startOverSubmit"]:hover {
@@ -142,7 +149,7 @@ input[name="confirmationSubmit"]:active,
 .lmsr-calendar-room-confinement-item:active {
   top: 0;
   -webkit-box-shadow: none;
-          box-shadow: none;
+  box-shadow: none;
 }
 
 input[name="startOverSubmit"]:active {
@@ -159,6 +166,7 @@ input[type="time"],
 input[type="date"],
 input[type="number"],
 input[type="text"],
+input[type="datetime-local"],
 textarea {
   border-radius: 7px;
   border-color: var(--seperator-light);
@@ -169,7 +177,7 @@ textarea {
   border: var(--seperator-light);
   border-radius: 12px;
   -webkit-box-shadow: var(--shadow-md);
-          box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md);
 }
 
 .lmsr-action-table-bookas,
@@ -183,25 +191,25 @@ textarea {
   grid-template-rows: auto auto;
   justify-items: stretch;
   -webkit-box-align: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
   border-top: 1px solid var(--seperator-light);
   border-right: 1px solid var(--seperator-light);
 }
 
 .lmsr-action-table-bookas {
-  -ms-grid-columns: 2em (1fr)[2];
+  -ms-grid-columns: 2em (1fr) [2];
   grid-template-columns: 2em repeat(2, 1fr);
 }
 
 .lmsr-action-table-delete-reservations {
-  -ms-grid-columns: 2em (1fr)[5];
+  -ms-grid-columns: 2em (1fr) [5];
   grid-template-columns: 2em repeat(5, 1fr);
 }
 
 .lmsr-action-table-delete-opening-hours,
 .lmsr-action-table-delete-blackouts {
-  -ms-grid-columns: 2em (1fr)[3];
+  -ms-grid-columns: 2em (1fr) [3];
   grid-template-columns: 2em repeat(3, 1fr);
 }
 
@@ -209,7 +217,6 @@ textarea {
   -ms-grid-columns: 2em 1fr;
   grid-template-columns: 2em 1fr;
 }
-
 
 .lmsr-action-table-delete-opening-hours span,
 .lmsr-action-table-delete-reservations span,
@@ -254,10 +261,11 @@ textarea {
   width: 100%;
   border-radius: 12px 12px 11px 11px;
   border: 1px solid var(--seperator-light);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   color: rgba(0, 0, 0, 0.8);
   -webkit-box-shadow: var(--shadow-md);
-          box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md);
 }
 
 .lmsr-calendar-controls {
@@ -266,18 +274,18 @@ textarea {
   display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
   -ms-flex-wrap: nowrap;
-      flex-wrap: nowrap;
+  flex-wrap: nowrap;
   -ms-flex-line-pack: center;
-      align-content: center;
+  align-content: center;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   border-bottom: 2px solid var(--seperator-light);
 }
 
@@ -292,16 +300,16 @@ textarea {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   border-top: 1px solid var(--seperator-light);
   border-radius: 0 0 12px 12px;
 }
 
 .lmsr-calendar-foot div.lmsr-calendar-row {
   -webkit-box-pack: right;
-      -ms-flex-pack: right;
-          justify-content: right;
+  -ms-flex-pack: right;
+  justify-content: right;
 }
 
 .lmsr-calendar-data-booking {
@@ -323,11 +331,11 @@ textarea {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   overflow-y: scroll;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
   flex-grow: 1;
   flex-basis: 0;
   transition: flex-grow 0.3s;
@@ -365,11 +373,11 @@ textarea {
   display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-      -ms-flex-flow: row nowrap;
-          flex-flow: row nowrap;
+  -ms-flex-flow: row nowrap;
+  flex-flow: row nowrap;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   gap: 0.5em;
 }
 
@@ -379,7 +387,7 @@ textarea {
 
 .lmsr-calendar-form-room-card input {
   background-color: transparent;
-  color: #0074AD;
+  color: #0074ad;
   text-decoration: underline;
 }
 
@@ -388,7 +396,7 @@ textarea {
   position: static;
   text-decoration: underline;
   -webkit-box-shadow: none;
-          box-shadow: none;
+  box-shadow: none;
   color: rgba(0, 116, 173, 0.8);
 }
 
@@ -482,7 +490,7 @@ textarea {
 }
 
 .lmsr-calendar-row:last-child .lmsr-calendar-data:last-child {
-border-radius: 0 0 9px 0;
+  border-radius: 0 0 9px 0;
 }
 
 .lmsr-calendar-vertical-separator {
@@ -535,7 +543,7 @@ border-radius: 0 0 9px 0;
 
 .lmsr-card {
   -webkit-box-shadow: var(--shadow-sm);
-          box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm);
   margin: 1em 0;
 }
 
@@ -564,8 +572,8 @@ border-radius: 0 0 9px 0;
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   gap: 2em;
 }
 
@@ -577,8 +585,8 @@ border-radius: 0 0 9px 0;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: space-evenly;
-      -ms-flex-pack: space-evenly;
-          justify-content: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
 }
 
 .lmsr-data-picker,
@@ -588,12 +596,41 @@ border-radius: 0 0 9px 0;
 .lmsr-number-picker,
 .lmsr-picker > label {
   -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
 }
 
 lmsr-equipment-selection {
   display: block;
+}
+
+lmsr-edit-modal {
+  position: fixed;
+  top: 50%;
+  left: 35%;
+  height: 200px;
+  width: 30%;
+  background: white;
+  border: 2px solid var(--seperator-light);
+  border-radius: 12px;
+  padding: 1.5em 2.5em;
+  box-shadow: var(--shadow-hv);
+}
+
+lmsr-edit-modal div:last-child {
+  text-align: right;
+  padding: 0 1em;
+}
+
+#lmsr-edit-modal {
+  display: none;
+}
+
+.lmsr-edit-modal-body {
+  display: grid;
+  padding: 1em;
+  grid-template-columns: 1fr 2fr;
+  align-items: baseline;
 }
 
 #lmsr-heading-main {
@@ -628,11 +665,11 @@ lmsr-equipment-selection {
   border-style: solid;
   border-color: #00a8a8;
   -webkit-transform-origin: bottom left;
-      -ms-transform-origin: bottom left;
-          transform-origin: bottom left;
+  -ms-transform-origin: bottom left;
+  transform-origin: bottom left;
   -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-          transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 
 .lmsr-menu {
@@ -655,8 +692,8 @@ lmsr-equipment-selection {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   gap: 1em;
 }
 
@@ -677,8 +714,8 @@ lmsr-equipment-selection {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 
 .lmsr-menu-list-heading {
@@ -704,8 +741,8 @@ lmsr-equipment-selection {
 .lmsr-picker {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .lmsr-number-picker:nth-child(even),
@@ -716,7 +753,7 @@ lmsr-equipment-selection {
 .lmsr-pill {
   padding: 0.375em;
   background-color: darkslategrey;
-  color: #FFFFFF;
+  color: #ffffff;
   border: 1px solid transparent;
   border-radius: 7px;
   line-height: 2.5em;
@@ -738,7 +775,7 @@ lmsr-equipment-selection {
   border-radius: 7px;
   border: 1px solid var(--seperator-light);
   -webkit-box-shadow: var(--shadow-hv);
-          box-shadow: var(--shadow-hv);
+  box-shadow: var(--shadow-hv);
 }
 
 .lmsr-toast-body {
@@ -757,23 +794,26 @@ lmsr-equipment-selection {
   border-radius: 7px;
 }
 
-.lmsr-toast-button-close:hover {
+.lmsr-toast-button-close:hover,
+.lmsr-modal-button-close:hover {
   background: crimson;
 }
 
-.lmsr-toast-button-close:hover span {
-  color: white
+.lmsr-toast-button-close:hover span,
+.lmsr-modal-button-close:hover span {
+  color: white;
 }
 
-.lmsr-toast-header {
+.lmsr-toast-header,
+.lmsr-edit-modal-header {
   border-bottom: 1px solid var(--seperator-light);
   border-radius: 7px 7px 0 0;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 
 .table-header-bold {

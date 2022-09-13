@@ -309,7 +309,7 @@ sub get_room_details_by_id {
 
     ## Note: GROUP BY is used to prevent duplication of rows in next step
     my $query = <<~"EOF";
-        SELECT r.roomnumber, r.maxcapacity, r.description, r.color, r.branch, e.equipmentname
+        SELECT r.roomnumber, r.maxcapacity, r.description, r.color, r.branch, r.maxbookabletime, e.equipmentname
         FROM $ROOMS_TABLE AS r, $EQUIPMENT_TABLE AS e, $ROOMEQUIPMENT_TABLE AS re
         WHERE r.roomid = re.roomid
         AND   e.equipmentid = re.equipmentid
@@ -439,19 +439,20 @@ sub add_room {
     my ($args) = @_;
 
     ## make $roomnumber SQL-friendly by surrounding with single quotes
-    my $roomnumber  = qq{'$args->{'roomnumber'}'};
-    my $description = qq{'$args->{'description'}'};
-    my $color       = qq{'$args->{'color'}'};
-    my $image       = qq{'$args->{'image'}'};
-    my $branch      = qq{'$args->{'branch'}'};
+    my $roomnumber      = qq{'$args->{'roomnumber'}'};
+    my $description     = qq{'$args->{'description'}'};
+    my $color           = qq{'$args->{'color'}'};
+    my $image           = qq{'$args->{'image'}'};
+    my $branch          = qq{'$args->{'branch'}'};
+    my $maxbookabletime = qq{'$args->{'maxbookabletime'}'};
 
     my $dbh = C4::Context->dbh;
 
     ## first insert roomnumber and maxcapacity into $ROOMS_TABLE
     $dbh->do(
         <<~"EOF"
-            INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image, branch)
-            VALUES ($roomnumber, $args->{'maxcapacity'}, $description, $color, $image, $branch);
+            INSERT IGNORE INTO $ROOMS_TABLE (roomnumber, maxcapacity, description, color, image, branch, maxbookabletime)
+            VALUES ($roomnumber, $args->{'maxcapacity'}, $description, $color, $image, $branch, $maxbookabletime);
         EOF
     );
 
@@ -497,18 +498,19 @@ sub update_room_details {
     # roomid, roomnumber, description, maxcapacity, color, image
     my ($args) = @_;
 
-    my $roomnumber  = qq{'$args->{'updated_room_number'}'};
-    my $description = qq{'$args->{'updated_description'}'};
-    my $color       = qq{'$args->{'updated_color'}'};
-    my $image       = qq{'$args->{'updated_image'}'};
-    my $branch      = qq{'$args->{'updated_branch'}'};
+    my $roomnumber      = qq{'$args->{'updated_room_number'}'};
+    my $description     = qq{'$args->{'updated_description'}'};
+    my $color           = qq{'$args->{'updated_color'}'};
+    my $image           = qq{'$args->{'updated_image'}'};
+    my $branch          = qq{'$args->{'updated_branch'}'};
+    my $maxbookabletime = qq{'$args->{'updated_max_bookable_time'}'};
 
     ## load access to database
     my $dbh = C4::Context->dbh;
 
     my $query = <<~"EOF";
         UPDATE $ROOMS_TABLE
-        SET roomnumber = $roomnumber, maxcapacity = $args->{'updated_max_capacity'}, description = $description, color = $color, image = $image, branch = $branch
+        SET roomnumber = $roomnumber, maxcapacity = $args->{'updated_max_capacity'}, description = $description, color = $color, image = $image, branch = $branch, maxbookabletime = $maxbookabletime
         WHERE roomid = $args->{'room_id_to_update'};
     EOF
 

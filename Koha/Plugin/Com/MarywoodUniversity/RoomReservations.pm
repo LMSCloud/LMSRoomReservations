@@ -127,7 +127,8 @@ sub install() {
               `description` TEXT, -- room description to display in OPAC
               `color` VARCHAR(7), -- room color to display in OPAC
               `image` TEXT, -- room image to display in OPAC
-              `branch` VARCHAR(255) -- branch that contains the room
+              `branch` VARCHAR(255), -- branch that contains the room
+              `maxbookabletime` INT -- the maximum timespan for a booking on this room
             PRIMARY KEY (roomid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
@@ -345,6 +346,11 @@ sub upgrade {
     my $column_branch_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'branch';});
     if ( $column_branch_exists eq '0E0' ) {
         my $rv_branch = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN branch VARCHAR(255);});
+    }
+
+    my $column_max_bookable_time_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'maxbookabletime';});
+    if ( $column_max_bookable_time_exists eq '0E0' ) {
+        my $rv_branch = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN maxbookabletime INT;});
     }
 
     return 1;
@@ -602,11 +608,13 @@ sub tool {
             when ('action-manage-reservations') {
                 my $bookings  = get_all_bookings();
                 my $equipment = load_all_equipment();
+                my $rooms     = get_all_room_numbers();
 
                 $template->param(
                     op        => 'manage-reservations',
                     bookings  => $bookings,
                     equipment => $equipment,
+                    rooms     => $rooms,
                 );
             }
 
@@ -672,21 +680,22 @@ sub tool {
     }
 
     if ( $op eq 'manage-reservations' ) {
-        my $selected = $cgi->param('manage-bookings-action');
-
-        my $selectedId = $cgi->param('manage-bookings-id');
+        my $selected    = $cgi->param('manage-bookings-action');
+        my $selected_id = $cgi->param('manage-bookings-id');
 
         if ( $selected eq 'delete' ) {
 
-            my $deleted   = delete_booking_by_id($selectedId);
+            my $deleted   = delete_booking_by_id($selected_id);
             my $bookings  = get_all_bookings();
             my $equipment = load_all_equipment();
+            my $rooms     = get_all_room_numbers();
 
             if ( $deleted == 0 ) {
                 $template->param(
                     deleted   => 1,
                     bookings  => $bookings,
                     equipment => $equipment,
+                    rooms     => $rooms,
 
                 );
             }
@@ -695,11 +704,40 @@ sub tool {
                     deleted   => 0,
                     bookings  => $bookings,
                     equipment => $equipment,
+                    rooms     => $rooms,
+
                 );
             }
         }
 
-        $template->param( op => $op, );
+        if ( $selected eq 'edit' ) {
+
+            my $bookings  = get_all_bookings();
+            my $equipment = load_all_equipment();
+            my $rooms     = get_all_room_numbers();
+
+            my $updated_roomid    = $cgi->param('edited-booking-roomnumber');
+            my $updated_start     = $cgi->param('edited-booking-start');
+            my $updated_end       = $cgi->param('edited-booking-end');
+            my $updated_equipment = $cgi->param('edited-booking-equipment');
+            my $booking_id        = $cgi->param('edited-booking-id');
+
+            my $updated = update_booking_by_id(
+                {   roomid    => $updated_roomid,
+                    start     => $updated_start,
+                    end       => $updated_end,
+                    bookingid => $booking_id,
+                }
+            );
+
+            $template->param(
+                bookings  => $bookings,
+                equipment => $equipment,
+                rooms     => $rooms,
+            );
+        }
+
+        $template->param( op => $op );
     }
 
     if ( $op eq 'manage-blackouts' ) {
@@ -1048,6 +1086,7 @@ sub configure {
             my $color              = $cgi->param('add-room-color');
             my $image              = $cgi->param('add-room-image');
             my $branch             = $cgi->param('add-room-branch');
+            my $maxbookabletime    = $cgi->param('add-room-maxbookabletime');
             my @selected_equipment = $cgi->param('selected-equipment');
 
             ## pass @selectedEquipment by reference
@@ -1058,6 +1097,7 @@ sub configure {
                     color              => $color,
                     image              => $image,
                     branch             => $branch,
+                    maxbookabletime    => $maxbookabletime,
                     selected_equipment => \@selected_equipment
                 }
             );
@@ -1086,22 +1126,24 @@ sub configure {
         }
 
         if ( $room_details_updated eq '1' ) {
-            my $room_id_to_update    = $cgi->param('room-details-updated-roomid');
-            my $updated_room_number  = $cgi->param('edit-rooms-room-roomnumber');
-            my $updated_description  = $cgi->param('edit-rooms-room-description');
-            my $updated_max_capacity = $cgi->param('edit-rooms-room-maxcapacity');
-            my $updated_color        = $cgi->param('edit-rooms-room-color');
-            my $updated_image        = $cgi->param('edit-rooms-room-image');
-            my $updated_branch       = $cgi->param('edit-rooms-room-branch');
+            my $room_id_to_update         = $cgi->param('room-details-updated-roomid');
+            my $updated_room_number       = $cgi->param('edit-rooms-room-roomnumber');
+            my $updated_description       = $cgi->param('edit-rooms-room-description');
+            my $updated_max_capacity      = $cgi->param('edit-rooms-room-maxcapacity');
+            my $updated_color             = $cgi->param('edit-rooms-room-color');
+            my $updated_image             = $cgi->param('edit-rooms-room-image');
+            my $updated_branch            = $cgi->param('edit-rooms-room-branch');
+            my $updated_max_bookable_time = $cgi->param('edit-rooms-room-maxbookabletime');
 
             update_room_details(
-                {   room_id_to_update    => $room_id_to_update,
-                    updated_room_number  => $updated_room_number,
-                    updated_description  => $updated_description,
-                    updated_max_capacity => $updated_max_capacity,
-                    updated_color        => $updated_color,
-                    updated_image        => $updated_image,
-                    updated_branch       => $updated_branch
+                {   room_id_to_update         => $room_id_to_update,
+                    updated_room_number       => $updated_room_number,
+                    updated_description       => $updated_description,
+                    updated_max_capacity      => $updated_max_capacity,
+                    updated_color             => $updated_color,
+                    updated_image             => $updated_image,
+                    updated_branch            => $updated_branch,
+                    updated_max_bookable_time => $updated_max_bookable_time,
                 }
             );
         }

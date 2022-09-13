@@ -214,9 +214,30 @@
   [% END # op == 'manage-openings' %]
 
   [% IF op == 'manage-reservations' %]
+
+  <template id="lmsr-edit-modal-template">
+    <form name="editBookingForm" method="post" action="#">
+      <div class="lmsr-edit-modal">
+        <div class="lmsr-edit-modal-header">
+          <strong>&quest;</strong>
+          <slot name="title"></slot>
+          <button type="button" class="lmsr-button-close lmsr-modal-button-close" aria-label="Close" disabled>
+            <span aria-hidden="true">&times;</i></span>
+          </button>
+        </div>
+        <slot name="content"></slot>
+        <slot name="hidden-inputs"></slot>
+        <slot name="submit"></slot>
+      </div>
+    </form>
+    <style>
+      @import url('/api/v1/contrib/roomreservations/static/css/main.css');
+    </style>
+    <script>RoomReservationBundle.closeModal({ selector: 'lmsr-edit-modal'});</script>
+  </template>
+
     <div class="lmsr-content-main">
       <div class="lmsr-content-block-exception">
-        <!-- TODO: add JS validation to check only one action item is selected - if (count > 1) -->
         <form name="manageBookingsForm" method="post" action="#">
           <input type="hidden" name="class" value="[% CLASS %]" />
           <input type="hidden" name="method" value="[% METHOD %]" />
@@ -271,21 +292,32 @@
               <span class="lmsr-action-table-header-item lmsr-visibility-hidden"></span>
               <select name="manage-bookings-action">
                 <option value="">[% 'Actions' | gettext %]</option>
+                <option value="edit">[% 'Edit' | gettext %]</option>
                 <option value="delete">[% 'Delete' | gettext %]</option>
               </select>
 
-
-              <input type="submit" name="submit-manage-bookings" value="[% 'Submit' | gettext %]" disabled/>
+              <input type="hidden" name="edited-booking-roomnumber" id="edited-booking-roomnumber">
+              <input type="hidden" name="edited-booking-start" id="edited-booking-start">
+              <input type="hidden" name="edited-booking-end" id="edited-booking-end">
+              <input type="hidden" name="edited-booking-equipment" id="edited-booking-equipment">
+              <input type="hidden" name="edited-booking-id" id="edited-booking-id">
+              <input type="submit" name="submit-manage-bookings" id="submit-manage-bookings" value="[% 'Submit' | gettext %]" disabled/>
             </div>
+            
+            
           [% ELSE %]
             <h5>[% 'No bookings found!' | gettext %]</h5>
           [% END # IF bookings %]
         </form>
+        <div id="lmsr-edit-modal"></div>
         <div id="lmsr-notifications"></div>
         <script>
+          const bookings = [% bookings.json %];
+          const equipment = [% equipment.json %];
+          const rooms = [% rooms.json %];
           const manageBookingsForm = document.querySelector('form[name="manageBookingsForm"]');
           const inputSubmitManageBookings = document.querySelector('input[name="submit-manage-bookings"]');
-          manageBookingsForm.addEventListener('submit', (e) => RoomReservationBundle.validateBookingAction(e));
+          manageBookingsForm.addEventListener('submit', (e) => RoomReservationBundle.validateBookingAction({ e, bookings, equipment, rooms }));
           inputSubmitManageBookings.disabled = false;
         </script>
       </div>
@@ -529,15 +561,15 @@
       });
 
       actionsMenu.forEach((action) => {
-          action.addEventListener('click', (e) => {
-              actionsInput.setAttribute('value', `${e.target.dataset.value}`);
-              actionsSubmit.click();
-          });
+        action.addEventListener('click', (e) => {
+          actionsInput.setAttribute('value', `${e.target.dataset.value}`);
+          actionsSubmit.click();
+        });
       });
     });
 
     if ( window.history.replaceState ) { 
-        window.history.replaceState( null, null, window.location.href ); 
+      window.history.replaceState( null, null, window.location.href ); 
     } 
   </script>
 [% INCLUDE 'intranet-bottom.inc' %]

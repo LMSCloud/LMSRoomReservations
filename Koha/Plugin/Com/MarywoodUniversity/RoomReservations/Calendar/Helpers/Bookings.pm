@@ -19,6 +19,8 @@ our @EXPORT  = qw(
     add_blackout_booking
     get_all_blackout_bookings
     get_all_bookings
+    get_booking_by_id
+    update_booking_by_id
 );
 
 my $ROOMS_TABLE              = 'booking_rooms';
@@ -264,6 +266,48 @@ sub get_all_bookings {
     }
 
     return \@all_bookings;
+}
+
+sub get_booking_by_id {
+
+    my ($selected_booking_id) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $query = <<~"EOF";
+        SELECT *
+        FROM $BOOKINGS_TABLE
+        WHERE bookingid = ?;
+    EOF
+
+    $sth = $dbh->prepare($query);
+    $sth->execute($selected_booking_id);
+
+    my $row = $sth->fetchrow_hashref();
+
+    return \$row;
+
+}
+
+sub update_booking_by_id {
+
+    my ($args) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = q{};
+
+    my $booking_update = <<~"EOF";
+        UPDATE $BOOKINGS_TABLE
+        SET roomid = ?, start = ?, end = ?
+        WHERE bookingid = ?;
+    EOF
+
+    $sth = $dbh->prepare($booking_update);
+    $sth->execute( $args->{'roomid'}, $args->{'start'}, $args->{'end'}, $args->{'bookingid'} );
+
+    return 1;
+
 }
 
 1;

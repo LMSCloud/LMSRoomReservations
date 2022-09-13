@@ -151,6 +151,7 @@
               <span style="height: 1em; width: 1em; border-radius: 50%; display: inline-block; background: [% room.color %];"></span>
             </p>
             <p><strong>[% 'Branch:' | gettext %]</strong>&nbsp;<span>[% room.branch %]</span></p>
+            <p><strong>[% 'Max. bookable time:' | gettext %]</strong>&nbsp;<span>[% room.maxbookabletime %]&nbsp;min</span></p>
             <p>
               <strong>[% 'Equipment:' | gettext %]</strong>
               &nbsp;
@@ -430,22 +431,24 @@
           <div class="lmsr-action-table">
             <div class="lmsr-picker">
               <label for="add-room-roomnumber">[% 'Room Name:' | gettext %]</label>
-              <input type="text" name="add-room-roomnumber" />
+              <input type="text" placeholder="[% 'Insert any alphanumeric character combination.' | gettext %]" name="add-room-roomnumber" />
               <label for="add-room-maxcapacity">[% 'Max Capacity:' | gettext %]</label>
-              <input type="text" name="add-room-maxcapacity" size="4" maxlength="4" />
+              <input type="text" placeholder="[% 'Insert the max. number of people allowed in this room.' | gettext %]" name="add-room-maxcapacity" size="4" maxlength="4" />
               <label for="add-room-description">[% 'Description:' | gettext %]</label>
-              <input type="text" name="add-room-description"/>
+              <input type="text" placeholder="[% 'Insert any description for the new room.' | gettext %]" name="add-room-description"/>
               <label for="add-room-color">[% 'Color:' | gettext %]</label>
               <input type="color" name="add-room-color"/>
               <label for="add-room-image">[% 'Image:' | gettext %]</label>
-              <input type="text" name="add-room-image"/>
+              <input type="text" placeholder="[% 'Insert a path to an image, starting from the webroot.' | gettext %]" name="add-room-image"/>
               <label for="add-room-branch">[% 'Branch:' | gettext %]</label>
               <select name="add-room-branch" id="add-room-branch">
                 <option value="[% room.branch %]">[% room.branch %]</option>
                 [% FOREACH branch IN branches %]
-                  <option value="[% branch.branchname %]">[% branch.branchname %]</option>
+                <option value="[% branch.branchname %]">[% branch.branchname %]</option>
                 [% END %]
               </select>
+              <label for="add-room-maxbookabletime">[% 'Max. bookable time (min):' | gettext %]</label>
+              <input type="number" placeholder="[% 'Insert a max. bookable time in minutes.' | gettext %]" name="add-room-maxbookabletime"/>
             </div>
 
             <hr>
@@ -557,22 +560,24 @@
               [% FOREACH room IN room_details %]
                 <input type="hidden" name="room-details-updated-roomid" value="[% room.roomid %]" />
                 <label>[% 'Room Name:' | gettext %] </label>
-                <input type="text" name="edit-rooms-room-roomnumber" value="[% room.roomnumber %]" />
+                <input type="text" placeholder="[% 'Insert any alphanumeric character combination.' | gettext %]" name="edit-rooms-room-roomnumber" value="[% room.roomnumber %]" />
                 <label>[% 'Max Capacity:' | gettext %] </label>
-                <input type="text" name="edit-rooms-room-maxcapacity" size="4" maxlength="4" value="[% room.maxcapacity %]" />
+                <input type="text" placeholder="[% 'Insert the max. number of people allowed in this room.' | gettext %]" name="edit-rooms-room-maxcapacity" size="4" maxlength="4" value="[% room.maxcapacity %]" />
                 <label>[% 'Description:' | gettext %] </label>
-                <input type="text" name="edit-rooms-room-description" value="[% room.description %]" />
+                <input type="text" placeholder="[% 'Insert any description for the new room.' | gettext %]" name="edit-rooms-room-description" value="[% room.description %]" />
                 <label>[% 'Color:' | gettext %] </label>
                 <input type="color" name="edit-rooms-room-color" value="[% room.color %]" />
                 <label>[% 'Image:' | gettext %] </label>
-                <input type="text" name="edit-rooms-room-image" value="[% room.image %]" />
+                <input type="text" placeholder="[% 'Insert a path to an image, starting from the webroot.' | gettext %]" name="edit-rooms-room-image" value="[% room.image %]" />
                 <label>[% 'Branch:' | gettext %] </label>
                 <select name="edit-rooms-room-branch" id="edit-rooms-room-branch">
-                    <option value="[% room.branch %]">[% room.branch %]</option>
+                  <option value="[% room.branch %]">[% room.branch %]</option>
                   [% FOREACH branch IN branches %]
-                    <option value="[% branch.branchname %]">[% branch.branchname %]</option>
+                  <option value="[% branch.branchname %]">[% branch.branchname %]</option>
                   [% END %]
                 </select>
+                <label>[% 'Max. bookable time (min):' | gettext %] </label>
+                <input type="text" placeholder="[% 'Insert a max. bookable time in minutes.' | gettext %]" name="edit-rooms-room-maxbookabletime" value="[% room.maxbookabletime %]" />
               [% END # FOREACH room IN room_details %]
             </div>
             
