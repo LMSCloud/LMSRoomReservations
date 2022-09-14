@@ -257,7 +257,7 @@ textarea {
 .lmsr-button-close:active {
   border: none;
   background: none;
-  color: dodgerblue;
+  color: black;
 }
 
 .lmsr-calendar {
@@ -614,7 +614,6 @@ lmsr-edit-modal {
   position: fixed;
   top: 50%;
   left: 35%;
-  height: 200px;
   width: 30%;
   background: white;
   border: 2px solid var(--seperator-light);
@@ -794,7 +793,8 @@ lmsr-edit-modal div:last-child {
   background-color: white;
 }
 
-.lmsr-toast-button-close {
+.lmsr-toast-button-close,
+.lmsr-modal-button-close {
   background: transparent;
   border: 1px solid transparent;
   border-radius: 7px;

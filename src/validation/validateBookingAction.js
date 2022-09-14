@@ -52,9 +52,14 @@ export default function validateBookingAction({
   /* Target format is 'yyyy-MM-dd hh:mm:ss' */
   const convertToDatabaseFormat = (datetime) => `${datetime.replace('T', ' ')}:00`;
 
-  const getFieldsForBookingEdit = ({ _booking, _equipment, _roomnumbers }) => `
+  const getFieldsForBookingEdit = ({
+    _booking,
+    _equipment,
+    _bookedEquipment,
+    _roomnumbers,
+  }) => `
       <label for="edit-booking-roomnumber">Raum</label>
-      <select type="text" name="edit-booking-roomnumber" id="edit-booking-roomnumber">
+      <select name="edit-booking-roomnumber" id="edit-booking-roomnumber">
         <option value="${_booking.roomnumber}">${_booking.roomnumber}</option>
         ${_roomnumbers
     .filter((roomnumber) => roomnumber !== _booking.roomnumber)
@@ -75,16 +80,31 @@ export default function validateBookingAction({
     _booking.end,
   )}">
       <label for="edit-booking-equipment">Austattung</label>
-      <input type="text" name="edit-booking-equipment" id="edit-booking-equipment" value="${
+      <select name="edit-booking-equipment" id="edit-booking-equipment" multiple>
+        ${
+  _bookedEquipment
+    ? _bookedEquipment.reduce(
+      (accumulator, bookedItem) => `
+      ${accumulator}
+      <option value="${bookedItem.equipmentid}" selected>${bookedItem.equipmentname}</option>
+      `,
+      '',
+    )
+    : ''
+}
+        ${
   _equipment
     ? _equipment
+      .filter((item) => (_bookedEquipment ? !_bookedEquipment.includes(item) : item))
       .reduce(
-        (accumulator, item) => `${accumulator}${item.equipmentname}, `,
+        (accumulator, item) => `
+      ${accumulator}
+      <option value="${item.equipmentid}">${item.equipmentname}</option>`,
         '',
       )
-      .trim()
     : ''
-}">
+}
+      </select>
     `;
   const getHiddenFieldsForBookingEdit = (bookingid) => `
       <input type="hidden" name="edit-booking-id" id="edit-booking-id" value="${bookingid}"/>
@@ -106,7 +126,8 @@ export default function validateBookingAction({
       <div slot="content" class="lmsr-edit-modal-body">${getFieldsForBookingEdit(
     {
       _booking: booking,
-      _equipment: bookedEquipment,
+      _equipment: equipment,
+      _bookedEquipment: bookedEquipment,
       _roomnumbers: roomnumbers,
     },
   )}</div>
@@ -142,9 +163,13 @@ export default function validateBookingAction({
       hiddenInputEnd.value = convertToDatabaseFormat(
         document.getElementById('edit-booking-end').value,
       );
-      hiddenInputEquipment.value = document.getElementById(
-        'edit-booking-equipment',
-      ).value;
+      hiddenInputEquipment.value = Array.from(
+        document.getElementById('edit-booking-equipment').childNodes,
+      )
+        .filter((item) => item.nodeName === 'OPTION')
+        .filter((item) => item.selected)
+        .reduce((accumulator, item) => `${accumulator},${item.value}`, '')
+        .replace(/^,|,$/g, '');
       hiddenInputId.value = document.getElementById('edit-booking-id').value;
 
       e.target.submit();

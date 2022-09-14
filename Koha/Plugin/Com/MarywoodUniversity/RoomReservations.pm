@@ -722,10 +722,13 @@ sub tool {
             my $updated_equipment = $cgi->param('edited-booking-equipment');
             my $booking_id        = $cgi->param('edited-booking-id');
 
+            my @updated_equipment = $updated_equipment ? split /,/smx, $updated_equipment : q{};
+
             my $updated = update_booking_by_id(
                 {   roomid    => $updated_roomid,
                     start     => $updated_start,
                     end       => $updated_end,
+                    equipment => \@updated_equipment,
                     bookingid => $booking_id,
                 }
             );

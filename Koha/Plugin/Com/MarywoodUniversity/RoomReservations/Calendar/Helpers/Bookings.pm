@@ -295,7 +295,6 @@ sub update_booking_by_id {
     my ($args) = @_;
 
     my $dbh = C4::Context->dbh;
-    my $sth = q{};
 
     my $booking_update = <<~"EOF";
         UPDATE $BOOKINGS_TABLE
@@ -303,8 +302,29 @@ sub update_booking_by_id {
         WHERE bookingid = ?;
     EOF
 
-    $sth = $dbh->prepare($booking_update);
-    $sth->execute( $args->{'roomid'}, $args->{'start'}, $args->{'end'}, $args->{'bookingid'} );
+    my $sth_booking = q{};
+    $sth_booking = $dbh->prepare($booking_update);
+    $sth_booking->execute( $args->{'roomid'}, $args->{'start'}, $args->{'end'}, $args->{'bookingid'} );
+
+    my $delete_previous_booked_equipment = <<~"EOF";
+        DELETE FROM $BOOKINGS_EQUIPMENT_TABLE
+        WHERE bookingid = ?;
+    EOF
+
+    my $sth_delete = q{};
+    $sth_delete = $dbh->prepare($delete_previous_booked_equipment);
+    $sth_delete->execute( $args->{'bookingid'} );
+
+    my $insert_new_booked_equipment = <<~"EOF";
+        INSERT INTO $BOOKINGS_EQUIPMENT_TABLE (bookingid, equipmentid)
+        VALUES (?, ?);
+    EOF
+
+    my $sth_insert = q{};
+    for my $item ( @{ $args->{'equipment'} } ) {
+        $sth_insert = $dbh->prepare($insert_new_booked_equipment);
+        $sth_insert->execute( $args->{'bookingid'}, $item || 1 );
+    }
 
     return 1;
 
