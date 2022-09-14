@@ -2,9 +2,18 @@ export default function hydrateRoomConfinement() {
   const roomConfinementItems = document.querySelectorAll(
     '.lmsr-calendar-room-confinement-item',
   );
-  const bookings = document.querySelectorAll('.lmsr-calendar-data-booking');
+  const bookingsLandscape = document.querySelectorAll(
+    '.lmsr-calendar-data-booking',
+  );
 
-  const resetVisibility = (e) => {
+  const bookingsPortrait = document.querySelectorAll(
+    '.lmsr-calendar-portrait-day-booking',
+  );
+
+  const bookings = bookingsLandscape.length > 0 ? bookingsLandscape : bookingsPortrait;
+  const format = bookingsLandscape.length > 0;
+
+  const resetVisibility = ({ e, _bookings }) => {
     roomConfinementItems.forEach((roomConfinementItem) => {
       if (
         roomConfinementItem.textContent.trim() !== e.target.textContent.trim()
@@ -13,17 +22,18 @@ export default function hydrateRoomConfinement() {
         ref.dataset.active = 'false';
       }
     });
-    bookings.forEach((booking) => {
+    _bookings.forEach((booking) => {
       const ref = booking;
-      ref.style.display = 'block';
+      ref.style.display = format ? 'block' : 'flex';
     });
   };
 
-  const toggleVisibility = (e) => {
-    resetVisibility(e);
+  const toggleVisibility = ({ e, _bookings }) => {
+    resetVisibility({ e, _bookings });
     const state = e.target.dataset.active === 'true';
     e.target.dataset.active = !state;
-    bookings.forEach((booking) => {
+
+    _bookings.forEach((booking) => {
       const ref = booking;
       if (
         !(
@@ -31,7 +41,7 @@ export default function hydrateRoomConfinement() {
           === e.target.textContent.trim()
         )
       ) {
-        ref.style.display = state ? 'block' : 'none';
+        ref.style.display = state ? `${format ? 'block' : 'flex'}` : 'none';
       }
     });
   };
@@ -47,7 +57,7 @@ export default function hydrateRoomConfinement() {
       ref.style.display = 'none';
     }
     roomConfinementItem.addEventListener('click', (e) => {
-      toggleVisibility(e);
+      toggleVisibility({ e, _bookings: bookings });
     });
   });
 }

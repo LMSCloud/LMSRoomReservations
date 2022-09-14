@@ -57,7 +57,7 @@
     <template id="lmsr-calendar-body-portrait-template">
       [% w = 0 %]
       [% WHILE w < 5 %] 
-        <div class="lmsr-calendar-portrait-week">
+        <div class="lmsr-calendar-portrait-week border rounded m-1 p-1">
           [% d = 0 %]
           [% weekdays = [ 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So' ] %]
           [% WHILE d < 7 %]
@@ -70,14 +70,15 @@
             [% END %]
 
             [% IF current_month_cal.$n %]
-              <div class="lmsr-calendar-portrait-day">
+              <div class="lmsr-calendar-portrait-day m-1 p-2">
                 <div class="lmsr-calendar-portrait-day-head">
-                  <span class="lmsr-calendar-portrait-day-head-date">[% current_month_cal.$n %]</span>
                   <span class="lmsr-calendar-portrait-day-head-weekday">[% weekdays.$wd %]</span>
+                  <span class="lmsr-calendar-portrait-day-head-date">[% current_month_cal.$n %]</span>
                 </div>
-                <div class="lmsr-calendar-portrait-day-body">
+                <div class="lmsr-calendar-portrait-day-body p-1">
                   [% FOREACH booking IN booking_days.$n_offset_by %]
-                    <div class="lmsr-calendar-portrait-day-booking">
+                    <div class="lmsr-calendar-portrait-day-booking mb-3 px-1 rounded">
+                      <div class="d-none">[% booking.roomnumber %]</div>
                       <div class="lmsr-calendar-portrait-day-booking-bookedtime">[% booking.bookedtime %]</div>
                       <div class="lmsr-calendar-potrait-day-booking-roomnumber">
                         <i class="fa fa-hashtag lmsr-calendar-portrait-day-booking-indicator" aria-hidden="true"
@@ -159,7 +160,7 @@
         </div> <!-- col-12 -->
       </div> <!-- row -->
 
-      <div class="row mb-1">
+      <div class="row mb-1 text-center">
         <div class="col">
           <p class="text-secondary">[% 'Confine your search for available dates by selecting rooms.' | gettext %]</p>
         </div>
