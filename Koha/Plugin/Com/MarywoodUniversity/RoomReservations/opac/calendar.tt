@@ -15,25 +15,6 @@
 [% INCLUDE 'masthead.inc' %]
 
 <div class="main">
-
-  <template id="lmsr-toast-template">
-    <div class="lmsr-toast">
-      <div class="lmsr-toast-header">
-        <strong>&excl;</strong>
-        <slot name="title"></slot>
-        <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
-          <span aria-hidden="true">&times;</i></span>
-        </button>
-      </div>
-      <div class="lmsr-toast-body">
-        <slot name="message"></slot>
-      </div>
-    </div>
-    <style>
-      @import url('/api/v1/contrib/roomreservations/static/css/main.css');
-    </style>
-    <script>RoomReservationBundle.closeToast();</script>
-  </template>
   <!-- op defaults to 'undef' if template param is undef (meaning show calendar) -->
   [% DEFAULT op = 'undef' %]
   [% IF op == 'undef' %]
@@ -228,10 +209,12 @@
                     [% END %]
                   </ul>
                 </p>
-                <p class="card-text">
-                  <b>[% 'Branch' | gettext %]</b>
-                  <span>[% room.branch %]</span>
-                </p>
+                [% IF room.branch %]
+                  <p class="card-text">
+                    <b>[% 'Branch' | gettext %]</b>
+                    <span>[% room.branch %]</span>
+                  </p>
+                [% END %]
                 <form class="lmsr-calendar-form lmsr-calendar-form-room-card" method="post" name="book-room" action="#">
                   <input type="hidden" name="op" value="availability-search" />
                   <input type="hidden" name="room-id" value="[% room.roomid %]">
@@ -250,14 +233,6 @@
 <!-- ####################### FIXME: END OF OPERATION ############################################################ -->
 
 [% ELSIF op == 'availability-search' %]
-
-  <template id="lmsr-equipment-selection-template" class="form-check">
-    <slot name="lmsr-check-input"></slot>
-    <slot name="lmsr-check-label"></slot>
-    <style>
-      @import url('/api/v1/contrib/roomreservations/static/css/main.css');
-    </style>
-  </template>
 
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -430,10 +405,12 @@
                   [% END %]
                 </ul>
               </p>
-              <p class="card-text">
-                <b>[% 'Branch' | gettext %]</b>
-                <span>[% room.branch %]</span>
-              </p>
+              [% IF room.branch %]
+                <p class="card-text">
+                  <b>[% 'Branch' | gettext %]</b>
+                  <span>[% room.branch %]</span>
+                </p>
+              [% END %]
             </div>
           </div>
         </div>

@@ -4,67 +4,93 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.RoomReservationBundle = {}));
 })(this, (function (exports) { 'use strict';
 
-  /* eslint-disable max-len */
-  /* eslint-disable max-classes-per-file */
-  /* eslint-disable no-unused-vars */
-  function loadSelectedAction() { document.getElementById('actionSelectedBtn').click(); }
+  const template$2 = document.createElement('template');
+  template$2.innerHTML = `
+  <div class="lmsr-toast">
+    <div class="lmsr-toast-header">
+      <strong>&excl;</strong>
+      <slot name="title"></slot>
+      <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
+        <span aria-hidden="true">&times;</i></span>
+      </button>
+    </div>
+    <div class="lmsr-toast-body">
+      <slot name="message"></slot>
+    </div>
+  </div>
+  <style>
+    @import url('/api/v1/contrib/roomreservations/static/css/main.css');
+  </style>
+`;
 
-  const customElementsRegistry = window.customElements;
-  customElementsRegistry.define(
-    'lmsr-toast',
-    class extends HTMLElement {
-      constructor() {
-        super();
-        const template = document.getElementById('lmsr-toast-template').content;
-        const shadowRoot = this.attachShadow({ mode: 'open' });
-        shadowRoot.appendChild(template.cloneNode(true));
-      }
-    },
-  );
-  customElementsRegistry.define(
-    'lmsr-equipment-selection',
-    class extends HTMLElement {
-      constructor() {
-        super();
-        const template = document.getElementById('lmsr-equipment-selection-template').content;
-        const shadowRoot = this.attachShadow({ mode: 'open' });
-        shadowRoot.appendChild(template.cloneNode(true));
-      }
-    },
-  );
-  customElementsRegistry.define(
-    'lmsr-edit-modal',
-    class extends HTMLElement {
-      constructor() {
-        super();
-        const template = document.getElementById('lmsr-edit-modal-template').content;
-        const shadowRoot = this.attachShadow({ mode: 'open' });
-        shadowRoot.appendChild(template.cloneNode(true));
-      }
-    },
-  );
+  class LmsrToast extends HTMLElement {
+    constructor() {
+      super();
 
-  const prohibitFormSubmitWithMessage = ({ e, type, message }) => {
-    e.preventDefault();
-    const lmsrNotifications = document.getElementById('lmsr-notifications');
-    lmsrNotifications.innerHTML = '';
-    const lmsrToast = document.createElement('lmsr-toast', { is: 'lmsr-toast' });
-    lmsrToast.innerHTML = `
-    <strong slot="title">${type}</strong>
-    <p slot="message">${message}</p>
-  `;
-    lmsrNotifications.appendChild(lmsrToast);
+      this.attachShadow({ mode: 'open' });
+      this.shadowRoot.append(template$2.content.cloneNode(true));
+    }
 
-    return false;
-  };
+    connectedCallback() {
+      const lmsrToast = this.shadowRoot.querySelector('.lmsr-toast');
+      const lmsrToastButtonClose = this.shadowRoot.querySelector('.lmsr-toast-button-close');
+      lmsrToastButtonClose.addEventListener('click', () => { lmsrToast.remove(); });
+      lmsrToastButtonClose.disabled = false;
+      window.setTimeout(() => { lmsrToast.remove(); }, 3000);
+    }
+  }
 
-  function closeToast() {
-    const lmsrToast = document.querySelector('lmsr-toast');
-    const lmsrToastRoot = lmsrToast.shadowRoot;
-    const lmsrToastButtonClose = lmsrToastRoot.querySelector('.lmsr-toast-button-close');
-    lmsrToastButtonClose.addEventListener('click', () => { lmsrToast.remove(); });
-    lmsrToastButtonClose.disabled = false;
-    window.setTimeout(() => { lmsrToast.remove(); }, 3000);
+  const template$1 = document.createElement('template');
+  template$1.innerHTML = `
+  <slot name="lmsr-check-input"></slot>
+  <slot name="lmsr-check-label"></slot>
+  <style>
+    @import url('/api/v1/contrib/roomreservations/static/css/main.css');
+  </style>
+`;
+
+  class LmsrEquipmentSelection extends HTMLElement {
+    constructor() {
+      super();
+
+      this.attachShadow({ mode: 'open' });
+      this.shadowRoot.append(template$1.content.cloneNode(true));
+    }
+  }
+
+  const template = document.createElement('template');
+  template.innerHTML = `
+  <div class="lmsr-edit-modal">
+    <div class="lmsr-edit-modal-header">
+      <strong>&quest;</strong>
+      <slot name="title"></slot>
+      <button type="button" class="lmsr-button-close lmsr-modal-button-close" aria-label="Close" disabled>
+        <span aria-hidden="true">&times;</i></span>
+      </button>
+    </div>
+    <slot name="content"></slot>
+    <slot name="hidden-inputs"></slot>
+    <slot name="submit"></slot>
+  </div>
+  <style>
+    @import url('/api/v1/contrib/roomreservations/static/css/main.css');
+  </style>
+`;
+
+  class LmsrEditModal extends HTMLElement {
+    constructor() {
+      super();
+
+      this.attachShadow({ mode: 'open' });
+      this.shadowRoot.append(template.content.cloneNode(true));
+    }
+
+    connectedCallback() {
+      const lmsrEditModal = document.querySelector('lmsr-edit-modal');
+      const lmsrModalButtonClose = this.shadowRoot.querySelector('.lmsr-modal-button-close');
+      lmsrModalButtonClose.addEventListener('click', () => { lmsrEditModal.remove(); });
+      lmsrModalButtonClose.disabled = false;
+    }
   }
 
   function closeModal({ selector }) {
@@ -75,34 +101,13 @@
     lmsrModalButtonClose.disabled = false;
   }
 
-  function getEquipmentBySelectedRoom({ rooms, equipment, lmsrEquipmentSelectionEntryPoint }) {
-    const lmsrEquipmentSelection = document.getElementById('lmsr-equipment-selection');
-    lmsrEquipmentSelection.innerHTML = '';
-    const [selectedRoom] = document.getElementById('availability-search-room').selectedOptions;
-    const roomData = rooms.find((room) => room.roomnumber === selectedRoom.text.replace(/\(.*\)/, '').trim());
-    roomData?.equipment.forEach((item) => {
-      const lmsrEquipmentSelectionCheckForm = document.createElement('lmsr-equipment-selection', { is: 'lmsr-equipment-selection' });
-      const itemMachineReadable = item.equipmentname.replace(' ', '_');
-      const itemId = (equipment.find((_item) => _item.equipmentname === item.equipmentname)).equipmentid;
-      lmsrEquipmentSelectionCheckForm.innerHTML = `
-      <input slot="lmsr-check-input" class="lmsr-check-input" type="checkbox" value="${itemId}" id="${itemMachineReadable}">
-      <label slot="lmsr-check-label" class="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
-    `;
-      lmsrEquipmentSelectionEntryPoint.appendChild(lmsrEquipmentSelectionCheckForm);
-    });
-  }
-
-  function getCheckedOptions({ elements, hiddenInputReference }) {
-    const hiddenInput = document.getElementById(hiddenInputReference);
-    const options = document.querySelectorAll(elements);
-    options.forEach((option) => {
-      option.addEventListener('change', () => {
-        const checkedOptions = Array.from(options).reduce((accumulator, _option) => {
-          if (_option.checked) { accumulator.push(_option.value); } return accumulator;
-        }, []);
-        hiddenInput.value = checkedOptions;
-      });
-    });
+  function closeToast() {
+    const lmsrToast = document.querySelector('lmsr-toast');
+    const lmsrToastRoot = lmsrToast.shadowRoot;
+    const lmsrToastButtonClose = lmsrToastRoot.querySelector('.lmsr-toast-button-close');
+    lmsrToastButtonClose.addEventListener('click', () => { lmsrToast.remove(); });
+    lmsrToastButtonClose.disabled = false;
+    window.setTimeout(() => { lmsrToast.remove(); }, 3000);
   }
 
   function getBlackoutsBySelectedRoom({ entryPoint, blackouts }) {
@@ -134,473 +139,17 @@
     });
   }
 
-  function validateOpeningHours(e) {
-    const start = document.forms.OpeningHoursForm['opening-from'].value;
-    const end = document.forms.OpeningHoursForm['opening-to'].value;
-
-    const weekdays = document.querySelectorAll('input[name="weekdays"]:checked');
-    if (weekdays.length === 0) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie mindestens einen Wochentag aus.' }); }
-    if (end <= start || start === 0 || end === 0) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine gültige Start- und Endzeit aus.' }); }
-
-    return true;
-  }
-  function validateBookingAction({
-    e, bookings, equipment, rooms,
-  }) {
-    const action = document.forms.manageBookingsForm['manage-bookings-action'].value;
-    const ids = document.getElementsByName('manage-bookings-id');
-
-    let checked = 0;
-    ids.forEach((id) => {
-      if (id.checked) { checked += 1; }
-    });
-
-    if (checked !== 1) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
-    if (action === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
-
-    const id = Array.from(ids).find((_id) => _id.checked).value;
-    const booking = bookings.find((_booking) => _booking.bookingid === id);
-    const bookedEquipment = booking.equipment?.reduce((accumulator, itemId) => { accumulator.push(equipment.find((item) => item.equipmentid === itemId.toString())); return accumulator; }, []);
-    const roomnumbers = rooms.map((room) => room.roomnumber);
-
-    /* Target format is yyyy-MM-ddThh:mm */
-    const convertToDatetimeLocal = (datetime) => {
-      const [date, time] = datetime.split(' ');
-      const [day, month, year] = date.split('.');
-      const [hours, minutes] = time.split(':');
-      return `${year}-${month}-${day}T${hours}:${minutes}`;
-    };
-
-    /* Target format is 'yyyy-MM-dd hh:mm:ss' */
-    const convertToDatabaseFormat = (datetime) => `${datetime.replace('T', ' ')}:00`;
-
-    const getFieldsForBookingEdit = ({ _booking, _equipment, _roomnumbers }) => `
-    <label for="edit-booking-roomnumber">Raum</label>
-    <select type="text" name="edit-booking-roomnumber" id="edit-booking-roomnumber">
-      <option value="${_booking.roomnumber}">${_booking.roomnumber}</option>
-      ${_roomnumbers.filter((roomnumber) => roomnumber !== _booking.roomnumber).reduce((accumulator, roomnumber) => `
-        ${accumulator}
-        <option value="${roomnumber}">${roomnumber}</option>
-      `, '')}
-    </select>
-    <label for="edit-booking-start">Start</label>
-    <input type="datetime-local" name="edit-booking-start" id="edit-booking-start" value="${convertToDatetimeLocal(_booking.start)}">
-    <label for="edit-booking-end">Ende</label>
-    <input type="datetime-local" name="edit-booking-end" id="edit-booking-end" value="${convertToDatetimeLocal(_booking.end)}">
-    <label for="edit-booking-equipment">Austattung</label>
-    <input type="text" name="edit-booking-equipment" id="edit-booking-equipment" value="${_equipment ? _equipment.reduce((accumulator, item) => `${accumulator}${item.equipmentname}, `, '').trim() : ''}">
-  `;
-    const getHiddenFieldsForBookingEdit = (bookingid) => `
-    <input type="hidden" name="edit-booking-id" id="edit-booking-id" value="${bookingid}"/>
-  `;
-    const getSubmitButtonForBookingEdit = () => `
-    <input type="submit" name="submit-edit-booking" id="submit-edit-booking" value="Bestätigen" />
-  `;
-
-    if (action === 'edit') {
-      e.preventDefault();
-      // FIXME: Title slot should be dynamic in the future
-      const entryPoint = document.getElementById('lmsr-edit-modal');
-      entryPoint.innerHTML = '';
-      const lmsrEditModal = document.createElement('lmsr-edit-modal', { is: 'lmsr-edit-modal' });
-      lmsrEditModal.innerHTML = `
-    <strong slot="title">Buchung bearbeiten</strong>
-    <div slot="content" class="lmsr-edit-modal-body">${getFieldsForBookingEdit({ _booking: booking, _equipment: bookedEquipment, _roomnumbers: roomnumbers })}</div>
-    <div slot="hidden-inputs" class="lmsr-hidden-inputs">${getHiddenFieldsForBookingEdit(booking.bookingid)}</div>
-    <div slot="submit">${getSubmitButtonForBookingEdit()}</div>
-    `;
-      entryPoint.appendChild(lmsrEditModal);
-      entryPoint.style.display = 'block';
-
-      const submitEditBookingButton = document.getElementById('submit-edit-booking');
-      submitEditBookingButton.addEventListener('click', () => {
-        const hiddenInputRoomnumber = document.getElementById('edited-booking-roomnumber');
-        const hiddenInputStart = document.getElementById('edited-booking-start');
-        const hiddenInputEnd = document.getElementById('edited-booking-end');
-        const hiddenInputEquipment = document.getElementById('edited-booking-equipment');
-        const hiddenInputId = document.getElementById('edited-booking-id');
-
-        hiddenInputRoomnumber.value = rooms.find((room) => room.roomnumber === document.getElementById('edit-booking-roomnumber').value).roomid;
-        hiddenInputStart.value = convertToDatabaseFormat(document.getElementById('edit-booking-start').value);
-        hiddenInputEnd.value = convertToDatabaseFormat(document.getElementById('edit-booking-end').value);
-        hiddenInputEquipment.value = document.getElementById('edit-booking-equipment').value;
-        hiddenInputId.value = document.getElementById('edit-booking-id').value;
-
-        e.target.submit();
+  function getCheckedOptions({ elements, hiddenInputReference }) {
+    const hiddenInput = document.getElementById(hiddenInputReference);
+    const options = document.querySelectorAll(elements);
+    options.forEach((option) => {
+      option.addEventListener('change', () => {
+        const checkedOptions = Array.from(options).reduce((accumulator, _option) => {
+          if (_option.checked) { accumulator.push(_option.value); } return accumulator;
+        }, []);
+        hiddenInput.value = checkedOptions;
       });
-
-      return false;
-    }
-
-    return true;
-  }
-
-  function validateManageBlackouts(e) {
-    const actionChoice = document.forms.manageBlackoutsForm['manage-blackouts-action'].value;
-    if (actionChoice === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
-
-    return true;
-  }
-
-  function validateDate(dateStr) { return true; }
-  // const regExp = /^(\d{4})-(\d\d?)-(\d\d?)$/;
-  // const matches = dateStr.match(regExp);
-  // console.log(matches);
-  // let isValid = matches;
-  // const maxDate = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-  // if (matches) {
-  //   const year = parseInt(matches[1], 10);
-  //   const month = parseInt(matches[2], 10);
-  //   const date = parseInt(matches[3], 10);
-
-  //   isValid = month <= 12 && month > 0;
-  //   isValid &= date <= maxDate[month] && date > 0;
-
-  //   const leapYear = (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
-  //   isValid &= month != 2 || leapYear || date <= 28;
-  // }
-
-  // return isValid;
-
-  function validateFullBlackout(e) {
-    document.forms.fullBlackoutForm['blackout-start-date'].value;
-    document.forms.fullBlackoutForm['blackout-end-date'].value;
-    const rooms = document.getElementsByName('current-room-blackout');
-    let roomChecked = false;
-
-    rooms.forEach((room) => {
-      if (room.checked) { roomChecked = true; }
     });
-
-    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum oder mehrere Räume aus.' }); }
-
-    return true;
-  }
-
-  function validatePartialBlackout(e) {
-    const blackoutStartTime = document.forms.partialBlackoutForm['blackout-start-time'].value;
-    const blackoutEndTime = document.forms.partialBlackoutForm['blackout-end-time'].value;
-    const rooms = document.getElementsByName('current-room-blackout');
-    let blackoutDate = document.forms.partialBlackoutForm['blackout-date'].value;
-    let roomChecked = false;
-
-    // convert date format from mm/dd/yyyy to yyyy-mm-dd
-    blackoutDate = blackoutDate.replace(/(\d\d)\/(\d\d)\/(\d{4})/, '$3-$1-$2');
-
-    // timestamp of MySQL type DATETIME
-    const startTimestamp = `${blackoutDate}  ${blackoutStartTime}`;
-    const endTimestamp = `${blackoutDate} ${blackoutEndTime}`;
-
-    // determines if invalid start/end values were entered
-    if (startTimestamp >= endTimestamp) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Start- und Endzeit an.' }); }
-
-    rooms.forEach((room) => {
-      if (room.checked) { roomChecked = true; }
-    });
-
-    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum oder mehrere Räume aus.' }); }
-
-    return true;
-  }
-
-  function setBlackoutValueOnChange(e) { e.target.value = e.target.value; }
-
-  function validateAvailabilitySearchForBookas(e) {
-    const startDate = document.forms.availabilitySearchForm['availability-search-start-date'].value;
-    const startTime = document.forms.availabilitySearchForm['availability-search-start-time'].value;
-    const endDate = document.forms.availabilitySearchForm['availability-search-end-date'].value;
-    const endTime = document.forms.availabilitySearchForm['availability-search-end-time'].value;
-    const maxCapacity = document.forms.availabilitySearchForm['availability-search-room-capacity'].value;
-
-    if (startDate === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Startdatum an.' }); }
-    if (startTime === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Startzeit an.' }); }
-    if (endDate === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Enddatum an.' }); }
-    if (endTime === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Endzeit an.' }); }
-    if (maxCapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus.' }); }
-
-    return true;
-  }
-
-  function validateAvailabilitySearchResultsForBookas(e) {
-    const rooms = document.getElementsByName('selected-room-id');
-
-    let roomChecked = false;
-    rooms.forEach((room) => {
-      if (room.checked) {
-        roomChecked = true;
-      }
-    });
-
-    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus um fortzufahren.' }); }
-
-    return true;
-  }
-
-  function validateSavedRooms(e) {
-    const savedRoomsAction = document.forms.saved_rooms.saved_rooms_action.value;
-    if (savedRoomsAction === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
-    if (savedRoomsAction === 'delete') {
-      const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie den ausgewählten Raum löschen möchten?');
-      if (isConfirmedDelete) { return true; }
-
-      e.preventDefault();
-      return false;
-    }
-
-    const rooms = document.getElementsByName('selectedRoom');
-    let roomValue = false;
-
-    rooms.forEach((room) => {
-      if (room.checked) { roomValue = true; }
-    });
-
-    if (!roomValue) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus.' }); }
-
-    return true;
-  }
-
-  function validateConfigActions(e) {
-    const configAction = document.forms.config_actions.config_actions_selection.value;
-    if (configAction === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
-
-    return true;
-  }
-
-  function validateDisplayRooms(e) {
-    const rooms = document.getElementsByName('selected-displayed-room');
-    let roomChecked = false;
-
-    rooms.forEach((room) => {
-      if (room.checked) { roomChecked = true; }
-    });
-
-    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie mindestens einen Tag aus.' }); }
-
-    return true;
-  }
-
-  function validateMaxFutureDate(e) {
-    const num = document.getElementById('max-days-field').value;
-    if (Number.isNaN(num)) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
-    if (num === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
-
-    return true;
-  }
-
-  function validateMaxTime(e) {
-    const numHours = document.getElementById('max-time-hours-field').value;
-    if (numHours === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
-
-    return true;
-  }
-
-  function validateLimitRestriction(e) {
-    const limitCount = document.getElementById('reservations-limit-field').value;
-    if (limitCount === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Wert aus.' }); }
-
-    return true;
-  }
-
-  function validateRestrictCategories(e) {
-    const numHours = document.getElementById('max-time-hours-field').value;
-    if (numHours === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
-
-    return true;
-  }
-
-  function validateAddRooms(e, rooms) {
-    const roomname = document.forms.addRoomForm['add-room-roomnumber'].value;
-    const maxcapacity = document.forms.addRoomForm['add-room-maxcapacity'].value;
-    const equipment = document.getElementsByName('selected-equipment');
-
-    if (rooms.some((room) => room.roomnumber === roomname)) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Diese Raumbezeichnung ist bereits vergeben.' }); }
-    if (roomname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Raumbezeichnung an.' }); }
-    if (maxcapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Maximalkapazität an.' }); }
-
-    let equipmentChecked = false;
-    equipment.forEach((item) => {
-      if (item.checked) {
-        equipmentChecked = true;
-      }
-    });
-
-    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie die Raumaustattung aus. Sollte der Raum über keine Austattung verfügen, wählen Sie \'nichts\' aus.' }); }
-
-    return true;
-  }
-
-  function validateEditRooms(e) {
-    const editChoice = document.forms.editRoomsForm['edit-rooms-choice'].value;
-    if (editChoice === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
-
-    return true;
-  }
-
-  function validateEditRoomsRoom(e) {
-    const roomname = document.forms.editRoomDetails['edit-rooms-room-roomnumber'].value;
-    const maxcapacity = document.forms.editRoomDetails['edit-rooms-room-maxcapacity'].value;
-    if (roomname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Raumbezeichnung darf nicht leer sein.' }); }
-    if (maxcapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Maximalkapazität darf nicht leer sein.' }); }
-
-    return true;
-  }
-
-  function validateEditRoomsEquipment(e) {
-    const equipment = document.getElementsByName('edit-rooms-current-equipment');
-    let equipmentChecked = false;
-
-    equipment.forEach((item) => {
-      if (item.checked) {
-        equipmentChecked = true;
-      }
-    });
-
-    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Raumaustattung darf nicht leer sein. Sollte der Raum über keine Austattung verfügen, geben Sie \'nichts\' an.' }); }
-
-    return true;
-  }
-
-  function deleteRoomConfirmation(e) {
-    const rooms = document.getElementsByName('delete-room-radio-button');
-    let roomChecked = false;
-
-    rooms.forEach((room) => {
-      if (room.checked) {
-        roomChecked = true;
-      }
-    });
-
-    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus, den Sie löschen möchten.' }); }
-    const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie den ausgewählten Raum löschen möchten?');
-    if (roomChecked && isConfirmedDelete) { return true; }
-
-    e.preventDefault();
-    return false;
-  }
-
-  function validateAddEquipment(e) {
-    const equipmentname = document.forms.addEquipment['add-equipment-text-field'].value;
-    if (equipmentname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Austattungsbezeichnung darf nicht leer sein.' }); }
-
-    return true;
-  }
-
-  function editEquipmentValidation(e) {
-    const equipment = document.getElementsByName('edit-equipment-radio-button');
-    let equipmentChecked = false;
-
-    equipment.forEach((item) => {
-      if (item.checked) {
-        equipmentChecked = true;
-      }
-    });
-
-    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Austattung aus, die Sie bearbeiten möchten.' }); }
-
-    return true;
-  }
-
-  function deleteEquipmentConfirmation(e) {
-    const equipment = document.getElementsByName('delete-equipment-radio-button');
-    let equipmentChecked = false;
-
-    equipment.forEach((item) => {
-      if (item.checked) {
-        equipmentChecked = true;
-      }
-    });
-
-    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Austattung aus, die Sie löschen möchten.' }); }
-
-    const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie die ausgewählte Raumaustattung löschen möchten?');
-    if (isConfirmedDelete) { return true; }
-
-    e.preventDefault();
-    return false;
-  }
-
-  function validateAvailabilitySearchForOPAC({ e, rooms }) {
-    const searchForm = {
-      sd: {
-        field: document.getElementById('availability-search-start-date'),
-        value: document.getElementById('availability-search-start-date').value,
-      },
-      st: {
-        field: document.getElementById('availability-search-start-time'),
-        value: document.getElementById('availability-search-start-time').value,
-      },
-      ed: {
-        field: document.getElementById('availability-search-end-date'),
-        value: document.getElementById('availability-search-end-date').value,
-      },
-      et: {
-        field: document.getElementById('availability-search-end-time'),
-        value: document.getElementById('availability-search-end-time').value,
-      },
-      ro: {
-        field: document.getElementById('availability-search-room'),
-        value: document.getElementById('availability-search-room').value,
-      },
-    };
-
-    const maximumBookableTimeframeOfSelectedRoom = rooms?.find((room) => room.roomid === searchForm.ro.value)?.maxbookabletime;
-    const searchFormArray = Array.from(Object.entries(searchForm));
-
-    searchFormArray.forEach((entry) => {
-      const [, values] = entry;
-      if (values.field.classList.contains('border-danger')) {
-        values.field.classList.toggle('border-danger');
-      }
-    });
-
-    const MINUTES_TO_MILLISECONDS = 60000;
-    const MILLISECONDS_TO_HOURS = 3600000;
-
-    const maximumBookableTimeframe = maximumBookableTimeframeOfSelectedRoom || parseInt(document.getElementById('max_time').value, 10);
-    const maximumBookableTimeframeInMilliseconds = maximumBookableTimeframe !== 0
-      ? maximumBookableTimeframe * MINUTES_TO_MILLISECONDS
-      : 0;
-    const maximumBookableTimeframeInHours = maximumBookableTimeframeInMilliseconds !== 0 ? (
-      maximumBookableTimeframeInMilliseconds / MILLISECONDS_TO_HOURS) % 24 : 0;
-
-    const startTimestamp = `${searchForm.sd.value} ${searchForm.st.value}`;
-    const endTimestamp = `${searchForm.ed.value} ${searchForm.et.value}`;
-
-    const startTimestampInMilliseconds = Date.parse(startTimestamp);
-    const endTimestampInMilliseconds = Date.parse(endTimestamp);
-
-    const timeDifferenceInMilliseconds = endTimestampInMilliseconds - startTimestampInMilliseconds;
-
-    if (
-      timeDifferenceInMilliseconds > maximumBookableTimeframeInMilliseconds
-      && maximumBookableTimeframeInMilliseconds > 0
-    ) {
-      let timeString = '';
-
-      if (maximumBookableTimeframeInHours > 0) {
-        timeString += `${maximumBookableTimeframeInHours} Stunde(n)`;
-      }
-
-      return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: `Die angegebene Zeitspanne übschreitet den Maximalwert: ${timeString}.` });
-    }
-
-    searchFormArray.forEach((entry) => {
-      const [, values] = entry;
-      if (values.value === '') {
-        values.field.classList.toggle('border-danger');
-      }
-    });
-
-    if (searchFormArray.some((entry) => {
-      const [, values] = entry;
-      return values.value === '';
-    })) {
-      e.preventDefault();
-      return false;
-    }
-
-    return true;
   }
 
   function getColorTextWithContrast(color) {
@@ -639,15 +188,143 @@
     return [backgroundColor, textColor];
   }
 
-  function validateConfirmation(e) {
-    const resLimit = document.getElementById('count-limit').value;
-    const userLimit = document.getElementById('user-daily-limit').value;
+  function getEquipmentBySelectedRoom({
+    rooms,
+    equipment,
+    lmsrEquipmentSelectionEntryPoint,
+  }) {
+    const lmsrEquipmentSelection = document.getElementById(
+      'lmsr-equipment-selection',
+    );
+    lmsrEquipmentSelection.innerHTML = '';
+    const [selectedRoom] = document.getElementById(
+      'availability-search-room',
+    ).selectedOptions;
+    const roomData = rooms.find(
+      (room) => room.roomnumber === selectedRoom.text.replace(/\(.*\)/, '').trim(),
+    );
+    roomData?.equipment.forEach((item) => {
+      const lmsrEquipmentSelectionCheckForm = document.createElement(
+        'lmsr-equipment-selection',
+        { is: 'lmsr-equipment-selection' },
+      );
+      const itemMachineReadable = item.equipmentname.replace(' ', '_');
+      const itemId = equipment.find(
+        (_item) => _item.equipmentname === item.equipmentname,
+      ).equipmentid;
+      lmsrEquipmentSelectionCheckForm.innerHTML = `
+        <input slot="lmsr-check-input" class="lmsr-check-input" type="checkbox" value="${itemId}" id="${itemMachineReadable}">
+        <label slot="lmsr-check-label" class="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
+      `;
+      lmsrEquipmentSelectionEntryPoint.appendChild(
+        lmsrEquipmentSelectionCheckForm,
+      );
+    });
+  }
 
-    if (userLimit === resLimit && userLimit > 0 && e.submitter.name === 'confirmationSubmit') {
-      return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Sie haben die maximale Anzahl an Reservierungen für Ihr Konto für diesen Tag erreicht.' });
+  function hydrateRoomConfinement() {
+    const roomConfinementItems = document.querySelectorAll(
+      '.lmsr-calendar-room-confinement-item',
+    );
+    const bookings = document.querySelectorAll('.lmsr-calendar-data-booking');
+
+    const resetVisibility = (e) => {
+      roomConfinementItems.forEach((roomConfinementItem) => {
+        if (
+          roomConfinementItem.textContent.trim() !== e.target.textContent.trim()
+        ) {
+          const ref = roomConfinementItem;
+          ref.dataset.active = 'false';
+        }
+      });
+      bookings.forEach((booking) => {
+        const ref = booking;
+        ref.style.display = 'block';
+      });
+    };
+
+    const toggleVisibility = (e) => {
+      resetVisibility(e);
+      const state = e.target.dataset.active === 'true';
+      e.target.dataset.active = !state;
+      bookings.forEach((booking) => {
+        const ref = booking;
+        if (
+          !(
+            booking.firstElementChild.textContent.trim()
+            === e.target.textContent.trim()
+          )
+        ) {
+          ref.style.display = state ? 'block' : 'none';
+        }
+      });
+    };
+
+    roomConfinementItems.forEach((roomConfinementItem) => {
+      const ref = roomConfinementItem;
+      if (
+        !Array.from(bookings).some(
+          (booking) => booking.firstElementChild.textContent.trim()
+            === roomConfinementItem.textContent.trim(),
+        )
+      ) {
+        ref.style.display = 'none';
+      }
+      roomConfinementItem.addEventListener('click', (e) => {
+        toggleVisibility(e);
+      });
+    });
+  }
+
+  function loadSelectedAction() { document.getElementById('actionSelectedBtn').click(); }
+
+  function notifyOnSubmitWithMessage({ type, message, style = null }) {
+    const lmsrNotifications = document.getElementById('lmsr-notifications');
+    lmsrNotifications.innerHTML = '';
+    const lmsrToast = document.createElement('lmsr-toast', { is: 'lmsr-toast' });
+    lmsrToast.innerHTML = `
+      <strong slot="title">${type}</strong>
+      <p slot="message">${message}</p>
+    `;
+    const lmsrToastDiv = lmsrToast.shadowRoot.querySelector('.lmsr-toast');
+    if (style) {
+      style.forEach((directive) => {
+        const { key, value } = directive;
+        lmsrToastDiv.style[key] = value;
+      });
     }
 
-    return true;
+    lmsrNotifications.appendChild(lmsrToast);
+  }
+
+  function prohibitFormSubmitWithMessage({
+    e,
+    type,
+    message,
+    style = [
+      { key: 'bottom', value: '3.5em' },
+      { key: 'right', value: '1em' },
+    ],
+  }) {
+    e.preventDefault();
+    const lmsrNotifications = document.getElementById('lmsr-notifications');
+    lmsrNotifications.innerHTML = '';
+    const lmsrToast = document.createElement('lmsr-toast', { is: 'lmsr-toast' });
+    lmsrToast.innerHTML = `
+      <strong slot="title">${type}</strong>
+      <p slot="message">${message}</p>
+      ${style ? `<style>${style}</style>` : ''}
+    `;
+    const lmsrToastDiv = lmsrToast.shadowRoot.querySelector('.lmsr-toast');
+    if (style) {
+      style.forEach((directive) => {
+        const { key, value } = directive;
+        lmsrToastDiv.style[key] = value;
+      });
+    }
+    lmsrNotifications.appendChild(lmsrToast);
+
+    return false;
   }
 
   function renderCalendar() {
@@ -685,56 +362,573 @@
     });
   }
 
-  function hydrateRoomConfinement() {
-    const roomConfinementItems = document.querySelectorAll('.lmsr-calendar-room-confinement-item');
-    const bookings = document.querySelectorAll('.lmsr-calendar-data-booking');
+  function setBlackoutValueOnChange(e) { e.target.value = e.target.value; }
 
-    const resetVisibility = (e) => {
-      roomConfinementItems.forEach((roomConfinementItem) => {
-        if (roomConfinementItem.textContent.trim() !== e.target.textContent.trim()) {
-          const ref = roomConfinementItem;
-          ref.dataset.active = 'false';
-        }
-      });
-      bookings.forEach((booking) => {
-        const ref = booking;
-        ref.style.display = 'block';
-      });
-    };
+  function deleteEquipmentConfirmation(e) {
+    const equipment = document.getElementsByName('delete-equipment-radio-button');
+    let equipmentChecked = false;
 
-    const toggleVisibility = (e) => {
-      resetVisibility(e);
-      const state = e.target.dataset.active === 'true';
-      e.target.dataset.active = !state;
-      bookings.forEach((booking) => {
-        const ref = booking;
-        if (!(booking.firstElementChild.textContent.trim() === e.target.textContent.trim())) {
-          ref.style.display = state ? 'block' : 'none';
-        }
-      });
-    };
-
-    roomConfinementItems.forEach((roomConfinementItem) => {
-      const ref = roomConfinementItem;
-      if (!(Array.from(bookings).some((booking) => booking.firstElementChild.textContent.trim() === roomConfinementItem.textContent.trim()))) {
-        ref.style.display = 'none';
+    equipment.forEach((item) => {
+      if (item.checked) {
+        equipmentChecked = true;
       }
-      roomConfinementItem.addEventListener('click', (e) => {
-        toggleVisibility(e);
-      });
     });
+
+    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Austattung aus, die Sie löschen möchten.' }); }
+
+    const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie die ausgewählte Raumaustattung löschen möchten?');
+    if (isConfirmedDelete) { return true; }
+
+    e.preventDefault();
+    return false;
   }
 
-  function notifyOnSubmitWithMessage({ type, message }) {
-    const lmsrNotifications = document.getElementById('lmsr-notifications');
-    lmsrNotifications.innerHTML = '';
-    const lmsrToast = document.createElement('lmsr-toast', { is: 'lmsr-toast' });
-    lmsrToast.innerHTML = `
-    <strong slot="title">${type}</strong>
-    <p slot="message">${message}</p>
-  `;
-    lmsrNotifications.appendChild(lmsrToast);
+  function deleteRoomConfirmation(e) {
+    const rooms = document.getElementsByName('delete-room-radio-button');
+    let roomChecked = false;
+
+    rooms.forEach((room) => {
+      if (room.checked) {
+        roomChecked = true;
+      }
+    });
+
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus, den Sie löschen möchten.' }); }
+    const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie den ausgewählten Raum löschen möchten?');
+    if (roomChecked && isConfirmedDelete) { return true; }
+
+    e.preventDefault();
+    return false;
   }
+
+  function editEquipmentValidation(e) {
+    const equipment = document.getElementsByName('edit-equipment-radio-button');
+    let equipmentChecked = false;
+
+    equipment.forEach((item) => {
+      if (item.checked) {
+        equipmentChecked = true;
+      }
+    });
+
+    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Austattung aus, die Sie bearbeiten möchten.' }); }
+
+    return true;
+  }
+
+  function validateAddEquipment(e) {
+    const equipmentname = document.forms.addEquipment['add-equipment-text-field'].value;
+    if (equipmentname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Austattungsbezeichnung darf nicht leer sein.' }); }
+
+    return true;
+  }
+
+  function validateAddRooms(e, rooms) {
+    const roomname = document.forms.addRoomForm['add-room-roomnumber'].value;
+    const maxcapacity = document.forms.addRoomForm['add-room-maxcapacity'].value;
+    const equipment = document.getElementsByName('selected-equipment');
+
+    if (rooms.some((room) => room.roomnumber === roomname)) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Diese Raumbezeichnung ist bereits vergeben.' }); }
+    if (roomname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Raumbezeichnung an.' }); }
+    if (maxcapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Maximalkapazität an.' }); }
+
+    let equipmentChecked = false;
+    equipment.forEach((item) => {
+      if (item.checked) {
+        equipmentChecked = true;
+      }
+    });
+
+    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie die Raumaustattung aus. Sollte der Raum über keine Austattung verfügen, wählen Sie \'nichts\' aus.' }); }
+
+    return true;
+  }
+
+  function validateAvailabilitySearchForBookas(e) {
+    const startDate = document.forms.availabilitySearchForm['availability-search-start-date'].value;
+    const startTime = document.forms.availabilitySearchForm['availability-search-start-time'].value;
+    const endDate = document.forms.availabilitySearchForm['availability-search-end-date'].value;
+    const endTime = document.forms.availabilitySearchForm['availability-search-end-time'].value;
+    const maxCapacity = document.forms.availabilitySearchForm['availability-search-room-capacity'].value;
+
+    if (startDate === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Startdatum an.' }); }
+    if (startTime === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine Startzeit an.' }); }
+    if (endDate === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Enddatum an.' }); }
+    if (endTime === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie ein Endzeit an.' }); }
+    if (maxCapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus.' }); }
+
+    return true;
+  }
+
+  function validateAvailabilitySearchForOPAC({ e, rooms }) {
+    const searchForm = {
+      sd: {
+        field: document.getElementById('availability-search-start-date'),
+        value: document.getElementById('availability-search-start-date').value,
+      },
+      st: {
+        field: document.getElementById('availability-search-start-time'),
+        value: document.getElementById('availability-search-start-time').value,
+      },
+      ed: {
+        field: document.getElementById('availability-search-end-date'),
+        value: document.getElementById('availability-search-end-date').value,
+      },
+      et: {
+        field: document.getElementById('availability-search-end-time'),
+        value: document.getElementById('availability-search-end-time').value,
+      },
+      ro: {
+        field: document.getElementById('availability-search-room'),
+        value: document.getElementById('availability-search-room').value,
+      },
+    };
+
+    const maximumBookableTimeframeOfSelectedRoom = rooms?.find(
+      (room) => room.roomid === searchForm.ro.value,
+    )?.maxbookabletime;
+    const searchFormArray = Array.from(Object.entries(searchForm));
+
+    searchFormArray.forEach((entry) => {
+      const [, values] = entry;
+      if (values.field.classList.contains('border-danger')) {
+        values.field.classList.toggle('border-danger');
+      }
+    });
+
+    const MINUTES_TO_MILLISECONDS = 60000;
+    const MILLISECONDS_TO_HOURS = 3600000;
+
+    const maximumBookableTimeframe = maximumBookableTimeframeOfSelectedRoom
+      || parseInt(document.getElementById('max_time').value, 10);
+    const maximumBookableTimeframeInMilliseconds = maximumBookableTimeframe !== 0
+      ? maximumBookableTimeframe * MINUTES_TO_MILLISECONDS
+      : 0;
+    const maximumBookableTimeframeInHours = maximumBookableTimeframeInMilliseconds !== 0
+      ? (maximumBookableTimeframeInMilliseconds / MILLISECONDS_TO_HOURS) % 24
+      : 0;
+
+    const startTimestamp = `${searchForm.sd.value} ${searchForm.st.value}`;
+    const endTimestamp = `${searchForm.ed.value} ${searchForm.et.value}`;
+
+    const startTimestampInMilliseconds = Date.parse(startTimestamp);
+    const endTimestampInMilliseconds = Date.parse(endTimestamp);
+
+    const timeDifferenceInMilliseconds = endTimestampInMilliseconds - startTimestampInMilliseconds;
+
+    if (
+      timeDifferenceInMilliseconds > maximumBookableTimeframeInMilliseconds
+      && maximumBookableTimeframeInMilliseconds > 0
+    ) {
+      let timeString = '';
+
+      if (maximumBookableTimeframeInHours > 0) {
+        timeString += `${maximumBookableTimeframeInHours} Stunde(n)`;
+      }
+
+      return prohibitFormSubmitWithMessage({
+        e,
+        type: 'Warnung',
+        message: `Die angegebene Zeitspanne übschreitet den Maximalwert: ${timeString}.`,
+        style: [
+          { key: 'bottom', value: '1em' },
+          { key: 'right', value: '1em' },
+        ],
+      });
+    }
+
+    searchFormArray.forEach((entry) => {
+      const [, values] = entry;
+      if (values.value === '') {
+        values.field.classList.toggle('border-danger');
+      }
+    });
+
+    if (
+      searchFormArray.some((entry) => {
+        const [, values] = entry;
+        return values.value === '';
+      })
+    ) {
+      e.preventDefault();
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateAvailabilitySearchResultsForBookas(e) {
+    const rooms = document.getElementsByName('selected-room-id');
+
+    let roomChecked = false;
+    rooms.forEach((room) => {
+      if (room.checked) {
+        roomChecked = true;
+      }
+    });
+
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus um fortzufahren.' }); }
+
+    return true;
+  }
+
+  function validateBookingAction({
+    e,
+    bookings,
+    equipment,
+    rooms,
+  }) {
+    const action = document.forms.manageBookingsForm['manage-bookings-action'].value;
+    const ids = document.getElementsByName('manage-bookings-id');
+
+    let checked = 0;
+    ids.forEach((id) => {
+      if (id.checked) {
+        checked += 1;
+      }
+    });
+
+    if (checked !== 1) {
+      return prohibitFormSubmitWithMessage({
+        e,
+        type: 'Warnung',
+        message: 'Bitte wählen Sie eine Aktion aus.',
+      });
+    }
+    if (action === '') {
+      return prohibitFormSubmitWithMessage({
+        e,
+        type: 'Warnung',
+        message: 'Bitte wählen Sie eine Aktion aus.',
+      });
+    }
+
+    const id = Array.from(ids).find((_id) => _id.checked).value;
+    const booking = bookings.find((_booking) => _booking.bookingid === id);
+    const bookedEquipment = booking.equipment?.reduce((accumulator, itemId) => {
+      accumulator.push(
+        equipment.find((item) => item.equipmentid === itemId.toString()),
+      );
+      return accumulator;
+    }, []);
+    const roomnumbers = rooms.map((room) => room.roomnumber);
+
+    /* Target format is yyyy-MM-ddThh:mm */
+    const convertToDatetimeLocal = (datetime) => {
+      const [date, time] = datetime.split(' ');
+      const [day, month, year] = date.split('.');
+      const [hours, minutes] = time.split(':');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
+
+    /* Target format is 'yyyy-MM-dd hh:mm:ss' */
+    const convertToDatabaseFormat = (datetime) => `${datetime.replace('T', ' ')}:00`;
+
+    const getFieldsForBookingEdit = ({ _booking, _equipment, _roomnumbers }) => `
+      <label for="edit-booking-roomnumber">Raum</label>
+      <select type="text" name="edit-booking-roomnumber" id="edit-booking-roomnumber">
+        <option value="${_booking.roomnumber}">${_booking.roomnumber}</option>
+        ${_roomnumbers
+    .filter((roomnumber) => roomnumber !== _booking.roomnumber)
+    .reduce(
+      (accumulator, roomnumber) => `
+          ${accumulator}
+          <option value="${roomnumber}">${roomnumber}</option>
+        `,
+      '',
+    )}
+      </select>
+      <label for="edit-booking-start">Start</label>
+      <input type="datetime-local" name="edit-booking-start" id="edit-booking-start" value="${convertToDatetimeLocal(
+    _booking.start,
+  )}">
+      <label for="edit-booking-end">Ende</label>
+      <input type="datetime-local" name="edit-booking-end" id="edit-booking-end" value="${convertToDatetimeLocal(
+    _booking.end,
+  )}">
+      <label for="edit-booking-equipment">Austattung</label>
+      <input type="text" name="edit-booking-equipment" id="edit-booking-equipment" value="${
+  _equipment
+    ? _equipment
+      .reduce(
+        (accumulator, item) => `${accumulator}${item.equipmentname}, `,
+        '',
+      )
+      .trim()
+    : ''
+}">
+    `;
+    const getHiddenFieldsForBookingEdit = (bookingid) => `
+      <input type="hidden" name="edit-booking-id" id="edit-booking-id" value="${bookingid}"/>
+    `;
+    const getSubmitButtonForBookingEdit = () => `
+      <input type="submit" name="submit-edit-booking" id="submit-edit-booking" value="Bestätigen" />
+    `;
+
+    if (action === 'edit') {
+      e.preventDefault();
+      // FIXME: Title slot should be dynamic in the future
+      const entryPoint = document.getElementById('lmsr-edit-modal');
+      entryPoint.innerHTML = '';
+      const lmsrEditModal = document.createElement('lmsr-edit-modal', {
+        is: 'lmsr-edit-modal',
+      });
+      lmsrEditModal.innerHTML = `
+      <strong slot="title">Buchung bearbeiten</strong>
+      <div slot="content" class="lmsr-edit-modal-body">${getFieldsForBookingEdit(
+    {
+      _booking: booking,
+      _equipment: bookedEquipment,
+      _roomnumbers: roomnumbers,
+    },
+  )}</div>
+      <div slot="hidden-inputs" class="lmsr-hidden-inputs">${getHiddenFieldsForBookingEdit(
+    booking.bookingid,
+  )}</div>
+      <div slot="submit">${getSubmitButtonForBookingEdit()}</div>
+      `;
+      entryPoint.appendChild(lmsrEditModal);
+      entryPoint.style.display = 'block';
+
+      const submitEditBookingButton = document.getElementById(
+        'submit-edit-booking',
+      );
+      submitEditBookingButton.addEventListener('click', () => {
+        const hiddenInputRoomnumber = document.getElementById(
+          'edited-booking-roomnumber',
+        );
+        const hiddenInputStart = document.getElementById('edited-booking-start');
+        const hiddenInputEnd = document.getElementById('edited-booking-end');
+        const hiddenInputEquipment = document.getElementById(
+          'edited-booking-equipment',
+        );
+        const hiddenInputId = document.getElementById('edited-booking-id');
+
+        hiddenInputRoomnumber.value = rooms.find(
+          (room) => room.roomnumber
+            === document.getElementById('edit-booking-roomnumber').value,
+        ).roomid;
+        hiddenInputStart.value = convertToDatabaseFormat(
+          document.getElementById('edit-booking-start').value,
+        );
+        hiddenInputEnd.value = convertToDatabaseFormat(
+          document.getElementById('edit-booking-end').value,
+        );
+        hiddenInputEquipment.value = document.getElementById(
+          'edit-booking-equipment',
+        ).value;
+        hiddenInputId.value = document.getElementById('edit-booking-id').value;
+
+        e.target.submit();
+      });
+
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateConfigActions(e) {
+    const configAction = document.forms.config_actions.config_actions_selection.value;
+    if (configAction === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
+
+    return true;
+  }
+
+  function validateConfirmation(e) {
+    const resLimit = document.getElementById('count-limit').value;
+    const userLimit = document.getElementById('user-daily-limit').value;
+
+    if (userLimit === resLimit && userLimit > 0 && e.submitter.name === 'confirmationSubmit') {
+      return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Sie haben die maximale Anzahl an Reservierungen für Ihr Konto für diesen Tag erreicht.' });
+    }
+
+    return true;
+  }
+
+  function validateDate(/* dateStr */) { return true; }
+  // const regExp = /^(\d{4})-(\d\d?)-(\d\d?)$/;
+  // const matches = dateStr.match(regExp);
+  // console.log(matches);
+  // let isValid = matches;
+  // const maxDate = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  // if (matches) {
+  //   const year = parseInt(matches[1], 10);
+  //   const month = parseInt(matches[2], 10);
+  //   const date = parseInt(matches[3], 10);
+
+  //   isValid = month <= 12 && month > 0;
+  //   isValid &= date <= maxDate[month] && date > 0;
+
+  //   const leapYear = (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
+  //   isValid &= month != 2 || leapYear || date <= 28;
+  // }
+
+  // return isValid;
+
+  function validateDisplayRooms(e) {
+    const rooms = document.getElementsByName('selected-displayed-room');
+    let roomChecked = false;
+
+    rooms.forEach((room) => {
+      if (room.checked) { roomChecked = true; }
+    });
+
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie mindestens einen Tag aus.' }); }
+
+    return true;
+  }
+
+  function validateEditRooms(e) {
+    const editChoice = document.forms.editRoomsForm['edit-rooms-choice'].value;
+    if (editChoice === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
+
+    return true;
+  }
+
+  function validateEditRoomsEquipment(e) {
+    const equipment = document.getElementsByName('edit-rooms-current-equipment');
+    let equipmentChecked = false;
+
+    equipment.forEach((item) => {
+      if (item.checked) {
+        equipmentChecked = true;
+      }
+    });
+
+    if (!equipmentChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Raumaustattung darf nicht leer sein. Sollte der Raum über keine Austattung verfügen, geben Sie \'nichts\' an.' }); }
+
+    return true;
+  }
+
+  function validateEditRoomsRoom(e) {
+    const roomname = document.forms.editRoomDetails['edit-rooms-room-roomnumber'].value;
+    const maxcapacity = document.forms.editRoomDetails['edit-rooms-room-maxcapacity'].value;
+    if (roomname === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Raumbezeichnung darf nicht leer sein.' }); }
+    if (maxcapacity === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Die Maximalkapazität darf nicht leer sein.' }); }
+
+    return true;
+  }
+
+  function validateFullBlackout(e) {
+    document.forms.fullBlackoutForm['blackout-start-date'].value;
+    document.forms.fullBlackoutForm['blackout-end-date'].value;
+    const rooms = document.getElementsByName('current-room-blackout');
+    let roomChecked = false;
+
+    rooms.forEach((room) => {
+      if (room.checked) { roomChecked = true; }
+    });
+
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum oder mehrere Räume aus.' }); }
+
+    return true;
+  }
+
+  function validateLimitRestriction(e) {
+    const limitCount = document.getElementById('reservations-limit-field').value;
+    if (limitCount === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Wert aus.' }); }
+
+    return true;
+  }
+
+  function validateManageBlackouts(e) {
+    const actionChoice = document.forms.manageBlackoutsForm['manage-blackouts-action'].value;
+    if (actionChoice === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
+
+    return true;
+  }
+
+  function validateMaxFutureDate(e) {
+    const num = document.getElementById('max-days-field').value;
+    if (Number.isNaN(num)) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
+    if (num === '') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
+
+    return true;
+  }
+
+  function validateMaxTime(e) {
+    const numHours = document.getElementById('max-time-hours-field').value;
+    if (numHours === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
+
+    return true;
+  }
+
+  function validateOpeningHours(e) {
+    const start = document.forms.OpeningHoursForm['opening-from'].value;
+    const end = document.forms.OpeningHoursForm['opening-to'].value;
+
+    const weekdays = document.querySelectorAll('input[name="weekdays"]:checked');
+    if (weekdays.length === 0) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie mindestens einen Wochentag aus.' }); }
+    if (end <= start || start === 0 || end === 0) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine gültige Start- und Endzeit aus.' }); }
+
+    return true;
+  }
+
+  function validatePartialBlackout(e) {
+    const blackoutStartTime = document.forms.partialBlackoutForm['blackout-start-time'].value;
+    const blackoutEndTime = document.forms.partialBlackoutForm['blackout-end-time'].value;
+    const rooms = document.getElementsByName('current-room-blackout');
+    let blackoutDate = document.forms.partialBlackoutForm['blackout-date'].value;
+    let roomChecked = false;
+
+    // convert date format from mm/dd/yyyy to yyyy-mm-dd
+    blackoutDate = blackoutDate.replace(/(\d\d)\/(\d\d)\/(\d{4})/, '$3-$1-$2');
+
+    // timestamp of MySQL type DATETIME
+    const startTimestamp = `${blackoutDate}  ${blackoutStartTime}`;
+    const endTimestamp = `${blackoutDate} ${blackoutEndTime}`;
+
+    // determines if invalid start/end values were entered
+    if (startTimestamp >= endTimestamp) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Start- und Endzeit an.' }); }
+
+    rooms.forEach((room) => {
+      if (room.checked) { roomChecked = true; }
+    });
+
+    if (!roomChecked) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum oder mehrere Räume aus.' }); }
+
+    return true;
+  }
+
+  function validateRestrictCategories(e) {
+    const numHours = document.getElementById('max-time-hours-field').value;
+    if (numHours === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte geben Sie eine valide Anzahl an.' }); }
+
+    return true;
+  }
+
+  function validateSavedRooms(e) {
+    const savedRoomsAction = document.forms.saved_rooms.saved_rooms_action.value;
+    if (savedRoomsAction === 'null') { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie eine Aktion aus.' }); }
+    if (savedRoomsAction === 'delete') {
+      const isConfirmedDelete = !!confirm('Sind Sie sicher, dass Sie den ausgewählten Raum löschen möchten?');
+      if (isConfirmedDelete) { return true; }
+
+      e.preventDefault();
+      return false;
+    }
+
+    const rooms = document.getElementsByName('selectedRoom');
+    let roomValue = false;
+
+    rooms.forEach((room) => {
+      if (room.checked) { roomValue = true; }
+    });
+
+    if (!roomValue) { return prohibitFormSubmitWithMessage({ e, type: 'Warnung', message: 'Bitte wählen Sie einen Raum aus.' }); }
+
+    return true;
+  }
+
+  const customElementsRegistry = window.customElements;
+  customElementsRegistry.define('lmsr-toast', LmsrToast);
+  customElementsRegistry.define(
+    'lmsr-equipment-selection',
+    LmsrEquipmentSelection,
+  );
+  customElementsRegistry.define('lmsr-edit-modal', LmsrEditModal);
 
   exports.closeModal = closeModal;
   exports.closeToast = closeToast;
@@ -748,6 +942,7 @@
   exports.hydrateRoomConfinement = hydrateRoomConfinement;
   exports.loadSelectedAction = loadSelectedAction;
   exports.notifyOnSubmitWithMessage = notifyOnSubmitWithMessage;
+  exports.prohibitFormSubmitWithMessage = prohibitFormSubmitWithMessage;
   exports.renderCalendar = renderCalendar;
   exports.setBlackoutValueOnChange = setBlackoutValueOnChange;
   exports.validateAddEquipment = validateAddEquipment;
@@ -756,7 +951,7 @@
   exports.validateAvailabilitySearchForOPAC = validateAvailabilitySearchForOPAC;
   exports.validateAvailabilitySearchResultsForBookas = validateAvailabilitySearchResultsForBookas;
   exports.validateBookingAction = validateBookingAction;
-  exports.validateConfigActions = validateConfigActions;
+  exports.validateConfigAction = validateConfigActions;
   exports.validateConfirmation = validateConfirmation;
   exports.validateDate = validateDate;
   exports.validateDisplayRooms = validateDisplayRooms;

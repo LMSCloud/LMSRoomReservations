@@ -12,29 +12,6 @@
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
-<template id="lmsr-toast-template">
-  <div class="lmsr-toast">
-    <div class="lmsr-toast-header">
-      <strong>&excl;</strong>
-      <slot name="title"></slot>
-      <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
-        <span aria-hidden="true">&times;</i></span>
-      </button>
-    </div>
-    <div class="lmsr-toast-body">
-      <slot name="message"></slot>
-    </div>
-  </div>
-  <style>
-    @import url('/api/v1/contrib/roomreservations/static/css/main.css');
-    .lmsr-toast {
-      bottom: 3.5em;
-      right: 1em;
-    }
-  </style>
-  <script>RoomReservationBundle.closeToast();</script>
-</template>
-
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>

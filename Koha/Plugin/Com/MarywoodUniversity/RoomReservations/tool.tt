@@ -12,29 +12,6 @@
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
-<template id="lmsr-toast-template">
-  <div class="lmsr-toast">
-    <div class="lmsr-toast-header">
-      <strong>&excl;</strong>
-      <slot name="title"></slot>
-      <button type="button" class="lmsr-button-close lmsr-toast-button-close" aria-label="Close" disabled>
-        <span aria-hidden="true">&times;</i></span>
-      </button>
-    </div>
-    <div class="lmsr-toast-body">
-      <slot name="message"></slot>
-    </div>
-  </div>
-  <style>
-    @import url('/api/v1/contrib/roomreservations/static/css/main.css');
-    .lmsr-toast {
-      bottom: 3.5em;
-      right: 1em;
-    }
-  </style>
-  <script>RoomReservationBundle.closeToast();</script>
-</template>
-
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a></li>
@@ -214,28 +191,6 @@
   [% END # op == 'manage-openings' %]
 
   [% IF op == 'manage-reservations' %]
-
-  <template id="lmsr-edit-modal-template">
-    <form name="editBookingForm" method="post" action="#">
-      <div class="lmsr-edit-modal">
-        <div class="lmsr-edit-modal-header">
-          <strong>&quest;</strong>
-          <slot name="title"></slot>
-          <button type="button" class="lmsr-button-close lmsr-modal-button-close" aria-label="Close" disabled>
-            <span aria-hidden="true">&times;</i></span>
-          </button>
-        </div>
-        <slot name="content"></slot>
-        <slot name="hidden-inputs"></slot>
-        <slot name="submit"></slot>
-      </div>
-    </form>
-    <style>
-      @import url('/api/v1/contrib/roomreservations/static/css/main.css');
-    </style>
-    <script>RoomReservationBundle.closeModal({ selector: 'lmsr-edit-modal'});</script>
-  </template>
-
     <div class="lmsr-content-main">
       <div class="lmsr-content-block-exception">
         <form name="manageBookingsForm" method="post" action="#">
@@ -246,14 +201,14 @@
             <div id="lmsr-notifications"></div>
             <script>
               RoomReservationBundle.notifyOnSubmitWithMessage(
-                { type: 'Fehler', message: "[% 'There was a problem deleting the selected booking. Please try again' | gettext %]"}
+                { type: 'Fehler', message: "[% 'There was a problem deleting the selected booking. Please try again' | gettext %]", style: [{ key: 'bottom', value: '3.5em'}, { key: 'right', value: '1em'}] }
               );
             </script>
           [% ELSIF deleted == 0 %]
             <div id="lmsr-notifications"></div>
             <script>
               RoomReservationBundle.notifyOnSubmitWithMessage(
-                { type: 'Erfolg', message: "[% 'Selected booking deleted successfully' | gettext %]"}
+                { type: 'Erfolg', message: "[% 'Selected booking deleted successfully' | gettext %]", style: [{ key: 'bottom', value: '3.5em'}, { key: 'right', value: '1em'}] }
               );
             </script>
           [% END # IF deleted %]
