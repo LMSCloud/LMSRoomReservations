@@ -733,6 +733,8 @@ sub tool {
                 }
             );
 
+            $bookings = get_all_bookings();
+
             $template->param(
                 bookings  => $bookings,
                 equipment => $equipment,

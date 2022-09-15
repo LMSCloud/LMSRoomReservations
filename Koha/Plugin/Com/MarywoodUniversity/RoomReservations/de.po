@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-15 14:36+0200\n"
+"PO-Revision-Date: 2022-09-15 15:13+0200\n"
 "PO-Revision-Date: 2022-09-15 14:30+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
@@ -184,7 +184,7 @@ msgstr "Eine Bestätigung Ihrer Buchung wurde an die folgende Adresse versandt"
 
 #: bookas.tt:233
 msgid "Back to patron record"
-msgstr "Zurück zum Nutzer:innen-Profil"
+msgstr "Zurück zum Nutzer*innen-Profil"
 
 #: configure.tt:5 configure.tt:100 tool.tt:4
 msgid "Koha: Room Reservations Plugin: Configuration"
@@ -236,7 +236,7 @@ msgstr "Maximale Anzahl an Reservierung pro Nutzer:in begrenzen"
 
 #: configure.tt:86 configure.tt:355
 msgid "Restrict patron categories"
-msgstr "Nutzer:innen-Kategorien einschränken"
+msgstr "Nutzer*innen-Kategorien einschränken"
 
 #: configure.tt:95 tool.tt:87
 msgid "Continue"
@@ -344,7 +344,7 @@ msgstr "Minuten"
 
 #: configure.tt:283
 msgid "Set daily reservation per patron limit"
-msgstr "Setze tägliches Reservierungslimit pro Nutzer:in"
+msgstr "Setze tägliches Reservierungslimit pro Nutzer*in"
 
 #: configure.tt:294 configure.tt:297
 msgid "Current limit:"
@@ -372,7 +372,7 @@ msgstr "Limit hinzufügen"
 
 #: configure.tt:368 configure.tt:372
 msgid "Restricted categories:"
-msgstr "Beschränkte Nuzter:innen-Kategorien:"
+msgstr "Beschränkte Nutzer*innen-Kategorien:"
 
 #: configure.tt:370
 msgid "No restrictions"
@@ -389,7 +389,7 @@ msgstr "Ungültig!"
 #: configure.tt:402
 msgid "Text entered here will be displayed to restricted patrons on the OPAC"
 msgstr ""
-"Der folgende Text wird Nutzer:innen mit aktiven Beschränkungen im OPAC "
+"Der folgende Text wird Nutzer*innen mit aktiven Beschränkungen im OPAC "
 "angezeigt"
 
 #: configure.tt:409 configure.tt:635
@@ -765,7 +765,7 @@ msgstr "Ausgewählte Buchung erfolgreich gelöscht"
 
 #: tool.tt:279
 msgid "Patron"
-msgstr "Nutzer:in"
+msgstr "Nutzer*in"
 
 #: tool.tt:302
 msgid "No bookings found!"

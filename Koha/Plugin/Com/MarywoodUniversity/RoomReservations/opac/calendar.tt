@@ -306,7 +306,7 @@
                         <div class="form-row">
                           <label class="col-sm-6 col-form-label">[% 'Select Room' | gettext %]</label>
                           <select class="form-control col-sm-6" name="availability-search-room"
-                            id="availability-search-room" title="availability-search-room">
+                            id="availability-search-room" title="availability-search-room" autocomplete="off">
                             [% IF pre_selected_room %]
                               <option value="[% pre_selected_room.roomid %]">
                                 [% pre_selected_room.roomnumber %] ([% 'max.' | gettext %] [% pre_selected_room.maxcapacity %] [% 'people' | gettext %])
@@ -421,18 +421,17 @@
         const availabilitySearchForm = document.querySelector('form[name="availabilitySearchForm"]');
         const availabilitySearchSubmitButton = document.querySelector('input[name="submit-check-room-availability"]');
         const availabilitySearchRoomSelect = document.getElementById('availability-search-room');
-        const lmsrEquipmentSelectionEntryPoint = document.getElementById('lmsr-equipment-selection');
         const rooms = [% rooms.json %];
         const equipment = [% available_room_equipment.json %];
         const blackouts = [% blackout_bookings.json %];
         const args = {
           blackoutsArgs: { entryPoint: 'lmsr-blackouts-display', blackouts },
-          equipmentArgs: { entryPoint: lmsrEquipmentSelectionEntryPoint, rooms, equipment },
+          equipmentArgs: { entryPoint: 'lmsr-equipment-selection', rooms, equipment },
           checkedOptionsArgs: { elements: '.lmsr-check-input', hiddenInputReference: 'availability-search-equipment' },
         };
         availabilitySearchForm.addEventListener('submit', (e) => RoomReservationBundle.validateAvailabilitySearchForOPAC({ e, rooms }));
         availabilitySearchSubmitButton.disabled = false;
-        RoomReservationBundle.hydrateAvailabilitySearch(args);
+        RoomReservationBundle.hydrateAvailabilitySearch({ ...args, roomSelectionRef: availabilitySearchRoomSelect });
         availabilitySearchRoomSelect.addEventListener('change', () => {
           RoomReservationBundle.hydrateAvailabilitySearch(args);
         });

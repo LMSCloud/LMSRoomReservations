@@ -208,15 +208,13 @@
       return false;
     };
 
-    const lmsrEquipmentSelection = document.getElementById(
-      'lmsr-equipment-selection',
-    );
-    lmsrEquipmentSelection.innerHTML = '';
+    const entryPointRef = document.getElementById(entryPoint);
+    entryPointRef.innerHTML = '';
     const [selectedRoom] = document.getElementById(
       'availability-search-room',
     ).selectedOptions;
     if (!+selectedRoom.value) {
-      return showEquipmentHint(lmsrEquipmentSelection);
+      return showEquipmentHint(entryPointRef);
     }
     const roomData = rooms.find(
       (room) => room.roomnumber === selectedRoom.text.replace(/\(.*\)/, '').trim(),
@@ -234,7 +232,7 @@
         <input slot="lmsr-check-input" class="lmsr-check-input" type="checkbox" value="${itemId}" id="${itemMachineReadable}">
         <label slot="lmsr-check-label" class="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
       `;
-      entryPoint.appendChild(
+      entryPointRef.appendChild(
         lmsrEquipmentSelectionCheckForm,
       );
     });
@@ -243,10 +241,17 @@
   }
 
   function hydrateAvailabilitySearch({
+    roomSelectionRef,
     blackoutsArgs,
     equipmentArgs,
     checkedOptionsArgs,
   }) {
+    if (roomSelectionRef) {
+      Array.from(roomSelectionRef.selectedOptions).forEach((selectedOption) => {
+        const selectedOptionRef = selectedOption;
+        selectedOptionRef.selected = false;
+      });
+    }
     getBlackoutsBySelectedRoom({
       entryPoint: blackoutsArgs.entryPoint,
       blackouts: blackoutsArgs.blackouts,
