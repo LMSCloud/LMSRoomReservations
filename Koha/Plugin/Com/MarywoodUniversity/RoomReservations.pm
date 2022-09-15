@@ -26,7 +26,7 @@ use C4::Context;
 use C4::Output;
 use C4::Languages;
 use C4::Letters;
-use Koha::DateUtils;
+use Koha::DateUtils qw( dt_from_string output_pref);
 use Koha::Email;
 use Koha::Patrons;
 use Encode;

@@ -334,7 +334,7 @@
                 <br>
                           
                 [% FOREACH cat IN restricted_categories %]
-                  <input type="checkbox" name="currently-restricted-category" value="[% cat.categorycode %]" checked="true" />&nbsp;<span>[% cat.description %]</span>
+                  <input type="checkbox" name="currently-restricted-category" value="[% cat.categorycode %]" checked="true" />&nbsp;<span>[% cat.description %]</span><br>
                   [% restricted_categorycodes.push(cat.categorycode) %]
                 [% END # FOREACH cat IN restricted_categories %]
                           
@@ -350,7 +350,7 @@
               [% IF categories.size %]
                 [% FOREACH category IN categories %]
                   [% UNLESS restricted_categorycodes.grep(category.categorycode).size() %]
-                    <input type="checkbox" name="patron-category" value="[% category.categorycode %]" /> [% category.description %]<br />
+                    <input type="checkbox" name="patron-category" value="[% category.categorycode %]" />&nbsp;<span>[% category.description %]</span><br>
                   [% END %]
                 [% END # FOREACH category IN categories %]
               [% ELSE %]
