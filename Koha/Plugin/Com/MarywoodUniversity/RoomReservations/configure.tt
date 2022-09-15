@@ -346,12 +346,14 @@
             <p>
               [% 'Non-Restricted categories:' | gettext %]
               <br>
-                  
               [% IF categories.size %]
                 [% FOREACH category IN categories %]
-                  [% UNLESS restricted_categorycodes.grep(category.categorycode).size() %]
-                    <input type="checkbox" name="patron-category" value="[% category.categorycode %]" />&nbsp;<span>[% category.description %]</span><br>
+                  [% FOREACH restricted_categorycode IN restricted_categorycodes %]
+                    [% restricted = category.categorycode == restricted_categorycode %]
+                    [% LAST IF restricted %]
                   [% END %]
+                  [% NEXT IF restricted %]
+                  <input type="checkbox" name="patron-category" value="[% category.categorycode %]" />&nbsp;<span>[% category.description %]</span><br>
                 [% END # FOREACH category IN categories %]
               [% ELSE %]
                 <p>[% 'INVALID!' | gettext %]</p>
