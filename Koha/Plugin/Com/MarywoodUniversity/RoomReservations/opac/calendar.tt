@@ -306,13 +306,13 @@
                         <div class="form-row">
                           <label class="col-sm-6 col-form-label">[% 'Select Room' | gettext %]</label>
                           <select class="form-control col-sm-6" name="availability-search-room"
-                            id="availability-search-room">
+                            id="availability-search-room" title="availability-search-room">
                             [% IF pre_selected_room %]
                               <option value="[% pre_selected_room.roomid %]">
                                 [% pre_selected_room.roomnumber %] ([% 'max.' | gettext %] [% pre_selected_room.maxcapacity %] [% 'people' | gettext %])
                               </option>
                             [% ELSE %]
-                              <option value=""></option> <!-- FIXME: This needs a value --> 
+                              <option value="0">[% 'Select a room' | gettext %]</option>
                             [% END %]
                             [% FOREACH room IN rooms %]
                               [% UNLESS room.roomid == pre_selected_room.roomid %]
@@ -425,17 +425,16 @@
         const rooms = [% rooms.json %];
         const equipment = [% available_room_equipment.json %];
         const blackouts = [% blackout_bookings.json %];
+        const args = {
+          blackoutsArgs: { entryPoint: 'lmsr-blackouts-display', blackouts },
+          equipmentArgs: { entryPoint: lmsrEquipmentSelectionEntryPoint, rooms, equipment },
+          checkedOptionsArgs: { elements: '.lmsr-check-input', hiddenInputReference: 'availability-search-equipment' },
+        };
         availabilitySearchForm.addEventListener('submit', (e) => RoomReservationBundle.validateAvailabilitySearchForOPAC({ e, rooms }));
         availabilitySearchSubmitButton.disabled = false;
-        document.addEventListener('DOMContentLoaded', () => {
-          RoomReservationBundle.getBlackoutsBySelectedRoom({ entryPoint: 'lmsr-blackouts-display', blackouts });
-          RoomReservationBundle.getEquipmentBySelectedRoom({ rooms, equipment, lmsrEquipmentSelectionEntryPoint });
-          RoomReservationBundle.getCheckedOptions({ elements: '.lmsr-check-input', hiddenInputReference: 'availability-search-equipment' });
-          availabilitySearchRoomSelect.addEventListener('change', () => {
-            RoomReservationBundle.getBlackoutsBySelectedRoom({ entryPoint: 'lmsr-blackouts-display', blackouts });
-            RoomReservationBundle.getEquipmentBySelectedRoom({ rooms, equipment, lmsrEquipmentSelectionEntryPoint });
-            RoomReservationBundle.getCheckedOptions({ elements: '.lmsr-check-input', hiddenInputReference: 'availability-search-equipment' });
-          });
+        RoomReservationBundle.hydrateAvailabilitySearch(args);
+        availabilitySearchRoomSelect.addEventListener('change', () => {
+          RoomReservationBundle.hydrateAvailabilitySearch(args);
         });
       </script>
     [% END %]

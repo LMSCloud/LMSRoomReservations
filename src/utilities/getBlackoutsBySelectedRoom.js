@@ -1,18 +1,23 @@
 export default function getBlackoutsBySelectedRoom({ entryPoint, blackouts }) {
+  const showBlackoutHint = (entryPointRef) => {
+    const blackoutInfo = document.createElement('span');
+    blackoutInfo.classList.add('row', 'mx-1', 'p-1');
+    blackoutInfo.textContent = 'Für diesen Raum existieren derzeit keine Sperrzeiten.';
+    entryPointRef.appendChild(blackoutInfo);
+    return false;
+  };
+
   const entryPointRef = document.getElementById(entryPoint);
   entryPointRef.innerHTML = '';
   let [selectedRoom] = document.getElementById('availability-search-room').selectedOptions;
+  if (!+selectedRoom.value) { return showBlackoutHint(entryPointRef); }
   selectedRoom = selectedRoom.text.replace(/\(.*\)/, '').trim();
   const blackoutsForSelectedRoom = blackouts.reduce((accumulator, blackout) => {
     if (blackout.roomnumber === selectedRoom) { accumulator.push(blackout); }
     return accumulator;
   }, []);
   if (blackoutsForSelectedRoom.length === 0) {
-    const blackoutInfo = document.createElement('span');
-    blackoutInfo.classList.add('row', 'mx-1', 'p-1');
-    blackoutInfo.textContent = 'Für diesen Raum existieren derzeit keine Sperrzeiten.';
-    entryPointRef.appendChild(blackoutInfo);
-    return;
+    return showBlackoutHint(entryPointRef);
   }
   blackoutsForSelectedRoom.forEach((blackout) => {
     const blackoutElement = document.createElement('div');
@@ -25,4 +30,6 @@ export default function getBlackoutsBySelectedRoom({ entryPoint, blackouts }) {
     });
     entryPointRef.appendChild(blackoutElement);
   });
+
+  return true;
 }

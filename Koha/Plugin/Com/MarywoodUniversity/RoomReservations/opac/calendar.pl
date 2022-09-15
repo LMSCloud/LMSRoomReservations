@@ -229,6 +229,7 @@ AVAILABILITY_SEARCH: {
                 $cgi->param('availability-search-equipment')
                 ? split /,/smx, $cgi->param('availability-search-equipment')
                 : ();
+            my $blackout_bookings = get_all_blackout_bookings();
 
             if ($is_room_available) {    # --> go to confirmation page
                 my $displayed_start          = output_pref( { dt => $start_datetime, } );
@@ -258,7 +259,7 @@ AVAILABILITY_SEARCH: {
                     displayed_end            => $displayed_end,
                     count_limit              => $count_limit,
                     user_daily_limit         => $current_user_daily_limit,
-                    equipment_ids            => \@equipment_ids,
+                    equipment_ids            => scalar @equipment_ids ? \@equipment_ids : [ 1 ], # 1 represents 'none' in the equipment table
                     available_room_equipment => $equipment,
                 );
             }
@@ -271,6 +272,7 @@ AVAILABILITY_SEARCH: {
                     max_days                 => $max_num_days,
                     max_time                 => $max_time,
                     opening_hours            => $opening_hours,
+                    blackout_bookings        => $blackout_bookings,
                 );
             }
         }

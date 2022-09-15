@@ -10,8 +10,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-15 10:51+0200\n"
-"PO-Revision-Date: 2022-08-31 13:32+0200\n"
+"PO-Revision-Date: 2022-09-15 14:36+0200\n"
+"PO-Revision-Date: 2022-09-15 14:30+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -256,7 +256,7 @@ msgstr "Zeige Details"
 
 #: configure.tt:161
 msgid "Select another room to display"
-msgstr "Zeigen einen anderen Raum an"
+msgstr "Zeige einen anderen Raum an"
 
 #: configure.tt:169
 msgid "Room capacity:"
@@ -634,6 +634,10 @@ msgstr "Ende"
 msgid "max."
 msgstr "max."
 
+#: opac/calendar.tt:315
+msgid "Select a room"
+msgstr "Kein Raum ausgewählt"
+
 #: opac/calendar.tt:333
 msgid "Select Equipment"
 msgstr "Wähle Austattung"
@@ -757,7 +761,7 @@ msgstr ""
 
 #: tool.tt:267
 msgid "Selected booking deleted successfully"
-msgstr "Ausgewählte Buchung erfolgreich gelöscht "
+msgstr "Ausgewählte Buchung erfolgreich gelöscht"
 
 #: tool.tt:279
 msgid "Patron"

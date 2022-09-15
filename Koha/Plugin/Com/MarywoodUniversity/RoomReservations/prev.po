@@ -6,15 +6,25 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-09-15 14:30+0200\n"
 "PO-Revision-Date: 2022-08-31 13:32+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
+"Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.1.1\n"
 
@@ -246,7 +256,7 @@ msgstr "Zeige Details"
 
 #: configure.tt:161
 msgid "Select another room to display"
-msgstr "Zeigen einen anderen Raum an"
+msgstr "Zeige einen anderen Raum an"
 
 #: configure.tt:169
 msgid "Room capacity:"
@@ -255,6 +265,18 @@ msgstr "Raumkapazität:"
 #: configure.tt:170 configure.tt:453 configure.tt:571
 msgid "Description:"
 msgstr "Beschreibung:"
+
+#: configure.tt:455 configure.tt:573
+msgid "Color:"
+msgstr "Farbe:"
+
+#: configure.tt:130 configure.tt:420 configure.tt:549
+msgid "Branch:"
+msgstr "Zweigstelle:"
+
+#: configure.tt:131
+msgid "Max. bookable time:"
+msgstr "Max. buchbarer Zeitraum:"
 
 #: configure.tt:172 configure.tt:462 configure.tt:620
 msgid "Equipment:"
@@ -386,13 +408,37 @@ msgstr "Raum hinzufügen"
 msgid "Room Name:"
 msgstr "Raumbezeichnung"
 
+#: configure.tt:411 configure.tt:540
+msgid "Insert any alphanumeric character combination."
+msgstr "Raum123"
+
 #: configure.tt:451 configure.tt:569
 msgid "Max Capacity:"
 msgstr "Max. Kapazität:"
 
-#: configure.tt:455 configure.tt:573
-msgid "Color:"
-msgstr "Farbe:"
+#: configure.tt:413 configure.tt:542
+msgid "Insert the max. number of people allowed in this room."
+msgstr "5"
+
+#: configure.tt:415 configure.tt:544
+msgid "Insert any description for the new room."
+msgstr "Dieser Raum ist…"
+
+#: configure.tt:418 configure.tt:547
+msgid "Image:"
+msgstr "Bild:"
+
+#: configure.tt:419 configure.tt:548
+msgid "Insert a path to an image, starting from the webroot."
+msgstr "/pfad/zum/bild"
+
+#: configure.tt:427 configure.tt:556
+msgid "Max. bookable time (min):"
+msgstr "Max. buchbarer Zeitraum (min):"
+
+#: configure.tt:428 configure.tt:557
+msgid "Insert a max. bookable time in minutes."
+msgstr "360"
 
 #: configure.tt:508 tool.tt:177 tool.tt:295
 msgid "Actions"
@@ -455,6 +501,158 @@ msgid "Only equipment not currently associated with a room is listed below"
 msgstr ""
 "Es werden nur Teile der Ausstattung angezeigt, die derzeitig nicht mit einem "
 "Raum assoziiert sind"
+
+#: opac/calendar-sendconfirmation.tt:6
+msgid "Study Room Reservation Confirmation"
+msgstr "Bestätigung der Raumreservierung"
+
+#: opac/calendar-sendconfirmation.tt:12
+msgid "Your study room request has been completed!"
+msgstr "Ihre Raumbuchungsanfrage wurde bestätigt!"
+
+#: opac/calendar-sendconfirmation.tt:14
+msgid ""
+"For proof of reservation, print or save this email containing the "
+"reservation details!"
+msgstr "Als Nachweis sollten Sie diese Email speichern."
+
+#: opac/calendar-sendconfirmation.tt:28
+msgid "From:"
+msgstr "Von:"
+
+#: opac/calendar-sendconfirmation.tt:30
+msgid "To:"
+msgstr "An:"
+
+#: opac/calendar-sendconfirmation.tt:32
+msgid "Reservation confirmed:"
+msgstr "Reservierung bestätigt:"
+
+#: opac/calendar.tt:6
+msgid "Koha online"
+msgstr "Koha online"
+
+#: opac/calendar.tt:6
+msgid "catalog"
+msgstr "Katalog"
+
+#: opac/calendar.tt:6
+msgid "Booking"
+msgstr "Buchung"
+
+#: opac/calendar.tt:149 opac/calendar.tt:258 opac/calendar.tt:428
+msgid "Study Room Calendar"
+msgstr "Buchungskalender"
+
+#: opac/calendar.tt:161
+msgid "Current Bookings"
+msgstr "Aktuelle Buchungen"
+
+#: opac/calendar.tt:178
+msgid "Book a Room"
+msgstr "Einen Raum buchen"
+
+#: opac/calendar.tt:183
+msgid "MON"
+msgstr "Mo"
+
+#: opac/calendar.tt:184
+msgid "TUE"
+msgstr "Di"
+
+#: opac/calendar.tt:185
+msgid "WED"
+msgstr "Mi"
+
+#: opac/calendar.tt:186
+msgid "THU"
+msgstr "Do"
+
+#: opac/calendar.tt:187
+msgid "FRI"
+msgstr "Fr"
+
+#: opac/calendar.tt:188
+msgid "SAT"
+msgstr "Sa"
+
+#: opac/calendar.tt:189
+msgid "SUN"
+msgstr "So"
+
+#: opac/calendar.tt:165
+msgid "Confine your search for available dates by selecting rooms."
+msgstr ""
+"Erleichtern Sie sich die Suche, indem Sie sich nur Buchungen für den "
+"gewünschten Raum anzeigen lassen."
+
+#: opac/calendar.tt:224 opac/calendar.tt:395
+msgid "Max. Capacity"
+msgstr "Max. Kapazität"
+
+#: opac/calendar.tt:225 opac/calendar.tt:396
+msgid "Persons"
+msgstr "Personen"
+
+#: opac/calendar.tt:228 opac/calendar.tt:399
+msgid "Equipment"
+msgstr "Austattung"
+
+#: opac/calendar.tt:215 opac/calendar.tt:411
+msgid "Branch"
+msgstr "Zweigstelle"
+
+#: opac/calendar.tt:240
+msgid "Book this Room"
+msgstr "Diesen Raum buchen"
+
+#: opac/calendar.tt:266
+msgid "You do not have permission to access this page"
+msgstr ""
+"Sie haben nicht die notwendigen Berechtigungen um diese Seite aufzurufen"
+
+#: opac/calendar.tt:271
+msgid "Book a room"
+msgstr "Einen Raum buchen"
+
+#: opac/calendar.tt:292
+msgid ""
+"Room is not available at the selected time. Please note the opening hours."
+msgstr ""
+"Dieser Raum ist zur gewählten Zeit nicht verfügbar. Bitte beachten Sie die "
+"Öffnungszeiten."
+
+#: opac/calendar.tt:304
+msgid "Start time"
+msgstr "Beginn"
+
+#: opac/calendar.tt:311
+msgid "End time"
+msgstr "Ende"
+
+#: opac/calendar.tt:328 opac/calendar.tt:336
+msgid "max."
+msgstr "max."
+
+#: opac/calendar.tt:333
+msgid "Select Equipment"
+msgstr "Wähle Austattung"
+
+#: opac/calendar.tt:365
+msgid "Opening hours"
+msgstr "Öffnungszeiten"
+
+#: opac/calendar.tt:373
+msgid "Blackouts"
+msgstr "Sperrzeiten"
+
+#: opac/calendar.tt:493
+msgid "Send me a copy of my confirmation"
+msgstr "Senden Sie mir eine Kopie meiner Reservierung zu"
+
+#: opac/calendar.tt:536
+msgid "Back to calendar"
+msgstr "Zurück zum Kalender"
 
 #: tool.tt:69
 msgid "Koha: Room Reservations Plugin: Tool"
@@ -608,137 +806,3 @@ msgstr "Räume für einen Blackout auswählen"
 #: tool.tt:435 tool.tt:504
 msgid "All rooms"
 msgstr "Alle Räume"
-
-#: opac/calendar-sendconfirmation.tt:6
-msgid "Study Room Reservation Confirmation"
-msgstr "Bestätigung der Raumreservierung"
-
-#: opac/calendar-sendconfirmation.tt:12
-msgid "Your study room request has been completed!"
-msgstr "Ihre Raumbuchungsanfrage wurde bestätigt!"
-
-#: opac/calendar-sendconfirmation.tt:14
-msgid ""
-"For proof of reservation, print or save this email containing the "
-"reservation details!"
-msgstr "Als Nachweis sollten Sie diese Email speichern."
-
-#: opac/calendar-sendconfirmation.tt:28
-msgid "From:"
-msgstr "Von:"
-
-#: opac/calendar-sendconfirmation.tt:30
-msgid "To:"
-msgstr "An:"
-
-#: opac/calendar-sendconfirmation.tt:32
-msgid "Reservation confirmed:"
-msgstr "Reservierung bestätigt:"
-
-#: opac/calendar.tt:6
-msgid "Koha online"
-msgstr "Koha online"
-
-#: opac/calendar.tt:6
-msgid "catalog"
-msgstr "Katalog"
-
-#: opac/calendar.tt:6
-msgid "Booking"
-msgstr "Buchung"
-
-#: opac/calendar.tt:149 opac/calendar.tt:258 opac/calendar.tt:428
-msgid "Study Room Calendar"
-msgstr "Buchungskalender"
-
-#: opac/calendar.tt:161
-msgid "Current Bookings"
-msgstr "Aktuelle Buchungen"
-
-#: opac/calendar.tt:178
-msgid "Book a Room"
-msgstr "Einen Raum buchen"
-
-#: opac/calendar.tt:183
-msgid "MON"
-msgstr "Mo"
-
-#: opac/calendar.tt:184
-msgid "TUE"
-msgstr "Di"
-
-#: opac/calendar.tt:185
-msgid "WED"
-msgstr "Mi"
-
-#: opac/calendar.tt:186
-msgid "THU"
-msgstr "Do"
-
-#: opac/calendar.tt:187
-msgid "FRI"
-msgstr "Fr"
-
-#: opac/calendar.tt:188
-msgid "SAT"
-msgstr "Sa"
-
-#: opac/calendar.tt:189
-msgid "SUN"
-msgstr "So"
-
-#: opac/calendar.tt:224 opac/calendar.tt:395
-msgid "Max. Capacity"
-msgstr "Max. Kapazität"
-
-#: opac/calendar.tt:225 opac/calendar.tt:396
-msgid "Persons"
-msgstr "Personen"
-
-#: opac/calendar.tt:228 opac/calendar.tt:399
-msgid "Equipment"
-msgstr "Austattung"
-
-#: opac/calendar.tt:240
-msgid "Book this Room"
-msgstr "Diesen Raum buchen"
-
-#: opac/calendar.tt:266
-msgid "You do not have permission to access this page"
-msgstr ""
-"Sie haben nicht die notwendigen Berechtigungen um diese Seite aufzurufen"
-
-#: opac/calendar.tt:271
-msgid "Book a room"
-msgstr "Einen Raum buchen"
-
-#: opac/calendar.tt:292
-msgid ""
-"Room is not available at the selected time. Please note the opening hours."
-msgstr ""
-"Dieser Raum ist zur gewählten Zeit nicht verfügbar. Bitte beachten Sie die "
-"Öffnungszeiten."
-
-#: opac/calendar.tt:304
-msgid "Start time"
-msgstr "Beginn"
-
-#: opac/calendar.tt:311
-msgid "End time"
-msgstr "Ende"
-
-#: opac/calendar.tt:328 opac/calendar.tt:336
-msgid "max."
-msgstr "max."
-
-#: opac/calendar.tt:365
-msgid "Opening hours"
-msgstr "Öffnungszeiten"
-
-#: opac/calendar.tt:493
-msgid "Send me a copy of my confirmation"
-msgstr "Senden Sie mir eine Kopie meiner Reservierung zu"
-
-#: opac/calendar.tt:536
-msgid "Back to calendar"
-msgstr "Zurück zum Kalender"

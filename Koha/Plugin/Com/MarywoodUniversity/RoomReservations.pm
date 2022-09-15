@@ -1234,6 +1234,8 @@ sub configure {
             my $addedEquipment = $cgi->param('add-equipment-text-field');
             ## Convert to lowercase to enforce uniformity
             $addedEquipment = lc $addedEquipment;
+            ## Remove preexisting quotes
+            $addedEquipment =~ s/'//gsmx;
             ## Enclose in single quotes for DB string compatibility
             $addedEquipment = qq{'$addedEquipment'};
             add_equipment($addedEquipment);

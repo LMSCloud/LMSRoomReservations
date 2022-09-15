@@ -83,7 +83,7 @@ export default function validateAvailabilitySearchForOPAC({ e, rooms }) {
 
   searchFormArray.forEach((entry) => {
     const [, values] = entry;
-    if (values.value === '') {
+    if (values.value === '' || values.value === '0') {
       values.field.classList.toggle('border-danger');
     }
   });

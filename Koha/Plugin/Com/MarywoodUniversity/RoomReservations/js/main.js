@@ -111,20 +111,25 @@
   }
 
   function getBlackoutsBySelectedRoom({ entryPoint, blackouts }) {
+    const showBlackoutHint = (entryPointRef) => {
+      const blackoutInfo = document.createElement('span');
+      blackoutInfo.classList.add('row', 'mx-1', 'p-1');
+      blackoutInfo.textContent = 'Für diesen Raum existieren derzeit keine Sperrzeiten.';
+      entryPointRef.appendChild(blackoutInfo);
+      return false;
+    };
+
     const entryPointRef = document.getElementById(entryPoint);
     entryPointRef.innerHTML = '';
     let [selectedRoom] = document.getElementById('availability-search-room').selectedOptions;
+    if (!+selectedRoom.value) { return showBlackoutHint(entryPointRef); }
     selectedRoom = selectedRoom.text.replace(/\(.*\)/, '').trim();
     const blackoutsForSelectedRoom = blackouts.reduce((accumulator, blackout) => {
       if (blackout.roomnumber === selectedRoom) { accumulator.push(blackout); }
       return accumulator;
     }, []);
     if (blackoutsForSelectedRoom.length === 0) {
-      const blackoutInfo = document.createElement('span');
-      blackoutInfo.classList.add('row', 'mx-1', 'p-1');
-      blackoutInfo.textContent = 'Für diesen Raum existieren derzeit keine Sperrzeiten.';
-      entryPointRef.appendChild(blackoutInfo);
-      return;
+      return showBlackoutHint(entryPointRef);
     }
     blackoutsForSelectedRoom.forEach((blackout) => {
       const blackoutElement = document.createElement('div');
@@ -137,6 +142,8 @@
       });
       entryPointRef.appendChild(blackoutElement);
     });
+
+    return true;
   }
 
   function getCheckedOptions({ elements, hiddenInputReference }) {
@@ -191,8 +198,16 @@
   function getEquipmentBySelectedRoom({
     rooms,
     equipment,
-    lmsrEquipmentSelectionEntryPoint,
+    entryPoint,
   }) {
+    const showEquipmentHint = (entryPointRef) => {
+      const equipmentInfo = document.createElement('span');
+      equipmentInfo.classList.add('row', 'mx-1', 'p-1');
+      equipmentInfo.textContent = 'Für diesen Raum konnte kein Equipment gefunden werden.';
+      entryPointRef.appendChild(equipmentInfo);
+      return false;
+    };
+
     const lmsrEquipmentSelection = document.getElementById(
       'lmsr-equipment-selection',
     );
@@ -200,6 +215,9 @@
     const [selectedRoom] = document.getElementById(
       'availability-search-room',
     ).selectedOptions;
+    if (!+selectedRoom.value) {
+      return showEquipmentHint(lmsrEquipmentSelection);
+    }
     const roomData = rooms.find(
       (room) => room.roomnumber === selectedRoom.text.replace(/\(.*\)/, '').trim(),
     );
@@ -216,9 +234,31 @@
         <input slot="lmsr-check-input" class="lmsr-check-input" type="checkbox" value="${itemId}" id="${itemMachineReadable}">
         <label slot="lmsr-check-label" class="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
       `;
-      lmsrEquipmentSelectionEntryPoint.appendChild(
+      entryPoint.appendChild(
         lmsrEquipmentSelectionCheckForm,
       );
+    });
+
+    return true;
+  }
+
+  function hydrateAvailabilitySearch({
+    blackoutsArgs,
+    equipmentArgs,
+    checkedOptionsArgs,
+  }) {
+    getBlackoutsBySelectedRoom({
+      entryPoint: blackoutsArgs.entryPoint,
+      blackouts: blackoutsArgs.blackouts,
+    });
+    getEquipmentBySelectedRoom({
+      entryPoint: equipmentArgs.entryPoint,
+      rooms: equipmentArgs.rooms,
+      equipment: equipmentArgs.equipment,
+    });
+    getCheckedOptions({
+      elements: checkedOptionsArgs.elements,
+      hiddenInputReference: checkedOptionsArgs.hiddenInputReference,
     });
   }
 
@@ -553,7 +593,7 @@
 
     searchFormArray.forEach((entry) => {
       const [, values] = entry;
-      if (values.value === '') {
+      if (values.value === '' || values.value === '0') {
         values.field.classList.toggle('border-danger');
       }
     });
@@ -978,6 +1018,7 @@
   exports.getCheckedOptions = getCheckedOptions;
   exports.getColorTextWithContrast = getColorTextWithContrast;
   exports.getEquipmentBySelectedRoom = getEquipmentBySelectedRoom;
+  exports.hydrateAvailabilitySearch = hydrateAvailabilitySearch;
   exports.hydrateRoomConfinement = hydrateRoomConfinement;
   exports.loadSelectedAction = loadSelectedAction;
   exports.notifyOnSubmitWithMessage = notifyOnSubmitWithMessage;

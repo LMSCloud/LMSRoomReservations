@@ -8,6 +8,7 @@ import getBlackoutsBySelectedRoom from './utilities/getBlackoutsBySelectedRoom';
 import getCheckedOptions from './utilities/getCheckedOptions';
 import getColorTextWithContrast from './utilities/getColorTextWithContrast';
 import getEquipmentBySelectedRoom from './utilities/getEquipmentBySelectedRoom';
+import hydrateAvailabilitySearch from './utilities/hydrateAvailabilitySearch';
 import hydrateRoomConfinement from './utilities/hydrateRoomConfinement';
 import loadSelectedAction from './utilities/loadSelectedAction';
 import notifyOnSubmitWithMessage from './utilities/notifyOnSubmitWithMessage';
@@ -56,6 +57,7 @@ export {
   getCheckedOptions,
   getColorTextWithContrast,
   getEquipmentBySelectedRoom,
+  hydrateAvailabilitySearch,
   hydrateRoomConfinement,
   loadSelectedAction,
   notifyOnSubmitWithMessage,

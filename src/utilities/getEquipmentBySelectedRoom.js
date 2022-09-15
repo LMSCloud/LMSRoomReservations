@@ -1,8 +1,16 @@
 export default function getEquipmentBySelectedRoom({
   rooms,
   equipment,
-  lmsrEquipmentSelectionEntryPoint,
+  entryPoint,
 }) {
+  const showEquipmentHint = (entryPointRef) => {
+    const equipmentInfo = document.createElement('span');
+    equipmentInfo.classList.add('row', 'mx-1', 'p-1');
+    equipmentInfo.textContent = 'Für diesen Raum konnte kein Equipment gefunden werden.';
+    entryPointRef.appendChild(equipmentInfo);
+    return false;
+  };
+
   const lmsrEquipmentSelection = document.getElementById(
     'lmsr-equipment-selection',
   );
@@ -10,6 +18,9 @@ export default function getEquipmentBySelectedRoom({
   const [selectedRoom] = document.getElementById(
     'availability-search-room',
   ).selectedOptions;
+  if (!+selectedRoom.value) {
+    return showEquipmentHint(lmsrEquipmentSelection);
+  }
   const roomData = rooms.find(
     (room) => room.roomnumber === selectedRoom.text.replace(/\(.*\)/, '').trim(),
   );
@@ -26,8 +37,10 @@ export default function getEquipmentBySelectedRoom({
         <input slot="lmsr-check-input" class="lmsr-check-input" type="checkbox" value="${itemId}" id="${itemMachineReadable}">
         <label slot="lmsr-check-label" class="lmsr-check-label" for="${itemMachineReadable}">${item.equipmentname}</label>
       `;
-    lmsrEquipmentSelectionEntryPoint.appendChild(
+    entryPoint.appendChild(
       lmsrEquipmentSelectionCheckForm,
     );
   });
+
+  return true;
 }
