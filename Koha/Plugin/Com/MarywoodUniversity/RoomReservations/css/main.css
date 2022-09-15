@@ -206,10 +206,25 @@ textarea {
   grid-template-columns: 2em repeat(2, 1fr);
 }
 
+.lmsr-action-table-bookas > .lmsr-action-table-body-item:nth-child(4n + 1), 
+.lmsr-action-table-bookas > .lmsr-action-table-body-item:nth-child(4n + 2), 
+.lmsr-action-table-bookas > .lmsr-action-table-body-item:nth-child(4n + 3) {
+  background: whitesmoke;
+} 
+
 .lmsr-action-table-delete-reservations {
   -ms-grid-columns: 2em (1fr) [5];
   grid-template-columns: 2em repeat(5, 1fr);
 }
+
+.lmsr-action-table-delete-reservations > .lmsr-action-table-body-item:nth-child(12n + 1), 
+.lmsr-action-table-delete-reservations > .lmsr-action-table-body-item:nth-child(12n + 2), 
+.lmsr-action-table-delete-reservations > .lmsr-action-table-body-item:nth-child(12n + 3), 
+.lmsr-action-table-delete-reservations > .lmsr-action-table-body-item:nth-child(12n + 4),
+.lmsr-action-table-delete-reservations > .lmsr-action-table-body-item:nth-child(12n + 5),
+.lmsr-action-table-delete-reservations > .lmsr-action-table-body-item:nth-child(12n + 6) {
+  background: whitesmoke;
+} 
 
 .lmsr-action-table-delete-opening-hours,
 .lmsr-action-table-delete-blackouts {
@@ -217,9 +232,25 @@ textarea {
   grid-template-columns: 2em repeat(3, 1fr);
 }
 
+.lmsr-action-table-delete-blackouts > .lmsr-action-table-body-item:nth-child(8n + 1), 
+.lmsr-action-table-delete-blackouts > .lmsr-action-table-body-item:nth-child(8n + 2), 
+.lmsr-action-table-delete-blackouts > .lmsr-action-table-body-item:nth-child(8n + 3), 
+.lmsr-action-table-delete-blackouts > .lmsr-action-table-body-item:nth-child(8n + 4),
+.lmsr-action-table-delete-opening-hours > .lmsr-action-table-body-item:nth-child(8n + 1),
+.lmsr-action-table-delete-opening-hours > .lmsr-action-table-body-item:nth-child(8n + 2),
+.lmsr-action-table-delete-opening-hours > .lmsr-action-table-body-item:nth-child(8n + 3),
+.lmsr-action-table-delete-opening-hours > .lmsr-action-table-body-item:nth-child(8n + 4) {
+  background: whitesmoke;
+} 
+
 .lmsr-action-table-display-rooms {
   -ms-grid-columns: 2em 1fr;
   grid-template-columns: 2em 1fr;
+}
+
+.lmsr-action-table-display-rooms > .lmsr-action-table-body-item:nth-child(4n + 1), 
+.lmsr-action-table-display-rooms > .lmsr-action-table-body-item:nth-child(4n + 2) {
+  background-color: whitesmoke;
 }
 
 .lmsr-action-table-delete-opening-hours span,
