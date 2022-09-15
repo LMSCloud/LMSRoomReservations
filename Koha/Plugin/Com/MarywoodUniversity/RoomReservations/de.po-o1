@@ -1,19 +1,20 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# German translations for PACKAGE package.
+# Copyright (C) 2022 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Paul Derscheid <paul.derscheid@lmscloud.de>, 2022.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
-"MIME-Version: \n"
+"Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2022-09-15 10:39+0200\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: bookas.tt:6
 msgid "Koha: Room Reservations Plugin: Reserve as patron"
@@ -148,7 +149,9 @@ msgid "It appears there was a problem completing your reservation"
 msgstr ""
 
 #: bookas.tt:214 opac/calendar.tt:563
-msgid "This is most likely due to someone else placing a reservation for a conflicting time slot."
+msgid ""
+"This is most likely due to someone else placing a reservation for a "
+"conflicting time slot."
 msgstr ""
 
 #: bookas.tt:221 opac/calendar.tt:566
@@ -488,7 +491,9 @@ msgid "Your study room request has been completed!"
 msgstr ""
 
 #: opac/calendar-sendconfirmation.tt:14
-msgid "For proof of reservation, print or save this email containing the reservation details!"
+msgid ""
+"For proof of reservation, print or save this email containing the "
+"reservation details!"
 msgstr ""
 
 #: opac/calendar-sendconfirmation.tt:28
@@ -588,7 +593,8 @@ msgid "Book a room"
 msgstr ""
 
 #: opac/calendar.tt:276
-msgid "Room is not available at the selected time. Please note the opening hours."
+msgid ""
+"Room is not available at the selected time. Please note the opening hours."
 msgstr ""
 
 #: opac/calendar.tt:288
@@ -640,7 +646,8 @@ msgid "Manage reservations"
 msgstr ""
 
 #: tool.tt:96
-msgid "There was a problem deleting the selected opening hours. Please try again"
+msgid ""
+"There was a problem deleting the selected opening hours. Please try again"
 msgstr ""
 
 #: tool.tt:110
@@ -770,4 +777,3 @@ msgstr ""
 #: tool.tt:401 tool.tt:470
 msgid "All rooms"
 msgstr ""
-

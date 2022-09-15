@@ -38,6 +38,7 @@ export default function validateAvailabilitySearchForOPAC({ e, rooms }) {
 
   const MINUTES_TO_MILLISECONDS = 60000;
   const MILLISECONDS_TO_HOURS = 3600000;
+  const MINUTES_IN_HOURS = 60;
 
   const maximumBookableTimeframe = maximumBookableTimeframeOfSelectedRoom
     || parseInt(document.getElementById('max_time').value, 10);
@@ -63,13 +64,16 @@ export default function validateAvailabilitySearchForOPAC({ e, rooms }) {
     let timeString = '';
 
     if (maximumBookableTimeframeInHours > 0) {
-      timeString += `${maximumBookableTimeframeInHours} Stunde(n)`;
+      timeString
+        += maximumBookableTimeframeInHours < 1
+          ? `${MINUTES_IN_HOURS * maximumBookableTimeframeInHours} Minuten`
+          : `${maximumBookableTimeframeInHours} Stunde(n)`;
     }
 
     return prohibitFormSubmitWithMessage({
       e,
       type: 'Warnung',
-      message: `Die angegebene Zeitspanne übschreitet den Maximalwert: ${timeString}.`,
+      message: `Die angegebene Zeitspanne überschreitet den Maximalwert: ${timeString}.`,
       style: [
         { key: 'bottom', value: '1em' },
         { key: 'right', value: '1em' },
