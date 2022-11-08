@@ -90,7 +90,7 @@ __ROOM_CANCELLATION__
 
 ```sql
 INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
-    'members', 'ROOM_CANCELLATION', "", "Raumreservierungsstornierungsbenachrichtigung", 1, "Storinierung der Reservierung eines Raumes", "email", "default",
+    'members', 'ROOM_CANCELLATION', "", "Raumreservierungsstornierungsbenachrichtigung", 1, "Stornierung der Reservierung eines Raumes", "email", "default",
     "<h2>Ihre Raumreservierung wurde storniert</h2>
     <p>Es tut uns Leid, Sie darüber informieren zu müssen, dass Ihre Reservierung storniert werden musste.</p>
     <hr>
