@@ -142,7 +142,7 @@ sub install() {
               `end` DATETIME NOT NULL, -- end date/time of booking
               `blackedout` TINYINT(1) NOT NULL DEFAULT 0, -- shows blackouts if true
               `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date
-              `updated_at` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP, -- date on which a booking has been updated
+              `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a booking has been updated
               PRIMARY KEY (bookingid),
               CONSTRAINT calendar_icfk FOREIGN KEY (roomid) REFERENCES $ROOMS_TABLE(roomid),
               CONSTRAINT calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
