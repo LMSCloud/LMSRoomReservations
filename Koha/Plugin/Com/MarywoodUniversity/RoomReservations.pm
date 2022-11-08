@@ -128,7 +128,7 @@ sub install() {
               `color` VARCHAR(7), -- room color to display in OPAC
               `image` TEXT, -- room image to display in OPAC
               `branch` VARCHAR(255), -- branch that contains the room
-              `maxbookabletime` INT -- the maximum timespan for a booking on this room
+              `maxbookabletime` INT, -- the maximum timespan for a booking on this room
             PRIMARY KEY (roomid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
