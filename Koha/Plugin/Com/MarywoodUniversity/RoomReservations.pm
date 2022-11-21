@@ -196,6 +196,8 @@ sub install() {
         # reservations for a patron from circulation.pl
         my $IntranetUserJS = C4::Context->preference('IntranetUserJS');
 
+        if ($IntranetUserJS =~ m/JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin/) { return; }
+
         $IntranetUserJS =~ s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///smxg;
 
         $IntranetUserJS .= <<~"EOF";
@@ -204,10 +206,10 @@ sub install() {
             Please do not modify */
 
             \$(document).ready(function() {
-                var buttonText = "
+                var buttonText = `
         EOF
 
-        $IntranetUserJS .= get_translation('Reserve room as patron') . q{";};
+        $IntranetUserJS .= get_translation('Reserve room as patron') . q{`;};
         $IntranetUserJS .= <<~"EOF";
                 var data = \$("div.patroninfo h5").html();
 
