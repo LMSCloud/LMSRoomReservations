@@ -196,10 +196,19 @@ sub install() {
         # reservations for a patron from circulation.pl
         my $IntranetUserJS = C4::Context->preference('IntranetUserJS');
 
-        if ($IntranetUserJS =~ m/JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin/) { return; }
+        my $JS_start = qr/JS for Koha RoomReservation Plugin/smx;
+        my $JS_end   = qr/End of JS for Koha RoomReservation Plugin/smx;
 
-        $IntranetUserJS =~ s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///smxg;
+        if ( $IntranetUserJS =~ /$JS_start\s*.*\s*$JS_end/smx ) {
 
+            # do nothing if the JS is already present
+            return;
+        }
+
+        # Remove any existing JS for the RoomReservation plugin from the $IntranetUserJS variable
+        $IntranetUserJS =~ s/$JS_regex//smxg;
+
+        # Append the required JS to the $IntranetUserJS variable
         $IntranetUserJS .= <<~"EOF";
             /* JS for Koha RoomReservation Plugin
             This JS was added automatically by installing the RoomReservation plugin
@@ -214,21 +223,19 @@ sub install() {
                 var data = \$("div.patroninfo h5").html();
 
                 if (typeof borrowernumber !== 'undefined') {
-                    if (data) {
-                        var regExp = /\(([^)]+)\)/;
-                        var matches = regExp.exec(data);
-                        if (matches) {
-                            var cardnumber = matches[1];
-                            \$('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter(\$('#addnewmessageLabel'));
-                        }
+                if (data) {
+                    var regExp = /\(([^)]+)\)/;
+                    var matches = regExp.exec(data);
+                    if (matches) {
+                    var cardnumber = matches[1];
+                    \$('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter(\$('#addnewmessageLabel'));
                     }
+                }
                 }
             });
 
-            /* End of JS for Koha RoomReservation Plugin */
+            /* End of JS
         EOF
-
-        C4::Context->set_preference( 'IntranetUserJS', $IntranetUserJS );
 
         for (@installer_statements) {
             my $sth = C4::Context->dbh->prepare($_);
@@ -352,7 +359,7 @@ sub upgrade {
 
     my $column_max_bookable_time_exists = C4::Context->dbh->do(qq{SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$ROOMS_TABLE' AND COLUMN_NAME = 'maxbookabletime';});
     if ( $column_max_bookable_time_exists eq '0E0' ) {
-        my $rv_branch = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN maxbookabletime INT;});
+        my $rv_max_bookable_time = C4::Context->dbh->do(qq{ALTER TABLE $ROOMS_TABLE ADD COLUMN maxbookabletime INT;});
     }
 
     return 1;
@@ -383,12 +390,26 @@ sub uninstall() {
     }
 
     my $IntranetUserJS = C4::Context->preference('IntranetUserJS');
-    $IntranetUserJS =~ s/\/\* JS for Koha RoomReservation Plugin.*End of JS for Koha RoomReservation Plugin \*\///smxg;
+    my $JS_start = 'JS for Koha RoomReservation Plugin';
+    my $JS_end = 'End of JS for Koha RoomReservation Plugin';
+
+    my $JS_regex = qr{/[*]\s* $JS_start \s* .* \s* $JS_end \s* [*]/ }smxg;
+
+    $IntranetUserJS =~ s/$JS_regex//smx;
 
     C4::Context->set_preference( 'IntranetUserJS', $IntranetUserJS );
 
     return 1;
 }
+
+# sub api_routes {
+#     my ( $self, $args ) = @_;
+
+#     my $spec_str = $self->mbf_read('openapi.json');
+#     my $spec     = decode_json($spec_str);
+
+#     return $spec;
+# }
 
 sub static_routes {
     my ( $self, $args ) = @_;
