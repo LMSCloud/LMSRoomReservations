@@ -237,6 +237,8 @@ sub install() {
             /* End of JS
         EOF
 
+        C4::Context->set_preference( 'IntranetUserJS', $IntranetUserJS );
+
         for (@installer_statements) {
             my $sth = C4::Context->dbh->prepare($_);
             $sth->execute or croak C4::Context->dbh->errstr;
@@ -393,9 +395,9 @@ sub uninstall() {
     my $JS_start = 'JS for Koha RoomReservation Plugin';
     my $JS_end = 'End of JS for Koha RoomReservation Plugin';
 
-    my $JS_regex = qr{/[*]\s* $JS_start \s* .* \s* $JS_end \s* [*]/ }smxg;
+    my $JS_regex = qr{/[*]\s* $JS_start \s* .* \s* $JS_end \s* [*]/ }smx;
 
-    $IntranetUserJS =~ s/$JS_regex//smx;
+    $IntranetUserJS =~ s/$JS_regex//gsmx;
 
     C4::Context->set_preference( 'IntranetUserJS', $IntranetUserJS );
 
