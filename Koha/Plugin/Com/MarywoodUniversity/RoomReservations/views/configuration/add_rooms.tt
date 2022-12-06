@@ -1,0 +1,81 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
+  <div class="lmsr-content-block">
+
+    <h4>[% 'Current Rooms' | gettext %]</h4>
+
+    <div class="lmsr-action-table">
+      [% FOREACH room IN all_room_numbers %]
+      <span class="lmsr-pill">[% room.roomnumber %]</span>
+      [% END # FOREACH room IN all_room_numbers %]
+    </div>
+  </div>
+
+  <div class="lmsr-content-block">
+
+    <h4>[% 'Add Room' | gettext %]</h4>
+
+    <!-- TODO: Display table of rooms already added -->
+    <form name="addRoomForm" method="post" action="#">
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="op" value="add-rooms" />
+      <input type="hidden" name="added-room" value="1" />
+
+      <div class="lmsr-action-table">
+        <div class="lmsr-picker">
+          <label for="add-room-roomnumber">[% 'Room Name:' | gettext %]</label>
+          <input type="text" placeholder="[% 'Insert any alphanumeric character combination.' | gettext %]"
+            name="add-room-roomnumber" />
+          <label for="add-room-maxcapacity">[% 'Max Capacity:' | gettext %]</label>
+          <input type="text" placeholder="[% 'Insert the max. number of people allowed in this room.' | gettext %]"
+            name="add-room-maxcapacity" size="4" maxlength="4" />
+          <label for="add-room-description">[% 'Description:' | gettext %]</label>
+          <input type="text" placeholder="[% 'Insert any description for the new room.' | gettext %]"
+            name="add-room-description" />
+          <label for="add-room-color">[% 'Color:' | gettext %]</label>
+          <input type="color" name="add-room-color" />
+          <label for="add-room-image">[% 'Image:' | gettext %]</label>
+          <input type="text" placeholder="[% 'Insert a path to an image, starting from the webroot.' | gettext %]"
+            name="add-room-image" />
+          <label for="add-room-branch">[% 'Branch:' | gettext %]</label>
+          <select name="add-room-branch" id="add-room-branch">
+            <option value="[% room.branch %]">[% room.branch %]</option>
+            [% FOREACH branch IN branches %]
+            <option value="[% branch.branchname %]">[% branch.branchname %]</option>
+            [% END %]
+          </select>
+          <label for="add-room-maxbookabletime">[% 'Max. bookable time (min):' | gettext %]</label>
+          <input type="number" placeholder="[% 'Insert a max. bookable time in minutes.' | gettext %]"
+            name="add-room-maxbookabletime" />
+        </div>
+
+        <hr>
+
+        <p>
+        <div>[% 'Equipment:' | gettext %]</div>
+        [% FOREACH equipment IN available_equipment %]
+          [% equipmentname = equipment.equipmentname %]
+          [% IF equipmentname == 'none' %]
+            [% equipmentname = gtx.gettext('none') %]
+          [% END %]
+        <span class="lmsr-pill lmsr-pill-checkbox"><input type="checkbox" name="selected-equipment"
+            value="[% equipment.equipmentid %]" />&nbsp;[% equipmentname %]</span>
+        [% END # FOREACH equipment IN available_equipment %]
+        </p>
+
+        <hr>
+
+        <input type="submit" id="submit-add-room" value="[% 'Add Room' | gettext %]" disabled>
+      </div>
+    </form>
+    <div id="lmsr-notifications"></div>
+    <script>
+      const addRoomForm = document.querySelector('form[name="addRoomForm"]');
+      const addRoomFormSubmitButton = document.getElementById('submit-add-room');
+      addRoomForm.addEventListener('submit', (e) => RoomReservationBundle.validateAddRooms(e, [% all_room_numbers.json %]));
+      addRoomFormSubmitButton.disabled = false;
+    </script>
+  </div>
+[% END %]

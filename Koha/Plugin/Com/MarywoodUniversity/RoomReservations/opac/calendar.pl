@@ -54,12 +54,12 @@ use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
 use Locale::Messages qw(:locale_h :libintl_h);
 
-use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Bookings;
-use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Equipment;
-use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Limits;
-use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Misc;
-use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Rooms;
-use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Times;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Bookings;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Equipment;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Limits;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Misc;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Rooms;
+use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Times;
 
 use Calendar::Simple;
 

@@ -1,0 +1,71 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
+  <div class="lmsr-content-block">
+
+    <h4>[% 'Set daily reservation per patron limit' | gettext %]</h4>
+
+    <form name="restrictDailyReservationsForm" method="post" action="#">
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="op" value="restrict-daily-reservations-per-patron" />
+      <input type="hidden" name="limit-submitted" value="1" />
+
+      <div class="lmsr-action-table">
+        <p>
+          [% IF count_limit == '' %]
+          [% 'Current limit:' | gettext %]
+          [% 'No Limit' | gettext %]
+          [% ELSE %]
+          [% 'Current limit:' | gettext %]
+          [% count_limit %] [% 'reservations' | gettext %]
+          [% END # count_limit == '' %]
+        </p>
+
+        <hr>
+
+        <p>
+          <span>
+            [% 'Set limit:' | gettext %]
+            <select name="reservations-limit-field" id="reservations-limit-field">
+              <option value="null"></option>
+              <option value="0">[% 'No limit' | gettext %]</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+            </select>
+            [% 'reservations' | gettext %]
+          </span>
+        </p>
+
+        <hr>
+
+        <input type="submit" id="submit-restrict-daily-reservations" value="[% 'Add limit' | gettext %]" disabled>
+      </div>
+    </form>
+    <div id="lmsr-notifications"></div>
+    <script>
+      const restrictDailyReservationsForm = document.querySelector('form[name="restrictDailyReservationsForm"]');
+      const restrictDailyReservationsFormSubmitButton = document.getElementById('submit-restrict-daily-reservations');
+      restrictDailyReservationsForm.addEventListener('submit', (e) => RoomReservationBundle.validateLimitRestriction(e));
+      restrictDailyReservationsFormSubmitButton.disabled = false;
+    </script>
+  </div>
+[% END %]

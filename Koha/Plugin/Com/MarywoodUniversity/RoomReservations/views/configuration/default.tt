@@ -1,0 +1,5 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
+TEST
+[% END %]

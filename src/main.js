@@ -1,6 +1,8 @@
+import { html, LitElement } from 'lit';
 import LmsrToast from './components/LmsrToast';
 import LmsrEquipmentSelection from './components/LmsrEquipmentSelection';
 import LmsrEditModal from './components/LmsrEditModal';
+import LMSRoom from './lit/LMSRoom';
 
 import closeModal from './utilities/closeModal';
 import closeToast from './utilities/closeToast';
@@ -89,4 +91,7 @@ export {
   validatePartialBlackout,
   validateRestrictCategories,
   validateSavedRooms,
+  html,
+  LitElement,
+  LMSRoom,
 };

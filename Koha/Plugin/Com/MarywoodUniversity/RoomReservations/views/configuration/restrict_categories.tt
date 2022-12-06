@@ -1,0 +1,74 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
+  <div class="lmsr-content-block">
+    
+    <h4>[% 'Restrict patron categories' | gettext %]</h4>
+
+    <form name="restrictCategoriesForm" method="post" action="#">
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="op" value="restrict-categories" />
+      <input type="hidden" name="restrict-categories-submitted" value="1" />
+
+      <div class="lmsr-action-table">
+        <p>
+          [% restricted_categorycodes = [] %]
+
+          [% IF restricted_categories == '' %]
+            [% 'Restricted categories:' | gettext %]
+            <br>
+            [% 'No restrictions' | gettext %]
+          [% ELSE %] 
+            [% 'Restricted categories:' | gettext %]
+            <br>
+                      
+            [% FOREACH cat IN restricted_categories %]
+              <input type="checkbox" name="currently-restricted-category" value="[% cat.categorycode %]" checked="true" />&nbsp;<span>[% cat.description %]</span><br>
+              [% restricted_categorycodes.push(cat.categorycode) %]
+            [% END # FOREACH cat IN restricted_categories %]
+                      
+          [% END # restricted_categories == '' %]
+        </p>
+
+        <hr>
+        
+        <p>
+          [% 'Non-Restricted categories:' | gettext %]
+          <br>
+          [% IF categories.size %]
+            [% FOREACH category IN categories %]
+              [% FOREACH restricted_categorycode IN restricted_categorycodes %]
+                [% restricted = category.categorycode == restricted_categorycode %]
+                [% LAST IF restricted %]
+              [% END %]
+              [% NEXT IF restricted %]
+              <input type="checkbox" name="patron-category" value="[% category.categorycode %]" />&nbsp;<span>[% category.description %]</span><br>
+            [% END # FOREACH category IN categories %]
+          [% ELSE %]
+            <p>[% 'INVALID!' | gettext %]</p>
+          [% END # categories.size %]
+        </p>
+        
+        <hr>
+      
+        <p>[% 'Text entered here will be displayed to restricted patrons on the OPAC' | gettext %]</p>
+        [% IF restrict_message %]
+          <textarea name="restricted-message">[% restrict_message %]</textarea>
+        [% ELSE %]
+          <textarea name="restricted-message"></textarea>
+        [% END %]
+
+        <input type="submit" id="submit-restrict-categories" value="[% 'Update' | gettext %]" disabled>  
+      </div>
+    </form>
+    <div id="lmsr-notifications"></div>
+    <script>
+      const restrictCategoriesForm = document.querySelector('form[name="restrictCategoriesForm"]');
+      const restrictCategoriesFormSubmitButton = document.getElementById('submit-restrict-categories');
+      restrictCategoriesForm.addEventListener('submit', (e) => RoomReservationBundle.validateRestrictCategories(e));
+      restrictCategoriesFormSubmitButton.disabled = false;
+    </script>
+  </div>
+[% END %]
+

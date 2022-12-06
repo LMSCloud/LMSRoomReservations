@@ -1,4 +1,6 @@
-package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Equipment;
+package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Equipment;
+
+use 5.010;
 
 use strict;
 use warnings;

@@ -1,0 +1,48 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
+  <div class="lmsr-content-block">
+
+    <h3>[% 'Only equipment not currently associated with a room is listed below' | gettext %]</h3>
+
+    <br>
+
+    <h4>[% 'Current Equipment' | gettext %]</h4>
+
+    <form name="deleteEquipmentForm" method="post" action="#">
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="op" value="delete-equipment" />
+      <input type="hidden" name="delete" value="1" />
+      
+      <div class="lmsr-action-table">
+
+        [% FOREACH equipment IN available_equipment %]
+          [% equipmentname = equipment.equipmentname %]
+          [% IF equipmentname == 'none' %]
+            [% equipmentname = gtx.gettext('none') %]
+          [% END %]
+          
+          <span class="lmsr-pill lmsr-pill-checkbox">
+            <input type="radio" name="delete-equipment-radio-button" value="[% equipment.equipmentid %]" />
+            &nbsp;
+            [% equipmentname %]
+          </span>
+          &nbsp;
+        [% END # FOREACH equipment IN available_equipment %]
+        
+        <hr>
+
+        <input type="submit" name="equipment-delete-submit" id="equipment-delete-submit" value="[% 'Delete' | gettext %]" />          
+      </div>
+    </form>
+    <div id="lmsr-notifications"></div>
+    <script>
+      const deleteEquipmentForm = document.querySelector('form[name="deleteEquipmentForm"]');
+      const deleteEquipmentFormSubmitButton = document.getElementById('equipment-delete-submit');
+      deleteEquipmentForm.addEventListener('submit', (e) => RoomReservationBundle.deleteEquipmentConfirmation(e));
+      deleteEquipmentFormSubmitButton.disabled = false;
+    </script>
+  </div>
+[% END %]
+

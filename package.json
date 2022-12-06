@@ -1,7 +1,7 @@
 {
   "name": "koha-plugin-room-reservations",
-  "version": "3.4.10",
-  "previous_version": "3.4.9",
+  "version": "3.4.16",
+  "previous_version": "3.4.15",
   "description": "Koha Room Reservations Plugin, modified by LMSCloud GmbH",
   "devDependencies": {
     "eslint": "^8.20.0",
@@ -12,12 +12,12 @@
     "gulp-github-release": "^1.1.5",
     "gulp-run": "^1.7.1",
     "rollup": "^2.77.2",
-    "stylelint": "^14.11.0",
-    "stylelint-config-prettier": "^9.0.3",
-    "stylelint-config-standard": "^28.0.0"
+    "vite": "^3.2.5"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/rollup/dist/bin/rollup -c && gulp build",
+    "build:next": "./node_modules/rollup/dist/bin/rollup -c && node increment_version.js && gulp build"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,9 @@
     "datetime": "0.0.3",
     "gulp-replace": "^0.6.1",
     "jsonfile": "^4.0.0",
-    "node-datetime": "^2.0.0"
+    "lit": "^2.4.1",
+    "node-datetime": "^2.0.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
   }
 }

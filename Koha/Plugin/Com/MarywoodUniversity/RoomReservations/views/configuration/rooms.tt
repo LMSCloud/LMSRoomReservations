@@ -1,0 +1,23 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
+  <div class="lmsr-content-block">
+    <form name="displayRooms" method="post" action="#">
+      <input type="hidden" name="class" value="[% CLASS %]" />
+      <input type="hidden" name="method" value="[% METHOD %]" />
+      <input type="hidden" name="op" value="rooms" />
+
+      [% FOREACH room IN roomnumbers %]
+        <lms-room branch="[% room.branch %]" color="[% room.color %]" description="[% room.description %]"
+          image="[% room.image %]" maxbookabletime="[% room.maxbookabletime %]" maxcapacity="[% room.maxcapacity %]"
+          roomid="[% room.roomid %]" roomnumber="[% room.roomnumber %]">
+        </lms-room>
+      [% END # FOREACH room IN roomnumbers %]
+
+    </form>
+    <script>
+      const rooms = document.getElementsByTagName('lms-room');
+      Array.from(rooms).forEach((room) => room.addEventListener('lms-room-saved', (event) => { console.log(event.detail); window.location.reload() }));
+    </script>
+  </div>
+[% END %]

@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Limits;
+package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Limits;
 
 use 5.010;
 

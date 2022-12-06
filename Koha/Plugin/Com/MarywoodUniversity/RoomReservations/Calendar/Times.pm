@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Times;
+package Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Times;
 
 use 5.010;
 
