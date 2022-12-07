@@ -1,22 +1,22 @@
 [% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
-  
-
-  [% FOREACH room IN rooms %]
-    <div class="lmsr-content-block">
+  <div class="lmsr-content-block" id="entry-point">
+    [% FOREACH room IN rooms %]
       <lms-room branch="[% room.branch %]" color="[% room.color %]" description="[% room.description %]"
         image="[% room.image %]" maxbookabletime="[% room.maxbookabletime %]" maxcapacity="[% room.maxcapacity %]"
         roomid="[% room.roomid %]" roomnumber="[% room.roomnumber %]">
       </lms-room>
-    </div>
-  [% END # FOREACH room IN rooms %]
+    [% END # FOREACH room IN rooms %]
+  </div>
 
   <lms-room-modal></lms-room-modal>
 
   <!-- <lms-search tagName="lms-room"></lms-search> -->
 
   <script>
+    const entryPoint = document.getElementById('entry-point');
+     
     const rooms = document.getElementsByTagName('lms-room');
     Array.from(rooms).forEach((room) => room.addEventListener('lms-room-saved', (event) => { console.log(event.detail); window.location.reload() }));
   </script>

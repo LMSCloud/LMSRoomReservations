@@ -1,15 +1,22 @@
 [% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
-    [% FOREACH item IN equipment %]
-      <lms-equipment-item
-        equipmentid="[% item.equipmentid %]"
-        equipmentname="[% item.equipmentname %]"
-      >
-      </lms-equipment-item>
-    [% END # FOREACH item IN equipment %]
+    <div class="lmsr-content-block" id="entry-point">
+      [% FOREACH item IN equipment %]
+        <lms-equipment-item
+          equipmentid="[% item.equipmentid %]"
+          equipmentname="[% item.equipmentname %]"
+        >
+        </lms-equipment-item>
+      [% END # FOREACH item IN equipment %]
+    </div>
 
     <lms-equipment-modal></lms-equipment-modal>
 
     <!-- <lms-search tagName="lms-equipment-item"></lms-search> -->
+
+    <script>
+      const entryPoint = document.getElementById('entry-point');
+
+    </script>
 [% END %]

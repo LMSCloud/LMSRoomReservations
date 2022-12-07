@@ -2,34 +2,55 @@
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
   <!-- DOCS -->
-  <section>
-    <h1>Rooms Page</h1>
-    <p>The Rooms page allows users to view and edit details about the rooms in a library management system (LMS).</p>
-    <h2>Using the Rooms page</h2>
-    <p>To use the Rooms page:</p>
-    <ol>
-      <li>Navigate to the Rooms page by clicking on the "Rooms" menu item in the main navigation menu.</li>
-      <li>
-        On the Rooms page, you will see a list of rooms in the LMS. Each room is represented by a
-        <code>LMSRoom</code> custom element, which displays details about the room, such as its maximum capacity,
-        description, and color.
-      </li>
-      <li>
-        To edit the details of a room, click on the "Edit" button in the <code>LMSRoom</code> element for that room. This
-        will
-        enable the form fields in the element and allow you to change the room's details.
-      </li>
-      <li>
-        After making your changes, click on the "Save" button to save the updated room details. This will
-        update the <code>LMSRoom</code> element and emit a <code>lms-room-saved</code> event with the updated room details
-        as
-        the event detail.
-      </li>
-    </ol>
-    <p>
-      Note: Other components on the page may be listening for the <code>lms-room-saved</code> event and may respond to it
-      by
-      updating the room details in a database or displaying a confirmation message.
-    </p>
-  </section>
+  <style>
+    section {
+      margin: 2em;
+      padding: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: sans-serif;
+    }
+    
+    h1, h2 {
+      font-weight: 600;
+    }
+    
+    code {
+      background-color: #f7f7f7;
+      border-radius: 4px;
+      padding: 0.1em 0.3em;
+    }
+  </style>
+  <div class="lmsr-content-block">
+    <section>
+      <h1>Rooms Page</h1>
+      <p>The Rooms page allows users to view and edit details about the rooms in a library management system (LMS).</p>
+      <h2>Using the Rooms page</h2>
+      <p>To use the Rooms page:</p>
+      <ol>
+        <li>Navigate to the Rooms page by clicking on the "Rooms" menu item in the main navigation menu.</li>
+        <li>
+          On the Rooms page, you will see a list of rooms in the LMS. Each room is represented by a
+          <code>LMSRoom</code> custom element, which displays details about the room, such as its maximum capacity,
+          description, and color.
+        </li>
+        <li>
+          To edit the details of a room, click on the "Edit" button in the <code>LMSRoom</code> element for that room. This
+          will
+          enable the form fields in the element and allow you to change the room's details.
+        </li>
+        <li>
+          After making your changes, click on the "Save" button to save the updated room details. This will
+          update the <code>LMSRoom</code> element and emit a <code>lms-room-saved</code> event with the updated room details
+          as
+          the event detail.
+        </li>
+      </ol>
+      <p>
+        Note: Other components on the page may be listening for the <code>lms-room-saved</code> event and may respond to it
+        by
+        updating the room details in a database or displaying a confirmation message.
+      </p>
+    </section>
+  </div>
 [% END %]
