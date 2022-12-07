@@ -1,0 +1,15 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
+    [% FOREACH item IN equipment %]
+      <lms-equipment-item
+        equipmentid="[% item.equipmentid %]"
+        equipmentname="[% item.equipmentname %]"
+      >
+      </lms-equipment-item>
+    [% END # FOREACH item IN equipment %]
+
+    <lms-equipment-modal></lms-equipment-modal>
+
+    <!-- <lms-search tagName="lms-equipment-item"></lms-search> -->
+[% END %]

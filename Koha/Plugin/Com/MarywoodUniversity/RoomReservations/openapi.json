@@ -376,5 +376,213 @@
         }
       }
     }
+  },
+  "/equipment": {
+    "get": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Equipment#list",
+      "tags": ["equipment"],
+      "summary": "Get a list of equipment items",
+      "operationId": "listEquipment",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "equipmentid": {
+                  "type": "integer"
+                },
+                "equipmentname": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Equipment#add",
+      "tags": ["equipment"],
+      "summary": "Create a new equipment item",
+      "operationId": "addEquipment",
+      "parameters": [{
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the added equipment",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "equipmentname": {
+              "type": "string"
+            }
+          },
+          "required": ["equipmentname"]
+        }
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentid": {
+                "type": "integer"
+              },
+              "equipmentname": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/equipment/{equipmentid}": {
+    "get": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Equipment#get",
+      "tags": ["equipment"],
+      "summary": "Get an equipment item by ID",
+      "operationId": "getEquipment",
+      "parameters": [{
+        "name": "equipmentid",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentid": {
+                "type": "integer"
+              },
+              "equipmentname": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Equipment#update",
+      "tags": ["equipment"],
+      "summary": "Update an equipment item by ID",
+      "operationId": "updateEquipment",
+      "parameters": [{
+        "name": "equipmentid",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }, {
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the updated equipment",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "equipmentname": {
+              "type": "string"
+            }
+          },
+          "required": ["equipmentname"]
+        }
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentid": {
+                "type": "integer"
+              },
+              "equipmentname": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Equipment#delete",
+      "tags": ["equipment"],
+      "summary": "Delete an equipment item by ID",
+      "operationId": "deleteEquipment",
+      "parameters": [{
+        "name": "equipmentid",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response"
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

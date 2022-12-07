@@ -63,7 +63,7 @@ sub add {
         my $dbh = C4::Context->dbh;
 
         my $room  = $c->validation->param('body');
-        my $query = "INSERT INTO $ROOMS_TABLE (maxcapacity, color, image, description, maxbookabletime, branch, roomnumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        my $query = "INSERT INTO $ROOMS_TABLE (maxcapacity, color, image, description, maxbookabletime, branch, roomnumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
         my $sth   = $dbh->prepare($query);
         $sth->execute( $room->{maxcapacity}, $room->{color}, $room->{image}, $room->{description}, $room->{maxbookabletime}, $room->{branch}, $room->{roomnumber} );
 

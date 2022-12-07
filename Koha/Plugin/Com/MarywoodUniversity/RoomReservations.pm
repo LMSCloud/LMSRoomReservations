@@ -819,184 +819,24 @@ sub configure {
         q{rooms} => sub {
             $template = $self->get_template( { file => 'views/configuration/rooms.tt' } );
             $template->param(
-                op          => $op,
-                roomnumbers => get_all_room_numbers(),
+                op    => $op,
+                rooms => get_all_room_numbers(),
             );
         },
-        q{display-rooms-detail} => sub {
-            my $room_id_to_display = $cgi->param('selected-displayed-room');
-
-            $template = $self->get_template( { file => 'views/configuration/display_rooms_detail.tt' } );
+        q{equipment} => sub {
+            $template = $self->get_template( { file => 'views/configuration/equipment.tt' } );
+            $template->param(
+                op        => $op,
+                equipment => load_all_equipment(),
+            );
+        },
+        q{restrictions} => sub {
+            $template = $self->get_template( { file => 'views/configuration/restrictions.tt' } );
             $template->param(
                 op                      => $op,
-                selected_room_details   => get_room_details_by_id($room_id_to_display),
-                selected_room_equipment => get_room_equipment_by_id($room_id_to_display),
-            );
-        },
-        q{add-rooms} => sub {
-            if ( ( scalar $cgi->param('added-room') || q{} ) eq '1' ) {
-                add_room(
-                    {   roomnumber         => scalar $cgi->param('add-room-roomnumber'),
-                        maxcapacity        => scalar $cgi->param('add-room-maxcapacity'),
-                        description        => scalar $cgi->param('add-room-description'),
-                        color              => scalar $cgi->param('add-room-color'),
-                        image              => scalar $cgi->param('add-room-image'),
-                        branch             => scalar $cgi->param('add-room-branch'),
-                        maxbookabletime    => scalar $cgi->param('add-room-maxbookabletime'),
-                        selected_equipment => $cgi->param('selected-equipment'),
-                    }
-                );
-            }
-
-            $template = $self->get_template( { file => 'views/configuration/add_rooms.tt' } );
-            $template->param(
-                op                  => $op,
-                available_equipment => get_all_room_equipment_names_and_ids(),
-                all_room_numbers    => get_current_room_numbers(),
-                branches            => get_branches(),
-            );
-        },
-        q{edit-rooms} => sub {
-            if ( ( scalar $cgi->param('editing') || q{} ) eq '1' ) { $template->param( selected_room_id => scalar $cgi->param('current-rooms-edit') ); }
-
-            if ( ( scalar $cgi->param('room-details-updated') || q{} ) eq '1' ) {
-                update_room_details(
-                    {   room_id_to_update         => scalar $cgi->param('room-details-updated-roomid'),
-                        updated_room_number       => scalar $cgi->param('edit-rooms-room-roomnumber'),
-                        updated_description       => scalar $cgi->param('edit-rooms-room-description'),
-                        updated_max_capacity      => scalar $cgi->param('edit-rooms-room-maxcapacity'),
-                        updated_color             => scalar $cgi->param('edit-rooms-room-color'),
-                        updated_image             => scalar $cgi->param('edit-rooms-room-image'),
-                        updated_branch            => scalar $cgi->param('edit-rooms-room-branch'),
-                        updated_max_bookable_time => scalar $cgi->param('edit-rooms-room-maxbookabletime'),
-                    }
-                );
-            }
-
-            if ( ( scalar $cgi->param('room-equipment-updated') || q{} ) eq '1' ) {
-                update_room_equipment( scalar $cgi->param('room-equipment-updated-roomid'), $cgi->param('edit-rooms-current-equipment') );
-            }
-
-            $template = $self->get_template( { file => 'views/configuration/edit_rooms.tt' } );
-            $template->param(
-                op            => $op,
-                current_rooms => get_all_room_numbers(),
-            );
-        },
-        q{edit-rooms-selection} => sub {
-            my $choice      = $cgi->param('edit-rooms-choice') || q{};
-            my $edit_action = q{};
-
-            if ( $choice eq 'room' ) {
-                $edit_action = 'edit-rooms-room';
-            }
-
-            if ( $choice eq 'equipment' ) {
-                $edit_action = 'edit-rooms-equipment';
-            }
-
-            $template = $self->get_template( { file => 'views/configuration/edit_rooms_selection.tt' } );
-            $template->param(
-                op               => $op,
-                edit_action      => $edit_action,
-                selected_room_id => ( scalar $cgi->param('current-rooms-edit') || q{} ),
-            );
-        },
-        q{edit-rooms-room} => sub {
-            $template = $self->get_template( { file => 'views/configuration/edit_rooms_room.tt' } );
-            $template->param(
-                op           => $op,
-                room_details => load_room_details_to_edit_by_room_id( ( scalar $cgi->param('selected-room-id') || q{} ) ),
-                branches     => get_branches(),
-
-            );
-        },
-        q{edit-rooms-equipment} => sub {
-            $template = $self->get_template( { file => 'views/configuration/edit_rooms_equipment.tt' } );
-            $template->param(
-                op                      => $op,
-                room_details            => load_room_details_to_edit_by_room_id( ( scalar $cgi->param('selected-room-id') || q{} ) ),
                 all_available_equipment => load_all_equipment(),
             );
-        },
-        q{delete-rooms} => sub {
-            if ( ( $cgi->param('delete') || q{} ) eq '1' ) { delete_room( scalar $cgi->param('delete-room-radio-button') ); }
-
-            my $available_rooms = get_all_room_numbers_and_ids_available_to_delete();
-
-            $template = $self->get_template( { file => 'views/configuration/delete_rooms.tt' } );
-            $template->param(
-                op                        => $op,
-                available_rooms           => $available_rooms,
-                rooms_available_to_delete => are_any_rooms_available_to_delete($available_rooms) ? 1 : 0,
-            );
-        },
-        q{add-equipment} => sub {
-            if ( ( $cgi->param('insert') || q{} ) eq '1' ) {
-
-                # Create a single-quoted string literal with the lowercase version of the value of
-                # the 'add-equipment-text-field' parameter, after removing any single quotes.
-                my $equipment = lc $cgi->param('add-equipment-text-field');
-                $equipment =~ s/'//gsmx;
-                add_equipment(qq{'$equipment'});
-            }
-
-            $template = $self->get_template( { file => 'views/configuration/add_equipment.tt' } );
-            $template->param(
-                op                  => $op,
-                available_equipment => get_all_room_equipment_names(),
-            );
-        },
-        q{delete-equipment} => sub {
-            if ( ( $cgi->param('delete') || q{} ) eq '1' ) { delete_equipment( scalar $cgi->param('delete-equipment-radio-button') ); }
-
-            $template = $self->get_template( { file => 'views/configuration/delete_equipment.tt' } );
-            $template->param(
-                op                  => $op,
-                available_equipment => get_all_room_equipment_names_and_ids_available_to_delete(),
-            );
-        },
-        q{edit-equipment-selection} => sub {
-            $template = $self->get_template( { file => 'views/configuration/edit_equipment_selection.tt' } );
-            $template->param(
-                op                  => $op,
-                available_equipment => get_all_room_equipment_names_and_ids(),
-            );
-        },
-        q{edit-equipment} => sub {
-            my $edit = $cgi->param('edit') || q{};
-
-            if ( $edit eq '1' ) {
-                my $editedEquipmentId   = $cgi->param('edit-equipment-id');
-                my $editedEquipmentName = $cgi->param('edit-equipment-text-field');
-
-                ## Convert to lowercase to enforce uniformity
-                $editedEquipmentName = lc $editedEquipmentName;
-
-                ## Enclose in single quotes for DB string compatibility
-                $editedEquipmentName = qq{'$editedEquipmentName'};
-
-                update_room_equipment( $editedEquipmentId, $editedEquipmentName );
-
-                my $availableEquipment = get_all_room_equipment_names_and_ids();
-
-                $template = $self->get_template( { file => 'views/configuration/edit_equipment_selection.tt' } );
-                $template->param(
-                    op                  => 'edit-equipment-selection',
-                    available_equipment => $availableEquipment,
-                );
-            }
-            else {
-                my $equipmentIdToEdit = $cgi->param('edit-equipment-radio-button');
-                my $equipmentToEdit   = get_room_equipment_by_id($equipmentIdToEdit);
-
-                $template = $self->get_template( { file => 'views/configuration/edit_equipment.tt' } );
-                $template->param(
-                    op                => $op,
-                    equipment_to_edit => $equipmentToEdit,
-                );
-            }
-        },
+        }
     };
 
     $operations->{$op}->() if exists $operations->{$op};

@@ -1,8 +1,10 @@
 import { html, LitElement } from 'lit';
-import LmsrToast from './components/LmsrToast';
-import LmsrEquipmentSelection from './components/LmsrEquipmentSelection';
-import LmsrEditModal from './components/LmsrEditModal';
-import LMSRoom from './lit/LMSRoom';
+import LMSRoom from './components/LMSRoom';
+import LMSModal from './components/LMSModal';
+import LMSRoomModal from './components/LMSRoomModal';
+import LMSEquipmentItem from './components/LMSEquipmentItem';
+import LMSEquipmentModal from './components/LMSEquipmentModal';
+import LMSSearch from './components/LMSSearch';
 
 import closeModal from './utilities/closeModal';
 import closeToast from './utilities/closeToast';
@@ -43,14 +45,6 @@ import validateOpeningHours from './validation/validateOpeningHours';
 import validatePartialBlackout from './validation/validatePartialBlackout';
 import validateRestrictCategories from './validation/validateRestrictCategories';
 import validateSavedRooms from './validation/validateSavedRooms';
-
-const customElementsRegistry = window.customElements;
-customElementsRegistry.define('lmsr-toast', LmsrToast);
-customElementsRegistry.define(
-  'lmsr-equipment-selection',
-  LmsrEquipmentSelection,
-);
-customElementsRegistry.define('lmsr-edit-modal', LmsrEditModal);
 
 export {
   closeModal,
@@ -94,4 +88,9 @@ export {
   html,
   LitElement,
   LMSRoom,
+  LMSModal,
+  LMSRoomModal,
+  LMSEquipmentItem,
+  LMSEquipmentModal,
+  LMSSearch,
 };
