@@ -72,42 +72,39 @@
         "description": "A JSON object representing an order",
         "required": true,
         "schema": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "maxcapacity": {
-                "type": "string",
-                "description": "The maximum number of people that can be in the room"
-              },
-              "color": {
-                "type": "string",
-                "description": "The color of the room"
-              },
-              "image": {
-                "type": "string",
-                "description": "An image of the room"
-              },
-              "description": {
-                "type": "string",
-                "description": "A description of the room"
-              },
-              "maxbookabletime": {
-                "type": "string",
-                "description": "The maximum amount of time that the room can be booked for"
-              },
-              "roomid": {
-                "type": "string",
-                "description": "The internal ID of the room"
-              },
-              "branch": {
-                "type": "string",
-                "description": "The branch where the room is located"
-              },
-              "roomnumber": {
-                "type": "string",
-                "description": "The number of the room"
-              }
+          "type": "object",
+          "properties": {
+            "maxcapacity": {
+              "type": "string",
+              "description": "The maximum number of people that can be in the room"
+            },
+            "color": {
+              "type": "string",
+              "description": "The color of the room"
+            },
+            "image": {
+              "type": "string",
+              "description": "An image of the room"
+            },
+            "description": {
+              "type": "string",
+              "description": "A description of the room"
+            },
+            "maxbookabletime": {
+              "type": "string",
+              "description": "The maximum amount of time that the room can be booked for"
+            },
+            "roomid": {
+              "type": "string",
+              "description": "The internal ID of the room"
+            },
+            "branch": {
+              "type": "string",
+              "description": "The branch where the room is located"
+            },
+            "roomnumber": {
+              "type": "string",
+              "description": "The number of the room"
             }
           }
         }
@@ -116,7 +113,7 @@
         "application/json"
       ],
       "responses": {
-        "200": {
+        "201": {
           "description": "The added room",
           "schema": {
             "type": "object",
@@ -171,14 +168,14 @@
       }
     }
   },
-  "/rooms/{roomId}": {
+  "/rooms/{roomid}": {
     "get": {
       "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Rooms#get",
       "operationId": "getRoom",
       "tags": ["rooms"],
       "produces": ["application/json"],
       "parameters": [{
-        "name": "roomId",
+        "name": "roomid",
         "in": "path",
         "description": "The ID of the room",
         "required": true,
@@ -244,47 +241,50 @@
       "operationId": "updateRoom",
       "tags": ["rooms"],
       "parameters": [{
+        "name": "roomid",
+        "in": "path",
+        "description": "The ID of the room",
+        "required": true,
+        "type": "string"
+      }, {
         "name": "body",
         "in": "body",
-        "description": "A JSON object representing an order",
+        "description": "A JSON object representing the updated room",
         "required": true,
         "schema": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "maxcapacity": {
-                "type": "string",
-                "description": "The maximum number of people that can be in the room"
-              },
-              "color": {
-                "type": "string",
-                "description": "The color of the room"
-              },
-              "image": {
-                "type": "string",
-                "description": "An image of the room"
-              },
-              "description": {
-                "type": "string",
-                "description": "A description of the room"
-              },
-              "maxbookabletime": {
-                "type": "string",
-                "description": "The maximum amount of time that the room can be booked for"
-              },
-              "roomid": {
-                "type": "string",
-                "description": "The internal ID of the room"
-              },
-              "branch": {
-                "type": "string",
-                "description": "The branch where the room is located"
-              },
-              "roomnumber": {
-                "type": "string",
-                "description": "The number of the room"
-              }
+          "type": "object",
+          "properties": {
+            "maxcapacity": {
+              "type": "string",
+              "description": "The maximum number of people that can be in the room"
+            },
+            "color": {
+              "type": "string",
+              "description": "The color of the room"
+            },
+            "image": {
+              "type": "string",
+              "description": "An image of the room"
+            },
+            "description": {
+              "type": "string",
+              "description": "A description of the room"
+            },
+            "maxbookabletime": {
+              "type": "string",
+              "description": "The maximum amount of time that the room can be booked for"
+            },
+            "roomid": {
+              "type": "string",
+              "description": "The internal ID of the room"
+            },
+            "branch": {
+              "type": "string",
+              "description": "The branch where the room is located"
+            },
+            "roomnumber": {
+              "type": "string",
+              "description": "The number of the room"
             }
           }
         }
@@ -351,6 +351,13 @@
       "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Rooms#delete",
       "operationId": "deleteRoom",
       "tags": ["rooms"],
+      "parameters": [{
+        "name": "roomid",
+        "in": "path",
+        "description": "The ID of the room",
+        "required": true,
+        "type": "string"
+      }],
       "responses": {
         "204": {
           "description": "The room was deleted"

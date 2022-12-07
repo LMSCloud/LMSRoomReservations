@@ -6,17 +6,23 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Classes::Rooms;
+use C4::Context;
 use Try::Tiny;
 
 our $VERSION = '1.0.0';
+
+my $ROOMS_TABLE = 'booking_rooms';
 
 sub list {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $rooms_set = Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Classes::Rooms->new;
-        my $rooms     = $c->objects->search($rooms_set);
+        my $dbh   = C4::Context->dbh;
+        my $query = "SELECT * FROM $ROOMS_TABLE";
+        my $sth   = $dbh->prepare($query);
+        $sth->execute();
+
+        my $rooms = $sth->fetchall_arrayref( {} );
         return $c->render( status => 200, openapi => $rooms );
     }
     catch {
@@ -28,7 +34,14 @@ sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $room = Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Classes::Rooms->find( $c->validation->param('room_id') );
+        my $dbh = C4::Context->dbh;
+
+        my $roomid = $c->validation->param('roomid');
+        my $query  = "SELECT * FROM $ROOMS_TABLE WHERE roomid = ?";
+        my $sth    = $dbh->prepare($query);
+        $sth->execute($roomid);
+
+        my $room = $sth->fetchrow_hashref();
         if ( !$room ) {
             return $c->render(
                 status  => 404,
@@ -36,7 +49,7 @@ sub get {
             );
         }
 
-        return $c->render( status => 200, openapi => $room->to_api );
+        return $c->render( status => 200, openapi => $room );
     }
     catch {
         $c->unhandled_exception($_);
@@ -47,12 +60,16 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $room = Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Classes::Rooms->new_from_api( $c->validation->param('body') );
-        $room->store;
-        $c->res->headers->location( $c->req->url->to_string . q{/} . $room->roomid );
+        my $dbh = C4::Context->dbh;
+
+        my $room  = $c->validation->param('body');
+        my $query = "INSERT INTO $ROOMS_TABLE (maxcapacity, color, image, description, maxbookabletime, branch, roomnumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        my $sth   = $dbh->prepare($query);
+        $sth->execute( $room->{maxcapacity}, $room->{color}, $room->{image}, $room->{description}, $room->{maxbookabletime}, $room->{branch}, $room->{roomnumber} );
+
         return $c->render(
             status  => 201,
-            openapi => $room->to_api
+            openapi => $room
         );
     }
     catch {
@@ -63,19 +80,32 @@ sub add {
 sub update {
     my $c = shift->openapi->valid_input or return;
 
-    my $room = Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Classes::Rooms->find( $c->validation->param('room_id') );
-
-    if ( not defined $room ) {
-        return $c->render(
-            status  => 404,
-            openapi => { error => 'Object not found' }
-        );
-    }
-
     return try {
-        $room->set_from_api( $c->validation->param('body') );
-        $room->store();
-        return $c->render( status => 200, openapi => $room->to_api );
+        my $dbh = C4::Context->dbh;
+
+        my $roomid = $c->validation->param('roomid');
+        my $query  = "SELECT * FROM $ROOMS_TABLE WHERE roomid = ?";
+        my $sth    = $dbh->prepare($query);
+        $sth->execute($roomid);
+
+        my $room = $sth->fetchrow_hashref();
+        if ( !$room ) {
+            return $c->render(
+                status  => 404,
+                openapi => { error => 'Object not found' }
+            );
+        }
+
+        my $new_room = $c->validation->param('body');
+        $query = "UPDATE $ROOMS_TABLE SET maxcapacity = ?, color = ?, image = ?, description = ?, maxbookabletime = ?, branch = ?, roomnumber = ? WHERE roomid = ?";
+        $sth   = $dbh->prepare($query);
+        $sth->execute(
+            $new_room->{maxcapacity},
+            $new_room->{color}, $new_room->{image},
+            $new_room->{description},
+            $new_room->{maxbookabletime},
+            $new_room->{branch}, $new_room->{roomnumber}, $roomid
+        );
     }
     catch {
         $c->unhandled_exception($_);
@@ -85,16 +115,26 @@ sub update {
 sub delete {
     my $c = shift->openapi->valid_input or return;
 
-    Copy code my $room = Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Classes::Rooms->find( $c->validation->param('room_id') );
-    if ( not defined $room ) {
-        return $c->render(
-            status  => 404,
-            openapi => { error => 'Object not found' }
-        );
-    }
-
     return try {
-        $room->delete;
+        my $dbh = C4::Context->dbh;
+
+        my $roomid = $c->validation->param('roomid');
+        my $query  = "SELECT * FROM $ROOMS_TABLE WHERE roomid = ?";
+        my $sth    = $dbh->prepare($query);
+        $sth->execute($roomid);
+
+        my $room = $sth->fetchrow_hashref();
+        if ( !$room ) {
+            return $c->render(
+                status  => 404,
+                openapi => { error => 'Object not found' }
+            );
+        }
+
+        $query = "DELETE FROM $ROOMS_TABLE WHERE roomid = ?";
+        $sth   = $dbh->prepare($query);
+        $sth->execute($roomid);
+
         return $c->render(
             status  => 204,
             openapi => q{}
