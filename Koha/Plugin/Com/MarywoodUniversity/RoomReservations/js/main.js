@@ -106,18 +106,7 @@
     handleSave() {
       this.editable = false;
       // Emit an event with the current property values
-      const event = new CustomEvent('lms-room-saved', {
-        detail: {
-          maxcapacity: this.maxcapacity,
-          color: this.color,
-          image: this.image,
-          description: this.description,
-          maxbookabletime: this.maxbookabletime,
-          roomid: this.roomid,
-          branch: this.branch,
-          roomnumber: this.roomnumber,
-        },
-      });
+      const event = new CustomEvent('modified', { bubbles: true });
       this.dispatchEvent(event);
     }
 
@@ -330,6 +319,9 @@
 
       if (response.status === 201) {
         this._toggleModal(); /** Implement success toast here */
+        
+        const event = new CustomEvent('created', { bubbles: true });
+        this.dispatchEvent(event);
       }
 
       if ([400, 500].includes(response.status)) ;
@@ -465,18 +457,7 @@
     handleSave() {
       this.editable = false;
       // Emit an event with the current property values
-      const event = new CustomEvent('lms-room-saved', {
-        detail: {
-          maxcapacity: this.maxcapacity,
-          color: this.color,
-          image: this.image,
-          description: this.description,
-          maxbookabletime: this.maxbookabletime,
-          roomid: this.roomid,
-          branch: this.branch,
-          roomnumber: this.roomnumber,
-        },
-      });
+      const event = new CustomEvent('modified', { bubbles: true });
       this.dispatchEvent(event);
     }
 
@@ -563,6 +544,89 @@
   }
 
   customElements.define('lms-search', LMSSearch);
+
+  class LMSTable extends s {
+    static get properties() {
+      return {
+        data: { type: Array },
+      };
+    }
+
+    static styles = i$1`
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: "Roboto", sans-serif;
+    }
+
+    th,
+    td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      font-weight: 500;
+      color: #3f51b5;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #eee;
+    }
+  `;
+
+    render() {
+      const { data } = this;
+
+      return y`
+      <table>
+        <thead>
+          <tr>
+            ${Object.keys(data[0]).map((key) => y`<th>${key}</th>`)}
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map(
+            (item) => y`
+              <tr>
+                ${Object.keys(item).map((key) =>
+                  key === "value"
+                    ? y`<td><input type="text" value=${item[key]} /></td>`
+                    : y`<td>${item[key]}</td>`
+                )}
+              </tr>
+            `
+          )}
+        </tbody>
+      </table>
+    `;
+    }
+  }
+
+  customElements.define("lms-table", LMSTable);
+
+  /* Usage
+  const data = [
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      email: 'janesmith@example.com',
+    },
+    // ...
+  ];
+
+  <lit-table .data=${data} />
+  */
 
   function closeModal({ selector }) {
     const lmsrModal = document.querySelector(selector);
@@ -889,6 +953,32 @@
   }
 
   function setBlackoutValueOnChange(e) { e.target.value = e.target.value; }
+
+  function renderOnUpdate({
+    entryPoint,
+    tagname,
+    eventName,
+    eventTarget,
+    endpoint,
+    options = {},
+  }) {
+    const entryPointRef = entryPoint;
+    const eventTargetRef = eventTarget || entryPoint;
+    eventTargetRef.addEventListener(eventName, async () => {
+      const response = await fetch(endpoint, options);
+      if ([200, 201].includes(response.status)) {
+        const result = await response.json();
+        entryPointRef.innerHTML = '';
+        result.forEach((item) => {
+          const element = document.createElement(tagname);
+          Object.keys(item).forEach((key) => {
+            element.setAttribute(key, item[key]);
+          });
+          entryPointRef.appendChild(element);
+        });
+      }
+    });
+  }
 
   function deleteEquipmentConfirmation(e) {
     const equipment = document.getElementsByName('delete-equipment-radio-button');
@@ -1483,6 +1573,7 @@
   exports.LMSRoom = LMSRoom;
   exports.LMSRoomModal = LMSRoomModal;
   exports.LMSSearch = LMSSearch;
+  exports.LMSTable = LMSTable;
   exports.LitElement = s;
   exports.closeModal = closeModal;
   exports.closeToast = closeToast;
@@ -1500,6 +1591,7 @@
   exports.notifyOnSubmitWithMessage = notifyOnSubmitWithMessage;
   exports.prohibitFormSubmitWithMessage = prohibitFormSubmitWithMessage;
   exports.renderCalendar = renderCalendar;
+  exports.renderOnUpdate = renderOnUpdate;
   exports.setBlackoutValueOnChange = setBlackoutValueOnChange;
   exports.validateAddEquipment = validateAddEquipment;
   exports.validateAddRooms = validateAddRooms;

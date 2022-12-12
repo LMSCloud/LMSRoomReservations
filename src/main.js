@@ -5,6 +5,7 @@ import LMSRoomModal from './components/LMSRoomModal';
 import LMSEquipmentItem from './components/LMSEquipmentItem';
 import LMSEquipmentModal from './components/LMSEquipmentModal';
 import LMSSearch from './components/LMSSearch';
+import LMSTable from './components/LMSTable';
 
 import closeModal from './utilities/closeModal';
 import closeToast from './utilities/closeToast';
@@ -19,6 +20,7 @@ import notifyOnSubmitWithMessage from './utilities/notifyOnSubmitWithMessage';
 import prohibitFormSubmitWithMessage from './utilities/prohibitFormSubmitWithMessage';
 import renderCalendar from './utilities/renderCalendar';
 import setBlackoutValueOnChange from './utilities/setBlackoutValueOnChange';
+import renderOnUpdate from './utilities/renderOnUpdate';
 
 import deleteEquipmentConfirmation from './validation/deleteEquipmentConfirmation';
 import deleteRoomConfirmation from './validation/deleteRoomConfirmation';
@@ -60,6 +62,7 @@ export {
   prohibitFormSubmitWithMessage,
   renderCalendar,
   setBlackoutValueOnChange,
+  renderOnUpdate,
   deleteEquipmentConfirmation,
   deleteRoomConfirmation,
   editEquipmentValidation,
@@ -93,4 +96,5 @@ export {
   LMSEquipmentItem,
   LMSEquipmentModal,
   LMSSearch,
+  LMSTable,
 };

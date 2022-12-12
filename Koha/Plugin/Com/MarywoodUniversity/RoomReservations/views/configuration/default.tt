@@ -2,7 +2,41 @@
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
   <!-- DOCS -->
-  <style>
+
+  <lms-table></lms-table>
+
+  <script>
+    const [entryPoint] = Array.from(document.getElementsByTagName('lms-table'));
+    entryPoint.data = [
+      {
+        "setting": "Max time",
+        "value": "[% max_time %]",
+        "description": "Default maximum bookable time for all rooms"
+      },
+      {
+        "setting": "Count limit",
+        "value": "[% count_limit %]",
+        "description": "I dont know"
+      },
+      {
+        "setting": "Restricted categories",
+        "value": "[% restricted_categories %]",
+        "description": "Whatever"
+      },
+      {
+        "setting": "Categories",
+        "value": "[% categories %]",
+        "description": "Also something"
+      },
+      {
+        "setting": "Restrict message",
+        "value": "[% restrict_message %]",
+        "description": "Some message"
+      },
+    ];
+  </script>
+
+<!-- <style>
     section {
       margin: 2em;
       padding: 1em;
@@ -52,5 +86,5 @@
         updating the room details in a database or displaying a confirmation message.
       </p>
     </section>
-  </div>
+  </div> -->
 [% END %]

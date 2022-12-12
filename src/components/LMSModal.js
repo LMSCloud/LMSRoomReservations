@@ -136,6 +136,9 @@ export default class LMSModal extends LitElement {
 
     if (response.status === 201) {
       this._toggleModal(); /** Implement success toast here */
+      
+      const event = new CustomEvent('created', { bubbles: true });
+      this.dispatchEvent(event);
     }
 
     if ([400, 500].includes(response.status)) {

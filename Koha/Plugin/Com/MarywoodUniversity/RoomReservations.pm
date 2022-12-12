@@ -747,7 +747,12 @@ sub configure {
     my $operations = {
         q{} => sub {
             $template = $self->get_template( { file => 'views/configuration/default.tt' } );
-            $template->param();
+            $template->param(
+                op          => $op,
+                max_time    => $self->retrieve_data('max_time'),
+                count_limit => $self->retrieve_data('count_limit'),
+
+            );
         },
         q{restrict-daily-reservations-per-patron} => sub {
             if ( ( scalar $cgi->param('limit-submitted') || q{} ) eq '1' ) { $self->store_data( { count_limit => scalar $cgi->param('reservations-limit-field') } ); }
@@ -760,8 +765,12 @@ sub configure {
 
             $template = $self->get_template( { file => 'views/configuration/restrict_daily_reservations_per_patron.tt' } );
             $template->param(
-                op          => $op,
-                count_limit => $current_limit,
+                op                    => $op,
+                count_limit           => $current_limit,
+                restricted_categories => get_restricted_patron_categories(),
+                categories            => get_patron_categories(),
+                restrict_message      => $self->retrieve_data('restricted_message'),
+
             );
         },
         q{restrict-categories} => sub {
@@ -793,27 +802,6 @@ sub configure {
                 restricted_categories => get_restricted_patron_categories(),
                 categories            => get_patron_categories(),
                 restrict_message      => scalar $self->retrieve_data('restricted_message'),
-            );
-        },
-        q{max-time} => sub {
-            Readonly my $HOUR_IN_MINUTES => 60;
-
-            if ( ( scalar $cgi->param('max-submitted') || q{} ) eq '1' ) {
-                my $max_time = ( scalar $cgi->param('max-time-hours-field') * $HOUR_IN_MINUTES ) + scalar $cgi->param('max-time-minutes-field');
-                $self->store_data( { max_time => $max_time } );
-            }
-
-            my $max_num_time = $self->retrieve_data('max_time');
-
-            if ( $max_num_time eq '0' ) {
-                $max_num_time = q{};
-            }
-
-            $template = $self->get_template( { file => 'views/configuration/max_time.tt' } );
-            $template->param(
-                op       => $op,
-                max_time => $max_num_time,
-
             );
         },
         q{rooms} => sub {

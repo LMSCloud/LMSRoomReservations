@@ -76,18 +76,7 @@ export default class LMSRoom extends LitElement {
   handleSave() {
     this.editable = false;
     // Emit an event with the current property values
-    const event = new CustomEvent('lms-room-saved', {
-      detail: {
-        maxcapacity: this.maxcapacity,
-        color: this.color,
-        image: this.image,
-        description: this.description,
-        maxbookabletime: this.maxbookabletime,
-        roomid: this.roomid,
-        branch: this.branch,
-        roomnumber: this.roomnumber,
-      },
-    });
+    const event = new CustomEvent('modified', { bubbles: true });
     this.dispatchEvent(event);
   }
 
