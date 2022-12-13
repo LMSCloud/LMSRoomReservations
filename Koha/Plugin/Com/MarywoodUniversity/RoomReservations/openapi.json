@@ -584,5 +584,134 @@
         }
       }
     }
+  },
+  "/settings": {
+    "get": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Settings#list",
+      "tags": ["settings"],
+      "summary": "Get all settings and their values",
+      "operationId": "getSettings",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "setting": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/settings/{setting}": {
+    "get": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Settings#get",
+      "tags": ["settings"],
+      "summary": "Get a setting by its name",
+      "operationId": "getSetting",
+      "parameters": [{
+        "name": "setting",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "setting": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Settings#update",
+      "tags": ["settings"],
+      "summary": "Update a setting by its name",
+      "operationId": "updateSetting",
+      "parameters": [{
+        "name": "setting",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }, {
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object respresenting the value of an updated setting",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": ["value"]
+        }
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

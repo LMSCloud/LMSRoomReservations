@@ -3,35 +3,47 @@
 [% WRAPPER "$PLUGIN_DIR/wrappers/body.inc" %]
   <!-- DOCS -->
 
-  <lms-table></lms-table>
+  <lms-settings-table></lms-settings-table>
 
   <script>
-    const [entryPoint] = Array.from(document.getElementsByTagName('lms-table'));
+    const [entryPoint] = Array.from(document.getElementsByTagName('lms-settings-table'));
     entryPoint.data = [
       {
-        "setting": "Max time",
-        "value": "[% max_time %]",
-        "description": "Default maximum bookable time for all rooms"
+        "setting": "default_max_booking_time",
+        "value": `<input class="input" type="number" name="default_max_booking_time" value="[% default_max_booking_time %]" disabled>`,
+        "description": "Default maximum bookable time for all rooms",
       },
       {
-        "setting": "Count limit",
-        "value": "[% count_limit %]",
-        "description": "I dont know"
+        "setting": "daily_reservation_limit",
+        "value": `<input class="input" type="number" name="daily_reservation_limit" value="[% daily_reservation_limit %]" disabled>`,
+        "description": "Daily reservation limit per patron",
       },
       {
-        "setting": "Restricted categories",
-        "value": "[% restricted_categories %]",
-        "description": "Whatever"
+        "setting": "restricted_patron_categories",
+        "value": `
+          [% FOREACH category IN restricted_patron_categories %]
+            <label class="checkbox">
+              <input type="checkbox" name="[% category %]" disabled>
+                [% category %]
+            </label>
+          [% END %]`,
+        "description": "Restricted patron categories which are not allowed to book rooms",
       },
       {
-        "setting": "Categories",
-        "value": "[% categories %]",
-        "description": "Also something"
+        "setting": "patron_categories",
+        "value": `
+          [% FOREACH category IN patron_categories %]
+            <label class="checkbox">
+              <input type="checkbox" name="[% category.categorycode %]" disabled>
+                [% category.description %]
+            </label>
+          [% END %]`,
+        "description": "Existing patron categories",
       },
       {
-        "setting": "Restrict message",
-        "value": "[% restrict_message %]",
-        "description": "Some message"
+        "setting": "restrict_message",
+        "value": `<input class="input" type="text" name="restrict_message" value="[% restrict_message %]" disabled>`,
+        "description": "Message that is shown to restricted patron categories trying to book rooms",
       },
     ];
   </script>

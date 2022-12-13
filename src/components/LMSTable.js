@@ -1,84 +1,82 @@
 import { html, css, LitElement } from "lit";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { templateContent } from "lit/directives/template-content.js";
+import { bulmaStyles } from "@granite-elements/granite-lit-bulma/granite-lit-bulma.js";
 
 export default class LMSTable extends LitElement {
   static get properties() {
     return {
       data: { type: Array },
+      _isEditable: { type: Boolean, attribute: false },
     };
   }
 
-  static styles = css`
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      font-family: "Roboto", sans-serif;
-    }
+  static styles = [bulmaStyles, css``];
 
-    th,
-    td {
-      padding: 16px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
+  constructor() {
+    super();
+    this._isEditable = false;
+  }
 
-    th {
-      font-weight: 500;
-      color: #3f51b5;
-    }
+  _handleEdit() {
+    console.log("Implement this method in your extended LMSTable component.");
+  }
 
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    tr:hover {
-      background-color: #eee;
-    }
-  `;
+  _handleSave() {
+    console.log("Implement this method in your extended LMSTable component.");
+  }
 
   render() {
     const { data } = this;
 
-    return html`
-      <table>
-        <thead>
-          <tr>
-            ${Object.keys(data[0]).map((key) => html`<th>${key}</th>`)}
-          </tr>
-        </thead>
-        <tbody>
-          ${data.map(
-            (item) => html`
+    return data?.length
+      ? html`
+          <table class="table is-striped is-hoverable">
+            <thead>
               <tr>
-                ${Object.keys(item).map((key) =>
-                  key === "value"
-                    ? html`<td><input type="text" value=${item[key]} /></td>`
-                    : html`<td>${item[key]}</td>`
-                )}
+                ${Object.keys(data[0]).map((key) => html`<th>${key}</th>`)}
+                ${this._isEditable ? html`<th>actions</th>` : html``}
               </tr>
-            `
-          )}
-        </tbody>
-      </table>
-    `;
+            </thead>
+            <tbody>
+              ${data.map(
+                (item) => html`
+                  <tr>
+                    ${Object.keys(item).map(
+                      (key) => html`<td>${unsafeHTML(item[key])}</td>`
+                    )}
+                    ${this._isEditable
+                      ? html`
+                          <td>
+                            <div class="columns">
+                              <div class="column">
+                                <button
+                                  @click=${this._handleEdit}
+                                  class="button is-primary"
+                                >
+                                  Edit
+                                </button>
+                              </div>
+                              <div class="column">
+                                <button
+                                  @click=${this._handleSave}
+                                  class="button is-danger"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                          </td>
+                        `
+                      : html``}
+                  </tr>
+                `
+              )}
+            </tbody>
+          </table>
+        `
+      : html``;
   }
 }
 
 customElements.define("lms-table", LMSTable);
-
-/* Usage
-const data = [
-  {
-    id: 1,
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    email: 'janesmith@example.com',
-  },
-  // ...
-];
-
-<lit-table .data=${data} />
-*/

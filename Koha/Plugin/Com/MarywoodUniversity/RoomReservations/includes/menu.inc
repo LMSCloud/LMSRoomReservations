@@ -4,7 +4,6 @@
     <li class="lmsr-menu-list-item" data-value="">[% 'Settings' | gettext %]</li>
     <li class="lmsr-menu-list-item" data-value="rooms">[% 'Rooms' | gettext %]</li>
     <li class="lmsr-menu-list-item" data-value="equipment">[% 'Equipment' | gettext %]</li>
-    <li class="lmsr-menu-list-item" data-value="restrictions">[% 'Restrictions' | gettext %]</li>
   </ol>
 </div>
 

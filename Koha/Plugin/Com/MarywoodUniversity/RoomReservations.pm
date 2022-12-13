@@ -748,9 +748,12 @@ sub configure {
         q{} => sub {
             $template = $self->get_template( { file => 'views/configuration/default.tt' } );
             $template->param(
-                op          => $op,
-                max_time    => $self->retrieve_data('max_time'),
-                count_limit => $self->retrieve_data('count_limit'),
+                op                           => $op,
+                default_max_booking_time     => $self->retrieve_data('default_max_booking_time'),
+                daily_reservation_limit      => $self->retrieve_data('daily_reservation_limit'),
+                restricted_patron_categories => get_restricted_patron_categories(),
+                patron_categories            => get_patron_categories(),
+                restrict_message             => $self->retrieve_data('restricted_message'),
 
             );
         },

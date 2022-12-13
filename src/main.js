@@ -6,6 +6,7 @@ import LMSEquipmentItem from './components/LMSEquipmentItem';
 import LMSEquipmentModal from './components/LMSEquipmentModal';
 import LMSSearch from './components/LMSSearch';
 import LMSTable from './components/LMSTable';
+import LMSSettingsTable from './components/LMSSettingsTable';
 
 import closeModal from './utilities/closeModal';
 import closeToast from './utilities/closeToast';
@@ -97,4 +98,5 @@ export {
   LMSEquipmentModal,
   LMSSearch,
   LMSTable,
+  LMSSettingsTable,
 };
