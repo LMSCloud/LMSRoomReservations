@@ -1,6 +1,5 @@
 import { html, css, LitElement } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { templateContent } from "lit/directives/template-content.js";
 import { bulmaStyles } from "@granite-elements/granite-lit-bulma/granite-lit-bulma.js";
 
 export default class LMSTable extends LitElement {

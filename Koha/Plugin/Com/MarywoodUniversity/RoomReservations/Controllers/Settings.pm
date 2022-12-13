@@ -9,6 +9,7 @@ use Koha::Plugin::Com::MarywoodUniversity::RoomReservations;
 
 use C4::Context;
 use Try::Tiny;
+use JSON;
 
 our $VERSION = '1.0.0';
 
@@ -36,6 +37,25 @@ sub list {
     };
 }
 
+sub add {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $json = $c->req->body;
+        my $body = from_json($json);
+
+        for my $setting ( $body->@* ) {
+            $self->store_data( { $setting->{'setting'} => $setting->{'value'} } );
+        }
+
+        return $c->render( status => 201, openapi => $body );
+
+    }
+    catch {
+        $c->unhandled_exception($_);
+    };
+}
+
 sub get {
     my $c = shift->openapi->valid_input or return;
 
@@ -56,14 +76,6 @@ sub update {
     return try {
         my $setting = $c->validation->param('setting');
         my $body    = $c->validation->param('body');
-
-        if ( scalar %{$body} > 1 ) {
-            while ( my ( $key, $value ) = each $body->%* ) {
-                $self->store_data( { $key => $value } );
-            }
-
-            return $c->render( status => 201, openapi => $body );
-        }
 
         $self->store_data( { $setting => $body->{'value'} } );
         return $c->render( status => 201, openapi => $body );

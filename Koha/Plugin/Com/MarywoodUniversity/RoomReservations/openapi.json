@@ -416,9 +416,9 @@
     },
     "post": {
       "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Equipment#add",
+      "operationId": "addEquipment",
       "tags": ["equipment"],
       "summary": "Create a new equipment item",
-      "operationId": "addEquipment",
       "parameters": [{
         "name": "body",
         "in": "body",
@@ -593,6 +593,63 @@
       "operationId": "getSettings",
       "responses": {
         "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "setting": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::MarywoodUniversity::RoomReservations::Controllers::Settings#add",
+      "operationId": "addSettings",
+      "tags": ["settings"],
+      "summary": "Add settings",
+      "parameters": [{
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the added settings",
+        "required": true,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "setting": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": ["setting"]
+          }
+        }
+      }],
+      "responses": {
+        "201": {
           "description": "Successful response",
           "schema": {
             "type": "array",

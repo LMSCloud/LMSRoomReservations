@@ -23,7 +23,7 @@
         "value": `
           [% FOREACH category IN restricted_patron_categories %]
             <label class="checkbox">
-              <input type="checkbox" name="[% category %]" disabled>
+              <input type="checkbox" name="[% category %]" checked disabled>
                 [% category %]
             </label>
           [% END %]`,
