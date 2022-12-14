@@ -23,8 +23,8 @@
         "value": `
           [% FOREACH category IN restricted_patron_categories %]
             <label class="checkbox">
-              <input type="checkbox" name="[% category %]" checked disabled>
-                [% category %]
+              <input type="checkbox" name="[% category.categorycode %]" checked disabled>
+                [% category.description %]
             </label>
           [% END %]`,
         "description": "Restricted patron categories which are not allowed to book rooms",

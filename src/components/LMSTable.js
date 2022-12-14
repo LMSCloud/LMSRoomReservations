@@ -15,14 +15,20 @@ export default class LMSTable extends LitElement {
   constructor() {
     super();
     this._isEditable = false;
+    this._notImplementedInBaseMessage =
+      "Implement this method in your extended LMSTable component.";
   }
 
   _handleEdit() {
-    console.log("Implement this method in your extended LMSTable component.");
+    console.log(this._notImplementedInBaseMessage);
   }
 
   _handleSave() {
-    console.log("Implement this method in your extended LMSTable component.");
+    console.log(this._notImplementedInBaseMessage);
+  }
+
+  _handleChange() {
+    console.log(this._notImplementedInBaseMessage);
   }
 
   render() {
@@ -46,7 +52,7 @@ export default class LMSTable extends LitElement {
                     )}
                     ${this._isEditable
                       ? html`
-                          <td>
+                          <td @change=${this._handleChange}>
                             <div class="columns">
                               <div class="column">
                                 <button

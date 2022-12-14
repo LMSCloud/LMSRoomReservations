@@ -8,13 +8,83 @@ export default class LMSSettingsTable extends LMSTable {
     };
   }
 
-  _handleEdit() {
-    console.log("edit");
+  _handleEdit(e) {
+    let parent = e.target.parentElement;
+    while (parent.tagName !== "TR") {
+      parent = parent.parentElement;
+    }
+
+    const inputs = parent.querySelectorAll("input");
+    inputs.forEach((input) => {
+      input.disabled = false;
+    });
   }
 
-  _handleSave() {
-    console.log("save");
+  async _handleSave(e) {
+    let parent = e.target.parentElement;
+    while (parent.tagName !== "TR") {
+      parent = parent.parentElement;
+    }
+
+    const inputs = Array.from(parent.querySelectorAll("input"));
+    const actions = {
+      restricted_patron_categories: () => {
+        const data = inputs.filter((input) => !input.checked);
+      },
+      patron_categories: async () => {
+        const data = inputs
+          .filter((input) => input.checked)
+          .map((input) => ({
+            setting: `rcat_${input.name}`,
+            value: input.name,
+          }));
+
+        const response = await fetch(
+          "/api/v1/contrib/roomreservations/settings",
+          {
+            method: "POST",
+            body: JSON.stringify(data),
+          }
+        );
+        const result = await response.json();
+        return result.status;
+      },
+    };
+
+    if (inputs.length > 1) {
+      const category = parent.firstElementChild.textContent;
+      if (inputs.every((input) => input.type === "checkbox")) {
+        const action = actions[category];
+        if (action) {
+          const status = await action();
+          if ([201, 204].includes(status)) {
+            // Implement success message
+            inputs.forEach((input) => {
+              input.disabled = true;
+            });
+          }
+        }
+      }
+      return;
+    }
+
+    const [input] = inputs;
+    const response = await fetch(
+      `/api/v1/contrib/roomreservations/settings/${input.name}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ value: input.value }),
+      }
+    );
+
+    const result = await response.json();
+    if (result.status === 201) {
+      // Implement success message
+      input.disabled = true;
+    }
   }
+
+  _handleChange() {}
 
   constructor() {
     super();

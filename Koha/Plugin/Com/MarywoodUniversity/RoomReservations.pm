@@ -34,7 +34,6 @@ use Encode;
 use Readonly;
 use DateTime;
 use experimental qw( switch );
-use Template::Constants qw( :debug );
 
 use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
@@ -747,14 +746,23 @@ sub configure {
     my $operations = {
         q{} => sub {
             $template = $self->get_template( { file => 'views/configuration/default.tt' } );
+
+            my $restricted_patron_categories = get_restricted_patron_categories();
+            my $patron_categories            = get_patron_categories();
+
             $template->param(
                 op                           => $op,
                 default_max_booking_time     => $self->retrieve_data('default_max_booking_time'),
                 daily_reservation_limit      => $self->retrieve_data('daily_reservation_limit'),
-                restricted_patron_categories => get_restricted_patron_categories(),
-                patron_categories            => get_patron_categories(),
-                restrict_message             => $self->retrieve_data('restricted_message'),
-
+                restricted_patron_categories => $restricted_patron_categories,
+                patron_categories            => sub {
+                    my $params    = shift;
+                    my %cmp_table = map  { $_->{'categorycode'} => 1 } @{ $params->{'cmp_with'} };
+                    my @diff      = grep { not exists $cmp_table{ $_->{'categorycode'} } } @{ $params->{'cmp_on'} };
+                    return \@diff;
+                }
+                    ->( { cmp_with => $restricted_patron_categories, cmp_on => $patron_categories } ),
+                restrict_message => $self->retrieve_data('restrict_message'),
             );
         },
         q{restrict-daily-reservations-per-patron} => sub {
