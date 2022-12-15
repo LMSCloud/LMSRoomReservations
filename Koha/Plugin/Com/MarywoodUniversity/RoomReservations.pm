@@ -757,9 +757,8 @@ sub configure {
                 restricted_patron_categories => $restricted_patron_categories,
                 patron_categories            => sub {
                     my $params    = shift;
-                    my %cmp_table = map  { $_->{'categorycode'} => 1 } @{ $params->{'cmp_with'} };
-                    my @diff      = grep { not exists $cmp_table{ $_->{'categorycode'} } } @{ $params->{'cmp_on'} };
-                    return \@diff;
+                    my %cmp_table = map { $_->{'categorycode'} => 1 } @{ $params->{'cmp_with'} };
+                    return [ grep { not exists $cmp_table{ $_->{'categorycode'} } } @{ $params->{'cmp_on'} } ];
                 }
                     ->( { cmp_with => $restricted_patron_categories, cmp_on => $patron_categories } ),
                 restrict_message => $self->retrieve_data('restrict_message'),
