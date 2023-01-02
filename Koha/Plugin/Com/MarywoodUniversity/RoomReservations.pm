@@ -13,7 +13,7 @@ use Modern::Perl;
 use English qw( -no_match_vars );
 
 use Carp;
-use Cwd qw( abs_path cwd );
+use Cwd            qw( abs_path cwd );
 use File::Basename qw( dirname );
 use MIME::Base64;
 use MIME::QuotedPrint;
@@ -38,7 +38,7 @@ use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
 
 use Locale::Messages qw(:locale_h :libintl_h);
-use POSIX qw(setlocale);
+use POSIX            qw(setlocale);
 
 use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Bookings;
 use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Equipment;
@@ -115,8 +115,7 @@ sub new {
 sub install() {
     my ( $self, $args ) = @_;
 
-    my $original_version = $self->retrieve_data('plugin_version');    # is this a new install or an upgrade?
-
+    my $original_version     = $self->retrieve_data('plugin_version');
     my @installer_statements = (
         qq{DROP TABLE IF EXISTS $BOOKINGS_TABLE, $ROOMEQUIPMENT_TABLE, $EQUIPMENT_TABLE, $ROOMS_TABLE, $OPENING_HOURS_TABLE},
         <<~"EOF",
@@ -190,16 +189,10 @@ sub install() {
         qq{INSERT INTO $EQUIPMENT_TABLE (equipmentname) VALUES ('none');},
     );
 
-    if ( !defined $original_version ) {    # clean install
+    if ( !defined $original_version ) {
         for (@installer_statements) {
             my $sth = C4::Context->dbh->prepare($_);
             $sth->execute or croak C4::Context->dbh->errstr;
-        }
-    }
-    else {    # upgrade
-        if ( $original_version eq '1.1.15' ) {
-
-            # do nothing..no database changes
         }
     }
 
@@ -244,7 +237,7 @@ sub install() {
         $sth->execute();
     }
 
-    $self->store_data( { plugin_version => $VERSION } );    # used when upgrading to newer version
+    $self->store_data( { plugin_version => $VERSION } );
 
     return 1;
 }
@@ -360,17 +353,7 @@ sub uninstall() {
         my $sth = C4::Context->dbh->prepare($_);
         $sth->execute or croak C4::Context->dbh->errstr;
     }
-
-    my $IntranetUserJS = C4::Context->preference('IntranetUserJS');
-    my $JS_start = 'JS for Koha RoomReservation Plugin';
-    my $JS_end = 'End of JS for Koha RoomReservation Plugin';
-
-    my $JS_regex = qr{/[*]\s* $JS_start \s* .* \s* $JS_end \s* [*]/ }smx;
-
-    $IntranetUserJS =~ s/$JS_regex//gsmx;
-
-    C4::Context->set_preference( 'IntranetUserJS', $IntranetUserJS );
-
+    
     return 1;
 }
 
