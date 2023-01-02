@@ -191,54 +191,6 @@ sub install() {
     );
 
     if ( !defined $original_version ) {    # clean install
-
-        # Add required IntranetUserJS entry to place
-        # reservations for a patron from circulation.pl
-        my $IntranetUserJS = C4::Context->preference('IntranetUserJS');
-
-        my $JS_start = qr/JS for Koha RoomReservation Plugin/smx;
-        my $JS_end   = qr/End of JS for Koha RoomReservation Plugin/smx;
-
-        if ( $IntranetUserJS =~ /$JS_start\s*.*\s*$JS_end/smx ) {
-
-            # do nothing if the JS is already present
-            return;
-        }
-
-        # Remove any existing JS for the RoomReservation plugin from the $IntranetUserJS variable
-        $IntranetUserJS =~ s/$JS_regex//smxg;
-
-        # Append the required JS to the $IntranetUserJS variable
-        $IntranetUserJS .= <<~"EOF";
-            /* JS for Koha RoomReservation Plugin
-            This JS was added automatically by installing the RoomReservation plugin
-            Please do not modify */
-
-            \$(document).ready(function() {
-                var buttonText = `
-        EOF
-
-        $IntranetUserJS .= get_translation('Reserve room as patron') . q{`;};
-        $IntranetUserJS .= <<~"EOF";
-                var data = \$("div.patroninfo h5").html();
-
-                if (typeof borrowernumber !== 'undefined') {
-                if (data) {
-                    var regExp = /\(([^)]+)\)/;
-                    var matches = regExp.exec(data);
-                    if (matches) {
-                    var cardnumber = matches[1];
-                    \$('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter(\$('#addnewmessageLabel'));
-                    }
-                }
-                }
-            });
-
-            /* End of JS
-        EOF
-
-        C4::Context->set_preference( 'IntranetUserJS', $IntranetUserJS );
-
         for (@installer_statements) {
             my $sth = C4::Context->dbh->prepare($_);
             $sth->execute or croak C4::Context->dbh->errstr;
@@ -307,7 +259,25 @@ sub intranet_js {
     my ($self) = @_;
 
     my $current_plugin_version = $self->retrieve_data('plugin_version');
-    return qq{<script>console.log('RoomReservations plugin loaded. Version $current_plugin_version');</script>};
+    return <<~'JS';
+        <script>
+            $(document).ready(function() {
+                var buttonText = `Reserve room as patron`;
+                var data = $("div.patroninfo h5").html();
+
+                if (typeof borrowernumber !== 'undefined') {
+                    if (data) {
+                        var regExp = /\(([^)]+)\)/;
+                        var matches = regExp.exec(data);
+                        if (matches) {
+                            var cardnumber = matches[1];
+                            $('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter($('#addnewmessageLabel'));
+                        }
+                    }
+                }
+            });
+        </script>
+    JS
 }
 
 sub upgrade {
