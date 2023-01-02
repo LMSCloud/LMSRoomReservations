@@ -33,7 +33,7 @@ use Koha::Patrons;
 use Encode;
 use Readonly;
 use DateTime;
-use experimental qw( switch );
+use experimental qw( switch signatures );
 
 use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
