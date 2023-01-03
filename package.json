@@ -1,33 +1,46 @@
 {
-  "name": "koha-plugin-kitchen-sink",
-  "version": "2.1.30",
-  "previous_version": "2.1.29",
-  "description": "Koha Kitchen Sink Plugin",
+  "name": "koha-plugin-lms-room-reservations",
+  "version": "0.0.1",
+  "previous_version": "0.0.0",
+  "description": "Koha Room Reservations Plugin, modified by LMSCloud GmbH",
   "devDependencies": {
-    "gulp": "^3.9.1",
+    "eslint": "^8.20.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "gulp": "^4.0.2",
     "gulp-cli": "^1.2.2",
     "gulp-github-release": "^1.1.5",
-    "gulp-run": "^1.7.1"
+    "gulp-run": "^1.7.1",
+    "rollup": "^2.77.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm *.kpz",
+    "build": "./node_modules/rollup/dist/bin/rollup -c && gulp build",
+    "build:next": "./node_modules/rollup/dist/bin/rollup -c && node increment_version.js && gulp build",
+    "docker:dev": "npm run clean && npm run build && npm run docker:move && npm run docker:unzip && npm run docker:install",
+    "docker:clean": "docker exec -it koha-koha-1 rm /var/lib/koha/kohadev/plugins/*.kpz",
+    "docker:move": "docker cp *.kpz koha-koha-1:/var/lib/koha/kohadev/plugins/",
+    "docker:unzip": "docker exec -it koha-koha-1 unzip /var/lib/koha/kohadev/plugins/*.kpz",
+    "docker:install": "docker exec -it koha-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bywatersolutions/koha-plugin-kitchen-sink.git"
+    "url": "git+https://github.com/ldjamison/koha-plugin-room-reservations.git"
   },
-  "author": "Kyle M Hall <kyle@bywatersolutions.com>",
+  "author": "Lee Jamison <ldjamison@marywood.edu>",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/bywatersolutions/koha-plugin-kitchen-sink/issues"
+    "url": "https://github.com/ldjamison/koha-plugin-room-reservations/issues"
   },
-  "homepage": "https://github.com/bywatersolutions/koha-plugin-kitchen-sink#readme",
+  "homepage": "https://github.com/ldjamison/koha-plugin-room-reservations#readme",
   "dependencies": {
+    "@granite-elements/granite-lit-bulma": "^0.9.2-0",
     "datetime": "0.0.3",
+    "gulp-replace": "^0.6.1",
     "jsonfile": "^4.0.0",
-    "node-datetime": "^2.0.0"
-  },
-  "overrides": {
-    "graceful-fs": "^4.2.9"
+    "lit": "^2.4.1",
+    "node-datetime": "^2.0.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
   }
 }

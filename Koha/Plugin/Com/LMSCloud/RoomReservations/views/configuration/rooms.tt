@@ -1,0 +1,36 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+[% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
+  <div class="lmsr-content-block" id="entry-point">
+    [% FOREACH room IN rooms %]
+      <lms-room branch="[% room.branch %]" color="[% room.color %]" description="[% room.description %]"
+        image="[% room.image %]" maxbookabletime="[% room.maxbookabletime %]" maxcapacity="[% room.maxcapacity %]"
+        roomid="[% room.roomid %]" roomnumber="[% room.roomnumber %]">
+      </lms-room>
+    [% END # FOREACH room IN rooms %]
+  </div>
+
+  <lms-room-modal></lms-room-modal>
+
+  <!-- <lms-search tagName="lms-room"></lms-search> -->
+
+  <script>
+    const entryPoint = document.getElementById('entry-point');
+    RoomReservationBundle.renderOnUpdate({
+      entryPoint,
+      tagname: 'lms-room', 
+      eventName: 'modified',
+      endpoint: '/api/v1/contrib/roomreservations/rooms'
+    });
+
+    const [eventTarget] = Array.from(document.getElementsByTagName('lms-room-modal'));
+    RoomReservationBundle.renderOnUpdate({
+      entryPoint,
+      tagname: 'lms-room', 
+      eventName: 'created',
+      eventTarget,
+      endpoint: '/api/v1/contrib/roomreservations/rooms'
+    });
+  </script>
+[% END %]

@@ -1,0 +1,774 @@
+{
+  "/rooms": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#list",
+      "operationId": "getRooms",
+      "tags": ["rooms"],
+      "responses": {
+        "200": {
+          "description": "A list of rooms",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "maxcapacity": {
+                  "type": "string",
+                  "description": "The maximum number of people that can be in the room"
+                },
+                "color": {
+                  "type": "string",
+                  "description": "The color of the room"
+                },
+                "image": {
+                  "type": "string",
+                  "description": "An image of the room"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "A description of the room"
+                },
+                "maxbookabletime": {
+                  "type": "string",
+                  "description": "The maximum amount of time that the room can be booked for"
+                },
+                "roomid": {
+                  "type": "string",
+                  "description": "The internal ID of the room"
+                },
+                "branch": {
+                  "type": "string",
+                  "description": "The branch where the room is located"
+                },
+                "roomnumber": {
+                  "type": "string",
+                  "description": "The number of the room"
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "No rooms were found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#add",
+      "operationId": "addRoom",
+      "tags": ["rooms"],
+      "parameters": [{
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing an order",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "maxcapacity": {
+              "type": "string",
+              "description": "The maximum number of people that can be in the room"
+            },
+            "color": {
+              "type": "string",
+              "description": "The color of the room"
+            },
+            "image": {
+              "type": "string",
+              "description": "An image of the room"
+            },
+            "description": {
+              "type": "string",
+              "description": "A description of the room"
+            },
+            "maxbookabletime": {
+              "type": "string",
+              "description": "The maximum amount of time that the room can be booked for"
+            },
+            "roomid": {
+              "type": "string",
+              "description": "The internal ID of the room"
+            },
+            "branch": {
+              "type": "string",
+              "description": "The branch where the room is located"
+            },
+            "roomnumber": {
+              "type": "string",
+              "description": "The number of the room"
+            }
+          }
+        }
+      }],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "201": {
+          "description": "The added room",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "maxcapacity": {
+                "type": "string",
+                "description": "The maximum number of people that can be in the room"
+              },
+              "color": {
+                "type": "string",
+                "description": "The color of the room"
+              },
+              "image": {
+                "type": "string",
+                "description": "An image of the room"
+              },
+              "description": {
+                "type": "string",
+                "description": "A description of the room"
+              },
+              "maxbookabletime": {
+                "type": "string",
+                "description": "The maximum amount of time that the room can be booked for"
+              },
+              "roomid": {
+                "type": "string",
+                "description": "The internal ID of the room"
+              },
+              "branch": {
+                "type": "string",
+                "description": "The branch where the room is located"
+              },
+              "roomnumber": {
+                "type": "string",
+                "description": "The number of the room"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid room data",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/rooms/{roomid}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#get",
+      "operationId": "getRoom",
+      "tags": ["rooms"],
+      "produces": ["application/json"],
+      "parameters": [{
+        "name": "roomid",
+        "in": "path",
+        "description": "The ID of the room",
+        "required": true,
+        "type": "string"
+      }],
+      "responses": {
+        "200": {
+          "description": "The room with the given ID",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "maxcapacity": {
+                "type": "string",
+                "description": "The maximum number of people that can be in the room"
+              },
+              "color": {
+                "type": "string",
+                "description": "The color of the room"
+              },
+              "image": {
+                "type": "string",
+                "description": "An image of the room"
+              },
+              "description": {
+                "type": "string",
+                "description": "A description of the room"
+              },
+              "maxbookabletime": {
+                "type": "string",
+                "description": "The maximum amount of time that the room can be booked for"
+              },
+              "roomid": {
+                "type": "string",
+                "description": "The internal ID of the room"
+              },
+              "branch": {
+                "type": "string",
+                "description": "The branch where the room is located"
+              },
+              "roomnumber": {
+                "type": "string",
+                "description": "The number of the room"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The room was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#update",
+      "operationId": "updateRoom",
+      "tags": ["rooms"],
+      "parameters": [{
+        "name": "roomid",
+        "in": "path",
+        "description": "The ID of the room",
+        "required": true,
+        "type": "string"
+      }, {
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the updated room",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "maxcapacity": {
+              "type": "string",
+              "description": "The maximum number of people that can be in the room"
+            },
+            "color": {
+              "type": "string",
+              "description": "The color of the room"
+            },
+            "image": {
+              "type": "string",
+              "description": "An image of the room"
+            },
+            "description": {
+              "type": "string",
+              "description": "A description of the room"
+            },
+            "maxbookabletime": {
+              "type": "string",
+              "description": "The maximum amount of time that the room can be booked for"
+            },
+            "roomid": {
+              "type": "string",
+              "description": "The internal ID of the room"
+            },
+            "branch": {
+              "type": "string",
+              "description": "The branch where the room is located"
+            },
+            "roomnumber": {
+              "type": "string",
+              "description": "The number of the room"
+            }
+          }
+        }
+      }],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "The updated room",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "maxcapacity": {
+                "type": "string",
+                "description": "The maximum number of people that can be in the room"
+              },
+              "color": {
+                "type": "string",
+                "description": "The color of the room"
+              },
+              "image": {
+                "type": "string",
+                "description": "An image of the room"
+              },
+              "description": {
+                "type": "string",
+                "description": "A description of the room"
+              },
+              "maxbookabletime": {
+                "type": "string",
+                "description": "The maximum amount of time that the room can be booked for"
+              },
+              "roomid": {
+                "type": "string",
+                "description": "The internal ID of the room"
+              },
+              "branch": {
+                "type": "string",
+                "description": "The branch where the room is located"
+              },
+              "roomnumber": {
+                "type": "string",
+                "description": "The number of the room"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The room was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#delete",
+      "operationId": "deleteRoom",
+      "tags": ["rooms"],
+      "parameters": [{
+        "name": "roomid",
+        "in": "path",
+        "description": "The ID of the room",
+        "required": true,
+        "type": "string"
+      }],
+      "responses": {
+        "204": {
+          "description": "The room was deleted"
+        },
+        "404": {
+          "description": "The room was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/equipment": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#list",
+      "tags": ["equipment"],
+      "summary": "Get a list of equipment items",
+      "operationId": "listEquipment",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "equipmentid": {
+                  "type": "integer"
+                },
+                "equipmentname": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#add",
+      "operationId": "addEquipment",
+      "tags": ["equipment"],
+      "summary": "Create a new equipment item",
+      "parameters": [{
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the added equipment",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "equipmentname": {
+              "type": "string"
+            }
+          },
+          "required": ["equipmentname"]
+        }
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentid": {
+                "type": "integer"
+              },
+              "equipmentname": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/equipment/{equipmentid}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#get",
+      "tags": ["equipment"],
+      "summary": "Get an equipment item by ID",
+      "operationId": "getEquipment",
+      "parameters": [{
+        "name": "equipmentid",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentid": {
+                "type": "integer"
+              },
+              "equipmentname": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#update",
+      "tags": ["equipment"],
+      "summary": "Update an equipment item by ID",
+      "operationId": "updateEquipment",
+      "parameters": [{
+        "name": "equipmentid",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }, {
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the updated equipment",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "equipmentname": {
+              "type": "string"
+            }
+          },
+          "required": ["equipmentname"]
+        }
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentid": {
+                "type": "integer"
+              },
+              "equipmentname": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#delete",
+      "tags": ["equipment"],
+      "summary": "Delete an equipment item by ID",
+      "operationId": "deleteEquipment",
+      "parameters": [{
+        "name": "equipmentid",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response"
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/settings": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#list",
+      "tags": ["settings"],
+      "summary": "Get all settings and their values",
+      "operationId": "getSettings",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "setting": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#add",
+      "operationId": "addSettings",
+      "tags": ["settings"],
+      "summary": "Add settings",
+      "parameters": [{
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the added settings",
+        "required": true,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "setting": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": ["setting"]
+          }
+        }
+      }],
+      "responses": {
+        "201": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "setting": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/settings/{setting}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#get",
+      "tags": ["settings"],
+      "summary": "Get a setting by its name",
+      "operationId": "getSetting",
+      "parameters": [{
+        "name": "setting",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "setting": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#update",
+      "tags": ["settings"],
+      "summary": "Update a setting by its name",
+      "operationId": "updateSetting",
+      "parameters": [{
+        "name": "setting",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }, {
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object respresenting the value of an updated setting",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": ["value"]
+        }
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

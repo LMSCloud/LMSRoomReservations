@@ -1,0 +1,41 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 10 version
+*/
+
+:root {
+  --shadow-sm: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+  --shadow-md: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+  --shadow-lg: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  --shadow-hv: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+
+  --breakpoint-xs: 425px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+
+  --seperator-light: rgba(0, 0, 0, 0.1);
+
+  --system-ui: system, -apple-system, ".SFNSText-Regular", "San Francisco",
+    "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+}
+
+#lmsr {
+  display: grid;
+  margin: 0 1em;
+  padding: 0 1em;
+  gap: 0.5em;
+}
+
+.lmsr-menu {
+  display: flex;
+  gap: 1em;
+}
+
+.lmsr-menu-item {
+  border: 1px solid var(--seperator-light);
+  border-radius: 12px;
+  padding: 1em;
+  background-color: white;
+}
