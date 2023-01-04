@@ -1,10 +1,3 @@
-/*
-* Prefixed by https://autoprefixer.github.io
-* PostCSS: v8.4.14,
-* Autoprefixer: v10.4.7
-* Browsers: last 10 version
-*/
-
 :root {
   --shadow-sm: rgba(0, 0, 0, 0.18) 0px 2px 4px;
   --shadow-md: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
@@ -16,6 +9,8 @@
   --breakpoint-md: 1024px;
 
   --seperator-light: rgba(0, 0, 0, 0.1);
+  --seperator-mid: rgba(0, 0, 0, 0.4);
+  --seperator-dark: rgba(0, 0, 0, 0.7);
 
   --system-ui: system, -apple-system, ".SFNSText-Regular", "San Francisco",
     "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;

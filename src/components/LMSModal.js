@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { LitElement, html, css } from "lit";
+import { bulmaStyles } from "@granite-elements/granite-lit-bulma/granite-lit-bulma.js";
 
 export default class LMSModal extends LitElement {
   static get properties() {
@@ -12,94 +13,96 @@ export default class LMSModal extends LitElement {
   }
 
   static get styles() {
-    return css`
-      .label {
-        display: block;
-        margin: 8px 0;
-        font-weight: bold;
-      }
+    return [
+      css`
+        .label {
+          display: block;
+          margin: 8px 0;
+          font-weight: bold;
+        }
 
-      .input {
-        display: block;
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
-      }
+        .input {
+          display: block;
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
 
-      .button {
-        display: inline-block;
-        margin-right: 8px;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        background-color: #333;
-        color: #fff;
-        cursor: pointer;
-      }
+        .button {
+          display: inline-block;
+          margin-right: 8px;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 4px;
+          background-color: #333;
+          color: #fff;
+          cursor: pointer;
+        }
 
-      .buttons {
-        display: flex;
-        justify-content: right;
-        margin: 8px 0;
-      }
+        .buttons {
+          display: flex;
+          justify-content: right;
+          margin: 8px 0;
+        }
 
-      .button:hover {
-        background-color: #444;
-      }
+        .button:hover {
+          background-color: #444;
+        }
 
-      .plus-button {
-        position: fixed;
-        bottom: 1em;
-        right: 1em;
-        border-radius: 50%;
-        background-color: #333;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        z-index: 99;
-      }
+        .plus-button {
+          position: fixed;
+          bottom: 1em;
+          right: 1em;
+          border-radius: 50%;
+          background-color: #333;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          cursor: pointer;
+          z-index: 99;
+        }
 
-      .plus-button > button {
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 2em;
-        width: 2em;
-        height: 2em;
-      }
+        .plus-button > button {
+          background: none;
+          border: none;
+          color: #fff;
+          font-size: 2em;
+          width: 2em;
+          height: 2em;
+        }
 
-      .modal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: white;
-        padding: 16px;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-        z-index: 100;
-      }
+        .modal {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: white;
+          padding: 16px;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
+          z-index: 100;
+        }
 
-      .dark-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 98;
-      }
+        .dark-background {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 98;
+        }
 
-      .tilted {
-        transition-timing-function: ease-in-out;
-        transition: 0.2s;
-        transform: rotate(45deg);
-      }
-    `;
+        .tilted {
+          transition-timing-function: ease-in-out;
+          transition: 0.2s;
+          transform: rotate(45deg);
+        }
+      `,
+    ];
   }
 
   constructor() {
@@ -126,6 +129,7 @@ export default class LMSModal extends LitElement {
       method,
       headers: {
         "Content-Type": "application/json",
+        Accept: "",
       },
       body: JSON.stringify(
         Object.assign(
@@ -136,8 +140,8 @@ export default class LMSModal extends LitElement {
 
     if (response.status === 201) {
       this._toggleModal(); /** Implement success toast here */
-      
-      const event = new CustomEvent('created', { bubbles: true });
+
+      const event = new CustomEvent("created", { bubbles: true });
       this.dispatchEvent(event);
     }
 

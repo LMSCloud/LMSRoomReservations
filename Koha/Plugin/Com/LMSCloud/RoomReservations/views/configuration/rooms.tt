@@ -21,7 +21,12 @@
       entryPoint,
       tagname: 'lms-room', 
       eventName: 'modified',
-      endpoint: '/api/v1/contrib/roomreservations/rooms'
+      endpoint: '/api/v1/contrib/roomreservations/rooms',
+      options: {
+        headers: {
+          'Accept': '',
+        }
+      },
     });
 
     const [eventTarget] = Array.from(document.getElementsByTagName('lms-room-modal'));
@@ -30,7 +35,12 @@
       tagname: 'lms-room', 
       eventName: 'created',
       eventTarget,
-      endpoint: '/api/v1/contrib/roomreservations/rooms'
+      endpoint: '/api/v1/contrib/roomreservations/rooms',
+      options: {
+        headers: {
+          'Accept': '',
+        }
+      },
     });
   </script>
 [% END %]

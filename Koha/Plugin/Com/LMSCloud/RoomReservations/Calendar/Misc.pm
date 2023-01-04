@@ -177,7 +177,7 @@ sub get_restricted_patron_categories {
     my $query = <<~"EOF";
         SELECT categorycode, description
         FROM categories, plugin_data
-        WHERE plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations'
+        WHERE plugin_class = 'Koha::Plugin::Com::LMSCloud::RoomReservations'
         AND plugin_key LIKE 'rcat_%'
         AND plugin_value = categorycode;
     EOF

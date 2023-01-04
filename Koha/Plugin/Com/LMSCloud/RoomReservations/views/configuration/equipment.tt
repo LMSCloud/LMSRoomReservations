@@ -19,7 +19,12 @@
       entryPoint,
       tagname: 'lms-equipment-item', 
       eventName: 'modified', 
-      endpoint: '/api/v1/contrib/roomreservations/equipment'
+      endpoint: '/api/v1/contrib/roomreservations/equipment',
+      options: {
+        headers: {
+          'Accept': '',
+        }
+      },
     });
 
     const [eventTarget] = Array.from(document.getElementsByTagName('lms-equipment-modal'));
@@ -28,7 +33,12 @@
       tagname: 'lms-equipment-item', 
       eventName: 'created',
       eventTarget,
-      endpoint: '/api/v1/contrib/roomreservations/equipment'
+      endpoint: '/api/v1/contrib/roomreservations/equipment',
+      options: {
+        headers: {
+          'Accept': '',
+        }
+      },
     });
   </script>
 [% END %]

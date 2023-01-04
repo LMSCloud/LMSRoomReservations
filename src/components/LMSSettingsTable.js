@@ -44,10 +44,12 @@ export default class LMSSettingsTable extends LMSTable {
           {
             method: "POST",
             body: JSON.stringify(data),
+            headers: {
+              'Accept': '',
+            },
           }
         );
-        const result = await response.json();
-        return result.status;
+        return response.status;
       },
     };
 
@@ -74,11 +76,13 @@ export default class LMSSettingsTable extends LMSTable {
       {
         method: "PUT",
         body: JSON.stringify({ value: input.value }),
+        headers: {
+          'Accept': '',
+        },
       }
     );
 
-    const result = await response.json();
-    if (result.status === 201) {
+    if (response.status === 201) {
       // Implement success message
       input.disabled = true;
     }

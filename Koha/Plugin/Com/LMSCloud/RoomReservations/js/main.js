@@ -182,382 +182,6 @@
 
   customElements.define('lms-room', LMSRoom);
 
-  /* eslint-disable no-underscore-dangle */
-
-  class LMSModal extends s {
-    static get properties() {
-      return {
-        fields: { type: Array },
-        createOpts: { type: Object },
-        editable: { type: Boolean },
-        isOpen: { type: Boolean },
-      };
-    }
-
-    static get styles() {
-      return i$2`
-      .label {
-        display: block;
-        margin: 8px 0;
-        font-weight: bold;
-      }
-
-      .input {
-        display: block;
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
-      }
-
-      .button {
-        display: inline-block;
-        margin-right: 8px;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        background-color: #333;
-        color: #fff;
-        cursor: pointer;
-      }
-
-      .buttons {
-        display: flex;
-        justify-content: right;
-        margin: 8px 0;
-      }
-
-      .button:hover {
-        background-color: #444;
-      }
-
-      .plus-button {
-        position: fixed;
-        bottom: 1em;
-        right: 1em;
-        border-radius: 50%;
-        background-color: #333;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        z-index: 99;
-      }
-
-      .plus-button > button {
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 2em;
-        width: 2em;
-        height: 2em;
-      }
-
-      .modal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: white;
-        padding: 16px;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-        z-index: 100;
-      }
-
-      .dark-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 98;
-      }
-
-      .tilted {
-        transition-timing-function: ease-in-out;
-        transition: 0.2s;
-        transform: rotate(45deg);
-      }
-    `;
-    }
-
-    constructor() {
-      super();
-      this.fields = [];
-      this.createOpts = {
-        endpoint: undefined,
-        method: undefined,
-        id: undefined,
-        body: undefined,
-      };
-      this.editable = false;
-      this.isOpen = false;
-    }
-
-    _toggleModal() {
-      this.isOpen = !this.isOpen;
-    }
-
-    async _create(e) {
-      e.preventDefault();
-      const { endpoint, method } = this.createOpts;
-      const response = await fetch(`${endpoint}`, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(
-          Object.assign(
-            ...this.fields.map(({ name, value }) => ({ [name]: value }))
-          )
-        ),
-      });
-
-      if (response.status === 201) {
-        this._toggleModal(); /** Implement success toast here */
-        
-        const event = new CustomEvent('created', { bubbles: true });
-        this.dispatchEvent(event);
-      }
-
-      if ([400, 500].includes(response.status)) ;
-    }
-
-    render() {
-      return y`
-      <div class="plus-button">
-        <button @click="${this._toggleModal}" class=${this.isOpen && "tilted"}>
-          +
-        </button>
-      </div>
-      <div
-        class="dark-background"
-        ?hidden=${!this.isOpen}
-        @click=${this._toggleModal}
-      ></div>
-      ${this.isOpen
-        ? y`
-            <div class="modal">
-              <form @submit="${this._create}">
-                ${this.fields.map((field) => this._getFieldMarkup(field))}
-                <div class="buttons">
-                  <button type="submit" class="button">Create</button>
-                </div>
-              </form>
-            </div>
-          `
-        : y``}
-    `;
-    }
-
-    _getFieldMarkup(field) {
-      return field.desc
-        ? y`
-          <label class="label">${field.desc}</label>
-          <input
-            type=${field.type}
-            name=${field.name}
-            class="input"
-            @input=${(e) => {
-              field.value = e.target.value;
-            }}
-          />
-        `
-        : y``;
-    }
-  }
-
-  class LMSRoomModal extends LMSModal {
-    static get properties() {
-      return { fields: { type: Array } };
-    }
-
-    constructor() {
-      super();
-      this.fields = [
-        { name: 'maxcapacity', type: 'text', desc: 'Max capacity' },
-        { name: 'color', type: 'color', desc: 'Color' },
-        { name: 'image', type: 'text', desc: 'Image' },
-        { name: 'description', type: 'text', desc: 'description' },
-        { name: 'maxbookabletime', type: 'text', desc: 'Max bookable time' },
-        { name: 'roomid', type: 'text' },
-        { name: 'branch', type: 'text', desc: 'Branch' },
-        { name: 'roomnumber', type: 'text', desc: 'Roomnumber' },
-      ];
-      this.createOpts = {
-        endpoint: '/api/v1/contrib/roomreservations/rooms',
-        method: 'POST',
-      };
-    }
-  }
-
-  customElements.define('lms-room-modal', LMSRoomModal);
-
-  class LMSEquipmentItem extends s {
-    static get properties() {
-      return {
-        equipmentid: { type: String },
-        equipmentname: { type: String },
-        editable: { type: Boolean },
-      };
-    }
-
-    static styles = i$2`
-    .pill {
-      padding: 0.5em 1em;
-      border-radius: 20px;
-      background-color: #333;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1em;
-    }
-
-    .label {
-      display: block;
-      margin: 8px 0;
-      font-weight: bold;
-    }
-
-    .input {
-      display: block;
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-      background-color: #fff;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      background-color: #555;
-      color: #fff;
-      cursor: pointer;
-    }
-  `;
-
-    constructor() {
-      super();
-      this.editable = false;
-    }
-
-    handleEdit() {
-      this.editable = true;
-    }
-
-    handleSave() {
-      this.editable = false;
-      // Emit an event with the current property values
-      const event = new CustomEvent('modified', { bubbles: true });
-      this.dispatchEvent(event);
-    }
-
-    render() {
-      return y`
-      <div class="pill">
-        <label class="label">${this.equipmentid}</label>
-        <input
-          type="text"
-          ?disabled=${!this.editable}
-          .value=${this.equipmentname}
-          @input=${(e) => { this.equipmentname = e.target.value; }}
-          class="input"
-        />
-        <button @click=${this.handleEdit} class="button">Edit</button>
-        <button @click=${this.handleSave} class="button">Save</button>
-      </div>
-    `;
-    }
-  }
-
-  customElements.define('lms-equipment-item', LMSEquipmentItem);
-
-  class LMSEquipmentModal extends LMSModal {
-    static get properties() {
-      return { fields: { type: Array } };
-    }
-
-    constructor() {
-      super();
-      this.fields = [
-        { name: 'equipmentid', type: 'text' },
-        { name: 'equipmentname', type: 'text', desc: 'Equipmentname' },
-      ];
-      this.createOpts = {
-        endpoint: '/api/v1/contrib/roomreservations/equipment',
-        method: 'POST',
-      };
-    }
-  }
-
-  customElements.define('lms-equipment-modal', LMSEquipmentModal);
-
-  class LMSSearch extends s {
-    static get properties() {
-      return {
-        tagName: { type: String },
-        search: { type: String },
-      };
-    }
-
-    constructor() {
-      super();
-      this.tagName = '';
-      this.search = '';
-      this.indexedContent = [];
-    }
-
-    firstUpdated() {
-      this.indexedContent = [...document.getElementsByTagName(this.tagName)];
-    }
-
-    update(changedProperties) {
-      if (changedProperties.has('search')) {
-        this.indexedContent.forEach((element) => {
-          if (element.textContent.includes(this.search)) {
-            element.style.display = 'block';
-          } else {
-            element.style.display = 'none';
-          }
-        });
-      }
-
-      super.update(changedProperties);
-    }
-
-    render() {
-      return y` <input type="text" @input="${this.handleSearchChange}" /> `;
-    }
-
-    handleSearchChange(event) {
-      this.search = event.target.value;
-    }
-  }
-
-  customElements.define('lms-search', LMSSearch);
-
-  /**
-   * @license
-   * Copyright 2017 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e$1=t=>(...e)=>({_$litDirective$:t,values:e});class i{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
-
-  /**
-   * @license
-   * Copyright 2017 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */class e extends i{constructor(i){if(super(i),this.it=b,i.type!==t.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(r){if(r===b||null==r)return this._t=void 0,this.it=r;if(r===x)return r;if("string"!=typeof r)throw Error(this.constructor.directiveName+"() called with a non-string value");if(r===this.it)return this._t;this.it=r;const s=[r];return s.raw=s,this._t={_$litType$:this.constructor.resultType,strings:s,values:[]}}}e.directiveName="unsafeHTML",e.resultType=1;const o=e$1(e);
-
   const bulmaStyles = i$2`
 /*! bulma.io v0.9.2 | MIT License | github.com/jgthms/bulma */
 /* Bulma Utilities */
@@ -12266,6 +11890,385 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 /*# sourceMappingURL=bulma.css.map */
 `;
 
+  /* eslint-disable no-underscore-dangle */
+
+  class LMSModal extends s {
+    static get properties() {
+      return {
+        fields: { type: Array },
+        createOpts: { type: Object },
+        editable: { type: Boolean },
+        isOpen: { type: Boolean },
+      };
+    }
+
+    static get styles() {
+      return [
+        i$2`
+        .label {
+          display: block;
+          margin: 8px 0;
+          font-weight: bold;
+        }
+
+        .input {
+          display: block;
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+
+        .button {
+          display: inline-block;
+          margin-right: 8px;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 4px;
+          background-color: #333;
+          color: #fff;
+          cursor: pointer;
+        }
+
+        .buttons {
+          display: flex;
+          justify-content: right;
+          margin: 8px 0;
+        }
+
+        .button:hover {
+          background-color: #444;
+        }
+
+        .plus-button {
+          position: fixed;
+          bottom: 1em;
+          right: 1em;
+          border-radius: 50%;
+          background-color: #333;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          cursor: pointer;
+          z-index: 99;
+        }
+
+        .plus-button > button {
+          background: none;
+          border: none;
+          color: #fff;
+          font-size: 2em;
+          width: 2em;
+          height: 2em;
+        }
+
+        .modal {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: white;
+          padding: 16px;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
+          z-index: 100;
+        }
+
+        .dark-background {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 98;
+        }
+
+        .tilted {
+          transition-timing-function: ease-in-out;
+          transition: 0.2s;
+          transform: rotate(45deg);
+        }
+      `,
+      ];
+    }
+
+    constructor() {
+      super();
+      this.fields = [];
+      this.createOpts = {
+        endpoint: undefined,
+        method: undefined,
+        id: undefined,
+        body: undefined,
+      };
+      this.editable = false;
+      this.isOpen = false;
+    }
+
+    _toggleModal() {
+      this.isOpen = !this.isOpen;
+    }
+
+    async _create(e) {
+      e.preventDefault();
+      const { endpoint, method } = this.createOpts;
+      const response = await fetch(`${endpoint}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "",
+        },
+        body: JSON.stringify(
+          Object.assign(
+            ...this.fields.map(({ name, value }) => ({ [name]: value }))
+          )
+        ),
+      });
+
+      if (response.status === 201) {
+        this._toggleModal(); /** Implement success toast here */
+
+        const event = new CustomEvent("created", { bubbles: true });
+        this.dispatchEvent(event);
+      }
+
+      if ([400, 500].includes(response.status)) ;
+    }
+
+    render() {
+      return y`
+      <div class="plus-button">
+        <button @click="${this._toggleModal}" class=${this.isOpen && "tilted"}>
+          +
+        </button>
+      </div>
+      <div
+        class="dark-background"
+        ?hidden=${!this.isOpen}
+        @click=${this._toggleModal}
+      ></div>
+      ${this.isOpen
+        ? y`
+            <div class="modal">
+              <form @submit="${this._create}">
+                ${this.fields.map((field) => this._getFieldMarkup(field))}
+                <div class="buttons">
+                  <button type="submit" class="button">Create</button>
+                </div>
+              </form>
+            </div>
+          `
+        : y``}
+    `;
+    }
+
+    _getFieldMarkup(field) {
+      return field.desc
+        ? y`
+          <label class="label">${field.desc}</label>
+          <input
+            type=${field.type}
+            name=${field.name}
+            class="input"
+            @input=${(e) => {
+              field.value = e.target.value;
+            }}
+          />
+        `
+        : y``;
+    }
+  }
+
+  class LMSRoomModal extends LMSModal {
+    static get properties() {
+      return { fields: { type: Array } };
+    }
+
+    constructor() {
+      super();
+      this.fields = [
+        { name: 'maxcapacity', type: 'text', desc: 'Max capacity' },
+        { name: 'color', type: 'color', desc: 'Color' },
+        { name: 'image', type: 'text', desc: 'Image' },
+        { name: 'description', type: 'text', desc: 'description' },
+        { name: 'maxbookabletime', type: 'text', desc: 'Max bookable time' },
+        { name: 'roomid', type: 'text' },
+        { name: 'branch', type: 'text', desc: 'Branch' },
+        { name: 'roomnumber', type: 'text', desc: 'Roomnumber' },
+      ];
+      this.createOpts = {
+        endpoint: '/api/v1/contrib/roomreservations/rooms',
+        method: 'POST',
+      };
+    }
+  }
+
+  customElements.define('lms-room-modal', LMSRoomModal);
+
+  class LMSEquipmentItem extends s {
+    static get properties() {
+      return {
+        equipmentid: { type: String },
+        equipmentname: { type: String },
+        editable: { type: Boolean },
+      };
+    }
+
+    static styles = i$2`
+    .pill {
+      padding: 0.5em 1em;
+      border-radius: 20px;
+      background-color: #333;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1em;
+    }
+
+    .label {
+      display: block;
+      margin: 8px 0;
+      font-weight: bold;
+    }
+
+    .input {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      background-color: #fff;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background-color: #555;
+      color: #fff;
+      cursor: pointer;
+    }
+  `;
+
+    constructor() {
+      super();
+      this.editable = false;
+    }
+
+    handleEdit() {
+      this.editable = true;
+    }
+
+    handleSave() {
+      this.editable = false;
+      // Emit an event with the current property values
+      const event = new CustomEvent('modified', { bubbles: true });
+      this.dispatchEvent(event);
+    }
+
+    render() {
+      return y`
+      <div class="pill">
+        <label class="label">${this.equipmentid}</label>
+        <input
+          type="text"
+          ?disabled=${!this.editable}
+          .value=${this.equipmentname}
+          @input=${(e) => { this.equipmentname = e.target.value; }}
+          class="input"
+        />
+        <button @click=${this.handleEdit} class="button">Edit</button>
+        <button @click=${this.handleSave} class="button">Save</button>
+      </div>
+    `;
+    }
+  }
+
+  customElements.define('lms-equipment-item', LMSEquipmentItem);
+
+  class LMSEquipmentModal extends LMSModal {
+    static get properties() {
+      return { fields: { type: Array } };
+    }
+
+    constructor() {
+      super();
+      this.fields = [
+        { name: 'equipmentid', type: 'text' },
+        { name: 'equipmentname', type: 'text', desc: 'Equipmentname' },
+      ];
+      this.createOpts = {
+        endpoint: '/api/v1/contrib/roomreservations/equipment',
+        method: 'POST',
+      };
+    }
+  }
+
+  customElements.define('lms-equipment-modal', LMSEquipmentModal);
+
+  class LMSSearch extends s {
+    static get properties() {
+      return {
+        tagName: { type: String },
+        search: { type: String },
+      };
+    }
+
+    constructor() {
+      super();
+      this.tagName = '';
+      this.search = '';
+      this.indexedContent = [];
+    }
+
+    firstUpdated() {
+      this.indexedContent = [...document.getElementsByTagName(this.tagName)];
+    }
+
+    update(changedProperties) {
+      if (changedProperties.has('search')) {
+        this.indexedContent.forEach((element) => {
+          if (element.textContent.includes(this.search)) {
+            element.style.display = 'block';
+          } else {
+            element.style.display = 'none';
+          }
+        });
+      }
+
+      super.update(changedProperties);
+    }
+
+    render() {
+      return y` <input type="text" @input="${this.handleSearchChange}" /> `;
+    }
+
+    handleSearchChange(event) {
+      this.search = event.target.value;
+    }
+  }
+
+  customElements.define('lms-search', LMSSearch);
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e$1=t=>(...e)=>({_$litDirective$:t,values:e});class i{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */class e extends i{constructor(i){if(super(i),this.it=b,i.type!==t.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(r){if(r===b||null==r)return this._t=void 0,this.it=r;if(r===x)return r;if("string"!=typeof r)throw Error(this.constructor.directiveName+"() called with a non-string value");if(r===this.it)return this._t;this.it=r;const s=[r];return s.raw=s,this._t={_$litType$:this.constructor.resultType,strings:s,values:[]}}}e.directiveName="unsafeHTML",e.resultType=1;const o=e$1(e);
+
   class LMSTable extends s {
     static get properties() {
       return {
@@ -12394,10 +12397,12 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
             {
               method: "POST",
               body: JSON.stringify(data),
+              headers: {
+                'Accept': '',
+              },
             }
           );
-          const result = await response.json();
-          return result.status;
+          return response.status;
         },
       };
 
@@ -12424,11 +12429,13 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
         {
           method: "PUT",
           body: JSON.stringify({ value: input.value }),
+          headers: {
+            'Accept': '',
+          },
         }
       );
 
-      const result = await response.json();
-      if (result.status === 201) {
+      if (response.status === 201) {
         // Implement success message
         input.disabled = true;
       }
