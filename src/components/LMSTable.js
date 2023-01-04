@@ -10,7 +10,14 @@ export default class LMSTable extends LitElement {
     };
   }
 
-  static styles = [bulmaStyles, css``];
+  static styles = [
+    bulmaStyles,
+    css`
+      table {
+        border-radius: var(--border-radius-lg);
+      }
+    `,
+  ];
 
   constructor() {
     super();
@@ -57,7 +64,7 @@ export default class LMSTable extends LitElement {
                               <div class="column">
                                 <button
                                   @click=${this._handleEdit}
-                                  class="button is-primary"
+                                  class="button is-outlined"
                                 >
                                   Edit
                                 </button>
@@ -65,7 +72,7 @@ export default class LMSTable extends LitElement {
                               <div class="column">
                                 <button
                                   @click=${this._handleSave}
-                                  class="button is-danger"
+                                  class="button is-outlined"
                                 >
                                   Save
                                 </button>

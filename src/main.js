@@ -7,6 +7,7 @@ import LMSEquipmentModal from './components/LMSEquipmentModal';
 import LMSSearch from './components/LMSSearch';
 import LMSTable from './components/LMSTable';
 import LMSSettingsTable from './components/LMSSettingsTable';
+import LMSOpenHoursTable from './components/LMSOpenHoursTable';
 
 function renderOnUpdate({
   entryPoint,
@@ -46,5 +47,6 @@ export {
   LMSSearch,
   LMSTable,
   LMSSettingsTable,
+  LMSOpenHoursTable,
   renderOnUpdate,
 };

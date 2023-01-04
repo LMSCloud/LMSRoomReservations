@@ -770,5 +770,215 @@
         }
       }
     }
+  },
+  "/open_hours": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#list",
+      "tags": ["open_hours"],
+      "summary": "Get opening and closing times for the whole week",
+      "operationId": "getOpenHours",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "openid": {
+                  "type": "integer"
+                },
+                "day": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#add",
+      "operationId": "addOpenHours",
+      "tags": ["open_hours"],
+      "summary": "Add opening and closing times for the whole week",
+      "parameters": [{
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the added open hours",
+        "required": true,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "day": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            },
+            "required": ["day", "start", "end"]
+          }
+        }
+      }],
+      "responses": {
+        "201": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "openid": {
+                  "type": "integer"
+                },
+                "day": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/open_hours/{day}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#get",
+      "tags": ["open_hours"],
+      "summary": "Get opening and closing times for a given day",
+      "operationId": "getOpenHoursByDay",
+      "parameters": [{
+        "name": "day",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "openid": {
+                "type": "integer"
+              },
+              "day": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#update",
+      "tags": ["open_hours"],
+      "summary": "Update opening and closing times for a given day",
+      "operationId": "updateOpenHours",
+      "parameters": [{
+        "name": "day",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }, {
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object respresenting the opening and closing times of an updated day",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string"
+            },
+            "end": {
+              "type": "string"
+            }
+          },
+          "required": ["start", "end"]
+        }
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

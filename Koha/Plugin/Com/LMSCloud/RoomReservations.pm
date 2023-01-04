@@ -73,15 +73,28 @@ sub new {
 sub tool {
     my ( $self, $args ) = @_;
 
+    my $template;
     my $cgi = $self->{'cgi'};
+    my $op  = $cgi->param('op') || q{};
 
-    unless ( $cgi->param('submitted') ) {
-        $self->tool_step1();
-    }
-    else {
-        $self->tool_step2();
-    }
+    my $operations = {
+        q{} => sub {
+            $template = $self->get_template( { file => 'views/tool/bookings.tt' } );
+            $template->param( op => $op, );
+        },
+        q{blackouts} => sub {
+            $template = $self->get_template( { file => 'views/tool/blackouts.tt' } );
+            $template->param( op => $op, );
+        },
+        q{open-hours} => sub {
+            $template = $self->get_template( { file => 'views/tool/open-hours.tt' } );
+            $template->param( op => $op, );
+        },
+    };
 
+    $operations->{$op}->() if exists $operations->{$op};
+
+    $self->output_html( $template->output() );
 }
 
 ## If your plugin needs to add some javascript in the staff intranet, you'll want
@@ -103,15 +116,13 @@ sub intranet_js {
 sub configure {
     my ( $self, $args ) = @_;
 
-    our $base = $self;
-
     my $template;
     my $cgi = $self->{'cgi'};
     my $op  = $cgi->param('op') || q{};
 
     my $operations = {
         q{} => sub {
-            $template = $self->get_template( { file => 'views/configuration/default.tt' } );
+            $template = $self->get_template( { file => 'views/configuration/settings.tt' } );
 
             my $restricted_patron_categories = get_restricted_patron_categories();
             my $patron_categories            = get_patron_categories();
