@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 import { LitElement, html, css } from "lit";
-import { bulmaStyles } from "@granite-elements/granite-lit-bulma/granite-lit-bulma.js";
 
 export default class LMSModal extends LitElement {
   static get properties() {

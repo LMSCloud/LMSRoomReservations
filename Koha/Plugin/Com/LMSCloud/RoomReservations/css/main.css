@@ -27,14 +27,16 @@
   gap: 0.5em;
 }
 
+.lmsr-content-block {
+  display: flex;
+  gap: 1em;
+}
+
 .lmsr-menu {
   display: flex;
   gap: 1em;
 }
 
 .lmsr-menu-item {
-  border: 1px solid var(--seperator-light);
-  border-radius: 12px;
   padding: 1em;
-  background-color: white;
 }

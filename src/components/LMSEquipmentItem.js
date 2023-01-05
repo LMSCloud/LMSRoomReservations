@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css } from "lit";
 
 export default class LMSEquipmentItem extends LitElement {
   static get properties() {
@@ -10,40 +10,22 @@ export default class LMSEquipmentItem extends LitElement {
   }
 
   static styles = css`
-    .pill {
-      padding: 0.5em 1em;
-      border-radius: 20px;
-      background-color: #333;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1em;
+    div {
+      padding: 1em;
+      border: 1px solid var(--seperator-light);
+      border-radius: var(--border-radius-md);
+      width: max-content;
     }
 
-    .label {
-      display: block;
-      margin: 8px 0;
+    span {
       font-weight: bold;
     }
 
-    .input {
-      display: block;
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-      background-color: #fff;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      background-color: #555;
-      color: #fff;
+    button {
+      border: 2px solid rgb(51, 51, 51);
+      border-radius: 3px;
+      background-color: rgb(51, 51, 51);
+      color: rgb(255, 255, 255);
       cursor: pointer;
     }
   `;
@@ -60,26 +42,32 @@ export default class LMSEquipmentItem extends LitElement {
   handleSave() {
     this.editable = false;
     // Emit an event with the current property values
-    const event = new CustomEvent('modified', { bubbles: true });
+    const event = new CustomEvent("modified", { bubbles: true });
     this.dispatchEvent(event);
   }
 
   render() {
     return html`
-      <div class="pill">
-        <label class="label">${this.equipmentid}</label>
+      <div>
+        <span>${this.equipmentid}</span>
         <input
           type="text"
           ?disabled=${!this.editable}
           .value=${this.equipmentname}
-          @input=${(e) => { this.equipmentname = e.target.value; }}
+          @input=${(e) => {
+            this.equipmentname = e.target.value;
+          }}
           class="input"
         />
-        <button @click=${this.handleEdit} class="button">Edit</button>
-        <button @click=${this.handleSave} class="button">Save</button>
+        <button @click=${this.handleEdit}>
+          Edit
+        </button>
+        <button @click=${this.handleSave}>
+          Save
+        </button>
       </div>
     `;
   }
 }
 
-customElements.define('lms-equipment-item', LMSEquipmentItem);
+customElements.define("lms-equipment-item", LMSEquipmentItem);

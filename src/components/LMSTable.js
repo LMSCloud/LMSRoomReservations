@@ -1,7 +1,5 @@
 import { html, css, LitElement } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { bulmaStyles } from "@granite-elements/granite-lit-bulma/granite-lit-bulma.js";
-
 export default class LMSTable extends LitElement {
   static get properties() {
     return {
@@ -11,10 +9,19 @@ export default class LMSTable extends LitElement {
   }
 
   static styles = [
-    bulmaStyles,
     css`
       table {
+        background: white;
+        padding: 1em;
         border-radius: var(--border-radius-lg);
+      }
+
+      thead {
+        border-bottom: 1px solid var(--seperator-light);
+      }
+
+      tbody > tr:nth-child(odd) {
+        background-color: whitesmoke;
       }
     `,
   ];
@@ -43,7 +50,7 @@ export default class LMSTable extends LitElement {
 
     return data?.length
       ? html`
-          <table class="table is-striped is-hoverable">
+          <table>
             <thead>
               <tr>
                 ${Object.keys(data[0]).map((key) => html`<th>${key}</th>`)}
@@ -64,7 +71,7 @@ export default class LMSTable extends LitElement {
                               <div class="column">
                                 <button
                                   @click=${this._handleEdit}
-                                  class="button is-outlined"
+                                  class=""
                                 >
                                   Edit
                                 </button>
@@ -72,7 +79,7 @@ export default class LMSTable extends LitElement {
                               <div class="column">
                                 <button
                                   @click=${this._handleSave}
-                                  class="button is-outlined"
+                                  class=""
                                 >
                                   Save
                                 </button>
