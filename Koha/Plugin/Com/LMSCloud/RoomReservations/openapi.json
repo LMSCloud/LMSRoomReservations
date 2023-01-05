@@ -980,5 +980,248 @@
         }
       }
     }
+  },
+  "/bookings": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#list",
+      "tags": ["bookings"],
+      "summary": "Get room bookings",
+      "operationId": "getBookings",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bookingid": {
+                  "type": "integer"
+                },
+                "borrowernumber": {
+                  "type": "integer"
+                },
+                "roomid": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                },
+                "blackedout": {
+                  "type": "integer"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#add",
+      "operationId": "addBookings",
+      "tags": ["bookings"],
+      "summary": "Add room bookings",
+      "parameters": [{
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object representing the added bookings",
+        "required": true,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "borrowernumber": {
+                "type": "integer"
+              },
+              "roomid": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            },
+            "required": ["borrowernumber", "roomid", "start", "end"]
+          }
+        }
+      }],
+      "responses": {
+        "201": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "borrowernumber": {
+                  "type": "integer"
+                },
+                "roomid": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/bookings/{booking_id}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#get",
+      "tags": ["bookings"],
+      "summary": "Get a single room booking",
+      "operationId": "getBooking",
+      "parameters": [{
+        "name": "booking_id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "bookingid": {
+                "type": "integer"
+              },
+              "borrowernumber": {
+                "type": "integer"
+              },
+              "roomid": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "blackedout": {
+                "type": "integer"
+              },
+              "created": {
+                "type": "string"
+              },
+              "updated_at": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#update",
+      "tags": ["bookings"],
+      "summary": "Update a single room booking",
+      "operationId": "updateBooking",
+      "parameters": [{
+        "name": "booking_id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }, {
+        "name": "body",
+        "in": "body",
+        "description": "A JSON object respresenting an updated booking",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "borrowernumber": {
+              "type": "integer"
+            },
+            "roomid": {
+              "type": "integer"
+            },
+            "start": {
+              "type": "string"
+            },
+            "end": {
+              "type": "string"
+            }
+          },
+          "required": ["borrowernumber", "roomid", "start", "end"]
+        }
+      }],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

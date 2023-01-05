@@ -8,6 +8,7 @@ import LMSSearch from './components/LMSSearch';
 import LMSTable from './components/LMSTable';
 import LMSSettingsTable from './components/LMSSettingsTable';
 import LMSOpenHoursTable from './components/LMSOpenHoursTable';
+import LMSBookingsTable from './components/LMSBookingsTable';
 
 function renderOnUpdate({
   entryPoint,
@@ -48,5 +49,6 @@ export {
   LMSTable,
   LMSSettingsTable,
   LMSOpenHoursTable,
+  LMSBookingsTable,
   renderOnUpdate,
 };
