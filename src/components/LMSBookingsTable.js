@@ -1,12 +1,10 @@
 import LMSTable from "./LMSTable";
 
 export default class LMSBookingsTable extends LMSTable {
-  static get properties() {
-    return {
-      data: { type: Array },
-      _isEditable: { type: Boolean, attribute: false },
-    };
-  }
+  static properties = {
+    data: { type: Array },
+    _isEditable: { type: Boolean, attribute: false },
+  };
 
   _handleEdit(e) {
     let parent = e.target.parentElement;
@@ -26,73 +24,103 @@ export default class LMSBookingsTable extends LMSTable {
       parent = parent.parentElement;
     }
 
+    /** The api expects integers so we convert them */
+    const [bookingid, borrowernumber] = [
+      ...Array.from(parent.children).map((element) =>
+        parseInt(element.textContent, 10)
+      ),
+    ];
     const inputs = Array.from(parent.querySelectorAll("input"));
-    const actions = {
-      restricted_patron_categories: () => {
-        const data = inputs.filter((input) => !input.checked);
-      },
-      patron_categories: async () => {
-        const data = inputs
-          .filter((input) => input.checked)
-          .map((input) => ({
-            setting: `rcat_${input.name}`,
-            value: input.name,
-          }));
+    /** Same here, roomid needs to be an integer */
+    const [roomid, start, end] = [
+      ...inputs.map((input, index) =>
+        index === 0 ? parseInt(input.value, 10) : input.value
+      ),
+    ];
 
-        const response = await fetch(
-          "/api/v1/contrib/roomreservations/settings",
-          {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-              'Accept': '',
-            },
-          }
-        );
-        return response.status;
-      },
-    };
-
-    if (inputs.length > 1) {
-      const category = parent.firstElementChild.textContent;
-      if (inputs.every((input) => input.type === "checkbox")) {
-        const action = actions[category];
-        if (action) {
-          const status = await action();
-          if ([201, 204].includes(status)) {
-            // Implement success message
-            inputs.forEach((input) => {
-              input.disabled = true;
-            });
-          }
-        }
-      }
-      return;
-    }
-
-    const [input] = inputs;
     const response = await fetch(
-      `/api/v1/contrib/roomreservations/settings/${input.name}`,
+      `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
       {
         method: "PUT",
-        body: JSON.stringify({ value: input.value }),
+        body: JSON.stringify({ borrowernumber, roomid, start, end }),
         headers: {
-          'Accept': '',
+          Accept: "",
         },
       }
     );
 
     if (response.status === 201) {
       // Implement success message
-      input.disabled = true;
+      inputs.forEach((input) => {
+        input.disabled = true;
+      });
     }
   }
 
   _handleChange() {}
 
+  async _getData() {
+    const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
+      method: "GET",
+      headers: {
+        Accept: "",
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.length) {
+      this.data = result
+        .map((datum) =>
+          Object.keys(datum)
+            .sort((a, b) => {
+              const order = [
+                "bookingid",
+                "borrowernumber",
+                "roomid",
+                "start",
+                "end",
+                "blackedout",
+                "created",
+                "updated_at",
+              ];
+              return order.indexOf(a) - order.indexOf(b);
+            })
+            .reduce((acc, key) => ({ ...acc, [key]: datum[key] }), {})
+        )
+        .map((datum) =>
+          Object.keys(datum).reduce(
+            (acc, key) => ({
+              ...acc,
+              [key]: this._inputFromValue({
+                key,
+                value:
+                  typeof datum[key] !== "string"
+                    ? datum[key].toString()
+                    : datum[key],
+              }),
+            }),
+            {}
+          )
+        );
+    }
+  }
+
+  _inputFromValue({ key, value }) {
+    return (
+      {
+        start: `<input type="datetime-local" name="start" value="${value}" disabled />`,
+        end: `<input type="datetime-local" name="end" value="${value}" disabled />`,
+        roomid: `<input type="number" name="roomid" value="${value}" disabled />`,
+      }[key] || value
+    );
+  }
+
   constructor() {
     super();
     this._isEditable = true;
+    this.data = [];
+    this._getData();
   }
 }
 
