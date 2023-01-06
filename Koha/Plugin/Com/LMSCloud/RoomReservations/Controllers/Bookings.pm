@@ -47,11 +47,17 @@ sub add {
 
         my $dbh = C4::Context->dbh;
 
-        my $query = "INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end) VALUES (?, ?, ?, ?)";
+        my $query = "INSERT INTO $BOOKINGS_TABLE (borrowernumber, roomid, start, end, blackedout) VALUES (?, ?, ?, ?, ?)";
         my $sth   = $dbh->prepare($query);
 
+        if ( ref $body eq 'HASH' ) {
+            $sth->execute( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'}, $body->{'end'}, $body->{'blackedout'} || 0 );
+
+            return $c->render( status => 201, openapi => [$body] );
+        }
+
         for my $booking ( $body->@* ) {
-            $sth->execute( $booking->{'borrowernumber'}, $booking->{'roomid'}, $booking->{'start'}, $booking->{'end'} );
+            $sth->execute( $booking->{'borrowernumber'}, $booking->{'roomid'}, $booking->{'start'}, $booking->{'end'}, $booking->{'blackedout'} || 0 );
         }
 
         return $c->render( status => 201, openapi => $body );

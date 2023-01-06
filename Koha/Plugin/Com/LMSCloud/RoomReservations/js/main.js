@@ -306,7 +306,7 @@
 
     async _create(e) {
       e.preventDefault();
-      const { endpoint, method } = this.createOpts;
+      const { endpoint, method, multiple } = this.createOpts;
       const response = await fetch(`${endpoint}`, {
         method,
         headers: {
@@ -897,7 +897,7 @@
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         // Implement success message
         inputs.forEach((input) => {
           input.disabled = true;
@@ -974,6 +974,29 @@
 
   customElements.define("lms-bookings-table", LMSBookingsTable);
 
+  class LMSBookingsModal extends LMSModal {
+    static get properties() {
+      return { fields: { type: Array } };
+    }
+
+    constructor() {
+      super();
+      this.fields = [
+        { name: 'borrowernumber', type: 'number', desc: 'Borrowernumber' },
+        { name: 'roomid', type: 'number', desc: 'Roomid' },
+        { name: 'start', type: 'datetime-local', desc: 'Starts at' },
+        { name: 'end', type: 'datetime-local', desc: 'Ends at' },
+        { name: 'blackedout', type: 'integer', desc: 'Is blackout' },
+      ];
+      this.createOpts = {
+        endpoint: '/api/v1/contrib/roomreservations/bookings',
+        method: 'POST',
+      };
+    }
+  }
+
+  customElements.define('lms-bookings-modal', LMSBookingsModal);
+
   function renderOnUpdate({
     entryPoint,
     tagname,
@@ -1000,6 +1023,7 @@
     });
   }
 
+  exports.LMSBookingsModal = LMSBookingsModal;
   exports.LMSBookingsTable = LMSBookingsTable;
   exports.LMSEquipmentItem = LMSEquipmentItem;
   exports.LMSEquipmentModal = LMSEquipmentModal;

@@ -123,7 +123,7 @@ export default class LMSModal extends LitElement {
 
   async _create(e) {
     e.preventDefault();
-    const { endpoint, method } = this.createOpts;
+    const { endpoint, method, multiple } = this.createOpts;
     const response = await fetch(`${endpoint}`, {
       method,
       headers: {

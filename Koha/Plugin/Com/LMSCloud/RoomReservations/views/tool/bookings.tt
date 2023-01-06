@@ -3,4 +3,6 @@
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
     <lms-bookings-table></lms-bookings-table>
+
+    <lms-bookings-modal></lms-bookings-modal>
 [% END %]

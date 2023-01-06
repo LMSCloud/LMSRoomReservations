@@ -20,11 +20,6 @@
     ><i class="fa fa-list" aria-hidden="true"></i> Bookings</a
   >
   <a
-    href="[% base_url %]?class=[% CLASS %]&method=tool&op=blackouts"
-    class="lmsr-menu-item"
-    ><i class="fa fa-times" aria-hidden="true"></i> Blackouts</a
-  >
-  <a
     href="[% base_url %]?class=[% CLASS %]&method=tool&op=open-hours"
     class="lmsr-menu-item"
     ><i class="fa fa-clock-o" aria-hidden="true"></i> Open Hours</a

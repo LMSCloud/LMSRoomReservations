@@ -1047,7 +1047,24 @@
         "description": "A JSON object representing the added bookings",
         "required": true,
         "schema": {
-          "type": "array",
+          "type": ["array", "object"],
+          "properties": {
+            "borrowernumber": {
+              "type": "integer"
+            },
+            "roomid": {
+              "type": "integer"
+            },
+            "start": {
+              "type": "string"
+            },
+            "end": {
+              "type": "string"
+            },
+            "blackedout": {
+              "type": "integer"
+            }
+          },
           "items": {
             "type": "object",
             "properties": {
@@ -1062,6 +1079,9 @@
               },
               "end": {
                 "type": "string"
+              },
+              "blackedout": {
+                "type": "integer"
               }
             },
             "required": ["borrowernumber", "roomid", "start", "end"]

@@ -82,10 +82,6 @@ sub tool {
             $template = $self->get_template( { file => 'views/tool/bookings.tt' } );
             $template->param( op => $op, );
         },
-        q{blackouts} => sub {
-            $template = $self->get_template( { file => 'views/tool/blackouts.tt' } );
-            $template->param( op => $op, );
-        },
         q{open-hours} => sub {
             $template = $self->get_template( { file => 'views/tool/open-hours.tt' } );
             $template->param( op => $op, );

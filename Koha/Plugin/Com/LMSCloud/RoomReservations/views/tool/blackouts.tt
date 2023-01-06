@@ -1,6 +1,0 @@
-[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
-[% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
-
-[% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
-
-[% END %]
