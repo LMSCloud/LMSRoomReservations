@@ -1,0 +1,21 @@
+[%- USE JSON.Escape; -%]
+
+[% USE Koha %]
+[% USE Branches %]
+[% INCLUDE 'doc-head-open.inc' %]
+    <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha online[% END %] catalog &rsaquo; Room Reservations</title>
+    <link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/css/main.css">
+    <script type="text/javascript" src="/api/v1/contrib/roomreservations/static/js/main.js"></script>
+    [% INCLUDE 'doc-head-close.inc' %]
+</head>
+[% BLOCK cssinclude %][% END %]
+
+[% INCLUDE 'bodytag.inc' bodyid='opac-main' %]
+[% INCLUDE 'masthead.inc' %]
+
+<h1>Hello from OPAC calendar.tt</h1>
+
+[% INCLUDE 'opac-bottom.inc' %]
+[% BLOCK jsinclude %]
+
+[% END %]
