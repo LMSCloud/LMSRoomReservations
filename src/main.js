@@ -10,6 +10,7 @@ import LMSSettingsTable from './components/LMSSettingsTable';
 import LMSOpenHoursTable from './components/LMSOpenHoursTable';
 import LMSBookingsTable from './components/LMSBookingsTable';
 import LMSBookingsModal from './components/LMSBookingsModal';
+import LMSCalendar from './components/LMSCalendar/lib/lms-calendar';
 
 function renderOnUpdate({
   entryPoint,
@@ -52,5 +53,6 @@ export {
   LMSOpenHoursTable,
   LMSBookingsTable,
   LMSBookingsModal,
+  LMSCalendar,
   renderOnUpdate,
 };
