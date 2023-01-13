@@ -11,7 +11,7 @@ const packageJson = JSON.parse(fs.readFileSync('./package.json'));
 const releaseFilename = `${packageJson.name}-v${packageJson.version}.kpz`;
 
 const pmFile = 'RoomReservations.pm';
-const pmFilePath = 'Koha/Plugin/Com/MarywoodUniversity/';
+const pmFilePath = 'Koha/Plugin/Com/LMSCloud/';
 // const pmFilePathFull = pmFilePath + pmFile;
 const pmFilePathDist = `dist/${pmFilePath}`;
 const pmFilePathFullDist = pmFilePathDist + pmFile;

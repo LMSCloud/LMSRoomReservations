@@ -13,7 +13,14 @@
 [% INCLUDE 'bodytag.inc' bodyid='opac-lms-room-reservations' %]
     [% INCLUDE 'masthead.inc' %]
 
-    <lms-calendar></lms-calendar>
+    <div id="lmsr">
+        <div class="lmsr-content-main">
+            <div class="lmsr-content-block">
+                <lms-calendar></lms-calendar>
+                <lms-bookie></lms-bookie>
+            </div>
+        </div>
+    </div>
     <script>
         const currentDate = new Date();
         const response = fetch('/api/v1/contrib/roomreservations/bookings', {
