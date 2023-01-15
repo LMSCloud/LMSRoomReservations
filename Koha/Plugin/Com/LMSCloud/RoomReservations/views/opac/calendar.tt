@@ -21,7 +21,7 @@
         <div class="lmsr-content-main">
             <div class="lmsr-content-block">
                 <lms-calendar></lms-calendar>
-                <lms-bookie></lms-bookie>
+                <lms-bookie borrowernumber="[% borrowernumber %]"></lms-bookie>
             </div>
         </div>
     </div>

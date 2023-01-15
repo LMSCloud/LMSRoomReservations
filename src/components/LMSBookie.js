@@ -3,8 +3,10 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 
 export default class LMSBookie extends LitElement {
   static properties = {
+    borrowernumber: { type: String },
     _openHours: { state: true },
     _rooms: { state: true },
+    _alertMessage: { state: true },
   };
 
   static styles = [
@@ -66,17 +68,20 @@ export default class LMSBookie extends LitElement {
 
   constructor() {
     super();
+    this.borrowernumber = "";
     this._openHours = [];
     this._rooms = [];
+    this._alertMessage = "";
     this._init();
   }
 
-  _handleSubmit() {
-    const [roomid, start, duration] = [
+  async _handleSubmit() {
+    const inputs = [
       this.renderRoot.getElementById("room"),
       this.renderRoot.getElementById("start-datetime"),
       this.renderRoot.getElementById("duration"),
-    ].map((input) => input.value);
+    ];
+    const [roomid, start, duration] = inputs.map((input) => input.value);
 
     /** Important note: This uses the dayjs library present in Koha
      *  You'll find this included as an asset in views/opac/calendar.tt */
@@ -85,14 +90,14 @@ export default class LMSBookie extends LitElement {
       .add(duration, "minute")
       .format("YYYY-MM-DDTHH:mm");
 
-    const response = fetch("/api/v1/contrib/roomreservations/bookings/", {
+    const response = await fetch("/api/v1/contrib/roomreservations/bookings/", {
       method: "POST",
       headers: {
         accept: "",
       },
       body: JSON.stringify([
         {
-          borrowernumber: 42,
+          borrowernumber: this.borrowernumber,
           roomid,
           start,
           end,
@@ -101,9 +106,19 @@ export default class LMSBookie extends LitElement {
       ]),
     });
 
-    if (response.ok) {
-      console.log("Booking added");
+    if ([201].includes(response.status)) {
+      inputs.forEach((input) => {
+        input.value = "";
+      });
+      this._alertMessage = "Success! Your booking is set.";
+      return;
     }
+
+    this._alertMessage = "Sorry! There has been a problem.";
+  }
+
+  _dismissAlert() {
+    this._alertMessage = "";
   }
 
   render() {
@@ -111,6 +126,24 @@ export default class LMSBookie extends LitElement {
       <div ?hidden=${!this._rooms.length}>
         <section>
           <div><strong>Book a room</strong></div>
+          <div
+            class="alert alert-${this._alertMessage.includes("Success!")
+              ? "success"
+              : "warning"} alert-dismissible fade show"
+            role="alert"
+            ?hidden=${!this._alertMessage}
+          >
+            ${this._alertMessage}
+            <button
+              @click=${this._dismissAlert}
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
           <div id="booking">
             <div class="form-group">
               <label for="room">Room</label>
