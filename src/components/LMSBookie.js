@@ -1,4 +1,5 @@
 import { LitElement, html, css } from "lit";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 
 export default class LMSBookie extends LitElement {
   static properties = {
@@ -7,54 +8,38 @@ export default class LMSBookie extends LitElement {
   };
 
   static styles = [
+    bootstrapStyles,
     css`
-      .card {
+      :host > div {
         padding: 16px;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
         border: 1px solid var(--seperator-light);
         border-radius: var(--border-radius-lg);
+        font-family: var(--system-ui);
+        background: white;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
       }
 
       #rooms {
-        overflow-y: scroll;
-        height: 80%; /* adjust to desired height */
         display: flex;
+        overflow-y: scroll;
+        flex-wrap: nowrap;
         gap: 1em;
       }
 
       .room {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border: 1px solid var(--seperator-light);
-        border-radius: var(--border-radius-md);
+        flex: 0 0 15vw;
       }
 
       .room img {
-        width: 100%;
-        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
         aspect-ratio: 16 / 9;
       }
 
-      .room p {
-        margin: 5px 0;
-      }
-
-      dl {
-        padding: 0 1em;
-      }
-
-      dt,
-      dd {
-        font-size: small;
-      }
-
-      dt {
-        font-weight: bold;
-      }
-
-      dd {
-        border-bottom: 1px solid var(--seperator-light);
+      section:not(:last-child) {
+        padding-bottom: 1em;
+        border-bottom: 2px solid var(--seperator-light);
       }
     `,
   ];
@@ -93,7 +78,12 @@ export default class LMSBookie extends LitElement {
       this.renderRoot.getElementById("duration"),
     ].map((input) => input.value);
 
-    //TODO: Add duration to start and assign to end
+    /** Important note: This uses the dayjs library present in Koha
+     *  You'll find this included as an asset in views/opac/calendar.tt */
+    const startDatetime = dayjs(start);
+    const end = startDatetime
+      .add(duration, "minute")
+      .format("YYYY-MM-DDTHH:mm");
 
     const response = fetch("/api/v1/contrib/roomreservations/bookings/", {
       method: "POST",
@@ -110,21 +100,26 @@ export default class LMSBookie extends LitElement {
         },
       ]),
     });
+
+    if (response.ok) {
+      console.log("Booking added");
+    }
   }
 
   render() {
     return html`
-      <div class="card" ?hidden=${!this._rooms.length}>
-        <div id="booking">
+      <div ?hidden=${!this._rooms.length}>
+        <section>
           <div><strong>Book a room</strong></div>
-          <small
-            >Pick a room, a date, a time and the duration of your
-            reservation.</small
-          >
-          <div>
-            <label for="room">
-              Room
-              <select id="room" name="room">
+          <div id="booking">
+            <div class="form-group">
+              <label for="room">Room</label>
+              <select
+                id="room"
+                name="room"
+                class="form-control"
+                aria-describedby="booking-help"
+              >
                 ${this._rooms.length &&
                 this._rooms.map(
                   (room) =>
@@ -133,26 +128,26 @@ export default class LMSBookie extends LitElement {
                     </option>`
                 )}
               </select>
-            </label>
-          </div>
-          <div>
-            <label for="start-datetime">
-              Date & Time
+            </div>
+            <div class="form-group">
+              <label for="start-datetime">Date & Time</label>
               <input
                 type="datetime-local"
                 id="start-datetime"
                 name="start-datetime"
+                class="form-control"
+                aria-describedby="booking-help"
               />
-            </label>
-          </div>
-          <div>
-            <label for="duration">
-              Duration
+            </div>
+            <div class="form-group">
+              <label for="duration">Duration</label>
               <input
                 type="number"
                 list="durations"
                 id="duration"
                 name="duration"
+                class="form-control"
+                aria-describedby="booking-help"
               />
               <datalist id="durations">
                 <option>30</option>
@@ -160,46 +155,81 @@ export default class LMSBookie extends LitElement {
                 <option>90</option>
                 <option>120</option>
               </datalist>
-            </label>
+            </div>
+            <small class="form-text text-muted" id="booking-help"
+              >Pick a room, a date, a time and the duration of your
+              reservation.</small
+            >
+            <button
+              type="submit"
+              @click=${this._handleSubmit}
+              class="btn btn-primary"
+            >
+              Submit
+            </button>
           </div>
-          <button type="submit" @click=${this._handleSubmit}>Submit</button>
-        </div>
-        <div>
-          <strong ?hidden=${!this._openHours.length}>Open hours</strong>
-        </div>
-        <div id="open-hours" ?hidden=${!this._openHours.length}>
-          ${this._openHours.map(
-            (day) => html`
-              <div>
-                <span>${day.day}</span>
-                <span>${day.start}</span>
-                <span>${day.end}</span>
-              </div>
-            `
-          )}
-        </div>
-        <div><strong>Rooms</strong></div>
-        <div id="rooms">
-          ${this._rooms.map(
-            (room) => html`
-              <div class="room">
-                <img src="${room.image}" />
-                <dl>
-                  <dt>Room Number</dt>
-                  <dd>${room.roomnumber}</dd>
-                  <dt>Description</dt>
-                  <dd>${room.description}</dd>
-                  <dt>Branch</dt>
-                  <dd>${room.branch}</dd>
-                  <dt>Max Bookable Time</dt>
-                  <dd>${room.maxbookabletime}</dd>
-                  <dt>Capacity</dt>
-                  <dd>${room.maxcapacity}</dd>
-                </dl>
-              </div>
-            `
-          )}
-        </div>
+        </section>
+        <section>
+          <div>
+            <strong ?hidden=${!this._openHours.length}>Open hours</strong>
+          </div>
+          <div id="open-hours" ?hidden=${!this._openHours.length}>
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">Day</th>
+                  <th scope="col">Open from</th>
+                  <th scope="col">Closed after</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${this._openHours.map(
+                  (day) => html`
+                    <tr>
+                      <td>${day.day}</td>
+                      <td>${day.start}</td>
+                      <td>${day.end}</td>
+                    </tr>
+                  `
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section>
+          <div><strong>Rooms</strong></div>
+          <div id="rooms">
+            ${this._rooms.map(
+              (room) => html`
+                <div class="room card">
+                  <img class="card-img-top" src="${room.image}" alt="..." />
+                  <div class="card-body">
+                    <h5 class="card-title">${room.roomnumber}</h5>
+                    <p class="card-text">${room.description}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <strong>Branch</strong>&nbsp;<span>${room.branch}</span>
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Max bookable time</strong>&nbsp;<span
+                        >${room.maxbookabletime}</span
+                      >
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Max Capacity</strong>&nbsp;<span
+                        >${room.maxcapacity}</span
+                      >
+                    </li>
+                  </ul>
+                  <div class="card-body">
+                    <a href="#" class="card-link">Card link</a>
+                  </div>
+                </div>
+              `
+            )}
+          </div>
+        </section>
       </div>
     `;
   }

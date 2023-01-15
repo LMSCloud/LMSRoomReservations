@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/ldjamison/koha-plugin-room-reservations#readme",
   "dependencies": {
+    "@granite-elements/granite-lit-bootstrap": "^4.6.0-0",
     "datetime": "0.0.3",
     "gulp-replace": "^0.6.1",
     "jsonfile": "^4.0.0",
