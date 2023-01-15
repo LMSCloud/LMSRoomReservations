@@ -58,7 +58,6 @@
                 };
             });
         });
-
     </script>
 
 [% INCLUDE 'opac-bottom.inc' %]

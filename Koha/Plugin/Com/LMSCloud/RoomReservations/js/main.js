@@ -2114,7 +2114,7 @@
 
       section:not(:last-child) {
         padding-bottom: 1em;
-        border-bottom: 2px solid var(--seperator-light);
+        border-bottom: 3px dotted var(--seperator-light);
       }
     `,
     ];
@@ -2198,7 +2198,7 @@
       return y$1`
       <div ?hidden=${!this._rooms.length}>
         <section>
-          <div><strong>Book a room</strong></div>
+          <h5>Book a room</h5>
           <div
             class="alert alert-${this._alertMessage.includes("Success!")
               ? "success"
@@ -2269,16 +2269,14 @@
             <button
               type="submit"
               @click=${this._handleSubmit}
-              class="btn btn-primary"
+              class="btn btn-primary mt-2 float-right"
             >
               Submit
             </button>
           </div>
         </section>
         <section>
-          <div>
-            <strong ?hidden=${!this._openHours.length}>Open hours</strong>
-          </div>
+          <h5 ?hidden=${!this._openHours.length}>Open hours</h5>
           <div id="open-hours" ?hidden=${!this._openHours.length}>
             <table class="table table-striped table-sm">
               <thead>
@@ -2303,7 +2301,7 @@
           </div>
         </section>
         <section>
-          <div><strong>Rooms</strong></div>
+          <h5>Rooms</h5>
           <div id="rooms">
             ${this._rooms.map(
               (room) => y$1`
