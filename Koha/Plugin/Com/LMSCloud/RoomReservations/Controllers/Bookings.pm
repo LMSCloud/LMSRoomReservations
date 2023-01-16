@@ -150,6 +150,26 @@ sub _check_and_save_booking {
         return $c->render( status => 400, openapi => { error => 'The booking exceeds the maximum allowed time for the room.' } );
     }
 
+    # Check if the institution is open during the booking time
+    my @wday_conversion_arr = ( 6, 0, 1, 2, 3, 4, 5 );
+    my ( $open_hours_where, @open_hours_bind ) = $sql->where(
+        {   -and => [
+                day   => $wday_conversion_arr[ Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->wday - 1 ],
+                start => { '<=' => Time::Piece->strptime( $body->{'end'},   '%Y-%m-%dT%H:%M' )->hms },
+                end   => { '>=' => Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->hms },
+            ]
+        }
+    );
+    my $open_hours_query = "SELECT COUNT(*) FROM $OPEN_HOURS_TABLE $open_hours_where";
+    my $open_hours_sth   = $dbh->prepare($open_hours_query);
+    $open_hours_sth->execute(@open_hours_bind);
+    my ($open_hours_count) = $open_hours_sth->fetchrow_array;
+
+    if ( $open_hours_count == 0 ) {
+        $dbh->rollback;    # rollback transaction
+        return $c->render( status => 400, openapi => { error => 'The institution is closed during the selected time frame.' } );
+    }
+
     my ( $where, @bind ) = $sql->where(
         {   roomid => $body->{'roomid'},
             -and   => [
