@@ -205,7 +205,7 @@ export default class LMSBookie extends LitElement {
         <section>
           <h5 ?hidden=${!this._openHours.length}>Open hours</h5>
           <div id="open-hours" ?hidden=${!this._openHours.length}>
-            <table class="table table-striped table-sm">
+            <table class="table table-striped table-bordered table-sm">
               <thead>
                 <tr>
                   <th scope="col">Day</th>
