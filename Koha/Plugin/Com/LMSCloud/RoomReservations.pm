@@ -2,6 +2,7 @@ package Koha::Plugin::Com::LMSCloud::RoomReservations;
 
 ## It's good practice to use Modern::Perl
 use Modern::Perl;
+use utf8;
 
 ## Required for all plugins
 use base qw(Koha::Plugins::Base);
@@ -18,10 +19,9 @@ use Koha::Patron::Categories;
 use Koha::Patron;
 
 use Cwd qw(abs_path);
-use Data::Dumper;
 use LWP::UserAgent;
 use MARC::Record;
-use Mojo::JSON  qw(decode_json);
+use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Bookings;
@@ -90,7 +90,7 @@ sub tool {
 
     $operations->{$op}->() if exists $operations->{$op};
 
-    $self->output_html( $template->output() );
+    return $self->output_html( $template->output() );
 }
 
 ## If your plugin needs to add some javascript in the staff intranet, you'll want
@@ -100,9 +100,9 @@ sub tool {
 sub intranet_js {
     my ($self) = @_;
 
-    return q|
+    return <<~'JS';
         <script>console.log("Thanks for testing the kitchen sink plugin!");</script>
-    |;
+    JS
 }
 
 ## If your tool is complicated enough to needs it's own setting/configuration
@@ -155,7 +155,7 @@ sub configure {
 
     $operations->{$op}->() if exists $operations->{$op};
 
-    $self->output_html( $template->output() );
+    return $self->output_html( $template->output() );
 }
 
 ## This is the 'install' method. Any database tables or other setup that should
@@ -271,7 +271,7 @@ sub upgrade {
     my ( $self, $args ) = @_;
 
     my $dt = dt_from_string();
-    $self->store_data( { last_upgraded => $dt->ymd('-') . ' ' . $dt->hms(':') } );
+    $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
 
     return 1;
 }
@@ -346,7 +346,7 @@ Plugin hook running code from a cron job
 sub cronjob_nightly {
     my ($self) = @_;
 
-    print "Remember to clean the kitchen\n";
+    return print "Remember to clean the kitchen\n";
 }
 
 1;

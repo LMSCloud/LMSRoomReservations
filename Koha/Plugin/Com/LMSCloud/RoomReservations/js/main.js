@@ -2079,6 +2079,7 @@
       borrowernumber: { type: String },
       _openHours: { state: true },
       _rooms: { state: true },
+      _roomEquipment: { state: true },
       _alertMessage: { state: true },
     };
 
@@ -2144,6 +2145,7 @@
       this.borrowernumber = "";
       this._openHours = [];
       this._rooms = [];
+      this._roomEquipment = [];
       this._alertMessage = "";
       this._init();
     }
@@ -2163,20 +2165,18 @@
         .add(duration, "minute")
         .format("YYYY-MM-DDTHH:mm");
 
-      const response = await fetch("/api/v1/contrib/roomreservations/bookings/", {
+      const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
         method: "POST",
         headers: {
           accept: "",
         },
-        body: JSON.stringify([
-          {
-            borrowernumber: this.borrowernumber,
-            roomid,
-            start,
-            end,
-            blackedout: 0,
-          },
-        ]),
+        body: JSON.stringify({
+          borrowernumber: this.borrowernumber,
+          roomid,
+          start,
+          end,
+          blackedout: 0,
+        }),
       });
 
       if ([201].includes(response.status)) {
@@ -2187,11 +2187,24 @@
         return;
       }
 
-      this._alertMessage = "Sorry! There has been a problem.";
+      const result = await response.json();
+      this._alertMessage = `Sorry! ${result.error}`;
     }
 
     _dismissAlert() {
       this._alertMessage = "";
+    }
+
+    _handleRoomChange() {}
+
+    async _getEquipment() {
+      const response = await fetch("/api/v1/contrib/roomreservations/equipment", {
+        headers: {
+          accept: "",
+        },
+      });
+
+      await response.json();
     }
 
     render() {
@@ -2225,6 +2238,7 @@
                 name="room"
                 class="form-control"
                 aria-describedby="booking-help"
+                @change=${this._handleRoomChange}
               >
                 ${this._rooms.length &&
                 this._rooms.map(
@@ -2275,10 +2289,10 @@
             </button>
           </div>
         </section>
-        <section>
-          <h5 ?hidden=${!this._openHours.length}>Open hours</h5>
-          <div id="open-hours" ?hidden=${!this._openHours.length}>
-            <table class="table table-striped table-sm">
+        <section ?hidden=${!this._openHours.length}>
+          <h5>Open hours</h5>
+          <div id="open-hours">
+            <table class="table table-striped table-bordered table-sm">
               <thead>
                 <tr>
                   <th scope="col">Day</th>

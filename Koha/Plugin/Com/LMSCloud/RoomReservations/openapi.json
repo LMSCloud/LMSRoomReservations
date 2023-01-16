@@ -66,52 +66,52 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#add",
       "operationId": "addRoom",
       "tags": ["rooms"],
-      "parameters": [{
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object representing an order",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "maxcapacity": {
-              "type": "string",
-              "description": "The maximum number of people that can be in the room"
-            },
-            "color": {
-              "type": "string",
-              "description": "The color of the room"
-            },
-            "image": {
-              "type": "string",
-              "description": "An image of the room"
-            },
-            "description": {
-              "type": "string",
-              "description": "A description of the room"
-            },
-            "maxbookabletime": {
-              "type": "string",
-              "description": "The maximum amount of time that the room can be booked for"
-            },
-            "roomid": {
-              "type": "string",
-              "description": "The internal ID of the room"
-            },
-            "branch": {
-              "type": "string",
-              "description": "The branch where the room is located"
-            },
-            "roomnumber": {
-              "type": "string",
-              "description": "The number of the room"
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object representing an order",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "maxcapacity": {
+                "type": "string",
+                "description": "The maximum number of people that can be in the room"
+              },
+              "color": {
+                "type": "string",
+                "description": "The color of the room"
+              },
+              "image": {
+                "type": "string",
+                "description": "An image of the room"
+              },
+              "description": {
+                "type": "string",
+                "description": "A description of the room"
+              },
+              "maxbookabletime": {
+                "type": "string",
+                "description": "The maximum amount of time that the room can be booked for"
+              },
+              "roomid": {
+                "type": "string",
+                "description": "The internal ID of the room"
+              },
+              "branch": {
+                "type": "string",
+                "description": "The branch where the room is located"
+              },
+              "roomnumber": {
+                "type": "string",
+                "description": "The number of the room"
+              }
             }
           }
         }
-      }],
-      "produces": [
-        "application/json"
       ],
+      "produces": ["application/json"],
       "responses": {
         "201": {
           "description": "The added room",
@@ -174,13 +174,15 @@
       "operationId": "getRoom",
       "tags": ["rooms"],
       "produces": ["application/json"],
-      "parameters": [{
-        "name": "roomid",
-        "in": "path",
-        "description": "The ID of the room",
-        "required": true,
-        "type": "string"
-      }],
+      "parameters": [
+        {
+          "name": "roomid",
+          "in": "path",
+          "description": "The ID of the room",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "responses": {
         "200": {
           "description": "The room with the given ID",
@@ -240,58 +242,59 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#update",
       "operationId": "updateRoom",
       "tags": ["rooms"],
-      "parameters": [{
-        "name": "roomid",
-        "in": "path",
-        "description": "The ID of the room",
-        "required": true,
-        "type": "string"
-      }, {
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object representing the updated room",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "maxcapacity": {
-              "type": "string",
-              "description": "The maximum number of people that can be in the room"
-            },
-            "color": {
-              "type": "string",
-              "description": "The color of the room"
-            },
-            "image": {
-              "type": "string",
-              "description": "An image of the room"
-            },
-            "description": {
-              "type": "string",
-              "description": "A description of the room"
-            },
-            "maxbookabletime": {
-              "type": "string",
-              "description": "The maximum amount of time that the room can be booked for"
-            },
-            "roomid": {
-              "type": "string",
-              "description": "The internal ID of the room"
-            },
-            "branch": {
-              "type": "string",
-              "description": "The branch where the room is located"
-            },
-            "roomnumber": {
-              "type": "string",
-              "description": "The number of the room"
+      "parameters": [
+        {
+          "name": "roomid",
+          "in": "path",
+          "description": "The ID of the room",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object representing the updated room",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "maxcapacity": {
+                "type": "string",
+                "description": "The maximum number of people that can be in the room"
+              },
+              "color": {
+                "type": "string",
+                "description": "The color of the room"
+              },
+              "image": {
+                "type": "string",
+                "description": "An image of the room"
+              },
+              "description": {
+                "type": "string",
+                "description": "A description of the room"
+              },
+              "maxbookabletime": {
+                "type": "string",
+                "description": "The maximum amount of time that the room can be booked for"
+              },
+              "roomid": {
+                "type": "string",
+                "description": "The internal ID of the room"
+              },
+              "branch": {
+                "type": "string",
+                "description": "The branch where the room is located"
+              },
+              "roomnumber": {
+                "type": "string",
+                "description": "The number of the room"
+              }
             }
           }
         }
-      }],
-      "produces": [
-        "application/json"
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "The updated room",
@@ -351,13 +354,15 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#delete",
       "operationId": "deleteRoom",
       "tags": ["rooms"],
-      "parameters": [{
-        "name": "roomid",
-        "in": "path",
-        "description": "The ID of the room",
-        "required": true,
-        "type": "string"
-      }],
+      "parameters": [
+        {
+          "name": "roomid",
+          "in": "path",
+          "description": "The ID of the room",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "responses": {
         "204": {
           "description": "The room was deleted"
@@ -419,21 +424,23 @@
       "operationId": "addEquipment",
       "tags": ["equipment"],
       "summary": "Create a new equipment item",
-      "parameters": [{
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object representing the added equipment",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "equipmentname": {
-              "type": "string"
-            }
-          },
-          "required": ["equipmentname"]
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object representing the added equipment",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentname": {
+                "type": "string"
+              }
+            },
+            "required": ["equipmentname"]
+          }
         }
-      }],
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -469,12 +476,14 @@
       "tags": ["equipment"],
       "summary": "Get an equipment item by ID",
       "operationId": "getEquipment",
-      "parameters": [{
-        "name": "equipmentid",
-        "in": "path",
-        "required": true,
-        "type": "integer"
-      }],
+      "parameters": [
+        {
+          "name": "equipmentid",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -508,26 +517,29 @@
       "tags": ["equipment"],
       "summary": "Update an equipment item by ID",
       "operationId": "updateEquipment",
-      "parameters": [{
-        "name": "equipmentid",
-        "in": "path",
-        "required": true,
-        "type": "integer"
-      }, {
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object representing the updated equipment",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "equipmentname": {
-              "type": "string"
-            }
-          },
-          "required": ["equipmentname"]
+      "parameters": [
+        {
+          "name": "equipmentid",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object representing the updated equipment",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentname": {
+                "type": "string"
+              }
+            },
+            "required": ["equipmentname"]
+          }
         }
-      }],
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -561,12 +573,14 @@
       "tags": ["equipment"],
       "summary": "Delete an equipment item by ID",
       "operationId": "deleteEquipment",
-      "parameters": [{
-        "name": "equipmentid",
-        "in": "path",
-        "required": true,
-        "type": "integer"
-      }],
+      "parameters": [
+        {
+          "name": "equipmentid",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
       "responses": {
         "200": {
           "description": "Successful response"
@@ -627,27 +641,29 @@
       "operationId": "addSettings",
       "tags": ["settings"],
       "summary": "Add settings",
-      "parameters": [{
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object representing the added settings",
-        "required": true,
-        "schema": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "setting": {
-                "type": "string"
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object representing the added settings",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "setting": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
               },
-              "value": {
-                "type": "string"
-              }
-            },
-            "required": ["setting"]
+              "required": ["setting"]
+            }
           }
         }
-      }],
+      ],
       "responses": {
         "201": {
           "description": "Successful response",
@@ -686,12 +702,14 @@
       "tags": ["settings"],
       "summary": "Get a setting by its name",
       "operationId": "getSetting",
-      "parameters": [{
-        "name": "setting",
-        "in": "path",
-        "required": true,
-        "type": "string"
-      }],
+      "parameters": [
+        {
+          "name": "setting",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -725,26 +743,29 @@
       "tags": ["settings"],
       "summary": "Update a setting by its name",
       "operationId": "updateSetting",
-      "parameters": [{
-        "name": "setting",
-        "in": "path",
-        "required": true,
-        "type": "string"
-      }, {
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object respresenting the value of an updated setting",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "value": {
-              "type": "string"
-            }
-          },
-          "required": ["value"]
+      "parameters": [
+        {
+          "name": "setting",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object respresenting the value of an updated setting",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": ["value"]
+          }
         }
-      }],
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -819,30 +840,32 @@
       "operationId": "addOpenHours",
       "tags": ["open_hours"],
       "summary": "Add opening and closing times for the whole week",
-      "parameters": [{
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object representing the added open hours",
-        "required": true,
-        "schema": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "day": {
-                "type": "integer"
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object representing the added open hours",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                }
               },
-              "start": {
-                "type": "string"
-              },
-              "end": {
-                "type": "string"
-              }
-            },
-            "required": ["day", "start", "end"]
+              "required": ["day", "start", "end"]
+            }
           }
         }
-      }],
+      ],
       "responses": {
         "201": {
           "description": "Successful response",
@@ -887,12 +910,14 @@
       "tags": ["open_hours"],
       "summary": "Get opening and closing times for a given day",
       "operationId": "getOpenHoursByDay",
-      "parameters": [{
-        "name": "day",
-        "in": "path",
-        "required": true,
-        "type": "integer"
-      }],
+      "parameters": [
+        {
+          "name": "day",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -932,29 +957,32 @@
       "tags": ["open_hours"],
       "summary": "Update opening and closing times for a given day",
       "operationId": "updateOpenHours",
-      "parameters": [{
-        "name": "day",
-        "in": "path",
-        "required": true,
-        "type": "integer"
-      }, {
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object respresenting the opening and closing times of an updated day",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "start": {
-              "type": "string"
+      "parameters": [
+        {
+          "name": "day",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object respresenting the opening and closing times of an updated day",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
             },
-            "end": {
-              "type": "string"
-            }
-          },
-          "required": ["start", "end"]
+            "required": ["start", "end"]
+          }
         }
-      }],
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1041,31 +1069,13 @@
       "operationId": "addBookings",
       "tags": ["bookings"],
       "summary": "Add room bookings",
-      "parameters": [{
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object representing the added bookings",
-        "required": true,
-        "schema": {
-          "type": ["array", "object"],
-          "properties": {
-            "borrowernumber": {
-              "type": "integer"
-            },
-            "roomid": {
-              "type": "integer"
-            },
-            "start": {
-              "type": "string"
-            },
-            "end": {
-              "type": "string"
-            },
-            "blackedout": {
-              "type": "integer"
-            }
-          },
-          "items": {
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object or array of objects representing the added bookings",
+          "required": true,
+          "schema": {
             "type": "object",
             "properties": {
               "borrowernumber": {
@@ -1087,27 +1097,35 @@
             "required": ["borrowernumber", "roomid", "start", "end"]
           }
         }
-      }],
+      ],
       "responses": {
         "201": {
           "description": "Successful response",
           "schema": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "borrowernumber": {
-                  "type": "integer"
-                },
-                "roomid": {
-                  "type": "integer"
-                },
-                "start": {
-                  "type": "string"
-                },
-                "end": {
-                  "type": "string"
-                }
+            "type": "object",
+            "properties": {
+              "borrowernumber": {
+                "type": "integer"
+              },
+              "roomid": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
               }
             }
           }
@@ -1132,12 +1150,14 @@
       "tags": ["bookings"],
       "summary": "Get a single room booking",
       "operationId": "getBooking",
-      "parameters": [{
-        "name": "booking_id",
-        "in": "path",
-        "required": true,
-        "type": "integer"
-      }],
+      "parameters": [
+        {
+          "name": "booking_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1189,35 +1209,38 @@
       "tags": ["bookings"],
       "summary": "Update a single room booking",
       "operationId": "updateBooking",
-      "parameters": [{
-        "name": "booking_id",
-        "in": "path",
-        "required": true,
-        "type": "integer"
-      }, {
-        "name": "body",
-        "in": "body",
-        "description": "A JSON object respresenting an updated booking",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "borrowernumber": {
-              "type": "integer"
+      "parameters": [
+        {
+          "name": "booking_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object respresenting an updated booking",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "borrowernumber": {
+                "type": "integer"
+              },
+              "roomid": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
             },
-            "roomid": {
-              "type": "integer"
-            },
-            "start": {
-              "type": "string"
-            },
-            "end": {
-              "type": "string"
-            }
-          },
-          "required": ["borrowernumber", "roomid", "start", "end"]
+            "required": ["borrowernumber", "roomid", "start", "end"]
+          }
         }
-      }],
+      ],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1225,6 +1248,17 @@
             "type": "object",
             "properties": {
               "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
                 "type": "string"
               }
             }
