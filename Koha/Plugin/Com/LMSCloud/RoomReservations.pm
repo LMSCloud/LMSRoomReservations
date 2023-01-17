@@ -230,7 +230,7 @@ sub install() {
               `description` TEXT, -- equipment description to display in OPAC
               `image` TEXT, -- equipment image to display in OPAC
               `maxbookabletime` INT, -- the maximum timespan for a booking of this item
-              PRIMARY KEY (equipmentid),
+              PRIMARY KEY (equipmentid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
         qq{CREATE INDEX $EQUIPMENT_IDX ON $EQUIPMENT(equipmentid);},

@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+use Modern::Perl;
+use utf8;
+use 5.032;
+
+our $VERSION = '1.0.0';
+
+# backup the original file
+system("cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf.bak");
+
+# read the file
+open( my $fh, "<", "/etc/apache2/apache2.conf" ) or die "Cannot open /etc/apache2/apache2.conf: $!";
+my @lines = <$fh>;
+close $fh;
+
+# find the last <Directory /> entry
+my $index = -1;
+for ( my $i = 0; $i < scalar(@lines); $i++ ) {
+    if ( $lines[$i] =~ m|</Directory>| ) {
+        $index = $i;
+    }
+}
+
+# insert the new entry
+if ( $index != -1 ) {
+    splice @lines, $index + 1, 0, "\n<Directory /var/lib/koha/kohadev/plugins/>\n";
+    splice @lines, $index + 2, 0, "     Options Indexes FollowSymLinks\n";
+    splice @lines, $index + 3, 0, "     AllowOverride None\n";
+    splice @lines, $index + 4, 0, "     Require all granted\n";
+    splice @lines, $index + 5, 0, "</Directory>\n\n";
+}
+
+# write the file
+open( my $fh, ">", "/etc/apache2/apache2.conf" ) or die "Cannot open /etc/apache2/apache2.conf: $!";
+print $fh @lines;
+close $fh;
+
+if ($?) {
+
+    # restore the original file if there was an error
+    system("mv /etc/apache2.conf.bak /etc/apache2/apache2.conf");
+    die "An error occurred. Restored original file.";
+}
