@@ -27,7 +27,7 @@ export default class LMSBookingsModal extends LMSModal {
       },
       { name: "start", type: "datetime-local", desc: "Starts at" },
       { name: "end", type: "datetime-local", desc: "Ends at" },
-      { name: "blackedout", type: "integer", desc: "Is blackout" },
+      { name: "blackedout", type: "checkbox", desc: "Is blackout" },
     ];
     this.createOpts = {
       endpoint: "/api/v1/contrib/roomreservations/bookings",

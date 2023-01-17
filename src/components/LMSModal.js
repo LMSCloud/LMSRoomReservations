@@ -188,7 +188,6 @@ export default class LMSModal extends LitElement {
   _getFieldMarkup(field) {
     if (!field.desc) return html``;
     if (field.type === "select" && field.entries) {
-      console.log(field.entries);
       return html`<label class="label">${field.desc}</label>
         <select
           name=${field.name}
@@ -201,6 +200,19 @@ export default class LMSModal extends LitElement {
             (entry) => html`<option value=${entry.value}>${entry.name}</option>`
           )}
         </select>`;
+    }
+    if (field.type === "checkbox") {
+      return html` <div>
+        <input
+          type=${field.type}
+          name=${field.name}
+          value="1"
+          @input=${(e) => {
+            field.value = e.target.value;
+          }}
+        />
+        <label>${field.desc}</label>
+      </div>`;
     }
     return html`<label class="label">${field.desc}</label>
       <input

@@ -6,7 +6,7 @@ export default class LMSBookie extends LitElement {
     borrowernumber: { type: String },
     _openHours: { state: true },
     _rooms: { state: true },
-    _roomEquipment: { state: true },
+    _equipment: { state: true },
     _alertMessage: { state: true },
   };
 
@@ -49,9 +49,10 @@ export default class LMSBookie extends LitElement {
 
   async _init() {
     const options = { headers: { accept: "" } };
-    const [openHours, rooms] = await Promise.all([
+    const [openHours, rooms, equipment] = await Promise.all([
       fetch("/api/v1/contrib/roomreservations/open_hours", options),
       fetch("/api/v1/contrib/roomreservations/rooms", options),
+      fetch("/api/v1/contrib/roomreservations/equipment", options),
     ]);
 
     if (openHours.ok) {
@@ -65,6 +66,12 @@ export default class LMSBookie extends LitElement {
     } else {
       console.error("Error fetching rooms");
     }
+
+    if (equipment.ok) {
+      this._equipment = await equipment.json();
+    } else {
+      console.error("Error fetching equipment");
+    }
   }
 
   constructor() {
@@ -72,7 +79,7 @@ export default class LMSBookie extends LitElement {
     this.borrowernumber = "";
     this._openHours = [];
     this._rooms = [];
-    this._roomEquipment = [];
+    this._equipment = [];
     this._alertMessage = "";
     this._init();
   }
@@ -123,16 +130,6 @@ export default class LMSBookie extends LitElement {
   }
 
   _handleRoomChange() {}
-
-  async _getEquipment() {
-    const response = await fetch("/api/v1/contrib/roomreservations/equipment", {
-      headers: {
-        accept: "",
-      },
-    });
-
-    const result = await response.json();
-  }
 
   render() {
     return html`
@@ -203,9 +200,29 @@ export default class LMSBookie extends LitElement {
                 <option>120</option>
               </datalist>
             </div>
+            <div ?hidden=${!this._equipment.length} class="form-group">
+              <label for="equipment">Equipment</label>
+              ${this._equipment.map(
+                (item) => html`
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="${item.equipmentid}"
+                    />
+                    <label class="form-check-label" for="${item.equipmentid}"
+                      >${item.equipmentname}</label
+                    >
+                  </div>
+                `
+              )}
+            </div>
             <small class="form-text text-muted" id="booking-help"
-              >Pick a room, a date, a time and the duration of your
-              reservation.</small
+              >Pick a room, a date, a time
+              <span ?hidden=${!this._equipment.length}
+                >, items you'd like to use</span
+              >
+              and the duration of your reservation.</small
             >
             <button
               type="submit"
@@ -228,15 +245,15 @@ export default class LMSBookie extends LitElement {
                 </tr>
               </thead>
               <tbody>
-                ${this._openHours.map(
-                  (day) => html`
+                ${this._openHours.map((day) => {
+                  return html`
                     <tr>
                       <td>${day.day}</td>
                       <td>${day.start}</td>
                       <td>${day.end}</td>
                     </tr>
-                  `
-                )}
+                  `;
+                })}
               </tbody>
             </table>
           </div>

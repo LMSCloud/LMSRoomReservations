@@ -230,7 +230,7 @@ sub install() {
               `description` TEXT, -- equipment description to display in OPAC
               `image` TEXT, -- equipment image to display in OPAC
               `maxbookabletime` INT, -- the maximum timespan for a booking of this item
-              PRIMARY KEY (equipmentid)
+              PRIMARY KEY (equipmentid),
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
         qq{CREATE INDEX $EQUIPMENT_IDX ON $EQUIPMENT(equipmentid);},
@@ -238,9 +238,11 @@ sub install() {
             CREATE TABLE $ROOMS_EQUIPMENT (
               `roomid` INT NOT NULL,
               `equipmentid` INT NOT NULL,
+              `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date of the relation
+              `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a relation has been updated
               PRIMARY KEY (roomid, equipmentid),
-              CONSTRAINT roomequipment_iafk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid),
-              CONSTRAINT roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid)
+              CONSTRAINT roomequipment_iafk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid) ON DELETE CASCADE,
+              CONSTRAINT roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
         qq{CREATE INDEX $ROOMS_EQUIPMENT_IDX ON $ROOMS_EQUIPMENT(roomid, equipmentid);},
@@ -248,13 +250,14 @@ sub install() {
             CREATE TABLE $BOOKINGS_EQUIPMENT (
                 `bookingid` INT NOT NULL,
                 `equipmentid` INT NOT NULL,
+                `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date of the relation
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a relation has been updated
                 PRIMARY KEY (bookingid, equipmentid),
                 CONSTRAINT bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES $BOOKINGS(bookingid) ON DELETE CASCADE,
                 CONSTRAINT bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
         qq{CREATE INDEX $BOOKINGS_EQUIPMENT_IDX ON $BOOKINGS_EQUIPMENT(bookingid, equipmentid);},
-        qq{INSERT INTO $EQUIPMENT (equipmentname) VALUES ('none');},
     );
 
     if ( !defined $original_version ) {

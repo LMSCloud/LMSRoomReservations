@@ -369,7 +369,6 @@
     _getFieldMarkup(field) {
       if (!field.desc) return y$1``;
       if (field.type === "select" && field.entries) {
-        console.log(field.entries);
         return y$1`<label class="label">${field.desc}</label>
         <select
           name=${field.name}
@@ -382,6 +381,19 @@
             (entry) => y$1`<option value=${entry.value}>${entry.name}</option>`
           )}
         </select>`;
+      }
+      if (field.type === "checkbox") {
+        return y$1` <div>
+        <input
+          type=${field.type}
+          name=${field.name}
+          value="1"
+          @input=${(e) => {
+            field.value = e.target.value;
+          }}
+        />
+        <label>${field.desc}</label>
+      </div>`;
       }
       return y$1`<label class="label">${field.desc}</label>
       <input
@@ -1035,7 +1047,7 @@
         },
         { name: "start", type: "datetime-local", desc: "Starts at" },
         { name: "end", type: "datetime-local", desc: "Ends at" },
-        { name: "blackedout", type: "integer", desc: "Is blackout" },
+        { name: "blackedout", type: "checkbox", desc: "Is blackout" },
       ];
       this.createOpts = {
         endpoint: "/api/v1/contrib/roomreservations/bookings",
@@ -2128,7 +2140,7 @@
       borrowernumber: { type: String },
       _openHours: { state: true },
       _rooms: { state: true },
-      _roomEquipment: { state: true },
+      _equipment: { state: true },
       _alertMessage: { state: true },
     };
 
@@ -2171,9 +2183,10 @@
 
     async _init() {
       const options = { headers: { accept: "" } };
-      const [openHours, rooms] = await Promise.all([
+      const [openHours, rooms, equipment] = await Promise.all([
         fetch("/api/v1/contrib/roomreservations/open_hours", options),
         fetch("/api/v1/contrib/roomreservations/rooms", options),
+        fetch("/api/v1/contrib/roomreservations/equipment", options),
       ]);
 
       if (openHours.ok) {
@@ -2187,6 +2200,12 @@
       } else {
         console.error("Error fetching rooms");
       }
+
+      if (equipment.ok) {
+        this._equipment = await equipment.json();
+      } else {
+        console.error("Error fetching equipment");
+      }
     }
 
     constructor() {
@@ -2194,7 +2213,7 @@
       this.borrowernumber = "";
       this._openHours = [];
       this._rooms = [];
-      this._roomEquipment = [];
+      this._equipment = [];
       this._alertMessage = "";
       this._init();
     }
@@ -2245,16 +2264,6 @@
     }
 
     _handleRoomChange() {}
-
-    async _getEquipment() {
-      const response = await fetch("/api/v1/contrib/roomreservations/equipment", {
-        headers: {
-          accept: "",
-        },
-      });
-
-      await response.json();
-    }
 
     render() {
       return y$1`
@@ -2325,9 +2334,29 @@
                 <option>120</option>
               </datalist>
             </div>
+            <div ?hidden=${!this._equipment.length} class="form-group">
+              <label for="equipment">Equipment</label>
+              ${this._equipment.map(
+                (item) => y$1`
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="${item.equipmentid}"
+                    />
+                    <label class="form-check-label" for="${item.equipmentid}"
+                      >${item.equipmentname}</label
+                    >
+                  </div>
+                `
+              )}
+            </div>
             <small class="form-text text-muted" id="booking-help"
-              >Pick a room, a date, a time and the duration of your
-              reservation.</small
+              >Pick a room, a date, a time
+              <span ?hidden=${!this._equipment.length}
+                >, items you'd like to use</span
+              >
+              and the duration of your reservation.</small
             >
             <button
               type="submit"
@@ -2350,15 +2379,15 @@
                 </tr>
               </thead>
               <tbody>
-                ${this._openHours.map(
-                  (day) => y$1`
+                ${this._openHours.map((day) => {
+                  return y$1`
                     <tr>
                       <td>${day.day}</td>
                       <td>${day.start}</td>
                       <td>${day.end}</td>
                     </tr>
-                  `
-                )}
+                  `;
+                })}
               </tbody>
             </table>
           </div>
