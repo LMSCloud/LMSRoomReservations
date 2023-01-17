@@ -149,6 +149,15 @@ export default class LMSModal extends LitElement {
     }
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.fields
+      .filter((field) => field.logic)
+      .map((_field) =>
+        _field.logic().then((entries) => (_field.entries = entries))
+      );
+  }
+
   render() {
     return html`
       <div class="plus-button">
@@ -177,18 +186,30 @@ export default class LMSModal extends LitElement {
   }
 
   _getFieldMarkup(field) {
-    return field.desc
-      ? html`
-          <label class="label">${field.desc}</label>
-          <input
-            type=${field.type}
-            name=${field.name}
-            class="input"
-            @input=${(e) => {
-              field.value = e.target.value;
-            }}
-          />
-        `
-      : html``;
+    if (!field.desc) return html``;
+    if (field.type === "select" && field.entries) {
+      console.log(field.entries);
+      return html`<label class="label">${field.desc}</label>
+        <select
+          name=${field.name}
+          class="input"
+          @change=${(e) => {
+            field.value = e.target.value;
+          }}
+        >
+          ${field.entries.map(
+            (entry) => html`<option value=${entry.value}>${entry.name}</option>`
+          )}
+        </select>`;
+    }
+    return html`<label class="label">${field.desc}</label>
+      <input
+        type=${field.type}
+        name=${field.name}
+        class="input"
+        @input=${(e) => {
+          field.value = e.target.value;
+        }}
+      />`;
   }
 }

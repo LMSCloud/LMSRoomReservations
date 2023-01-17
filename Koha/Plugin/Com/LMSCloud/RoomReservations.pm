@@ -218,6 +218,7 @@ sub install() {
               `day` INT NOT NULL,
               `start` TIME NOT NULL, -- start date/time of opening hours
               `end` TIME NOT NULL, -- end date/time of opening hours
+              `branch` VARCHAR(255), -- branch that contains the room
               PRIMARY KEY (openid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
@@ -226,6 +227,9 @@ sub install() {
             CREATE TABLE $EQUIPMENT (
               `equipmentid` INT NOT NULL AUTO_INCREMENT,
               `equipmentname` VARCHAR(20) NOT NULL,
+              `description` TEXT, -- equipment description to display in OPAC
+              `image` TEXT, -- equipment image to display in OPAC
+              `maxbookabletime` INT, -- the maximum timespan for a booking of this item
               PRIMARY KEY (equipmentid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
