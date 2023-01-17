@@ -283,6 +283,14 @@
           transition: 0.2s;
           transform: rotate(45deg);
         }
+
+        .checkbox {
+          margin: 1em 0;
+        }
+
+        .checkbox > label {
+          vertical-align: text-bottom;
+        }
       `,
       ];
     }
@@ -383,7 +391,7 @@
         </select>`;
       }
       if (field.type === "checkbox") {
-        return y$1` <div>
+        return y$1` <div class="checkbox">
         <input
           type=${field.type}
           name=${field.name}

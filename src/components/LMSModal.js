@@ -100,6 +100,14 @@ export default class LMSModal extends LitElement {
           transition: 0.2s;
           transform: rotate(45deg);
         }
+
+        .checkbox {
+          margin: 1em 0;
+        }
+
+        .checkbox > label {
+          vertical-align: text-bottom;
+        }
       `,
     ];
   }
@@ -202,7 +210,7 @@ export default class LMSModal extends LitElement {
         </select>`;
     }
     if (field.type === "checkbox") {
-      return html` <div>
+      return html` <div class="checkbox">
         <input
           type=${field.type}
           name=${field.name}
