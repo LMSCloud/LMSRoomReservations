@@ -15,6 +15,7 @@ export default class LMSEquipmentItem extends LitElement {
       border: 1px solid var(--seperator-light);
       border-radius: var(--border-radius-md);
       width: max-content;
+      background-color: var(--background-color);
     }
 
     span {

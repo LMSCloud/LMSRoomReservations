@@ -334,7 +334,9 @@
       super.connectedCallback();
       this.fields
         .filter((field) => field.logic)
-        .map((_field) => _field.logic().then((entries) => (_field.entries = entries)));
+        .map((_field) =>
+          _field.logic().then((entries) => (_field.entries = entries))
+        );
     }
 
     render() {
@@ -446,6 +448,7 @@
       border: 1px solid var(--seperator-light);
       border-radius: var(--border-radius-md);
       width: max-content;
+      background-color: var(--background-color);
     }
 
     span {
@@ -1013,20 +1016,35 @@
     constructor() {
       super();
       this.fields = [
-        { name: 'borrowernumber', type: 'number', desc: 'Borrowernumber' },
-        { name: 'roomid', type: 'number', desc: 'Roomid' },
-        { name: 'start', type: 'datetime-local', desc: 'Starts at' },
-        { name: 'end', type: 'datetime-local', desc: 'Ends at' },
-        { name: 'blackedout', type: 'integer', desc: 'Is blackout' },
+        { name: "borrowernumber", type: "number", desc: "Borrowernumber" },
+        {
+          name: "roomid",
+          type: "select",
+          desc: "Roomid",
+          logic: async () => {
+            const response = await fetch(
+              "/api/v1/contrib/roomreservations/rooms",
+              { headers: { accept: "" } }
+            );
+            const result = await response.json();
+            return result.map((room) => ({
+              value: room.roomid,
+              name: room.roomnumber,
+            }));
+          },
+        },
+        { name: "start", type: "datetime-local", desc: "Starts at" },
+        { name: "end", type: "datetime-local", desc: "Ends at" },
+        { name: "blackedout", type: "integer", desc: "Is blackout" },
       ];
       this.createOpts = {
-        endpoint: '/api/v1/contrib/roomreservations/bookings',
-        method: 'POST',
+        endpoint: "/api/v1/contrib/roomreservations/bookings",
+        method: "POST",
       };
     }
   }
 
-  customElements.define('lms-bookings-modal', LMSBookingsModal);
+  customElements.define("lms-bookings-modal", LMSBookingsModal);
 
   /**
    * @license

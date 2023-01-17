@@ -18,7 +18,7 @@
   /* color variables */
   --primary-color: #0074c2;
   --secondary-color: #f5a623;
-  --background-color: #f5f5f5;
+  --background-color: #fff;
   --text-color: #333;
   --link-color: #0074c2;
   --hover-color: #f5a623;
@@ -53,6 +53,7 @@
 
   @media (min-width: var(--min-width-xl)) {
   } */
+
 }
 
 lms-calendar {
