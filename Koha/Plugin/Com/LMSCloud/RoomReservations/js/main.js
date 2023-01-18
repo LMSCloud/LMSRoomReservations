@@ -403,6 +403,9 @@
         <label>${field.desc}</label>
       </div>`;
       }
+      if (field.type === "info") {
+        return y$1` <p>${field.desc}</p> `;
+      }
       return y$1`<label class="label">${field.desc}</label>
       <input
         type=${field.type}
@@ -513,6 +516,33 @@
           }}
           class="input"
         />
+        <input
+          type="text"
+          ?disabled=${!this.editable}
+          .value=${this.description}
+          @input=${(e) => {
+            this.description = e.target.value;
+          }}
+          class="input"
+        />
+        <input
+          type="text"
+          ?disabled=${!this.editable}
+          .value=${this.image}
+          @input=${(e) => {
+            this.image = e.target.value;
+          }}
+          class="input"
+        />
+        <input
+          type="text"
+          ?disabled=${!this.editable}
+          .value=${this.maxbookabletime}
+          @input=${(e) => {
+            this.maxbookabletime = e.target.value;
+          }}
+          class="input"
+        />
         <button @click=${this.handleEdit}>
           Edit
         </button>
@@ -534,17 +564,25 @@
     constructor() {
       super();
       this.fields = [
-        { name: 'equipmentid', type: 'text' },
-        { name: 'equipmentname', type: 'text', desc: 'Equipmentname' },
+        { name: "equipmentid", type: "text" },
+        { name: "equipmentname", type: "text", desc: "Equipmentname" },
+        { name: "description", type: "text", desc: "Description" },
+        { name: "image", type: "text", desc: "Image" },
+        { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
+        {
+          name: "info",
+          type: "info",
+          desc: "You can assign this item to a room once its created.",
+        },
       ];
       this.createOpts = {
-        endpoint: '/api/v1/contrib/roomreservations/equipment',
-        method: 'POST',
+        endpoint: "/api/v1/contrib/roomreservations/equipment",
+        method: "POST",
       };
     }
   }
 
-  customElements.define('lms-equipment-modal', LMSEquipmentModal);
+  customElements.define("lms-equipment-modal", LMSEquipmentModal);
 
   class LMSSearch extends s$4 {
     static get properties() {
@@ -2275,6 +2313,13 @@
 
     render() {
       return y$1`
+      <h1 ?hidden=${this._rooms.length === 0}>
+        No rooms have been configured yet. You can configure them
+        <a
+          href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::LMSCloud::RoomReservations&method=configure&op=rooms"
+          >here</a
+        >.
+      </h1>
       <div ?hidden=${!this._rooms.length}>
         <section>
           <h5>Book a room</h5>
@@ -2360,8 +2405,8 @@
               )}
             </div>
             <small class="form-text text-muted" id="booking-help"
-              >Pick a room, a date, a time
-              <span ?hidden=${!this._equipment.length}
+              >Pick a room, a date, a time<span
+                ?hidden=${!this._equipment.length}
                 >, items you'd like to use</span
               >
               and the duration of your reservation.</small

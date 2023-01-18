@@ -401,6 +401,15 @@
                 },
                 "equipmentname": {
                   "type": "string"
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "image": {
+                  "type": ["string", "null"]
+                },
+                "maxbookabletime": {
+                  "type": ["integer", "null"]
                 }
               }
             }
@@ -435,6 +444,15 @@
             "properties": {
               "equipmentname": {
                 "type": "string"
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "maxbookabletime": {
+                "type": ["integer", "null"]
               }
             },
             "required": ["equipmentname"]
@@ -452,6 +470,15 @@
               },
               "equipmentname": {
                 "type": "string"
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "maxbookabletime": {
+                "type": ["integer", "null"]
               }
             }
           }
@@ -495,6 +522,15 @@
               },
               "equipmentname": {
                 "type": "string"
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "maxbookabletime": {
+                "type": ["integer", "null"]
               }
             }
           }
@@ -534,6 +570,15 @@
             "properties": {
               "equipmentname": {
                 "type": "string"
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "maxbookabletime": {
+                "type": ["integer", "null"]
               }
             },
             "required": ["equipmentname"]
@@ -551,6 +596,15 @@
               },
               "equipmentname": {
                 "type": "string"
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "maxbookabletime": {
+                "type": ["integer", "null"]
               }
             }
           }

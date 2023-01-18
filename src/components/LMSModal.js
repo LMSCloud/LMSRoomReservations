@@ -222,6 +222,9 @@ export default class LMSModal extends LitElement {
         <label>${field.desc}</label>
       </div>`;
     }
+    if (field.type === "info") {
+      return html` <p>${field.desc}</p> `;
+    }
     return html`<label class="label">${field.desc}</label>
       <input
         type=${field.type}

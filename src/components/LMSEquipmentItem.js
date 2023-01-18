@@ -60,6 +60,33 @@ export default class LMSEquipmentItem extends LitElement {
           }}
           class="input"
         />
+        <input
+          type="text"
+          ?disabled=${!this.editable}
+          .value=${this.description}
+          @input=${(e) => {
+            this.description = e.target.value;
+          }}
+          class="input"
+        />
+        <input
+          type="text"
+          ?disabled=${!this.editable}
+          .value=${this.image}
+          @input=${(e) => {
+            this.image = e.target.value;
+          }}
+          class="input"
+        />
+        <input
+          type="text"
+          ?disabled=${!this.editable}
+          .value=${this.maxbookabletime}
+          @input=${(e) => {
+            this.maxbookabletime = e.target.value;
+          }}
+          class="input"
+        />
         <button @click=${this.handleEdit}>
           Edit
         </button>

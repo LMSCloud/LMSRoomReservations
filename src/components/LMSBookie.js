@@ -133,6 +133,13 @@ export default class LMSBookie extends LitElement {
 
   render() {
     return html`
+      <h1 ?hidden=${this._rooms.length === 0}>
+        No rooms have been configured yet. You can configure them
+        <a
+          href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::LMSCloud::RoomReservations&method=configure&op=rooms"
+          >here</a
+        >.
+      </h1>
       <div ?hidden=${!this._rooms.length}>
         <section>
           <h5>Book a room</h5>
@@ -218,8 +225,8 @@ export default class LMSBookie extends LitElement {
               )}
             </div>
             <small class="form-text text-muted" id="booking-help"
-              >Pick a room, a date, a time
-              <span ?hidden=${!this._equipment.length}
+              >Pick a room, a date, a time<span
+                ?hidden=${!this._equipment.length}
                 >, items you'd like to use</span
               >
               and the duration of your reservation.</small

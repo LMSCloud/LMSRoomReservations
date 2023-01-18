@@ -227,9 +227,9 @@ sub install() {
             CREATE TABLE $EQUIPMENT (
               `equipmentid` INT NOT NULL AUTO_INCREMENT,
               `equipmentname` VARCHAR(20) NOT NULL,
-              `description` TEXT, -- equipment description to display in OPAC
-              `image` TEXT, -- equipment image to display in OPAC
-              `maxbookabletime` INT, -- the maximum timespan for a booking of this item
+              `description` TEXT DEFAULT NULL, -- equipment description to display in OPAC
+              `image` TEXT DEFAULT NULL, -- equipment image to display in OPAC
+              `maxbookabletime` INT DEFAULT NULL, -- the maximum timespan for a booking of this item
               PRIMARY KEY (equipmentid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
