@@ -518,6 +518,7 @@
 
     span {
       font-weight: bold;
+      text-align: center;
     }
   `;
 
@@ -564,9 +565,7 @@
           }),
         }
       );
-      const result = await response.json();
-
-      console.log("Result: ", result);
+      await response.json();
 
       // Emit an event with the current property values
       const event = new CustomEvent("modified", { bubbles: true });
@@ -591,7 +590,7 @@
         <input
           type="text"
           ?disabled=${!this.editable}
-          .value=${this.description}
+          .value=${this.description.match(/^null$/i) ? null : this.description ?? ""}
           @input=${(e) => {
             this.description = e.target.value;
           }}
@@ -601,7 +600,7 @@
         <input
           type="text"
           ?disabled=${!this.editable}
-          .value=${this.image}
+          .value=${this.image.match(/^null$/i) ? null : this.image ?? ""}
           @input=${(e) => {
             this.image = e.target.value;
           }}
@@ -611,7 +610,7 @@
         <input
           type="text"
           ?disabled=${!this.editable}
-          .value=${this.maxbookabletime}
+          .value=${this.maxbookabletime.match(/^null$/i) ? null : this.description ?? ""}
           @input=${(e) => {
             this.maxbookabletime = e.target.value;
           }}
@@ -620,21 +619,22 @@
         <label class="label" ?hidden=${!this._rooms.length}>Roomid</label>
         <select
           ?hidden=${!this._rooms.length}
-          type="text"
           ?disabled=${!this.editable}
-          .value=${this.roomid}
           @change=${(e) => {
             this.roomid = e.target.value;
           }}
           class="input"
         >
-          <option>${this.roomid}</option>
-          ${this._rooms
-            .filter((room) => room.value !== this.roomid)
-            .map(
-              (room) =>
-                y$1`<option value="${room.value}">${room.name}</option>`
-            )}
+          ${this._rooms.map(
+            (room) =>
+              y$1`<option
+                ?selected=${room.value == this.roomid}
+                value="${room.value}"
+              >
+                ${room.name}
+              </option>`
+          )}
+          <option ?selected=${!this.roomid}>No room associated</option>
         </select>
         <div class="buttons">
           <button class="button" @click=${this.handleEdit}>Edit</button>
@@ -2279,6 +2279,7 @@
       _rooms: { state: true },
       _equipment: { state: true },
       _alertMessage: { state: true },
+      _selectedRoom: { state: true },
     };
 
     static styles = [
@@ -2334,6 +2335,7 @@
 
       if (rooms.ok) {
         this._rooms = await rooms.json();
+        [this._selectedRoom] = this._rooms;
       } else {
         console.error("Error fetching rooms");
       }
@@ -2404,13 +2406,13 @@
 
     render() {
       return y$1`
-      <h1 ?hidden=${this._rooms.length === 0}>
+      <!-- <h4 ?hidden=${this._rooms.length !== 0}>
         No rooms have been configured yet. You can configure them
         <a
           href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::LMSCloud::RoomReservations&method=configure&op=rooms"
           >here</a
         >.
-      </h1>
+      </h4> -->
       <div ?hidden=${!this._rooms.length}>
         <section>
           <h5>Book a room</h5>
@@ -2440,7 +2442,11 @@
                 name="room"
                 class="form-control"
                 aria-describedby="booking-help"
-                @change=${this._handleRoomChange}
+                @change=${(e) => {
+                  this._selectedRoom = this._rooms.find(
+                    (room) => room.roomid === e.target.value
+                  );
+                }}
               >
                 ${this._rooms.length &&
                 this._rooms.map(
@@ -2479,21 +2485,29 @@
               </datalist>
             </div>
             <div ?hidden=${!this._equipment.length} class="form-group">
-              <label for="equipment">Equipment</label>
-              ${this._equipment.map(
-                (item) => y$1`
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      class="form-check-input"
-                      id="${item.equipmentid}"
-                    />
-                    <label class="form-check-label" for="${item.equipmentid}"
-                      >${item.equipmentname}</label
-                    >
-                  </div>
-                `
-              )}
+              <label
+                ?hidden=${!this._equipment.filter(
+                  (item) => item.roomid == this._selectedRoom.roomid
+                ).length}
+                for="equipment"
+                >Equipment</label
+              >
+              ${this._equipment
+                .filter((item) => item.roomid == this._selectedRoom.roomid)
+                .map(
+                  (item) => y$1`
+                    <div class="form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="${item.equipmentid}"
+                      />
+                      <label class="form-check-label" for="${item.equipmentid}"
+                        >${item.equipmentname}</label
+                      >
+                    </div>
+                  `
+                )}
             </div>
             <small class="form-text text-muted" id="booking-help"
               >Pick a room, a date, a time<span

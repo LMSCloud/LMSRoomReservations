@@ -61,6 +61,7 @@ export default class LMSEquipmentItem extends LitElement {
 
     span {
       font-weight: bold;
+      text-align: center;
     }
   `;
 
@@ -109,8 +110,6 @@ export default class LMSEquipmentItem extends LitElement {
     );
     const result = await response.json();
 
-    console.log("Result: ", result);
-
     // Emit an event with the current property values
     const event = new CustomEvent("modified", { bubbles: true });
     this.dispatchEvent(event);
@@ -134,7 +133,7 @@ export default class LMSEquipmentItem extends LitElement {
         <input
           type="text"
           ?disabled=${!this.editable}
-          .value=${this.description}
+          .value=${this.description.match(/^null$/i) ? null : this.description ?? ""}
           @input=${(e) => {
             this.description = e.target.value;
           }}
@@ -144,7 +143,7 @@ export default class LMSEquipmentItem extends LitElement {
         <input
           type="text"
           ?disabled=${!this.editable}
-          .value=${this.image}
+          .value=${this.image.match(/^null$/i) ? null : this.image ?? ""}
           @input=${(e) => {
             this.image = e.target.value;
           }}
@@ -154,7 +153,7 @@ export default class LMSEquipmentItem extends LitElement {
         <input
           type="text"
           ?disabled=${!this.editable}
-          .value=${this.maxbookabletime}
+          .value=${this.maxbookabletime.match(/^null$/i) ? null : this.description ?? ""}
           @input=${(e) => {
             this.maxbookabletime = e.target.value;
           }}
@@ -163,21 +162,22 @@ export default class LMSEquipmentItem extends LitElement {
         <label class="label" ?hidden=${!this._rooms.length}>Roomid</label>
         <select
           ?hidden=${!this._rooms.length}
-          type="text"
           ?disabled=${!this.editable}
-          .value=${this.roomid}
           @change=${(e) => {
             this.roomid = e.target.value;
           }}
           class="input"
         >
-          <option>${this.roomid}</option>
-          ${this._rooms
-            .filter((room) => room.value !== this.roomid)
-            .map(
-              (room) =>
-                html`<option value="${room.value}">${room.name}</option>`
-            )}
+          ${this._rooms.map(
+            (room) =>
+              html`<option
+                ?selected=${room.value == this.roomid}
+                value="${room.value}"
+              >
+                ${room.name}
+              </option>`
+          )}
+          <option ?selected=${!this.roomid}>No room associated</option>
         </select>
         <div class="buttons">
           <button class="button" @click=${this.handleEdit}>Edit</button>

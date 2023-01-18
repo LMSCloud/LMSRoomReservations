@@ -23,18 +23,26 @@ my $ROOMS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('rooms_equip
 sub list {
     my $c = shift->openapi->valid_input or return;
 
-    return try {
-        my $dbh   = C4::Context->dbh;
-        my $query = "SELECT * FROM $EQUIPMENT_TABLE";
-        my $sth   = $dbh->prepare($query);
-        $sth->execute();
+    my $dbh = C4::Context->dbh;
+    my $sql = SQL::Abstract->new;
 
-        my $equipment = $sth->fetchall_arrayref( {} );
-        return $c->render( status => 200, openapi => $equipment );
+    my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*} );
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+
+    my $equipment = $sth->fetchall_arrayref( {} );
+    foreach my $item ( $equipment->@* ) {
+        ( $stmt, @bind ) = $sql->select( $ROOMS_EQUIPMENT_TABLE, 'roomid', { equipmentid => $item->{equipmentid} } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $roomid = $sth->fetchrow_hashref();
+        if ($roomid) {
+            $item->{roomid} = $roomid->{roomid};
+        }
     }
-    catch {
-        $c->unhandled_exception($_);
-    };
+
+    return $c->render( status => 200, openapi => $equipment );
 }
 
 sub get {
@@ -42,11 +50,12 @@ sub get {
 
     return try {
         my $dbh = C4::Context->dbh;
+        my $sql = SQL::Abstract->new;
 
         my $equipmentid = $c->validation->param('equipmentid');
-        my $query       = "SELECT * FROM $EQUIPMENT_TABLE WHERE equipmentid = ?";
-        my $sth         = $dbh->prepare($query);
-        $sth->execute($equipmentid);
+        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         my $equipment = $sth->fetchrow_hashref();
         if ( !$equipment ) {
@@ -56,7 +65,13 @@ sub get {
             );
         }
 
-        return $c->render( status => 200, openapi => $equipment );
+        ( $stmt, @bind ) = $sql->select( $ROOMS_EQUIPMENT_TABLE, 'roomid', { equipmentid => $equipmentid } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $roomid = $sth->fetchrow_hashref();
+
+        return $c->render( status => 200, openapi => $roomid ? { $equipment->%*, roomid => $roomid } : $equipment );
     }
     catch {
         $c->unhandled_exception($_);
@@ -103,10 +118,20 @@ sub update {
             my $new_equipment = $c->validation->param('body');
 
             my $roomid;
+
+            # Handles a new association
             if ( exists $new_equipment->{'roomid'} && $new_equipment->{'roomid'} ) {
                 $roomid = delete $new_equipment->{'roomid'};
 
                 ( $stmt, @bind ) = $sql->insert( $ROOMS_EQUIPMENT_TABLE, { roomid => $roomid, equipmentid => $equipmentid } );
+                $sth = $dbh->prepare($stmt);
+                $sth->execute(@bind);
+            }
+
+            if ( exists $new_equipment->{'roomid'} && !$new_equipment->{'roomid'} ) {
+                $roomid = delete $new_equipment->{'roomid'};
+
+                ( $stmt, @bind ) = $sql->delete( $ROOMS_EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
                 $sth = $dbh->prepare($stmt);
                 $sth->execute(@bind);
             }
@@ -130,6 +155,51 @@ sub update {
         $c->unhandled_exception($_);
     };
 }
+
+# sub update {
+#     my $c = shift->openapi->valid_input or return;
+
+#     my $dbh = C4::Context->dbh;
+#     my $sql = SQL::Abstract->new;
+
+#     my $equipmentid = $c->validation->param('equipmentid');
+#     my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, '*', { equipmentid => $equipmentid } );
+#     my $sth = $dbh->prepare($stmt);
+#     $sth->execute(@bind);
+#     my $equipment = $sth->fetchrow_hashref();
+
+#     if (!$equipment) {
+#         return $c->render(
+#             status  => 404,
+#             openapi => { error => 'Item not found' }
+#         );
+#     }
+
+#     my $new_equipment = $c->validation->param('body');
+
+#     if ( exists $new_equipment->{'roomid'} && $new_equipment->{'roomid'} ) {
+#         my $roomid = delete $new_equipment->{'roomid'};
+
+#         ( $stmt, @bind ) = $sql->insert( $ROOMS_EQUIPMENT_TABLE, { roomid => $roomid, equipmentid => $equipmentid } );
+#         $sth = $dbh->prepare($stmt);
+#         $sth->execute(@bind);
+#     } elsif ( exists $new_equipment->{'roomid'} && !$new_equipment->{'roomid'} ) {
+#         delete $new_equipment->{'roomid'};
+
+#         ( $stmt, @bind ) = $sql->delete( $ROOMS_EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
+#         $sth = $dbh->prepare($stmt);
+#         $sth->execute(@bind);
+#     }
+
+#     ( $stmt, @bind ) = $sql->update( $EQUIPMENT_TABLE, $new_equipment, { equipmentid => $equipmentid } );
+#     $sth = $dbh->prepare($stmt);
+#     $sth->execute(@bind);
+
+#     return $c->render(
+#         status  => 200,
+#         openapi => { $new_equipment->%*, equipmentid => $equipmentid }
+#     );
+# }
 
 sub delete {
     my $c = shift->openapi->valid_input or return;

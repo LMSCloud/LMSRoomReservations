@@ -8,6 +8,7 @@ export default class LMSBookie extends LitElement {
     _rooms: { state: true },
     _equipment: { state: true },
     _alertMessage: { state: true },
+    _selectedRoom: { state: true },
   };
 
   static styles = [
@@ -63,6 +64,7 @@ export default class LMSBookie extends LitElement {
 
     if (rooms.ok) {
       this._rooms = await rooms.json();
+      [this._selectedRoom] = this._rooms;
     } else {
       console.error("Error fetching rooms");
     }
@@ -133,13 +135,13 @@ export default class LMSBookie extends LitElement {
 
   render() {
     return html`
-      <h1 ?hidden=${this._rooms.length === 0}>
+      <!-- <h4 ?hidden=${this._rooms.length !== 0}>
         No rooms have been configured yet. You can configure them
         <a
           href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::LMSCloud::RoomReservations&method=configure&op=rooms"
           >here</a
         >.
-      </h1>
+      </h4> -->
       <div ?hidden=${!this._rooms.length}>
         <section>
           <h5>Book a room</h5>
@@ -169,7 +171,11 @@ export default class LMSBookie extends LitElement {
                 name="room"
                 class="form-control"
                 aria-describedby="booking-help"
-                @change=${this._handleRoomChange}
+                @change=${(e) => {
+                  this._selectedRoom = this._rooms.find(
+                    (room) => room.roomid === e.target.value
+                  );
+                }}
               >
                 ${this._rooms.length &&
                 this._rooms.map(
@@ -208,21 +214,29 @@ export default class LMSBookie extends LitElement {
               </datalist>
             </div>
             <div ?hidden=${!this._equipment.length} class="form-group">
-              <label for="equipment">Equipment</label>
-              ${this._equipment.map(
-                (item) => html`
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      class="form-check-input"
-                      id="${item.equipmentid}"
-                    />
-                    <label class="form-check-label" for="${item.equipmentid}"
-                      >${item.equipmentname}</label
-                    >
-                  </div>
-                `
-              )}
+              <label
+                ?hidden=${!this._equipment.filter(
+                  (item) => item.roomid == this._selectedRoom.roomid
+                ).length}
+                for="equipment"
+                >Equipment</label
+              >
+              ${this._equipment
+                .filter((item) => item.roomid == this._selectedRoom.roomid)
+                .map(
+                  (item) => html`
+                    <div class="form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="${item.equipmentid}"
+                      />
+                      <label class="form-check-label" for="${item.equipmentid}"
+                        >${item.equipmentname}</label
+                      >
+                    </div>
+                  `
+                )}
             </div>
             <small class="form-text text-muted" id="booking-help"
               >Pick a room, a date, a time<span
