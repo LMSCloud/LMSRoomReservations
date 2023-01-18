@@ -2,24 +2,38 @@
 [% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
-  <div class="lmsr-content-block" id="entry-point">
-    [% FOREACH item IN equipment %]
-      <lms-equipment-item equipmentid="[% item.equipmentid %]" equipmentname="[% item.equipmentname %]">
-      </lms-equipment-item>
-    [% END # FOREACH item IN equipment %]
-  </div>
-
+  <div class="lmsr-content-block" id="entry-point"></div>
   <lms-equipment-modal></lms-equipment-modal>
 
-  <!-- <lms-search tagName="lms-equipment-item"></lms-search> -->
-
   <script>
-    const entryPoint = document.getElementById('entry-point')
+    const entryPoint = document.getElementById('entry-point');
+    const endpoint = '/api/v1/contrib/roomreservations/equipment';
+    const options = {
+      headers: {
+        'Accept': '',
+      }
+    };
+    const equipment = fetch(endpoint, options);
+    equipment
+      .then((response) => response.json())
+      .then((result) => {
+        result.forEach((item) => {
+          const lmsEquipmentItem = document.createElement('lms-equipment-item', {
+            is: 'lms-equipment-item'
+          });
+          Array.from(Object.entries(item)).forEach((entry) => {
+            const [name, value] = entry;
+            lmsEquipmentItem.setAttribute(name, value);
+          });
+          entryPoint.appendChild(lmsEquipmentItem);
+        })
+      });
+
     RoomReservationBundle.renderOnUpdate({
       entryPoint,
-      tagname: 'lms-equipment-item', 
-      eventName: 'modified', 
-      endpoint: '/api/v1/contrib/roomreservations/equipment',
+      tagname: 'lms-equipment-item',
+      eventName: 'modified',
+      endpoint,
       options: {
         headers: {
           'Accept': '',
@@ -30,10 +44,10 @@
     const [eventTarget] = Array.from(document.getElementsByTagName('lms-equipment-modal'));
     RoomReservationBundle.renderOnUpdate({
       entryPoint,
-      tagname: 'lms-equipment-item', 
+      tagname: 'lms-equipment-item',
       eventName: 'created',
       eventTarget,
-      endpoint: '/api/v1/contrib/roomreservations/equipment',
+      endpoint,
       options: {
         headers: {
           'Accept': '',

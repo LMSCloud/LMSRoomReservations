@@ -32,6 +32,8 @@ Here we grant access to the plugins directory to get around circumvent problems.
 
 ### Infuriating errors
 
+#### Install hook weirdness
+
 - If something goes wrong with the installer statements in the install hook, you will
   1. Get an error like this one `Calling 'install' died for plugin Koha::Plugin::Com::LMSCloud::RoomReservationsCompilation failed in require at /usr/share/perl/5.32/Module/Load.pm line 77.`.
   2. (Optionally) get other errors that lead you on a wrong path.
@@ -56,3 +58,18 @@ Here we grant access to the plugins directory to get around circumvent problems.
   ```
   Don't look at the **files it can't locate**, that's (most likely) **not** the source of your problems.
 
+#### Requesting the wrong endpoint
+
+- If you see these errors popping up
+  ```log
+    [2023/01/18 15:19:42] [WARN] ERROR: Unsupported method history at /kohadevbox/koha/Koha/Logger.pm line 135.
+    [2023/01/18 15:19:42] [ERROR] Can't use an undefined value as an ARRAY reference at template mojo/debug.h
+    tml.ep line 288.
+    Context:
+      283:               </div>
+      284:               <div class="tap tap-border-top">tap for more</div>
+      285:             </div>
+      286:           </div>
+  ```
+  you **likely** didn't request the endpoint, you think you did.
+- Check your AJAX or whatever you use for the requests to hit the endpoint/method you intended.

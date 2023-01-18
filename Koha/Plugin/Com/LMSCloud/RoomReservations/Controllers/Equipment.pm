@@ -8,6 +8,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context;
 use Try::Tiny;
+use SQL::Abstract;
 
 our $VERSION = '1.0.0';
 
@@ -16,7 +17,8 @@ if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 }
 
-my $EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('equipment') : undef;
+my $EQUIPMENT_TABLE       = $self ? $self->get_qualified_table_name('equipment')       : undef;
+my $ROOMS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('rooms_equipment') : undef;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -65,12 +67,14 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $dbh = C4::Context->dbh;
-
         my $equipment = $c->validation->param('body');
-        my $query     = "INSERT INTO $EQUIPMENT_TABLE (equipmentname) VALUES (?)";
-        my $sth       = $dbh->prepare($query);
-        $sth->execute( $equipment->{equipmentname} );
+        my $sql       = SQL::Abstract->new;
+
+        my ( $stmt, @bind ) = $sql->insert( $EQUIPMENT_TABLE, $equipment );
+
+        my $dbh = C4::Context->dbh;
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         return $c->render(
             status  => 201,
@@ -87,33 +91,44 @@ sub update {
 
     return try {
         my $dbh = C4::Context->dbh;
+        my $sql = SQL::Abstract->new;
 
         my $equipmentid = $c->validation->param('equipmentid');
-        my $query       = "SELECT * FROM $EQUIPMENT_TABLE WHERE equipmentid = ?";
-        my $sth         = $dbh->prepare($query);
-        $sth->execute($equipmentid);
-
+        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
         my $equipment = $sth->fetchrow_hashref();
-        if ( !$equipment ) {
+
+        if ($equipment) {
+            my $new_equipment = $c->validation->param('body');
+
+            my $roomid;
+            if ( exists $new_equipment->{'roomid'} && $new_equipment->{'roomid'} ) {
+                $roomid = delete $new_equipment->{'roomid'};
+
+                ( $stmt, @bind ) = $sql->insert( $ROOMS_EQUIPMENT_TABLE, { roomid => $roomid, equipmentid => $equipmentid } );
+                $sth = $dbh->prepare($stmt);
+                $sth->execute(@bind);
+            }
+
+            ( $stmt, @bind ) = $sql->update( $EQUIPMENT_TABLE, $new_equipment, { equipmentid => $equipmentid } );
+            $sth = $dbh->prepare($stmt);
+            $sth->execute(@bind);
+
             return $c->render(
-                status  => 404,
-                openapi => { error => 'Object not found' }
+                status  => 200,
+                openapi => $roomid ? { $new_equipment->%*, equipmentid => $equipmentid, roomid => $roomid } : { $new_equipment->%*, equipmentid => $equipmentid }
             );
         }
 
-        my $new_equipment = $c->validation->param('body');
-        $query = "UPDATE $EQUIPMENT_TABLE SET equipmentname = ? WHERE equipmentid = ?";
-        $sth   = $dbh->prepare($query);
-        $sth->execute( $new_equipment->{equipmentname}, $equipmentid );
-
         return $c->render(
-            status  => 200,
-            openapi => $new_equipment
+            status  => 404,
+            openapi => { error => 'Item not found' }
         );
     }
     catch {
         $c->unhandled_exception($_);
-    }
+    };
 }
 
 sub delete {

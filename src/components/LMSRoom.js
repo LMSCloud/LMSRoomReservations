@@ -21,6 +21,7 @@ export default class LMSRoom extends LitElement {
       padding: 16px;
       box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
       border-radius: 4px;
+      background-color: var(--background-color);
     }
 
     .label {
