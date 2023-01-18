@@ -35,7 +35,7 @@ Here we grant access to the plugins directory to get around circumvent problems.
 - If something goes wrong with the installer statements in the install hook, you will
   1. Get an error like this one `Calling 'install' died for plugin Koha::Plugin::Com::LMSCloud::RoomReservationsCompilation failed in require at /usr/share/perl/5.32/Module/Load.pm line 77.`.
   2. (Optionally) get other errors that lead you on a wrong path.
-- Always validate your create statements **_first_** or you will regret it 2 hours down the line.
+- Always validate your create statements **first** or you will regret it 2 hours down the line.
 - Example: I had an excess comma on the last line of a create statement:
   ```sql
     CREATE TABLE $EQUIPMENT (
@@ -54,5 +54,5 @@ Here we grant access to the plugins directory to get around circumvent problems.
     Can't locate Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings in @INC (@INC contains: /kohadevbox/koha /kohadevbox/koha/lib /kohadevbox/qa-test-tools /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.32.1 /usr/local/share/perl/5.32.1 /usr/lib/aarch64-linux-gnu/perl5/5.32 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.32 /usr/share/perl/5.32 /usr/local/lib/site_perl /var/lib/koha/kohadev/plugins) at /usr/share/perl/5.32/Module/Load.pm line 77.
     ...
   ```
-  Don't look at the ***files it can't locate***, that's (most likely) ***not*** the source of your problems.
+  Don't look at the **files it can't locate**, that's (most likely) **not** the source of your problems.
 
