@@ -41,8 +41,7 @@ This plugin requires the following modules to be installed:
 If you are on debian >= bullseye, you'll have to install libcalendar-simple-perl manually, because the packaged version is now 2.0.1.
 
 ```bash
-wget http://deb.debian.org/debian/pool/main/libc/libcalendar-simple-perl/libcalendar-simple-perl_1
-.21.orig.tar.gz
+wget http://deb.debian.org/debian/pool/main/libc/libcalendar-simple-perl/libcalendar-simple-perl_1.21.orig.tar.gz
 tar xzf libcalendar-simple-perl_1.21.orig.tar.gz
 cd Calendar-Simple-1.21
 perl Build.PL
