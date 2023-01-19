@@ -2,11 +2,9 @@
   "extends": "stylelint-config-standard",
   "ignoreFiles": [
     "./Koha/Plugin/Com/LMSCloud/RoomReservations/**/*",
-    "./src/components/LMSCalendar/**/*",
     "./node_modules/**/*",
     "./**/*.js",
-    "./**/*.mjs",
-    "./src/*.ts"
+    "./**/*.mjs"
   ],
   "overrides": [
     {

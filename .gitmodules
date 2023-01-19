@@ -1,4 +1,3 @@
 [submodule "src/components/LMSCalendar"]
 	path = src/components/LMSCalendar
 	url = git@github.com:LMSCloudPaulD/LMSCalendar.git
-	branch = ts-migration
