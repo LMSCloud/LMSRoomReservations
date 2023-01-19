@@ -16,7 +16,7 @@ export default class LMSBookie extends LitElement {
     css`
       :host > div {
         padding: 16px;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
         border: 1px solid var(--seperator-light);
         border-radius: var(--border-radius-lg);
         font-family: var(--system-ui);

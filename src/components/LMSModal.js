@@ -59,7 +59,7 @@ export default class LMSModal extends LitElement {
           display: flex;
           justify-content: center;
           align-items: center;
-          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
           cursor: pointer;
           z-index: 99;
         }
@@ -80,7 +80,7 @@ export default class LMSModal extends LitElement {
           transform: translate(-50%, -50%);
           background-color: white;
           padding: 16px;
-          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
           border-radius: 4px;
           z-index: 100;
         }
@@ -91,13 +91,13 @@ export default class LMSModal extends LitElement {
           left: 0;
           width: 100%;
           height: 100%;
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: rgb(0 0 0 / 50%);
           z-index: 98;
         }
 
         .tilted {
-          transition-timing-function: ease-in-out;
           transition: 0.2s;
+          transition-timing-function: ease-in-out;
           transform: rotate(45deg);
         }
 

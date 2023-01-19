@@ -38,7 +38,7 @@ export default class LMSToast extends LitElement {
       color: white;
     }
 
-    .lms-toast-header{
+    .lms-toast-header {
       border-bottom: 1px solid var(--seperator-light);
       border-radius: 7px 7px 0 0;
       display: flex;

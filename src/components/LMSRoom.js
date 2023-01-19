@@ -19,7 +19,7 @@ export default class LMSRoom extends LitElement {
     .card {
       margin: 16px;
       padding: 16px;
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
       border-radius: 4px;
       background-color: var(--background-color);
     }
@@ -83,7 +83,7 @@ export default class LMSRoom extends LitElement {
 
   render() {
     return html`
-      <div class="card">
+      <div class="card w-0">
         <label class="label">Room ID</label>
         <input disabled type="text" .value=${this.roomid} class="input" />
         <label class="label">Room Number</label>

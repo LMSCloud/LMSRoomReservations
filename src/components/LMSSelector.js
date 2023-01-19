@@ -1,7 +1,7 @@
 import { css, html, LitElement } from 'lit';
 
 const style = css`
-  @import url('/api/v1/contrib/roomreservations/static/css/main.css');
+  @import url("/api/v1/contrib/roomreservations/static/css/main.css");
 `;
 
 class LmsrEquipmentSelection extends LitElement {

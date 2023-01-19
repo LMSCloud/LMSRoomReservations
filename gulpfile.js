@@ -1,17 +1,18 @@
-const gulp = require('gulp');
-const release = require('gulp-github-release');
-const fs = require('fs');
-const run = require('gulp-run');
-const dateTime = require('node-datetime');
+const gulp = require("gulp");
+const release = require("gulp-github-release");
+const fs = require("fs");
+const run = require("gulp-run");
+const dateTime = require("node-datetime");
+const postcss = require("gulp-postcss");
 
 const dt = dateTime.create();
-const today = dt.format('Y-m-d');
+const today = dt.format("Y-m-d");
 
-const packageJson = JSON.parse(fs.readFileSync('./package.json'));
+const packageJson = JSON.parse(fs.readFileSync("./package.json"));
 const releaseFilename = `${packageJson.name}-v${packageJson.version}.kpz`;
 
-const pmFile = 'RoomReservations.pm';
-const pmFilePath = 'Koha/Plugin/Com/LMSCloud/';
+const pmFile = "RoomReservations.pm";
+const pmFilePath = "Koha/Plugin/Com/LMSCloud/";
 // const pmFilePathFull = pmFilePath + pmFile;
 const pmFilePathDist = `dist/${pmFilePath}`;
 const pmFilePathFullDist = pmFilePathDist + pmFile;
@@ -20,9 +21,10 @@ console.log(releaseFilename);
 console.log(pmFilePathFullDist);
 
 gulp.task(
-  'build',
-  () => new Promise((resolve) => {
-    run(`
+  "build",
+  () =>
+    new Promise((resolve) => {
+      run(`
       mkdir dist ;
       cp -r Koha dist/. ;
       sed -i -e "s/{VERSION}/${packageJson.version}/g" ${pmFilePathFullDist} ;
@@ -32,15 +34,14 @@ gulp.task(
       cd .. ;
       rm -rf dist ;
     `).exec();
-    resolve();
-  }),
+      resolve();
+    })
 );
 
-gulp.task('release', () => {
+gulp.task("release", () => {
   gulp.src(releaseFilename).pipe(
     release({
-      // eslint-disable-next-line global-require
-      manifest: require('./package.json'), // package.json from which default values will be extracted if they're missing
-    }),
+      manifest: require("./package.json"), // package.json from which default values will be extracted if they're missing
+    })
   );
 });

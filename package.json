@@ -4,6 +4,7 @@
   "previous_version": "0.0.0",
   "description": "Koha Room Reservations Plugin, modified by LMSCloud GmbH",
   "devDependencies": {
+    "autoprefixer": "^10.4.13",
     "eslint": "^8.20.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -11,7 +12,10 @@
     "gulp-cli": "^1.2.2",
     "gulp-github-release": "^1.1.5",
     "gulp-run": "^1.7.1",
+    "postcss": "^8.4.21",
+    "postcss-lit": "^1.0.1",
     "rollup": "^2.77.2",
+    "rollup-plugin-postcss": "^4.0.2",
     "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0"
   },
@@ -23,7 +27,8 @@
     "docker:clean": "docker exec -it koha-koha-1 rm /var/lib/koha/kohadev/plugins/*.kpz",
     "docker:move": "docker cp *.kpz koha-koha-1:/var/lib/koha/kohadev/plugins/",
     "docker:unzip": "docker exec -it koha-koha-1 unzip -o /var/lib/koha/kohadev/plugins/*.kpz",
-    "docker:install": "docker exec -it koha-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl"
+    "docker:install": "docker exec -it koha-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl",
+    "lint:css": "stylelint './src/components/*.js'"
   },
   "repository": {
     "type": "git",
