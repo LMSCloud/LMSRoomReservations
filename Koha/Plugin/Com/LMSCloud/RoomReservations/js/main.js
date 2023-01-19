@@ -2484,14 +2484,14 @@
                 <option>120</option>
               </datalist>
             </div>
-            <div ?hidden=${!this._equipment.length} class="form-group">
-              <label
-                ?hidden=${!this._equipment.filter(
-                  (item) => item.roomid == this._selectedRoom.roomid
-                ).length}
-                for="equipment"
-                >Equipment</label
-              >
+            <div
+              ?hidden=${!this._equipment.length ||
+              !this._equipment.filter(
+                (item) => item.roomid == this._selectedRoom.roomid
+              ).length}
+              class="form-group"
+            >
+              <label for="equipment">Equipment</label>
               ${this._equipment
                 .filter((item) => item.roomid == this._selectedRoom.roomid)
                 .map(
