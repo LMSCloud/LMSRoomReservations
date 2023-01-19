@@ -3,7 +3,8 @@
   "ignoreFiles": [
     "./Koha/Plugin/Com/LMSCloud/RoomReservations/**/*",
     "./node_modules/**/*",
-    "./**/*.js"
+    "./**/*.js",
+    "./**/*.mjs"
   ],
   "overrides": [
     {

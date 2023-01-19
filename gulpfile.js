@@ -3,7 +3,6 @@ const release = require("gulp-github-release");
 const fs = require("fs");
 const run = require("gulp-run");
 const dateTime = require("node-datetime");
-const postcss = require("gulp-postcss");
 
 const dt = dateTime.create();
 const today = dt.format("Y-m-d");

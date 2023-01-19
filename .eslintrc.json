@@ -14,5 +14,6 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "rules": {}
+  "rules": {},
+  "ignorePatterns": ["Koha/Plugin/Com/LMSCloud/RoomReservations/**/*.js"]
 }
