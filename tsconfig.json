@@ -1,0 +1,6 @@
+{
+  "extends": "./src/components/LMSCalendar/tsconfig.json",
+  "compilerOptions": {
+    "composite": true
+  }
+}
