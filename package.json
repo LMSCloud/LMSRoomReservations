@@ -34,9 +34,8 @@
     "docker:unzip": "docker exec -it koha-koha-1 unzip -o /var/lib/koha/kohadev/plugins/*.kpz",
     "docker:install": "docker exec -it koha-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl",
     "lint:css": "stylelint './src/components/*.js'",
-    "LMSCalendar:cd": "cd ./src/components/LMSCalendar",
-    "LMSCalendar:init": "npm run LMSCalendar:cd && git submodule update --init --recursive",
-    "LMSCalendar:pull": "npm run LMSCalendar:cd && git submodule update --recursive --remote"
+    "LMSCalendar:init": "git submodule update --init --recursive",
+    "LMSCalendar:pull": "git submodule update --recursive --remote"
 
   },
   "repository": {
