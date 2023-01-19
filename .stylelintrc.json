@@ -1,4 +1,13 @@
 {
   "extends": "stylelint-config-standard",
-  "customSyntax": "postcss-lit"
+  "ignoreFiles": [
+    "./Koha/Plugin/Com/LMSCloud/RoomReservations/**/*",
+    "./node_modules/**/*"
+  ],
+  "overrides": [
+    {
+      "files": ["./src/components/*.js"],
+      "customSyntax": "postcss-lit"
+    }
+  ]
 }
