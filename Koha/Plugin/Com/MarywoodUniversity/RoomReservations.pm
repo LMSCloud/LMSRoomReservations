@@ -13,7 +13,7 @@ use Modern::Perl;
 use English qw( -no_match_vars );
 
 use Carp;
-use Cwd            qw( abs_path cwd );
+use Cwd qw( abs_path cwd );
 use File::Basename qw( dirname );
 use MIME::Base64;
 use MIME::QuotedPrint;
@@ -38,7 +38,7 @@ use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
 
 use Locale::Messages qw(:locale_h :libintl_h);
-use POSIX            qw(setlocale);
+use POSIX qw(setlocale);
 
 use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Bookings;
 use Koha::Plugin::Com::MarywoodUniversity::RoomReservations::Calendar::Helpers::Equipment;
@@ -342,18 +342,19 @@ sub uninstall() {
     ## of the install() method's order
 
     my @uninstaller_statements = (
-        qq{DROP TABLE IF EXISTS $BOOKINGS_TABLE;},
+        qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT_TABLE;},
         qq{DROP TABLE IF EXISTS $ROOMEQUIPMENT_TABLE;},
         qq{DROP TABLE IF EXISTS $EQUIPMENT_TABLE;},
+        qq{DROP TABLE IF EXISTS $OPENING_HOURS_TABLE;},
+        qq{DROP TABLE IF EXISTS $BOOKINGS_TABLE;},
         qq{DROP TABLE IF EXISTS $ROOMS_TABLE;},
-        qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT_TABLE;},
     );
 
     for (@uninstaller_statements) {
         my $sth = C4::Context->dbh->prepare($_);
         $sth->execute or croak C4::Context->dbh->errstr;
     }
-    
+
     return 1;
 }
 
