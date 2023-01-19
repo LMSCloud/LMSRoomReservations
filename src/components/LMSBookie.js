@@ -135,13 +135,6 @@ export default class LMSBookie extends LitElement {
 
   render() {
     return html`
-      <!-- <h4 ?hidden=${this._rooms.length !== 0}>
-        No rooms have been configured yet. You can configure them
-        <a
-          href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::LMSCloud::RoomReservations&method=configure&op=rooms"
-          >here</a
-        >.
-      </h4> -->
       <div ?hidden=${!this._rooms.length}>
         <section>
           <h5>Book a room</h5>
