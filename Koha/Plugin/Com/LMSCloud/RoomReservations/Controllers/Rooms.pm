@@ -127,7 +127,7 @@ sub delete {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { roomid => $roomid } );
+        my ( $stmt, @bind ) = $sql->select( $ROOMS_TABLE, q{*}, { roomid => $roomid } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
@@ -139,7 +139,7 @@ sub delete {
             );
         }
 
-        my ( $stmt, @bind ) = $sql->delete( $EQUIPMENT_TABLE, { roomid => $roomid } );
+        my ( $stmt, @bind ) = $sql->delete( $ROOMS_TABLE, { roomid => $roomid } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 

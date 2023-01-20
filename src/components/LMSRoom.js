@@ -84,7 +84,7 @@ export default class LMSRoom extends LitElement {
 
   async handleDelete() {
     const response = await fetch(
-      `/api/v1/contrib/roomreservations/equipment/${this.roomid}`,
+      `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
       {
         method: "DELETE",
         headers: {

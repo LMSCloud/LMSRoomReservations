@@ -106,13 +106,28 @@
 
     handleSave() {
       this.editable = false;
+      
       // Emit an event with the current property values
       const event = new CustomEvent('modified', { bubbles: true });
       this.dispatchEvent(event);
     }
 
-    handleDelete() {
-      console.log("UNIMPLEMENTED");
+    async handleDelete() {
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "",
+          },
+        }
+      );
+
+      if (response.status === 204) {
+        // Emit an event with the current property values
+        const event = new CustomEvent("deleted", { bubbles: true });
+        this.dispatchEvent(event);
+      }
     }
 
     render() {
