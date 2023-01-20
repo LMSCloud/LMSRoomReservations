@@ -19,9 +19,10 @@ if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 }
 
-my $BOOKINGS_TABLE   = $self ? $self->get_qualified_table_name('bookings')   : undef;
-my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
-my $ROOMS_TABLE      = $self ? $self->get_qualified_table_name('rooms')      : undef;
+my $BOOKINGS_TABLE           = $self ? $self->get_qualified_table_name('bookings')           : undef;
+my $OPEN_HOURS_TABLE         = $self ? $self->get_qualified_table_name('open_hours')         : undef;
+my $ROOMS_TABLE              = $self ? $self->get_qualified_table_name('rooms')              : undef;
+my $BOOKINGS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('bookings_equipment') : undef;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -162,6 +163,21 @@ sub _check_and_save_booking {
             : $sql->insert( $BOOKINGS_TABLE, $booking );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
+
+        my $new_booking_id = $sth->last_insert_id();
+        if ( defined $body->{'equipment'} && scalar $body->{'equipment'} > 0 ) {
+            foreach my $item ( @{ $body->{'equipment'} } ) {
+                my ( $stmt, @bind ) = $sql->insert(
+                    $BOOKINGS_EQUIPMENT_TABLE,
+                    {   bookingid   => $new_booking_id,
+                        equipmentid => $item,
+                    }
+                );
+                my $sth = $dbh->prepare($stmt);
+                $sth->execute(@bind);
+            }
+        }
+
         $dbh->commit;    # commit transaction
         return $c->render( status => defined $booking_id ? 200 : 201, openapi => $body );
     }

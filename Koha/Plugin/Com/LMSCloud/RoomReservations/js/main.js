@@ -560,6 +560,8 @@
           headers: {
             Accept: "",
           },
+          /** We need to filter properties from the payload the are null
+           *  because the backend set NULL by default on non-supplied args */
           body: JSON.stringify(
             Object.fromEntries(
               Object.entries({
@@ -568,7 +570,7 @@
                 image: this.image,
                 maxbookabletime: this.maxbookabletime,
                 roomid: this.roomid,
-              }).filter(([, value]) => ![null, "null", ""].includes(value))
+              }).filter(([, value]) => !["", null, "null"].includes(value))
             )
           ),
         }
@@ -2238,8 +2240,21 @@
         this.renderRoot.getElementById("room"),
         this.renderRoot.getElementById("start-datetime"),
         this.renderRoot.getElementById("duration"),
+        this.renderRoot.querySelectorAll(".equipment-item"),
       ];
       const [roomid, start, duration] = inputs.map((input) => input.value);
+
+      /** We filter for checked checkbox inputs here. */
+      const [, , , equipmentInputs] = inputs;
+      const equipment = [...equipmentInputs].reduce(
+        (accumulator, equipmentInput) => {
+          if (equipmentInput.checked) {
+            accumulator.push(equipmentInput.id);
+          }
+          return accumulator;
+        },
+        []
+      );
 
       /** Important note: This uses the dayjs library present in Koha
        *  You'll find this included as an asset in views/opac/calendar.tt */
@@ -2259,6 +2274,7 @@
           start,
           end,
           blackedout: 0,
+          equipment,
         }),
       });
 
@@ -2368,7 +2384,7 @@
                     <div class="form-check">
                       <input
                         type="checkbox"
-                        class="form-check-input"
+                        class="form-check-input equipment-item"
                         id="${item.equipmentid}"
                       />
                       <label class="form-check-label" for="${item.equipmentid}"

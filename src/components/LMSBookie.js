@@ -91,8 +91,21 @@ export default class LMSBookie extends LitElement {
       this.renderRoot.getElementById("room"),
       this.renderRoot.getElementById("start-datetime"),
       this.renderRoot.getElementById("duration"),
+      this.renderRoot.querySelectorAll(".equipment-item"),
     ];
     const [roomid, start, duration] = inputs.map((input) => input.value);
+
+    /** We filter for checked checkbox inputs here. */
+    const [, , , equipmentInputs] = inputs;
+    const equipment = [...equipmentInputs].reduce(
+      (accumulator, equipmentInput) => {
+        if (equipmentInput.checked) {
+          accumulator.push(equipmentInput.id);
+        }
+        return accumulator;
+      },
+      []
+    );
 
     /** Important note: This uses the dayjs library present in Koha
      *  You'll find this included as an asset in views/opac/calendar.tt */
@@ -112,6 +125,7 @@ export default class LMSBookie extends LitElement {
         start,
         end,
         blackedout: 0,
+        equipment,
       }),
     });
 
@@ -221,7 +235,7 @@ export default class LMSBookie extends LitElement {
                     <div class="form-check">
                       <input
                         type="checkbox"
-                        class="form-check-input"
+                        class="form-check-input equipment-item"
                         id="${item.equipmentid}"
                       />
                       <label class="form-check-label" for="${item.equipmentid}"
