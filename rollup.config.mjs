@@ -1,8 +1,8 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
-import template from "rollup-plugin-html-literals";
+// import template from "rollup-plugin-html-literals";
 // import analyze from 'rollup-plugin-analyzer';
-import { terser } from 'rollup-plugin-terser';
+// import { terser } from 'rollup-plugin-terser';
 
 export default [
   {
@@ -16,8 +16,8 @@ export default [
     plugins: [
       nodeResolve(),
       commonjs(),
-      template(),
-      terser(),
+      // template(),
+      // terser(),
       // analyze(),
     ],
   },

@@ -196,6 +196,10 @@ export default class LMSModal extends LitElement {
   _getFieldMarkup(field) {
     if (!field.desc) return html``;
     if (field.type === "select" && field.entries) {
+      /** We have to initialize the select with a default
+       *  value because otherwise NULL is supplied until
+       *  the first change event occurs. */
+      [{ value: field.value }] = field.entries;
       return html`<label class="label">${field.desc}</label>
         <select
           name=${field.name}

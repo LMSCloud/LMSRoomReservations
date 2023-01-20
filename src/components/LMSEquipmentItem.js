@@ -99,13 +99,19 @@ export default class LMSEquipmentItem extends LitElement {
         headers: {
           Accept: "",
         },
-        body: JSON.stringify({
-          equipmentname: this.equipmentname,
-          description: this.description,
-          image: this.image,
-          maxbookabletime: this.maxbookabletime,
-          roomid: this.roomid,
-        }),
+        /** We need to filter properties from the payload the are null
+         *  because the backend set NULL by default on non-supplied args */
+        body: JSON.stringify(
+          Object.fromEntries(
+            Object.entries({
+              equipmentname: this.equipmentname,
+              description: this.description,
+              image: this.image,
+              maxbookabletime: this.maxbookabletime,
+              roomid: this.roomid,
+            }).filter(([, value]) => !["", null, "null"].includes(value))
+          )
+        ),
       }
     );
     const result = await response.json();
@@ -133,7 +139,9 @@ export default class LMSEquipmentItem extends LitElement {
         <input
           type="text"
           ?disabled=${!this.editable}
-          .value=${this.description.match(/^null$/i) ? null : this.description ?? ""}
+          .value=${this.description.match(/^null$/i)
+            ? null
+            : this.description ?? ""}
           @input=${(e) => {
             this.description = e.target.value;
           }}
@@ -153,7 +161,9 @@ export default class LMSEquipmentItem extends LitElement {
         <input
           type="text"
           ?disabled=${!this.editable}
-          .value=${this.maxbookabletime.match(/^null$/i) ? null : this.description ?? ""}
+          .value=${this.maxbookabletime.match(/^null$/i)
+            ? null
+            : this.maxbookabletime ?? ""}
           @input=${(e) => {
             this.maxbookabletime = e.target.value;
           }}
