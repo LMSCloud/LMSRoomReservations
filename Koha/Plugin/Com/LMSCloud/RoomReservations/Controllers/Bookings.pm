@@ -165,13 +165,20 @@ sub _check_and_save_booking {
         $sth->execute(@bind);
 
         my $new_booking_id = $sth->last_insert_id();
-        my $has_inserted   = _insert_booking_equipment( $new_booking_id, $body );
-        if ( !$has_inserted ) {
-            $dbh->rollback;    # rollback transaction
-            return $c->render( status => 400, openapi => { error => q{The equipment you selected couldn't be booked.} } );
+        if ( defined $body->{'equipment'} && scalar $body->{'equipment'} > 0 ) {
+            foreach my $item ( @{ $body->{'equipment'} } ) {
+                my ( $stmt, @bind ) = $sql->insert(
+                    $BOOKINGS_EQUIPMENT_TABLE,
+                    {   bookingid   => $new_booking_id,
+                        equipmentid => $item,
+                    }
+                );
+                my $sth = $dbh->prepare($stmt);
+                $sth->execute(@bind);
+            }
         }
 
-        $dbh->commit;          # commit transaction
+        $dbh->commit;    # commit transaction
         return $c->render( status => defined $booking_id ? 200 : 201, openapi => $body );
     }
     catch {
@@ -257,32 +264,6 @@ sub _has_conflicting_booking {
     my ($conflict_count) = $check_sth->fetchrow_array;
 
     return $conflict_count > 0;
-}
-
-sub _insert_booking_equipment {
-    my ( $new_booking_id, $body ) = @_;
-
-    my $dbh = C4::Context->dbh;
-    my $sql = SQL::Abstract->new;
-
-    try {
-        if ( defined $body->{'equipment'} && scalar $body->{'equipment'} > 0 ) {
-            foreach my $item ( @{ $body->{'equipment'} } ) {
-                my ( $stmt, @bind ) = $sql->insert(
-                    $BOOKINGS_EQUIPMENT_TABLE,
-                    {   bookingid   => $new_booking_id,
-                        equipmentid => $item,
-                    }
-                );
-                my $sth = $dbh->prepare($stmt);
-                $sth->execute(@bind);
-            }
-        }
-    }
-    catch {
-        return 0;
-    }
-    return 1;
 }
 
 1;
