@@ -29,30 +29,20 @@
         })
       });
 
-    RoomReservationBundle.renderOnUpdate({
+    const renderOpts = {
       entryPoint,
       tagname: 'lms-equipment-item',
-      eventName: 'modified',
       endpoint,
       options: {
         headers: {
-          'Accept': '',
+          Accept: '',
         }
-      },
-    });
+      }
+    };
+    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'modified'});
+    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'deleted'});
 
     const [eventTarget] = Array.from(document.getElementsByTagName('lms-equipment-modal'));
-    RoomReservationBundle.renderOnUpdate({
-      entryPoint,
-      tagname: 'lms-equipment-item',
-      eventName: 'created',
-      eventTarget,
-      endpoint,
-      options: {
-        headers: {
-          'Accept': '',
-        }
-      },
-    });
+    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'created', eventTarget});
   </script>
 [% END %]

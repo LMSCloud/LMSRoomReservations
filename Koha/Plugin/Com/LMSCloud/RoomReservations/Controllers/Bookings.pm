@@ -108,6 +108,18 @@ sub delete {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
+        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, q{*}, { bookingid => $booking_id } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $equipment = $sth->fetchrow_hashref();
+        if ( !$equipment ) {
+            return $c->render(
+                status  => 404,
+                openapi => { error => 'Object not found' }
+            );
+        }
+
         my ( $stmt, @bind ) = $sql->delete( $BOOKINGS_TABLE, { bookingid => $booking_id } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);

@@ -639,7 +639,7 @@
         }
       ],
       "responses": {
-        "200": {
+        "204": {
           "description": "Successful response"
         },
         "default": {

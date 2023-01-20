@@ -8,6 +8,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context;
 use Try::Tiny;
+use SQL::Abstract;
 
 our $VERSION = '1.0.0';
 
@@ -121,24 +122,26 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $roomid = $c->validation->param('roomid');
+
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $roomid = $c->validation->param('roomid');
-        my $query  = "SELECT * FROM $ROOMS_TABLE WHERE roomid = ?";
-        my $sth    = $dbh->prepare($query);
-        $sth->execute($roomid);
+        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { roomid => $roomid } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
-        my $room = $sth->fetchrow_hashref();
-        if ( !$room ) {
+        my $equipment = $sth->fetchrow_hashref();
+        if ( !$equipment ) {
             return $c->render(
                 status  => 404,
                 openapi => { error => 'Object not found' }
             );
         }
 
-        $query = "DELETE FROM $ROOMS_TABLE WHERE roomid = ?";
-        $sth   = $dbh->prepare($query);
-        $sth->execute($roomid);
+        my ( $stmt, @bind ) = $sql->delete( $EQUIPMENT_TABLE, { roomid => $roomid } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         return $c->render(
             status  => 204,

@@ -25,7 +25,7 @@ function renderOnUpdate({
   const eventTargetRef = eventTarget || entryPoint;
   eventTargetRef.addEventListener(eventName, async () => {
     const response = await fetch(endpoint, options);
-    if ([200, 201].includes(response.status)) {
+    if ([200, 201, 204].includes(response.status)) {
       const result = await response.json();
       entryPointRef.innerHTML = '';
       result.forEach((item) => {

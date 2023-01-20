@@ -114,11 +114,30 @@ export default class LMSEquipmentItem extends LitElement {
         ),
       }
     );
-    const result = await response.json();
 
-    // Emit an event with the current property values
-    const event = new CustomEvent("modified", { bubbles: true });
-    this.dispatchEvent(event);
+    if ([200, 201].includes(response.status)) {
+      // Emit an event with the current property values
+      const event = new CustomEvent("modified", { bubbles: true });
+      this.dispatchEvent(event);
+    }
+  }
+
+  async handleDelete() {
+    const response = await fetch(
+      `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "",
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      // Emit an event with the current property values
+      const event = new CustomEvent("modified", { bubbles: true });
+      this.dispatchEvent(event);
+    }
   }
 
   render() {
@@ -192,6 +211,7 @@ export default class LMSEquipmentItem extends LitElement {
         <div class="buttons">
           <button class="button" @click=${this.handleEdit}>Edit</button>
           <button class="button" @click=${this.handleSave}>Save</button>
+          <button class="button" @click=${this.handleDelete}>Delete</button>
         </div>
       </div>
     `;

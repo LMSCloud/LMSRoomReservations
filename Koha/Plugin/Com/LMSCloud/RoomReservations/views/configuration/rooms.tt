@@ -28,29 +28,21 @@
           entryPoint.appendChild(lmsRoom);
         })
       });
-    RoomReservationBundle.renderOnUpdate({
+
+    const renderOpts = {
       entryPoint,
       tagname: 'lms-room',
-      eventName: 'modified',
       endpoint,
       options: {
         headers: {
-          'Accept': '',
+          Accept: '',
         }
-      },
-    });
+      }
+    };
+    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'modified'});
+    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'deleted'});
+
     const [eventTarget] = Array.from(document.getElementsByTagName('lms-room-modal'));
-    RoomReservationBundle.renderOnUpdate({
-      entryPoint,
-      tagname: 'lms-room',
-      eventName: 'created',
-      eventTarget,
-      endpoint,
-      options: {
-        headers: {
-          'Accept': '',
-        }
-      },
-    });
+    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'created', eventTarget});
   </script>
 [% END %]

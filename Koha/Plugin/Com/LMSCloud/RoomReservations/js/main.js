@@ -111,6 +111,10 @@
       this.dispatchEvent(event);
     }
 
+    handleDelete() {
+      console.log("UNIMPLEMENTED");
+    }
+
     render() {
       return y`
       <div class="card w-0">
@@ -175,6 +179,7 @@
         <div class="buttons">
           <button @click=${this.handleEdit} class="button">Edit</button>
           <button @click=${this.handleSave} class="button">Save</button>
+          <button @click=${this.handleDelete} class="button">Delete</button>
         </div>
       </div>
     `;
@@ -590,11 +595,30 @@
           ),
         }
       );
-      await response.json();
 
-      // Emit an event with the current property values
-      const event = new CustomEvent("modified", { bubbles: true });
-      this.dispatchEvent(event);
+      if ([200, 201].includes(response.status)) {
+        // Emit an event with the current property values
+        const event = new CustomEvent("modified", { bubbles: true });
+        this.dispatchEvent(event);
+      }
+    }
+
+    async handleDelete() {
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "",
+          },
+        }
+      );
+
+      if (response.status === 204) {
+        // Emit an event with the current property values
+        const event = new CustomEvent("modified", { bubbles: true });
+        this.dispatchEvent(event);
+      }
     }
 
     render() {
@@ -668,6 +692,7 @@
         <div class="buttons">
           <button class="button" @click=${this.handleEdit}>Edit</button>
           <button class="button" @click=${this.handleSave}>Save</button>
+          <button class="button" @click=${this.handleDelete}>Delete</button>
         </div>
       </div>
     `;
@@ -799,10 +824,6 @@
     }
 
     _handleSave() {
-      console.log(this._notImplementedInBaseMessage);
-    }
-
-    _handleChange() {
       console.log(this._notImplementedInBaseMessage);
     }
 
@@ -952,8 +973,6 @@
       }
     }
 
-    _handleChange() {}
-
     constructor() {
       super();
       this._isEditable = true;
@@ -1014,8 +1033,6 @@
         [start, end].forEach((input) => (input.disabled = true));
       }
     }
-
-    _handleChange() {}
 
     async _init() {
       const endpoint = "/api/v1/contrib/roomreservations/open_hours";
@@ -2530,7 +2547,7 @@
     const eventTargetRef = eventTarget || entryPoint;
     eventTargetRef.addEventListener(eventName, async () => {
       const response = await fetch(endpoint, options);
-      if ([200, 201].includes(response.status)) {
+      if ([200, 201, 204].includes(response.status)) {
         const result = await response.json();
         entryPointRef.innerHTML = '';
         result.forEach((item) => {

@@ -76,9 +76,28 @@ export default class LMSRoom extends LitElement {
 
   handleSave() {
     this.editable = false;
+    
     // Emit an event with the current property values
     const event = new CustomEvent('modified', { bubbles: true });
     this.dispatchEvent(event);
+  }
+
+  async handleDelete() {
+    const response = await fetch(
+      `/api/v1/contrib/roomreservations/equipment/${this.roomid}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "",
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      // Emit an event with the current property values
+      const event = new CustomEvent("deleted", { bubbles: true });
+      this.dispatchEvent(event);
+    }
   }
 
   render() {
@@ -145,6 +164,7 @@ export default class LMSRoom extends LitElement {
         <div class="buttons">
           <button @click=${this.handleEdit} class="button">Edit</button>
           <button @click=${this.handleSave} class="button">Save</button>
+          <button @click=${this.handleDelete} class="button">Delete</button>
         </div>
       </div>
     `;

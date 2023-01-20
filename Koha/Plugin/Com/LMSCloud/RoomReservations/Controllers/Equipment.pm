@@ -205,12 +205,14 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $equipmentid = $c->validation->param('equipmentid');
+
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $equipmentid = $c->validation->param('equipmentid');
-        my $query       = "SELECT * FROM $EQUIPMENT_TABLE WHERE equipmentid = ?";
-        my $sth         = $dbh->prepare($query);
-        $sth->execute($equipmentid);
+        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         my $equipment = $sth->fetchrow_hashref();
         if ( !$equipment ) {
@@ -220,13 +222,13 @@ sub delete {
             );
         }
 
-        $query = "DELETE FROM $EQUIPMENT_TABLE WHERE equipmentid = ?";
-        $sth   = $dbh->prepare($query);
-        $sth->execute($equipmentid);
+        my ( $stmt, @bind ) = $sql->delete( $EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         return $c->render(
-            status  => 200,
-            openapi => { success => 1 }
+            status  => 204,
+            openapi => q{}
         );
     }
     catch {
