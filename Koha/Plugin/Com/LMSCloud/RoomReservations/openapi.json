@@ -1333,6 +1333,37 @@
           }
         }
       }
+    },
+    "delete": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#delete",
+      "tags": ["bookings"],
+      "summary": "Delete a single room booking",
+      "operationId": "deleteBooking",
+      "parameters": [
+        {
+          "name": "booking_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "The booking was deleted"
+        },
+        "404": {
+          "description": "The booking was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

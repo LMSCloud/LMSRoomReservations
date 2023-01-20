@@ -59,6 +59,27 @@ export default class LMSBookingsTable extends LMSTable {
 
   _handleChange() {}
 
+  async _handleDelete(e) {
+    let parent = e.target.parentElement;
+    while (parent.tagName !== "TR") {
+      parent = parent.parentElement;
+    }
+
+    /** The api expects integers so we convert them */
+    const [bookingid] = [
+      ...Array.from(parent.children).map((element) =>
+        parseInt(element.textContent, 10)
+      ),
+    ];
+
+    const response = await fetch(`/api/v1/contrib/roomreservations/bookings/${bookingid}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "",
+      },
+    });
+  }
+
   async _getData() {
     const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
       method: "GET",

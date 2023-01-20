@@ -103,21 +103,18 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $booking_id = $c->validation->param('booking_id');
+
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $json = $c->req->body;
-        my $body = from_json($json);
-
-        my $query = "DELETE FROM $BOOKINGS_TABLE WHERE bookingid = ?";
-        my $sth   = $dbh->prepare($query);
-
-        for my $booking ( $body->@* ) {
-            $sth->execute( $booking->{'bookingid'} );
-        }
+        my ( $stmt, @bind ) = $sql->delete( $BOOKINGS_TABLE, { bookingid => $booking_id } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         return $c->render(
-            status  => 200,
-            openapi => $body
+            status  => 204,
+            openapi => q{},
         );
     }
     catch {

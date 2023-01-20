@@ -45,6 +45,10 @@ export default class LMSTable extends LitElement {
     console.log(this._notImplementedInBaseMessage);
   }
 
+  _handleDelete() {
+    console.log(this._notImplementedInBaseMessage);
+  }
+
   render() {
     const { data } = this;
 
@@ -69,19 +73,18 @@ export default class LMSTable extends LitElement {
                           <td @change=${this._handleChange}>
                             <div class="columns">
                               <div class="column">
-                                <button
-                                  @click=${this._handleEdit}
-                                  class=""
-                                >
+                                <button @click=${this._handleEdit} class="">
                                   Edit
                                 </button>
                               </div>
                               <div class="column">
-                                <button
-                                  @click=${this._handleSave}
-                                  class=""
-                                >
+                                <button @click=${this._handleSave} class="">
                                   Save
+                                </button>
+                              </div>
+                              <div class="column">
+                                <button @click=${this._handleDelete} class="">
+                                  Delete
                                 </button>
                               </div>
                             </div>

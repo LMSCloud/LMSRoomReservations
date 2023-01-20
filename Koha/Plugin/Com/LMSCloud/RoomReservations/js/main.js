@@ -806,6 +806,10 @@
       console.log(this._notImplementedInBaseMessage);
     }
 
+    _handleDelete() {
+      console.log(this._notImplementedInBaseMessage);
+    }
+
     render() {
       const { data } = this;
 
@@ -830,19 +834,18 @@
                           <td @change=${this._handleChange}>
                             <div class="columns">
                               <div class="column">
-                                <button
-                                  @click=${this._handleEdit}
-                                  class=""
-                                >
+                                <button @click=${this._handleEdit} class="">
                                   Edit
                                 </button>
                               </div>
                               <div class="column">
-                                <button
-                                  @click=${this._handleSave}
-                                  class=""
-                                >
+                                <button @click=${this._handleSave} class="">
                                   Save
+                                </button>
+                              </div>
+                              <div class="column">
+                                <button @click=${this._handleDelete} class="">
+                                  Delete
                                 </button>
                               </div>
                             </div>
@@ -1118,6 +1121,27 @@
     }
 
     _handleChange() {}
+
+    async _handleDelete(e) {
+      let parent = e.target.parentElement;
+      while (parent.tagName !== "TR") {
+        parent = parent.parentElement;
+      }
+
+      /** The api expects integers so we convert them */
+      const [bookingid] = [
+        ...Array.from(parent.children).map((element) =>
+          parseInt(element.textContent, 10)
+        ),
+      ];
+
+      await fetch(`/api/v1/contrib/roomreservations/bookings/${bookingid}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "",
+        },
+      });
+    }
 
     async _getData() {
       const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
