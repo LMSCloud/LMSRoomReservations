@@ -88,8 +88,6 @@ export default class LMSSettingsTable extends LMSTable {
     }
   }
 
-  _handleChange() {}
-
   constructor() {
     super();
     this._isEditable = true;

@@ -41,10 +41,6 @@ export default class LMSTable extends LitElement {
     console.log(this._notImplementedInBaseMessage);
   }
 
-  _handleChange() {
-    console.log(this._notImplementedInBaseMessage);
-  }
-
   _handleDelete() {
     console.log(this._notImplementedInBaseMessage);
   }
@@ -70,7 +66,7 @@ export default class LMSTable extends LitElement {
                     )}
                     ${this._isEditable
                       ? html`
-                          <td @change=${this._handleChange}>
+                          <td>
                             <div class="columns">
                               <div class="column">
                                 <button @click=${this._handleEdit} class="">

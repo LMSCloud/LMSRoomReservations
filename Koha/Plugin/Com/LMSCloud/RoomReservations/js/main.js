@@ -831,7 +831,7 @@
                     )}
                     ${this._isEditable
                       ? y`
-                          <td @change=${this._handleChange}>
+                          <td>
                             <div class="columns">
                               <div class="column">
                                 <button @click=${this._handleEdit} class="">
@@ -1117,10 +1117,10 @@
         inputs.forEach((input) => {
           input.disabled = true;
         });
+
+        this._getData();
       }
     }
-
-    _handleChange() {}
 
     async _handleDelete(e) {
       let parent = e.target.parentElement;
@@ -1135,12 +1135,16 @@
         ),
       ];
 
-      await fetch(`/api/v1/contrib/roomreservations/bookings/${bookingid}`, {
+      const response = await fetch(`/api/v1/contrib/roomreservations/bookings/${bookingid}`, {
         method: "DELETE",
         headers: {
           Accept: "",
         },
       });
+
+      if (response.status === 204) {
+        this._getData();
+      }
     }
 
     async _getData() {

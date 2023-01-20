@@ -54,10 +54,10 @@ export default class LMSBookingsTable extends LMSTable {
       inputs.forEach((input) => {
         input.disabled = true;
       });
+
+      this._getData();
     }
   }
-
-  _handleChange() {}
 
   async _handleDelete(e) {
     let parent = e.target.parentElement;
@@ -78,6 +78,10 @@ export default class LMSBookingsTable extends LMSTable {
         Accept: "",
       },
     });
+
+    if (response.status === 204) {
+      this._getData();
+    }
   }
 
   async _getData() {

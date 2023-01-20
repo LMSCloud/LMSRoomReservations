@@ -53,8 +53,6 @@ export default class LMSOpenHoursTable extends LMSTable {
     }
   }
 
-  _handleChange() {}
-
   async _init() {
     const endpoint = "/api/v1/contrib/roomreservations/open_hours";
     const response = await fetch(endpoint, {
