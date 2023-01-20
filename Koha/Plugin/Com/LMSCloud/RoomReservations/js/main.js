@@ -192,6 +192,7 @@
         createOpts: { type: Object },
         editable: { type: Boolean },
         isOpen: { type: Boolean },
+        _alertMessage: { state: true },
       };
     }
 
@@ -307,6 +308,7 @@
       };
       this.editable = false;
       this.isOpen = false;
+      this._alertMessage = "";
     }
 
     _toggleModal() {
@@ -315,7 +317,7 @@
 
     async _create(e) {
       e.preventDefault();
-      const { endpoint, method, multiple } = this.createOpts;
+      const { endpoint, method } = this.createOpts;
       const response = await fetch(`${endpoint}`, {
         method,
         headers: {
@@ -330,13 +332,20 @@
       });
 
       if (response.status === 201) {
-        this._toggleModal(); /** Implement success toast here */
+        this._toggleModal();
 
         const event = new CustomEvent("created", { bubbles: true });
         this.dispatchEvent(event);
       }
 
-      if ([400, 500].includes(response.status)) ;
+      if ([400, 500].includes(response.status)) {
+        const result = await response.json();
+        this._alertMessage = `Sorry! ${result.error}`;
+      }
+    }
+
+    _dismissAlert() {
+      this._alertMessage = "";
     }
 
     connectedCallback() {
@@ -363,6 +372,12 @@
       ${this.isOpen
         ? y`
             <div class="modal">
+              <div role="alert" ?hidden=${!this._alertMessage}>
+                ${this._alertMessage}
+                <button @click=${this._dismissAlert} type="button">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
               <form @submit="${this._create}">
                 ${this.fields.map((field) => this._getFieldMarkup(field))}
                 <div class="buttons">
