@@ -113,7 +113,7 @@ sub update {
         $sth   = $dbh->prepare($query);
         $sth->execute( $new_open_hours->{'start'}, $new_open_hours->{'end'}, $day );
 
-        return $c->render( status => 201, openapi => { $new_open_hours->%*, day => $day } );
+        return $c->render( status => 201, openapi => { %{$new_open_hours}, day => $day } );
     }
     catch {
         $c->unhandled_exception($_);

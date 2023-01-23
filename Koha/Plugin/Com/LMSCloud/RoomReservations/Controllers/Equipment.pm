@@ -71,7 +71,7 @@ sub get {
 
         my $roomid = $sth->fetchrow_hashref();
 
-        return $c->render( status => 200, openapi => $roomid ? { $equipment->%*, roomid => $roomid } : $equipment );
+        return $c->render( status => 200, openapi => $roomid ? { %{$equipment}, roomid => $roomid } : $equipment );
     }
     catch {
         $c->unhandled_exception($_);
@@ -142,7 +142,7 @@ sub update {
 
             return $c->render(
                 status  => 200,
-                openapi => $roomid ? { $new_equipment->%*, equipmentid => $equipmentid, roomid => $roomid } : { $new_equipment->%*, equipmentid => $equipmentid }
+                openapi => $roomid ? { %{$new_equipment}, equipmentid => $equipmentid, roomid => $roomid } : { %{$new_equipment}, equipmentid => $equipmentid }
             );
         }
 

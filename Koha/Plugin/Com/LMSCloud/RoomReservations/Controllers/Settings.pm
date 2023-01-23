@@ -140,8 +140,8 @@ sub delete {
             );
         }
 
-        my ( $stmt, @bind ) = $sql->delete( 'plugin_data', { plugin_class => 'Koha::Plugin::Com::LMSCloud::RoomReservations', plugin_key => $setting } );
-        my $sth = $dbh->prepare($stmt);
+        ( $stmt, @bind ) = $sql->delete( 'plugin_data', { plugin_class => 'Koha::Plugin::Com::LMSCloud::RoomReservations', plugin_key => $setting } );
+        $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
         return $c->render( status => 204, openapi => q{} );

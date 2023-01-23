@@ -115,7 +115,7 @@ sub update {
 
         return $c->render(
             status  => 200,
-            openapi => { $new_room->%*, roomid => $roomid }
+            openapi => { %{$new_room}, roomid => $roomid }
         );
     }
     catch {
@@ -144,8 +144,8 @@ sub delete {
             );
         }
 
-        my ( $stmt, @bind ) = $sql->delete( $ROOMS_TABLE, { roomid => $roomid } );
-        my $sth = $dbh->prepare($stmt);
+        ( $stmt, @bind ) = $sql->delete( $ROOMS_TABLE, { roomid => $roomid } );
+        $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
         return $c->render(
