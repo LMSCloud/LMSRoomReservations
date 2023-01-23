@@ -226,18 +226,19 @@ sub _is_open_during_booking_time {
     # Time::Piece starts weeks on Sundays. To get around that, we use the wday method and
     # subtract one from the return value (1 = Sunday, 1..7) and pick the respective entry
     # from the conversion array to stay in the german/european notation.
-    my $wday_conversion_map = {
-        MONDAY    => 1,
-        TUESDAY   => 2,
-        WEDNESDAY => 3,
-        THURSDAY  => 4,
-        FRIDAY    => 5,
-        SATURDAY  => 6,
-        SUNDAY    => 0,
+    use constant {
+        MONDAY    => 0,
+        TUESDAY   => 1,
+        WEDNESDAY => 2,
+        THURSDAY  => 3,
+        FRIDAY    => 4,
+        SATURDAY  => 5,
+        SUNDAY    => 6,
     };
+    my @wday_conversion_arr = ( SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY );
     my ( $where, @bind ) = $sql->where(
         {   -and => [
-                day   => $wday_conversion_map->{ Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->wday - 1 },
+                day   => $wday_conversion_arr[ Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->wday - 1 ],
                 start => { '<=' => Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' )->hms },
                 end   => { '>=' => Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms },
             ]
