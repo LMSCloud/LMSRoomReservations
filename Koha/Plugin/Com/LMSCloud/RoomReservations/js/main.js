@@ -2268,6 +2268,7 @@
       _equipment: { state: true },
       _alertMessage: { state: true },
       _selectedRoom: { state: true },
+      _defaultMaxBookingTime: { state: true },
     };
 
     static styles = [
@@ -2309,11 +2310,16 @@
 
     async _init() {
       const options = { headers: { accept: "" } };
-      const [openHours, rooms, equipment] = await Promise.all([
-        fetch("/api/v1/contrib/roomreservations/open_hours", options),
-        fetch("/api/v1/contrib/roomreservations/rooms", options),
-        fetch("/api/v1/contrib/roomreservations/equipment", options),
-      ]);
+      const [openHours, rooms, equipment, defaultMaxBookingTime] =
+        await Promise.all([
+          fetch("/api/v1/contrib/roomreservations/open_hours", options),
+          fetch("/api/v1/contrib/roomreservations/rooms", options),
+          fetch("/api/v1/contrib/roomreservations/equipment", options),
+          fetch(
+            "/api/v1/contrib/roomreservations/settings/default_max_booking_time",
+            options
+          ),
+        ]);
 
       if (openHours.ok) {
         this._openHours = await openHours.json();
@@ -2333,6 +2339,12 @@
       } else {
         console.error("Error fetching equipment");
       }
+
+      if (defaultMaxBookingTime.ok) {
+        this._defaultMaxBookingTime = await defaultMaxBookingTime.json();
+      } else {
+        console.error("Error fetching default max booking time");
+      }
     }
 
     constructor() {
@@ -2342,6 +2354,7 @@
       this._rooms = [];
       this._equipment = [];
       this._alertMessage = "";
+      this._defaultMaxBookingTime = undefined;
       this._init();
     }
 
@@ -2473,10 +2486,32 @@
                 aria-describedby="booking-help"
               />
               <datalist id="durations">
-                <option>30</option>
-                <option>60</option>
-                <option>90</option>
-                <option>120</option>
+                <!-- Check if this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime has a value, if not, output nothing
+                Else, create an array with chunks of 30, using this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime, 
+                if the value is not divisible by 30, add the value as the last element of the array, 
+                and then use map function to create <option> elements with each value of the array -->
+                ${this._selectedRoom.maxbookabletime ||
+                this._defaultMaxBookingTime
+                  ? Array.from(
+                      {
+                        length: Math.floor(
+                          (this._selectedRoom.maxbookabletime ||
+                            this._defaultMaxBookingTime) / 30
+                        ),
+                      },
+                      (_, i) => (i + 1) * 30
+                    )
+                      .concat(
+                        (this._selectedRoom.maxbookabletime ||
+                          this._defaultMaxBookingTime) %
+                          30 ===
+                          0
+                          ? []
+                          : this._selectedRoom.maxbookabletime ||
+                              this._defaultMaxBookingTime
+                      )
+                      .map((timespan) => y`<option>${timespan}</option>`)
+                  : ""}
               </datalist>
             </div>
             <div
