@@ -112,6 +112,11 @@ sub update {
             $new_room->{maxbookabletime},
             $new_room->{branch}, $new_room->{roomnumber}, $roomid
         );
+
+        return $c->render(
+            status  => 200,
+            openapi => { $new_room->%*, roomid => $roomid }
+        );
     }
     catch {
         $c->unhandled_exception($_);

@@ -104,12 +104,33 @@
       this.editable = true;
     }
 
-    handleSave() {
+    async handleSave() {
       this.editable = false;
-      
-      // Emit an event with the current property values
-      const event = new CustomEvent('modified', { bubbles: true });
-      this.dispatchEvent(event);
+
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "",
+          },
+          body: JSON.stringify({
+            maxcapacity: this.maxcapacity,
+            color: this.color,
+            image: this.image,
+            description: this.description,
+            maxbookabletime: this.maxbookabletime,
+            branch: this.branch,
+            roomnumber: this.roomnumber,
+          }),
+        }
+      );
+
+      if (response.status === 200) {
+        // Emit an event with the current property values
+        const event = new CustomEvent("modified", { bubbles: true });
+        this.dispatchEvent(event);
+      }
     }
 
     async handleDelete() {
@@ -140,7 +161,9 @@
           ?disabled=${!this.editable}
           type="text"
           .value=${this.roomnumber}
-          @input=${(e) => { this.roomnumber = e.target.value; }}
+          @input=${(e) => {
+            this.roomnumber = e.target.value;
+          }}
           class="input"
         />
         <label class="label">Max Capacity</label>
@@ -148,7 +171,9 @@
           ?disabled=${!this.editable}
           type="text"
           .value=${this.maxcapacity}
-          @input=${(e) => { this.maxcapacity = e.target.value; }}
+          @input=${(e) => {
+            this.maxcapacity = e.target.value;
+          }}
           class="input"
         />
         <label class="label">Description</label>
@@ -156,7 +181,9 @@
           ?disabled=${!this.editable}
           type="text"
           .value=${this.description}
-          @input=${(e) => { this.description = e.target.value; }}
+          @input=${(e) => {
+            this.description = e.target.value;
+          }}
           class="input"
         />
         <label class="label">Color</label>
@@ -164,7 +191,9 @@
           ?disabled=${!this.editable}
           type="color"
           .value=${this.color}
-          @input=${(e) => { this.color = e.target.value; }}
+          @input=${(e) => {
+            this.color = e.target.value;
+          }}
           class="input p-0"
         />
         <label class="label">Image</label>
@@ -172,7 +201,9 @@
           ?disabled=${!this.editable}
           type="text"
           .value=${this.image}
-          @input=${(e) => { this.image = e.target.value; }}
+          @input=${(e) => {
+            this.image = e.target.value;
+          }}
           class="input"
         />
         <label class="label">Branch</label>
@@ -180,7 +211,9 @@
           ?disabled=${!this.editable}
           type="text"
           .value=${this.branch}
-          @input=${(e) => { this.branch = e.target.value; }}
+          @input=${(e) => {
+            this.branch = e.target.value;
+          }}
           class="input"
         />
         <label class="label">Max Bookable Time</label>
@@ -188,7 +221,9 @@
           ?disabled=${!this.editable}
           type="number"
           .value=${this.maxbookabletime}
-          @input=${(e) => { this.maxbookabletime = e.target.value; }}
+          @input=${(e) => {
+            this.maxbookabletime = e.target.value;
+          }}
           class="input"
         />
         <div class="buttons">
@@ -201,7 +236,7 @@
     }
   }
 
-  customElements.define('lms-room', LMSRoom);
+  customElements.define("lms-room", LMSRoom);
 
   /* eslint-disable no-underscore-dangle */
 
