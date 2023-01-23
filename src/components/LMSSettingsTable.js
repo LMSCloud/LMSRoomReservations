@@ -8,6 +8,34 @@ export default class LMSSettingsTable extends LMSTable {
     };
   }
 
+  async _getData() {
+    const response = await fetch("/api/v1/contrib/roomreservations/settings", {
+      headers: {
+        Accept: "",
+      },
+    });
+
+    const result = await response.json();
+
+    let order = ["setting", "value", "description"];
+    this.data = result
+      .map((setting) => ({
+        ...setting,
+        value: this._getFieldMarkup(setting),
+      }))
+      .map((obj) => {
+        const { type, ...setting } = obj;
+        return setting;
+      })
+      .map((obj) =>
+        Object.fromEntries(
+          Object.entries(obj).sort(
+            ([a], [b]) => order.indexOf(a) - order.indexOf(b)
+          )
+        )
+      );
+  }
+
   _handleEdit(e) {
     let parent = e.target.parentElement;
     while (parent.tagName !== "TR") {
@@ -28,7 +56,7 @@ export default class LMSSettingsTable extends LMSTable {
 
     const inputs = Array.from(parent.querySelectorAll("input"));
     const actions = {
-      restricted_patron_categories: () => {
+      restricted_patron_categories: async () => {
         const data = inputs
           .filter((input) => !input.checked)
           .map((input) => ({
@@ -50,9 +78,8 @@ export default class LMSSettingsTable extends LMSTable {
           );
         });
 
-        return Promise.all(responses).then((response) =>
-          response.every((res) => res.status === 204) ? 204 : 207
-        );
+        const response = await Promise.all(responses);
+        return response.every((res) => res.status === 204) ? 204 : 207;
       },
       patron_categories: async () => {
         const data = inputs
@@ -78,14 +105,15 @@ export default class LMSSettingsTable extends LMSTable {
 
     const category = parent.firstElementChild.textContent;
     const action = actions[category];
+    const [input] = inputs;
     const status = action
       ? await action()
       : (
           await fetch(
-            `/api/v1/contrib/roomreservations/settings/${inputs[0].name}`,
+            `/api/v1/contrib/roomreservations/settings/${input.name}`,
             {
               method: "PUT",
-              body: JSON.stringify({ value: inputs[0].value }),
+              body: JSON.stringify({ value: input.value }),
               headers: {
                 Accept: "",
               },
@@ -98,12 +126,43 @@ export default class LMSSettingsTable extends LMSTable {
       inputs.forEach((input) => {
         input.disabled = true;
       });
+
+      this.data = this._getData();
     }
   }
 
   constructor() {
     super();
     this._isEditable = true;
+    this._getData();
+  }
+
+  _getFieldMarkup(field) {
+    if (["number", "string"].includes(field.type)) {
+      return `<input
+        class="input"
+        type="${field.type}"
+        name="${field.setting}"
+        value="${field.value}"
+        disabled
+      />`;
+    }
+
+    if (field.type === "array") {
+      return field.value.reduce(
+        (accumulator, category) => `${accumulator}
+          <label class="checkbox">
+            <input
+              type="checkbox"
+              name="${category.categorycode}"
+              ${field.setting === "restricted_patron_categories" && "checked"}
+              disabled
+            />
+            ${category.description}
+          </label> `,
+        ""
+      );
+    }
   }
 }
 

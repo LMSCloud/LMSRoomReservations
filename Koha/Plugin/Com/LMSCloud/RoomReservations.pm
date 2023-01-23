@@ -126,6 +126,7 @@ sub configure {
             $template->param(
                 op                           => $op,
                 default_max_booking_time     => $self->retrieve_data('default_max_booking_time'),
+                absolute_reservation_limit   => $self->retrieve_data('absolute_reservation_limit'),
                 daily_reservation_limit      => $self->retrieve_data('daily_reservation_limit'),
                 restricted_patron_categories => $restricted_patron_categories,
                 patron_categories            => sub {
@@ -218,7 +219,7 @@ sub install() {
               `day` INT NOT NULL,
               `start` TIME NOT NULL, -- start date/time of opening hours
               `end` TIME NOT NULL, -- end date/time of opening hours
-              `branch` VARCHAR(255), -- branch that contains the room
+              `branch` VARCHAR(255), -- branch on which open hours apply
               PRIMARY KEY (openid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF

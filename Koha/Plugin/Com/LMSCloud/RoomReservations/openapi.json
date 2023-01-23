@@ -674,6 +674,23 @@
                   "type": "string"
                 },
                 "value": {
+                  "type": ["string", "array"],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "categorycode": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "description": {
+                  "type": "string"
+                },
+                "type": {
                   "type": "string"
                 }
               }
