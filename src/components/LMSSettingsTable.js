@@ -29,7 +29,30 @@ export default class LMSSettingsTable extends LMSTable {
     const inputs = Array.from(parent.querySelectorAll("input"));
     const actions = {
       restricted_patron_categories: () => {
-        const data = inputs.filter((input) => !input.checked);
+        const data = inputs
+          .filter((input) => !input.checked)
+          .map((input) => ({
+            setting: `rcat_${input.name}`,
+          }));
+
+        const responses = [];
+        data.forEach(async (datum) => {
+          responses.push(
+            fetch(
+              `/api/v1/contrib/roomreservations/settings/${datum.setting}`,
+              {
+                method: "DELETE",
+                headers: {
+                  Accept: "",
+                },
+              }
+            )
+          );
+        });
+
+        return Promise.all(responses).then((response) =>
+          response.every((res) => res.status === 204) ? 204 : 207
+        );
       },
       patron_categories: async () => {
         const data = inputs
@@ -45,7 +68,7 @@ export default class LMSSettingsTable extends LMSTable {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
-              'Accept': '',
+              Accept: "",
             },
           }
         );
@@ -53,38 +76,28 @@ export default class LMSSettingsTable extends LMSTable {
       },
     };
 
-    if (inputs.length > 1) {
-      const category = parent.firstElementChild.textContent;
-      if (inputs.every((input) => input.type === "checkbox")) {
-        const action = actions[category];
-        if (action) {
-          const status = await action();
-          if ([201, 204].includes(status)) {
-            // Implement success message
-            inputs.forEach((input) => {
-              input.disabled = true;
-            });
-          }
-        }
-      }
-      return;
-    }
+    const category = parent.firstElementChild.textContent;
+    const action = actions[category];
+    const status = action
+      ? await action()
+      : (
+          await fetch(
+            `/api/v1/contrib/roomreservations/settings/${inputs[0].name}`,
+            {
+              method: "PUT",
+              body: JSON.stringify({ value: inputs[0].value }),
+              headers: {
+                Accept: "",
+              },
+            }
+          )
+        ).status;
 
-    const [input] = inputs;
-    const response = await fetch(
-      `/api/v1/contrib/roomreservations/settings/${input.name}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({ value: input.value }),
-        headers: {
-          'Accept': '',
-        },
-      }
-    );
-
-    if (response.status === 201) {
+    if ([201, 204].includes(status)) {
       // Implement success message
-      input.disabled = true;
+      inputs.forEach((input) => {
+        input.disabled = true;
+      });
     }
   }
 

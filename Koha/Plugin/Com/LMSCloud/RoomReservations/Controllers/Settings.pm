@@ -9,6 +9,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use C4::Context;
 use Try::Tiny;
 use JSON;
+use SQL::Abstract;
 
 our $VERSION = '1.0.0';
 
@@ -81,6 +82,38 @@ sub update {
 
         $self->store_data( { $setting => $body->{'value'} } );
         return $c->render( status => 201, openapi => $body );
+    }
+    catch {
+        $c->unhandled_exception($_);
+    };
+}
+
+sub delete {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $setting = $c->validation->param('setting');
+
+        my $sql = SQL::Abstract->new;
+        my $dbh = C4::Context->dbh;
+
+        my ( $stmt, @bind ) = $sql->select( 'plugin_data', q{*}, { plugin_class => 'Koha::Plugin::Com::LMSCloud::RoomReservations', plugin_key => $setting } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $setting_to_delete = $sth->fetchrow_hashref();
+        if ( !$setting_to_delete ) {
+            return $c->render(
+                status  => 404,
+                openapi => { error => 'Setting not found' }
+            );
+        }
+
+        my ( $stmt, @bind ) = $sql->delete( 'plugin_data', { plugin_class => 'Koha::Plugin::Com::LMSCloud::RoomReservations', plugin_key => $setting } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        return $c->render( status => 204, openapi => q{} );
     }
     catch {
         $c->unhandled_exception($_);
