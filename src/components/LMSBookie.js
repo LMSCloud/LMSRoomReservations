@@ -147,7 +147,7 @@ export default class LMSBookie extends LitElement {
         input.value = "";
       });
       this._alertMessage = "Success! Your booking is set.";
-      
+
       const event = new CustomEvent("submitted", { bubbles: true });
       this.dispatchEvent(event);
       return;
