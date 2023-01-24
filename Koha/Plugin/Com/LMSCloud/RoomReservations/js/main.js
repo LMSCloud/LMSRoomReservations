@@ -2478,7 +2478,7 @@
           input.value = "";
         });
         this._alertMessage = "Success! Your booking is set.";
-        
+
         const event = new CustomEvent("submitted", { bubbles: true });
         this.dispatchEvent(event);
         return;
@@ -2565,7 +2565,7 @@
                 Else, create an array with chunks of 30, using this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime, 
                 if the value is not divisible by 30, add the value as the last element of the array, 
                 and then use map function to create <option> elements with each value of the array -->
-                ${this._selectedRoom.maxbookabletime ||
+                ${this._selectedRoom?.maxbookabletime ||
                 this._defaultMaxBookingTime
                   ? Array.from(
                       {
