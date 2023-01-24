@@ -26,7 +26,7 @@ use LWP::UserAgent;
 use MARC::Record;
 use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
-use JSON::XS;
+use Try::Tiny;
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Bookings;
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Equipment;
