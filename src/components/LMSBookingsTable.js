@@ -144,6 +144,7 @@ export default class LMSBookingsTable extends LMSTable {
   constructor() {
     super();
     this._isEditable = true;
+    this._isDeletable = true;
     this.data = [];
     this._getData();
   }

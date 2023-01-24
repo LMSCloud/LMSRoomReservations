@@ -841,6 +841,7 @@
       return {
         data: { type: Array },
         _isEditable: { type: Boolean, attribute: false },
+        _isDeletable: { type: Boolean, attribute: false },
       };
     }
 
@@ -865,6 +866,7 @@
     constructor() {
       super();
       this._isEditable = false;
+      this._isDeletable = false;
       this._notImplementedInBaseMessage =
         "Implement this method in your extended LMSTable component.";
     }
@@ -914,7 +916,7 @@
                                   Save
                                 </button>
                               </div>
-                              <div class="column">
+                              <div class="column" ?hidden=${!this._isDeletable}>
                                 <button @click=${this._handleDelete} class="">
                                   Delete
                                 </button>
@@ -1412,6 +1414,7 @@
     constructor() {
       super();
       this._isEditable = true;
+      this._isDeletable = true;
       this.data = [];
       this._getData();
     }

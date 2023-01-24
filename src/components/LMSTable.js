@@ -5,6 +5,7 @@ export default class LMSTable extends LitElement {
     return {
       data: { type: Array },
       _isEditable: { type: Boolean, attribute: false },
+      _isDeletable: { type: Boolean, attribute: false },
     };
   }
 
@@ -29,6 +30,7 @@ export default class LMSTable extends LitElement {
   constructor() {
     super();
     this._isEditable = false;
+    this._isDeletable = false;
     this._notImplementedInBaseMessage =
       "Implement this method in your extended LMSTable component.";
   }
@@ -78,7 +80,7 @@ export default class LMSTable extends LitElement {
                                   Save
                                 </button>
                               </div>
-                              <div class="column">
+                              <div class="column" ?hidden=${!this._isDeletable}>
                                 <button @click=${this._handleDelete} class="">
                                   Delete
                                 </button>
