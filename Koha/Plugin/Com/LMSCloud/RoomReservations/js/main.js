@@ -2478,6 +2478,9 @@
           input.value = "";
         });
         this._alertMessage = "Success! Your booking is set.";
+        
+        const event = new CustomEvent("submitted", { bubbles: true });
+        this.dispatchEvent(event);
         return;
       }
 
@@ -2706,7 +2709,7 @@
       const response = await fetch(endpoint, options);
       if ([200, 201, 204].includes(response.status)) {
         const result = await response.json();
-        entryPointRef.innerHTML = '';
+        entryPointRef.innerHTML = "";
         result.forEach((item) => {
           const element = document.createElement(tagname);
           Object.keys(item).forEach((key) => {
@@ -2716,6 +2719,61 @@
         });
       }
     });
+  }
+
+  function renderCalendar() {
+    const currentDate = new Date();
+    const options = { headers: { accept: "" } };
+    const response = fetch("/api/v1/contrib/roomreservations/bookings", options);
+
+    const calendar = document.querySelector("lms-calendar");
+    if (!calendar) {
+      throw Error("No calendar reference found.");
+    }
+
+    calendar.heading = "Current Bookings";
+    calendar.activeDate = {
+      day: currentDate.getDate(),
+      month: currentDate.getMonth() + 1,
+      year: currentDate.getFullYear(),
+    };
+
+    response
+      .then((result) => result.json())
+      .then(async (entries) => {
+        const response = await fetch(
+          "/api/v1/contrib/roomreservations/rooms",
+          options
+        );
+        const rooms = await response.json();
+
+        calendar.entries = entries.map(({ roomid, start, end }) => {
+          const [s, e] = [new Date(start), new Date(end)];
+          const _roomid = roomid;
+          const room = rooms.find(({ roomid }) => roomid == _roomid);
+          return {
+            date: {
+              start: {
+                day: s.getDate(),
+                month: s.getMonth() + 1,
+                year: s.getFullYear(),
+              },
+              end: {
+                day: e.getDate(),
+                month: e.getMonth() + 1,
+                year: e.getFullYear(),
+              },
+            },
+            time: {
+              start: { hours: s.getHours(), minutes: s.getMinutes() },
+              end: { hours: e.getHours(), minutes: e.getMinutes() },
+            },
+            heading: room.roomnumber,
+            content: "booked",
+            color: room.color,
+          };
+        });
+      });
   }
 
   exports.LMSBookie = LMSBookie;
@@ -2733,6 +2791,7 @@
   exports.LMSTable = LMSTable;
   exports.LitElement = s;
   exports.html = y;
+  exports.renderCalendar = renderCalendar;
   exports.renderOnUpdate = renderOnUpdate;
 
   Object.defineProperty(exports, '__esModule', { value: true });

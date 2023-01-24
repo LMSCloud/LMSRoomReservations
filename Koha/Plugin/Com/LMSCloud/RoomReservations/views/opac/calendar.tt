@@ -26,38 +26,9 @@
         </div>
     </div>
     <script>
-        const currentDate = new Date();
-        const response = fetch('/api/v1/contrib/roomreservations/bookings', {
-            headers: {
-                accept: "",
-            },
-        });
-        const calendar = document.querySelector('lms-calendar');
-        calendar.heading = 'Current Bookings';
-        calendar.activeDate = {
-            day: currentDate.getDate(),
-            month: currentDate.getMonth() + 1,
-            year: currentDate.getFullYear()
-        };
-
-        response.then((result) => result.json()).then((entries) => {
-            calendar.entries = entries.map(({ roomid, start, end }) => {
-                const [s, e] = [new Date(start), new Date(end)];
-                return {
-                    date: {
-                        start: { day: s.getDate(), month: s.getMonth() + 1, year: s.getFullYear() },
-                        end: { day: e.getDate(), month: e.getMonth() + 1, year: e.getFullYear() },
-                    },
-                    time: {
-                        start: { hours: s.getHours(), minutes: s.getMinutes() },
-                        end: { hours: e.getHours(), minutes: e.getMinutes() },
-                    },
-                    heading: roomid,
-                    content: 'TEST',
-                    color: '#EFEFEF'
-                };
-            });
-        });
+        const lmsBookie = document.querySelector('lms-bookie');
+        RoomReservationBundle.renderCalendar();
+        lmsBookie.addEventListener('submitted', RoomReservationBundle.renderCalendar);
     </script>
 
 [% INCLUDE 'opac-bottom.inc' %]
