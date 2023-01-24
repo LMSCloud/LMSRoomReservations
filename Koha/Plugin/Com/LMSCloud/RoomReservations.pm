@@ -3,6 +3,9 @@ package Koha::Plugin::Com::LMSCloud::RoomReservations;
 ## It's good practice to use Modern::Perl
 use Modern::Perl;
 use utf8;
+use English qw( -no_match_vars );
+use 5.032;
+use Carp;
 
 ## Required for all plugins
 use base qw(Koha::Plugins::Base);
@@ -23,6 +26,7 @@ use LWP::UserAgent;
 use MARC::Record;
 use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
+use JSON::XS;
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Bookings;
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Equipment;
@@ -166,24 +170,25 @@ sub configure {
 sub install() {
     my ( $self, $args ) = @_;
 
-    my $ROOMS                  = $self->get_qualified_table_name('rooms');
-    my $ROOMS_IDX              = $self->get_qualified_table_name('rooms_idx');
-    my $BOOKINGS               = $self->get_qualified_table_name('bookings');
-    my $BOOKINGS_IDX           = $self->get_qualified_table_name('bookings_idx');
-    my $EQUIPMENT              = $self->get_qualified_table_name('equipment');
-    my $EQUIPMENT_IDX          = $self->get_qualified_table_name('equipment_idx');
-    my $ROOMS_EQUIPMENT        = $self->get_qualified_table_name('rooms_equipment');
-    my $ROOMS_EQUIPMENT_IDX    = $self->get_qualified_table_name('rooms_equipment_idx');
-    my $OPEN_HOURS             = $self->get_qualified_table_name('open_hours');
-    my $OPEN_HOURS_IDX         = $self->get_qualified_table_name('open_hours_idx');
-    my $BOOKINGS_EQUIPMENT     = $self->get_qualified_table_name('bookings_equipment');
-    my $BOOKINGS_EQUIPMENT_IDX = $self->get_qualified_table_name('bookings_equipment_idx');
+    try {
+        my $ROOMS                  = $self->get_qualified_table_name('rooms');
+        my $ROOMS_IDX              = $self->get_qualified_table_name('rooms_idx');
+        my $BOOKINGS               = $self->get_qualified_table_name('bookings');
+        my $BOOKINGS_IDX           = $self->get_qualified_table_name('bookings_idx');
+        my $EQUIPMENT              = $self->get_qualified_table_name('equipment');
+        my $EQUIPMENT_IDX          = $self->get_qualified_table_name('equipment_idx');
+        my $ROOMS_EQUIPMENT        = $self->get_qualified_table_name('rooms_equipment');
+        my $ROOMS_EQUIPMENT_IDX    = $self->get_qualified_table_name('rooms_equipment_idx');
+        my $OPEN_HOURS             = $self->get_qualified_table_name('open_hours');
+        my $OPEN_HOURS_IDX         = $self->get_qualified_table_name('open_hours_idx');
+        my $BOOKINGS_EQUIPMENT     = $self->get_qualified_table_name('bookings_equipment');
+        my $BOOKINGS_EQUIPMENT_IDX = $self->get_qualified_table_name('bookings_equipment_idx');
 
-    my $original_version = $self->retrieve_data('plugin_version');    # is this a new install or an upgrade?
+        my $original_version = $self->retrieve_data('plugin_version');    # is this a new install or an upgrade?
 
-    my @installer_statements = (
-        qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT, $ROOMS_EQUIPMENT, $EQUIPMENT, $OPEN_HOURS, $BOOKINGS, $ROOMS },
-        <<~"EOF",
+        my @installer_statements = (
+            qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT, $ROOMS_EQUIPMENT, $EQUIPMENT, $OPEN_HOURS, $BOOKINGS, $ROOMS },
+            <<~"EOF",
             CREATE TABLE $ROOMS (
               `roomid` INT NOT NULL AUTO_INCREMENT,
               `roomnumber` VARCHAR(20) NOT NULL, -- alphanumeric room identifier
@@ -196,8 +201,8 @@ sub install() {
             PRIMARY KEY (roomid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-        qq{CREATE INDEX $ROOMS_IDX ON $ROOMS(roomid);},
-        <<~"EOF",
+            qq{CREATE INDEX $ROOMS_IDX ON $ROOMS(roomid);},
+            <<~"EOF",
             CREATE TABLE $BOOKINGS (
               `bookingid` INT NOT NULL AUTO_INCREMENT,
               `borrowernumber` INT NOT NULL, -- foreign key; borrowers table
@@ -212,8 +217,8 @@ sub install() {
               CONSTRAINT calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-        qq{CREATE INDEX $BOOKINGS_IDX ON $BOOKINGS(borrowernumber, roomid);},
-        <<~"EOF",
+            qq{CREATE INDEX $BOOKINGS_IDX ON $BOOKINGS(borrowernumber, roomid);},
+            <<~"EOF",
             CREATE TABLE $OPEN_HOURS (
               `openid` INT NOT NULL AUTO_INCREMENT,
               `day` INT NOT NULL,
@@ -223,8 +228,8 @@ sub install() {
               PRIMARY KEY (openid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-        qq{CREATE INDEX $OPEN_HOURS_IDX ON $OPEN_HOURS(openid);},
-        <<~"EOF",
+            qq{CREATE INDEX $OPEN_HOURS_IDX ON $OPEN_HOURS(openid);},
+            <<~"EOF",
             CREATE TABLE $EQUIPMENT (
               `equipmentid` INT NOT NULL AUTO_INCREMENT,
               `equipmentname` VARCHAR(20) NOT NULL,
@@ -234,8 +239,8 @@ sub install() {
               PRIMARY KEY (equipmentid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-        qq{CREATE INDEX $EQUIPMENT_IDX ON $EQUIPMENT(equipmentid);},
-        <<~"EOF",
+            qq{CREATE INDEX $EQUIPMENT_IDX ON $EQUIPMENT(equipmentid);},
+            <<~"EOF",
             CREATE TABLE $ROOMS_EQUIPMENT (
               `roomid` INT NOT NULL,
               `equipmentid` INT NOT NULL,
@@ -246,8 +251,8 @@ sub install() {
               CONSTRAINT roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-        qq{CREATE INDEX $ROOMS_EQUIPMENT_IDX ON $ROOMS_EQUIPMENT(roomid, equipmentid);},
-        <<~"EOF",
+            qq{CREATE INDEX $ROOMS_EQUIPMENT_IDX ON $ROOMS_EQUIPMENT(roomid, equipmentid);},
+            <<~"EOF",
             CREATE TABLE $BOOKINGS_EQUIPMENT (
                 `bookingid` INT NOT NULL,
                 `equipmentid` INT NOT NULL,
@@ -258,19 +263,31 @@ sub install() {
                 CONSTRAINT bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-        qq{CREATE INDEX $BOOKINGS_EQUIPMENT_IDX ON $BOOKINGS_EQUIPMENT(bookingid, equipmentid);},
-    );
+            qq{CREATE INDEX $BOOKINGS_EQUIPMENT_IDX ON $BOOKINGS_EQUIPMENT(bookingid, equipmentid);},
+        );
 
-    if ( !defined $original_version ) {
-        for (@installer_statements) {
-            my $sth = C4::Context->dbh->prepare($_);
-            $sth->execute or croak C4::Context->dbh->errstr;
+        if ( !defined $original_version ) {
+            for (@installer_statements) {
+                my $sth = C4::Context->dbh->prepare($_);
+                $sth->execute;
+            }
         }
+
+        $self->store_data( { plugin_version => $VERSION } );
+
+        return 1;
     }
+    catch {
+        my $error = $_;
+        use Data::Dumper;
+        carp Dumper($error);
+        carp "INSTALL ERROR: $error";
 
-    $self->store_data( { plugin_version => $VERSION } );
+        return 0;
+    };
 
-    return 1;
+    carp 'Unexpected return value from install()';
+    return 0;
 }
 
 ## This is the 'upgrade' method. It will be triggered when a newer version of a
