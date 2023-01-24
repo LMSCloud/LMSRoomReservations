@@ -1106,13 +1106,17 @@
   class LMSOpenHoursTable extends LMSTable {
     static get properties() {
       return {
-        data: { type: Array },
+        data: {
+          type: Array,
+          convert: (value) => JSON.parse(value),
+        },
+        branch: { type: String },
         _isEditable: { type: Boolean, attribute: false },
       };
     }
 
     _handleEdit(e) {
-      if (this._isReady) {
+      if (this._isSetup) {
         let parent = e.target.parentElement;
         while (parent.tagName !== "TR") {
           parent = parent.parentElement;
@@ -1134,13 +1138,12 @@
       const inputs = Array.from(parent.querySelectorAll("input"));
       const [start, end] = inputs;
       const response = await fetch(
-        `/api/v1/contrib/roomreservations/open_hours/${
+        `/api/v1/contrib/roomreservations/open_hours/${this.branch}/${
         this._dayConversionMap[start.name]
       }`,
         {
           method: "PUT",
           body: JSON.stringify({
-            day: this._dayConversionMap[start.name],
             start: start.value,
             end: end.value,
           }),
@@ -1156,7 +1159,7 @@
       }
     }
 
-    async _init() {
+    async _setup() {
       const endpoint = "/api/v1/contrib/roomreservations/open_hours";
       const response = await fetch(endpoint, {
         method: "GET",
@@ -1165,11 +1168,14 @@
         },
       });
       const result = await response.json();
-      if (!result.length) {
+
+      const branchResult = result.filter((entry) => entry.branch === this.branch);
+      if (!branchResult.length) {
         const response = await fetch(endpoint, {
           method: "POST",
           body: JSON.stringify(
             Array.from({ length: 7 }, (_, i) => ({
+              branch: this.branch,
               day: i,
               start: "00:00",
               end: "00:00",
@@ -1179,9 +1185,44 @@
             Accept: "",
           },
         });
-        return response.status === 201;
+
+        this._isSetup = response.status === 201;
+        if (this._isSetup) {
+          const data = await this._getData();
+          this.data = this._init(data);
+        }
+        return;
       }
-      return result.length > 0;
+
+      this._isSetup = true;
+    }
+
+    _init(data) {
+      return (
+        data?.map((datum) => {
+          const { day, start, end } = datum;
+          const weekday = Object.keys(this._dayConversionMap)[day];
+          return {
+            day: weekday,
+            start: `<input class="input" type="time" name="${weekday}" value="${start}" disabled>`,
+            end: `<input class="input" type="time" name="${weekday}" value="${end}" disabled>`,
+          };
+        }) ?? []
+      );
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      if (this.data?.length) {
+        this.data = this._init(this.data);
+      }
+    }
+
+    render() {
+      return y`
+      <h4>${this.branch}</h4>
+      ${super.render()}
+    `;
     }
 
     constructor() {
@@ -1196,7 +1237,32 @@
         saturday: 5,
         sunday: 6,
       };
-      this._isReady = this._init();
+      this._isSetup = false;
+      this._setup();
+    }
+
+    async _getData() {
+      const endpoint = "/api/v1/contrib/roomreservations/open_hours";
+      const options = {
+        headers: {
+          Accept: "",
+        },
+      };
+      const response = await fetch(endpoint, options);
+      const result = await response.json();
+
+      if (result.length) {
+        const groupedResult = this._groupBy(result, (item) => item.branch);
+        console.log(groupedResult);
+        return groupedResult[this.branch];
+      }
+    }
+
+    _groupBy(array, predicate) {
+      return array.reduce((acc, value, index, array) => {
+        (acc[predicate(value, index, array)] ||= []).push(value);
+        return acc;
+      }, {});
     }
   }
 
@@ -2776,6 +2842,63 @@
       });
   }
 
+  function renderOpenHours() {
+    const entryPoint = document.getElementById("entry-point");
+    const endpoint = "/api/v1/contrib/roomreservations/open_hours";
+    const options = {
+      headers: {
+        Accept: "",
+      },
+    };
+    const openHours = fetch(endpoint, options);
+    openHours
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.length) {
+          const groupedResult = groupBy(result, (item) => item.branch);
+          Array.from(Object.entries(groupedResult)).forEach(([branch, data]) => {
+            const lmsOpenHoursTable = document.createElement(
+              "lms-open-hours-table",
+              {
+                is: "lms-open-hours-table",
+              }
+            );
+            lmsOpenHoursTable.setAttribute("branch", branch);
+            lmsOpenHoursTable.setAttribute("data", JSON.stringify(data));
+            entryPoint.appendChild(lmsOpenHoursTable);
+          });
+          return;
+        }
+
+        const branches = fetch("/api/v1/libraries");
+        branches
+          .then((response) => response.json())
+          .then((result) => {
+            result
+              .map((library) => ({
+                branch: library.library_id,
+              }))
+              .forEach(({ branch }) => {
+                const lmsOpenHoursTable = document.createElement(
+                  "lms-open-hours-table",
+                  {
+                    is: "lms-open-hours-table",
+                  }
+                );
+                lmsOpenHoursTable.setAttribute("branch", branch);
+                entryPoint.appendChild(lmsOpenHoursTable);
+              });
+          });
+      });
+  }
+
+  function groupBy(array, predicate) {
+    return array.reduce((acc, value, index, array) => {
+      (acc[predicate(value, index, array)] ||= []).push(value);
+      return acc;
+    }, {});
+  }
+
   exports.LMSBookie = LMSBookie;
   exports.LMSBookingsModal = LMSBookingsModal;
   exports.LMSBookingsTable = LMSBookingsTable;
@@ -2793,6 +2916,7 @@
   exports.html = y;
   exports.renderCalendar = renderCalendar;
   exports.renderOnUpdate = renderOnUpdate;
+  exports.renderOpenHours = renderOpenHours;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

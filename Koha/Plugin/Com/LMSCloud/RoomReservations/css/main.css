@@ -90,6 +90,10 @@ lms-bookie {
   gap: 1em;
 }
 
+.lmsr-content-block:has(lms-open-hours-table) {
+  flex-wrap: wrap;
+}
+
 .lmsr-menu {
   display: flex;
   gap: 1em;

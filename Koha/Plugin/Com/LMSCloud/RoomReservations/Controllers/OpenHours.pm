@@ -9,6 +9,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use C4::Context;
 use Try::Tiny;
 use JSON;
+use SQL::Abstract;
 
 our $VERSION = '1.0.0';
 
@@ -23,11 +24,12 @@ sub list {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $query = "SELECT * FROM $OPEN_HOURS_TABLE";
-        my $sth   = $dbh->prepare($query);
-        $sth->execute();
+        my ( $stmt, @bind ) = $sql->select( $OPEN_HOURS_TABLE, q{*} );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         my $open_hours = $sth->fetchall_arrayref( {} );
 
@@ -45,13 +47,14 @@ sub add {
         my $json = $c->req->body;
         my $body = from_json($json);
 
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $query = "INSERT INTO $OPEN_HOURS_TABLE (day, start, end) VALUES (?, ?, ?)";
-        my $sth   = $dbh->prepare($query);
-
-        for my $day ( $body->@* ) {
-            $sth->execute( $day->{'day'}, $day->{'start'}, $day->{'end'} );
+        my ( $stmt, @bind, $sth );
+        for my $entry ( $body->@* ) {
+            ( $stmt, @bind ) = $sql->insert( $OPEN_HOURS_TABLE, $entry );
+            $sth = $dbh->prepare($stmt);
+            $sth->execute(@bind);
         }
 
         return $c->render( status => 201, openapi => $body );
@@ -66,12 +69,15 @@ sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $branch = $c->validation->param('branch');
+        my $day    = $c->validation->param('day');
+
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $day   = $c->validation->param('day');
-        my $query = "SELECT * FROM $OPEN_HOURS_TABLE WHERE day = ?";
-        my $sth   = $dbh->prepare($query);
-        $sth->execute($day);
+        my ( $stmt, @bind ) = $sql->select( $OPEN_HOURS_TABLE, q{*}, { branch => $branch, day => $day } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         my $open_hours = $sth->fetchrow_hashref;
         if ( !$open_hours ) {
@@ -92,13 +98,15 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $day = $c->validation->param('day');
+        my $branch = $c->validation->param('branch');
+        my $day    = $c->validation->param('day');
 
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $query = "SELECT * FROM $OPEN_HOURS_TABLE WHERE day = ?";
-        my $sth   = $dbh->prepare($query);
-        $sth->execute($day);
+        my ( $stmt, @bind ) = $sql->select( $OPEN_HOURS_TABLE, q{*}, { branch => $branch, day => $day } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         my $open_hours = $sth->fetchrow_hashref();
         if ( !$open_hours ) {
@@ -109,11 +117,11 @@ sub update {
         }
 
         my $new_open_hours = $c->validation->param('body');
-        $query = "UPDATE $OPEN_HOURS_TABLE SET start = ?, end = ? WHERE day = ?";
-        $sth   = $dbh->prepare($query);
-        $sth->execute( $new_open_hours->{'start'}, $new_open_hours->{'end'}, $day );
+        ( $stmt, @bind ) = $sql->update( $OPEN_HOURS_TABLE, $new_open_hours, { branch => $branch, day => $day } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
-        return $c->render( status => 201, openapi => { %{$new_open_hours}, day => $day } );
+        return $c->render( status => 201, openapi => { %{$new_open_hours}, day => $day, branch => $branch } );
     }
     catch {
         $c->unhandled_exception($_);

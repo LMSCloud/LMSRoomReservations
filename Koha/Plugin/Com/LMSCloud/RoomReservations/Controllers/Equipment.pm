@@ -222,8 +222,8 @@ sub delete {
             );
         }
 
-        my ( $stmt, @bind ) = $sql->delete( $EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
-        my $sth = $dbh->prepare($stmt);
+        ( $stmt, @bind ) = $sql->delete( $EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
+        $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
         return $c->render(

@@ -2,45 +2,8 @@
 [% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
-    <lms-open-hours-table></lms-open-hours-table>
+    <div class="lmsr-content-block" id="entry-point"></div>
     <script>
-    const [entryPoint] = Array.from(document.getElementsByTagName('lms-open-hours-table'));
-    entryPoint.data = [
-        { 
-            "day": "Monday",
-            "open from": `<input class="input" type="time" name="monday" value="[% open_hours.monday.open_from %]" disabled>`,
-            "closed after": `<input class="input" type="time" name="monday" value="[% open_hours.monday.closed_after %]" disabled>`
-        },
-        { 
-            "day": "Tuesday",
-            "open from": `<input class="input" type="time" name="tuesday" value="[% open_hours.tuesday.open_from %]" disabled>`,
-            "closed after": `<input class="input" type="time" name="tuesday" value="[% open_hours.tuesday.closed_after %]" disabled>`
-        },
-        { 
-            "day": "Wednesday",
-            "open from": `<input class="input" type="time" name="wednesday" value="[% open_hours.wednesday.open_from %]" disabled>`,
-            "closed after": `<input class="input" type="time" name="wednesday" value="[% open_hours.wednesday.closed_after %]" disabled>`
-        },
-        { 
-            "day": "Thursday",
-            "open from": `<input class="input" type="time" name="thursday" value="[% open_hours.thursday.open_from %]" disabled>`,
-            "closed after": `<input class="input" type="time" name="thursday" value="[% open_hours.thursday.closed_after %]" disabled>`
-        },
-        { 
-            "day": "Friday",
-            "open from": `<input class="input" type="time" name="friday" value="[% open_hours.friday.open_from %]" disabled>`,
-            "closed after": `<input class="input" type="time" name="friday" value="[% open_hours.friday.closed_after %]" disabled>`
-        },
-        { 
-            "day": "Saturday",
-            "open from": `<input class="input" type="time" name="saturday" value="[% open_hours.saturday.open_from %]" disabled>`,
-            "closed after": `<input class="input" type="time" name="saturday" value="[% open_hours.saturday.closed_after %]" disabled>`
-        },
-        { 
-            "day": "Sunday",
-            "open from": `<input class="input" type="time" name="sunday" value="[% open_hours.sunday.open_from %]" disabled>`,
-            "closed after": `<input class="input" type="time" name="sunday" value="[% open_hours.sunday.closed_after %]" disabled>`
-        },
-    ];
-  </script>
+        RoomReservationBundle.renderOpenHours();
+    </script>
 [% END %]

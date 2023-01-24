@@ -921,6 +921,9 @@
                 "openid": {
                   "type": "integer"
                 },
+                "branch": {
+                  "type": "string"
+                },
                 "day": {
                   "type": "integer"
                 },
@@ -963,6 +966,9 @@
             "items": {
               "type": "object",
               "properties": {
+                "branch": {
+                  "type": "string"
+                },
                 "day": {
                   "type": "integer"
                 },
@@ -973,7 +979,7 @@
                   "type": "string"
                 }
               },
-              "required": ["day", "start", "end"]
+              "required": ["branch", "day", "start", "end"]
             }
           }
         }
@@ -988,6 +994,9 @@
               "properties": {
                 "openid": {
                   "type": "integer"
+                },
+                "branch": {
+                  "type": "string"
                 },
                 "day": {
                   "type": "integer"
@@ -1016,13 +1025,19 @@
       }
     }
   },
-  "/open_hours/{day}": {
+  "/open_hours/{branch}/{day}": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#get",
       "tags": ["open_hours"],
       "summary": "Get opening and closing times for a given day",
       "operationId": "getOpenHoursByDay",
       "parameters": [
+        {
+          "name": "branch",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
         {
           "name": "day",
           "in": "path",
@@ -1038,6 +1053,9 @@
             "properties": {
               "openid": {
                 "type": "integer"
+              },
+              "branch": {
+                "type": "string"
               },
               "day": {
                 "type": "integer"
@@ -1070,6 +1088,12 @@
       "summary": "Update opening and closing times for a given day",
       "operationId": "updateOpenHours",
       "parameters": [
+        {
+          "name": "branch",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
         {
           "name": "day",
           "in": "path",
