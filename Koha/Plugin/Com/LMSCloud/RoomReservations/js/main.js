@@ -2560,7 +2560,15 @@
       this._alertMessage = "";
     }
 
-    _handleRoomChange() {}
+    _selectRoom(e) {
+      const roomInput = this.renderRoot.getElementById("room");
+      const options = [...roomInput.options];
+      options.find((option) => option.value === e.target.id).selected = true;
+      
+      const event = new Event("change");
+      roomInput.dispatchEvent(event);
+      roomInput.scrollIntoView();
+    }
 
     render() {
       return y`
@@ -2710,15 +2718,17 @@
                 </tr>
               </thead>
               <tbody>
-                ${this._openHours.filter((day) => day.branch === this._selectedRoom?.branch).map((day) => {
-                  return y`
-                    <tr>
-                      <td>${day.day}</td>
-                      <td>${day.start}</td>
-                      <td>${day.end}</td>
-                    </tr>
-                  `;
-                })}
+                ${this._openHours
+                  .filter((day) => day.branch === this._selectedRoom?.branch)
+                  .map((day) => {
+                    return y`
+                      <tr>
+                        <td>${day.day}</td>
+                        <td>${day.start}</td>
+                        <td>${day.end}</td>
+                      </tr>
+                    `;
+                  })}
               </tbody>
             </table>
           </div>
@@ -2729,7 +2739,11 @@
             ${this._rooms.map(
               (room) => y`
                 <div class="room card">
-                  <img class="card-img-top" src="${room.image}" alt="..." />
+                  <img
+                    class="card-img-top"
+                    src="${room.image}"
+                    alt="Image for ${room.roomnumber}"
+                  />
                   <div class="card-body">
                     <h5 class="card-title">${room.roomnumber}</h5>
                     <p class="card-text">${room.description}</p>
@@ -2750,7 +2764,15 @@
                     </li>
                   </ul>
                   <div class="card-body">
-                    <a href="#" class="card-link">Book this room</a>
+                    <a
+                      href="#"
+                      class="card-link"
+                      id=${room.roomid}
+                      @click=${(e) => {
+                        this._selectRoom(e);
+                      }}
+                      >Book this room</a
+                    >
                   </div>
                 </div>
               `

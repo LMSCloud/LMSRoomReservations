@@ -162,7 +162,15 @@ export default class LMSBookie extends LitElement {
     this._alertMessage = "";
   }
 
-  _handleRoomChange() {}
+  _selectRoom(e) {
+    const roomInput = this.renderRoot.getElementById("room");
+    const options = [...roomInput.options];
+    options.find((option) => option.value === e.target.id).selected = true;
+    
+    const event = new Event("change");
+    roomInput.dispatchEvent(event);
+    roomInput.scrollIntoView();
+  }
 
   render() {
     return html`
@@ -312,15 +320,17 @@ export default class LMSBookie extends LitElement {
                 </tr>
               </thead>
               <tbody>
-                ${this._openHours.filter((day) => day.branch === this._selectedRoom?.branch).map((day) => {
-                  return html`
-                    <tr>
-                      <td>${day.day}</td>
-                      <td>${day.start}</td>
-                      <td>${day.end}</td>
-                    </tr>
-                  `;
-                })}
+                ${this._openHours
+                  .filter((day) => day.branch === this._selectedRoom?.branch)
+                  .map((day) => {
+                    return html`
+                      <tr>
+                        <td>${day.day}</td>
+                        <td>${day.start}</td>
+                        <td>${day.end}</td>
+                      </tr>
+                    `;
+                  })}
               </tbody>
             </table>
           </div>
@@ -331,7 +341,11 @@ export default class LMSBookie extends LitElement {
             ${this._rooms.map(
               (room) => html`
                 <div class="room card">
-                  <img class="card-img-top" src="${room.image}" alt="..." />
+                  <img
+                    class="card-img-top"
+                    src="${room.image}"
+                    alt="Image for ${room.roomnumber}"
+                  />
                   <div class="card-body">
                     <h5 class="card-title">${room.roomnumber}</h5>
                     <p class="card-text">${room.description}</p>
@@ -352,7 +366,15 @@ export default class LMSBookie extends LitElement {
                     </li>
                   </ul>
                   <div class="card-body">
-                    <a href="#" class="card-link">Book this room</a>
+                    <a
+                      href="#"
+                      class="card-link"
+                      id=${room.roomid}
+                      @click=${(e) => {
+                        this._selectRoom(e);
+                      }}
+                      >Book this room</a
+                    >
                   </div>
                 </div>
               `
