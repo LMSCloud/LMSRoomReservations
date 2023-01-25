@@ -322,12 +322,12 @@ export default class LMSBookie extends LitElement {
               <tbody>
                 ${this._openHours
                   .filter((day) => day.branch === this._selectedRoom?.branch)
-                  .map((day) => {
+                  .map(({day, start, end}) => {
                     return html`
                       <tr>
-                        <td>${day.day}</td>
-                        <td>${day.start}</td>
-                        <td>${day.end}</td>
+                        <td>${day}</td>
+                        <td>${start.slice(0, -3)}</td>
+                        <td>${end.slice(0, -3)}</td>
                       </tr>
                     `;
                   })}
