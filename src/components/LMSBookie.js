@@ -311,7 +311,7 @@ export default class LMSBookie extends LitElement {
                 </tr>
               </thead>
               <tbody>
-                ${this._openHours.map((day) => {
+                ${this._openHours.filter((day) => day.branch === this._selectedRoom?.branch).map((day) => {
                   return html`
                     <tr>
                       <td>${day.day}</td>
