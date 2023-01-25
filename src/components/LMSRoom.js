@@ -1,4 +1,5 @@
 import { LitElement, html, css } from "lit";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 
 export default class LMSRoom extends LitElement {
   static get properties() {
@@ -15,55 +16,19 @@ export default class LMSRoom extends LitElement {
     };
   }
 
-  static styles = css`
-    .card {
-      margin: 16px;
-      padding: 16px;
-      box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-      border-radius: 4px;
-      background-color: var(--background-color);
-    }
+  static styles = [
+    bootstrapStyles,
+    css`
+      .lms-room {
+        max-width: 18rem;
+      }
 
-    .label {
-      display: block;
-      margin: 8px 0;
-      font-weight: bold;
-    }
-
-    .input {
-      display: block;
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-
-    .button {
-      display: inline-block;
-      margin-right: 8px;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      background-color: #333;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: right;
-      margin: 8px 0;
-    }
-
-    .button:hover {
-      background-color: #444;
-    }
-
-    .p-0 {
-      padding: 0;
-    }
-  `;
+      .lms-room-img {
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+    `,
+  ];
 
   constructor() {
     super();
@@ -123,83 +88,113 @@ export default class LMSRoom extends LitElement {
 
   render() {
     return html`
-      <div class="card w-0">
-        <label class="label">Room ID</label>
-        <input disabled type="text" .value=${this.roomid} class="input" />
-        <label class="label">Room Number</label>
-        <input
-          ?disabled=${!this.editable}
-          type="text"
-          .value=${this.roomnumber}
-          @input=${(e) => {
-            this.roomnumber = e.target.value;
-          }}
-          class="input"
+      <div class="card lms-room">
+        <img
+          class="card-img-top lms-room-img"
+          ?hidden=${!this.image}
+          src=${this.image ?? "..."}
+          alt="Image for ${this.roomnumber}"
         />
-        <label class="label">Max Capacity</label>
-        <input
-          ?disabled=${!this.editable}
-          type="text"
-          .value=${this.maxcapacity}
-          @input=${(e) => {
-            this.maxcapacity = e.target.value;
-          }}
-          class="input"
-        />
-        <label class="label">Description</label>
-        <input
-          ?disabled=${!this.editable}
-          type="text"
-          .value=${this.description}
-          @input=${(e) => {
-            this.description = e.target.value;
-          }}
-          class="input"
-        />
-        <label class="label">Color</label>
-        <input
-          ?disabled=${!this.editable}
-          type="color"
-          .value=${this.color}
-          @input=${(e) => {
-            this.color = e.target.value;
-          }}
-          class="input p-0"
-        />
-        <label class="label">Image</label>
-        <input
-          ?disabled=${!this.editable}
-          type="text"
-          .value=${this.image}
-          @input=${(e) => {
-            this.image = e.target.value;
-          }}
-          class="input"
-        />
-        <label class="label">Branch</label>
-        <input
-          ?disabled=${!this.editable}
-          type="text"
-          .value=${this.branch}
-          @input=${(e) => {
-            this.branch = e.target.value;
-          }}
-          class="input"
-        />
-        <label class="label">Max Bookable Time</label>
-        <input
-          ?disabled=${!this.editable}
-          type="number"
-          .value=${this.maxbookabletime}
-          @input=${(e) => {
-            this.maxbookabletime = e.target.value;
-          }}
-          class="input"
-        />
-        <div class="buttons">
-          <button @click=${this.handleEdit} class="button">Edit</button>
-          <button @click=${this.handleSave} class="button">Save</button>
-          <button @click=${this.handleDelete} class="button">Delete</button>
+        <div class="card-body">
+          <h5 class="card-title">
+            <span class="badge badge-primary">${this.roomid}</span>
+          </h5>
+          <div class="form-group">
+            <label for="roomnumber">Room Number</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.roomnumber}
+              @input=${(e) => {
+                this.roomnumber = e.target.value;
+              }}
+              class="form-control"
+              id="roomnumber"
+            />
+          </div>
+          <div class="form-group">
+            <label for="maxcapacity">Max Capacity</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.maxcapacity}
+              @input=${(e) => {
+                this.maxcapacity = e.target.value;
+              }}
+              class="form-control"
+              id="maxcapacity"
+            />
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.description}
+              @input=${(e) => {
+                this.description = e.target.value;
+              }}
+              class="form-control"
+              id="description"
+            />
+          </div>
+          <div class="form-group">
+            <label for="color">Color</label>
+            <input
+              ?disabled=${!this.editable}
+              type="color"
+              .value=${this.color}
+              @input=${(e) => {
+                this.color = e.target.value;
+              }}
+              class="form-control"
+              id="color"
+            />
+          </div>
+          <div class="form-group">
+            <label for="image">Image</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.image}
+              @input=${(e) => {
+                this.image = e.target.value;
+              }}
+              class="form-control"
+              id="image"
+            />
+          </div>
+          <div class="form-group">
+            <label for="branch">Branch</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.branch}
+              @input=${(e) => {
+                this.branch = e.target.value;
+              }}
+              class="form-control"
+              id="branch"
+            />
+          </div>
+          <div class="form-group">
+            <label for="maxbookabletime">Max Bookable Time</label>
+            <input
+              ?disabled=${!this.editable}
+              type="number"
+              .value=${this.maxbookabletime}
+              @input=${(e) => {
+                this.maxbookabletime = e.target.value;
+              }}
+              class="form-control"
+              id="maxbookabletime"
+            />
+          </div>
+          <button @click=${this.handleEdit} class="btn btn-dark">Edit</button>
+          <button @click=${this.handleSave} class="btn btn-dark">Save</button>
+          <button @click=${this.handleDelete} class="btn btn-danger">
+            Delete
+          </button>
         </div>
       </div>
     `;

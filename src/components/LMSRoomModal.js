@@ -33,6 +33,7 @@ export default class LMSRoomModal extends LMSModal {
       endpoint: "/api/v1/contrib/roomreservations/rooms",
       method: "POST",
     };
+    this._modalTitle = "Add a Room";
   }
 }
 

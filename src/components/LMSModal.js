@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { LitElement, html, css } from "lit";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 
 export default class LMSModal extends LitElement {
   static get properties() {
@@ -14,58 +15,23 @@ export default class LMSModal extends LitElement {
 
   static get styles() {
     return [
+      bootstrapStyles,
       css`
-        .label {
-          display: block;
-          margin: 8px 0;
-          font-weight: bold;
-        }
-
-        .input {
-          display: block;
-          width: 100%;
-          padding: 8px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          box-sizing: border-box;
-        }
-
-        .button {
-          display: inline-block;
-          margin-right: 8px;
-          padding: 8px 16px;
-          border: none;
-          border-radius: 4px;
-          background-color: #333;
-          color: #fff;
-          cursor: pointer;
-        }
-
-        .buttons {
-          display: flex;
-          justify-content: right;
-          margin: 8px 0;
-        }
-
-        .button:hover {
-          background-color: #444;
-        }
-
-        .plus-button {
+        .btn-modal-wrapper {
           position: fixed;
           bottom: 1em;
           right: 1em;
           border-radius: 50%;
-          background-color: #333;
+          background-color: rgb(35, 39, 43);
           display: flex;
           justify-content: center;
           align-items: center;
-          box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+          box-shadow: var(--shadow-hv);
           cursor: pointer;
-          z-index: 99;
+          z-index: 1049;
         }
 
-        .plus-button > button {
+        .btn-modal-wrapper > .btn-modal {
           background: none;
           border: none;
           color: #fff;
@@ -74,40 +40,26 @@ export default class LMSModal extends LitElement {
           height: 2em;
         }
 
-        .modal {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background-color: white;
-          padding: 16px;
-          box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-          border-radius: 4px;
-          z-index: 100;
-        }
-
-        .dark-background {
+        .backdrop {
           position: fixed;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
           background-color: rgb(0 0 0 / 50%);
-          z-index: 98;
+          z-index: 1048;
+        }
+
+        button.btn-modal:not(.tilted) {
+          transition: 0.2s;
+          transition-timing-function: ease-in-out;
+          transform: translateX(0%) translateY(0%) rotate(0deg);
         }
 
         .tilted {
           transition: 0.2s;
           transition-timing-function: ease-in-out;
-          transform: rotate(45deg);
-        }
-
-        .checkbox {
-          margin: 1em 0;
-        }
-
-        .checkbox > label {
-          vertical-align: text-bottom;
+          transform: translateX(2px) translateY(-1px) rotate(45deg);
         }
       `,
     ];
@@ -125,6 +77,7 @@ export default class LMSModal extends LitElement {
     this.editable = false;
     this.isOpen = false;
     this._alertMessage = "";
+    this._modalTitle = "";
   }
 
   _toggleModal() {
@@ -175,34 +128,78 @@ export default class LMSModal extends LitElement {
 
   render() {
     return html`
-      <div class="plus-button">
-        <button @click="${this._toggleModal}" class=${this.isOpen && "tilted"}>
+      <div class="btn-modal-wrapper">
+        <button
+          @click=${this._toggleModal}
+          class="btn-modal ${this.isOpen && "tilted"}"
+          type="button"
+        >
           +
         </button>
       </div>
       <div
-        class="dark-background"
+        class="backdrop"
         ?hidden=${!this.isOpen}
-        @click=${this._toggleModal}
       ></div>
-      ${this.isOpen
-        ? html`
-            <div class="modal">
-              <div role="alert" ?hidden=${!this._alertMessage}>
-                ${this._alertMessage}
-                <button @click=${this._dismissAlert} type="button">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <form @submit="${this._create}">
-                ${this.fields.map((field) => this._getFieldMarkup(field))}
-                <div class="buttons">
-                  <button type="submit" class="button">Create</button>
-                </div>
-              </form>
+      <div
+        class="modal fade ${this.isOpen && "d-block show"}"
+        id="lms-modal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="lms-modal-title"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="lms-modal-title">
+                ${this._modalTitle || "Add"}
+              </h5>
+              <button
+                @click=${this._toggleModal}
+                type="button"
+                class="close"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-          `
-        : html``}
+            <form @submit="${this._create}">
+              <div class="modal-body">
+                <div
+                  role="alert"
+                  ?hidden=${!this._alertMessage}
+                  class="alert alert-${this._alertMessage.includes("Sorry!") &&
+                  "danger"} alert-dismissible fade show"
+                >
+                  ${this._alertMessage}
+                  <button
+                    @click=${this._dismissAlert}
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                ${this.fields.map((field) => this._getFieldMarkup(field))}
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                  @click=${this._toggleModal}
+                >
+                  Close
+                </button>
+                <button type="submit" class="btn btn-primary">Create</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     `;
   }
 
@@ -213,10 +210,12 @@ export default class LMSModal extends LitElement {
        *  value because otherwise NULL is supplied until
        *  the first change event occurs. */
       [{ value: field.value }] = field.entries;
-      return html`<label class="label">${field.desc}</label>
+      return html` <div class="form-group">
+        <label for=${field.name}>${field.desc}</label>
         <select
           name=${field.name}
-          class="input"
+          id=${field.name}
+          class="form-control"
           @change=${(e) => {
             field.value = e.target.value;
           }}
@@ -224,32 +223,38 @@ export default class LMSModal extends LitElement {
           ${field.entries.map(
             (entry) => html`<option value=${entry.value}>${entry.name}</option>`
           )}
-        </select>`;
+        </select>
+      </div>`;
     }
     if (field.type === "checkbox") {
-      return html` <div class="checkbox">
+      return html` <div class="form-check">
         <input
           type=${field.type}
           name=${field.name}
+          id=${field.name}
           value="1"
+          class="form-check-input"
           @input=${(e) => {
             field.value = e.target.value;
           }}
         />
-        <label>${field.desc}</label>
+        <label for=${field.name}>&nbsp;${field.desc}</label>
       </div>`;
     }
     if (field.type === "info") {
       return html` <p>${field.desc}</p> `;
     }
-    return html`<label class="label">${field.desc}</label>
+    return html` <div class="form-group">
+      <label for=${field.name}>${field.desc}</label>
       <input
         type=${field.type}
         name=${field.name}
-        class="input"
+        id=${field.name}
+        class="form-control"
         @input=${(e) => {
           field.value = e.target.value;
         }}
-      />`;
+      />
+    </div>`;
   }
 }

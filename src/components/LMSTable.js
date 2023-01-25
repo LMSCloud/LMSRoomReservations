@@ -1,5 +1,7 @@
 import { html, css, LitElement } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
+
 export default class LMSTable extends LitElement {
   static get properties() {
     return {
@@ -10,19 +12,11 @@ export default class LMSTable extends LitElement {
   }
 
   static styles = [
+    bootstrapStyles,
     css`
       table {
         background: white;
         padding: 1em;
-        border-radius: var(--border-radius-lg);
-      }
-
-      thead {
-        border-bottom: 1px solid var(--seperator-light);
-      }
-
-      tbody > tr:nth-child(odd) {
-        background-color: whitesmoke;
       }
     `,
   ];
@@ -52,11 +46,15 @@ export default class LMSTable extends LitElement {
 
     return data?.length
       ? html`
-          <table>
+          <table class="table table-striped table-bordered table-hover">
             <thead>
               <tr>
-                ${Object.keys(data[0]).map((key) => html`<th>${key}</th>`)}
-                ${this._isEditable ? html`<th>actions</th>` : html``}
+                ${Object.keys(data[0]).map(
+                  (key) => html`<th scope="col">${key}</th>`
+                )}
+                ${this._isEditable
+                  ? html`<th scope="col">actions</th>`
+                  : html``}
               </tr>
             </thead>
             <tbody>
@@ -69,22 +67,29 @@ export default class LMSTable extends LitElement {
                     ${this._isEditable
                       ? html`
                           <td>
-                            <div class="columns">
-                              <div class="column">
-                                <button @click=${this._handleEdit} class="">
-                                  Edit
-                                </button>
-                              </div>
-                              <div class="column">
-                                <button @click=${this._handleSave} class="">
-                                  Save
-                                </button>
-                              </div>
-                              <div class="column" ?hidden=${!this._isDeletable}>
-                                <button @click=${this._handleDelete} class="">
-                                  Delete
-                                </button>
-                              </div>
+                            <div class="d-flex">
+                              <button
+                                @click=${this._handleEdit}
+                                type="button"
+                                class="btn btn-dark mx-2"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                @click=${this._handleSave}
+                                type="button"
+                                class="btn btn-dark mx-2"
+                              >
+                                Save
+                              </button>
+                              <button
+                                @click=${this._handleDelete}
+                                ?hidden=${!this._isDeletable}
+                                type="button"
+                                class="btn btn-danger mx-2"
+                              >
+                                Delete
+                              </button>
                             </div>
                           </td>
                         `

@@ -33,6 +33,7 @@ export default class LMSBookingsModal extends LMSModal {
       endpoint: "/api/v1/contrib/roomreservations/bookings",
       method: "POST",
     };
+    this._modalTitle = "Add Booking";
   }
 }
 

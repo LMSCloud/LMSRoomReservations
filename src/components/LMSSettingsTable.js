@@ -24,6 +24,7 @@ export default class LMSSettingsTable extends LMSTable {
         value: this._getFieldMarkup(setting),
       }))
       .map((obj) => {
+        // eslint-disable-next-line no-unused-vars
         const { type, ...setting } = obj;
         return setting;
       })
@@ -140,7 +141,7 @@ export default class LMSSettingsTable extends LMSTable {
   _getFieldMarkup(field) {
     if (["number", "string"].includes(field.type)) {
       return `<input
-        class="input"
+        class="form-control"
         type="${field.type}"
         name="${field.setting}"
         value="${field.value}"
@@ -151,15 +152,21 @@ export default class LMSSettingsTable extends LMSTable {
     if (field.type === "array") {
       return field.value.reduce(
         (accumulator, category) => `${accumulator}
-          <label class="checkbox">
-            <input
-              type="checkbox"
-              name="${category.categorycode}"
-              ${field.setting === "restricted_patron_categories" && "checked"}
-              disabled
-            />
-            ${category.description}
-          </label> `,
+          <div class="form-check d-inline">
+          <input
+            type="checkbox"
+            name="${category.categorycode}"
+            ${field.setting === "restricted_patron_categories" && "checked"}
+            disabled
+            class="form-check-input"
+            id="${category.categorycode}
+          />
+          <label for="${
+            category.categorycode
+          }" class="form-check-label">&nbsp;${
+          category.description
+        }&nbsp;</label>
+          </div>`,
         ""
       );
     }

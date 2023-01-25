@@ -122,6 +122,7 @@ export default class LMSBookie extends LitElement {
 
     /** Important note: This uses the dayjs library present in Koha
      *  You'll find this included as an asset in views/opac/calendar.tt */
+    // eslint-disable-next-line no-undef
     const startDatetime = dayjs(start);
     const end = startDatetime
       .add(duration, "minute")

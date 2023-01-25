@@ -102,8 +102,8 @@ export default class LMSOpenHoursTable extends LMSTable {
         const weekday = Object.keys(this._dayConversionMap)[day];
         return {
           day: weekday,
-          start: `<input class="input" type="time" name="${weekday}" value="${start}" disabled>`,
-          end: `<input class="input" type="time" name="${weekday}" value="${end}" disabled>`,
+          start: `<input class="form-control" type="time" name="${weekday}" value="${start}" disabled>`,
+          end: `<input class="form-control" type="time" name="${weekday}" value="${end}" disabled>`,
         };
       }) ?? []
     );
@@ -118,7 +118,7 @@ export default class LMSOpenHoursTable extends LMSTable {
 
   render() {
     return html`
-      <h4>${this.branch}</h4>
+      <h4><span class="badge badge-secondary">${this.branch}</span></h4>
       ${super.render()}
     `;
   }

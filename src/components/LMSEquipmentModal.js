@@ -23,6 +23,7 @@ export default class LMSEquipmentModal extends LMSModal {
       endpoint: "/api/v1/contrib/roomreservations/equipment",
       method: "POST",
     };
+    this._modalTitle = "Add Equipment";
   }
 }
 
