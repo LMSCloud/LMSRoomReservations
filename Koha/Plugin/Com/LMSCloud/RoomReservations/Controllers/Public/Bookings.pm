@@ -86,8 +86,6 @@ sub _check_and_save_booking {
     }
 
     my ( $has_reached_reservation_limit, $message ) = _has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
-    use Data::Dumper;
-    warn Dumper $has_reached_reservation_limit, $message;
     if ($has_reached_reservation_limit) {
         $dbh->rollback;    # rollback transaction
         return $c->render( status => 400, openapi => { error => "You have reached the $message maximum number of reservations." } );
@@ -130,6 +128,9 @@ sub _check_and_save_booking {
         $dbh->rollback;
         $c->unhandled_exception($_);
     };
+
+    return $c->render( status => 500, openapi => { error => 'An error occurred while saving the booking.' } );
+
 }
 
 sub _is_bookable_time {

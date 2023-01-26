@@ -293,31 +293,40 @@ sub _has_reached_reservation_limit {
     # We have to check the bookings table for bookings with the given borrowernumber.
     # and return 400 if the number of bookings is greater than the default_max_booking_time.
     my $absolute_reservation_limit = $self->retrieve_data('absolute_reservation_limit');
-    my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, ['COUNT(*)'], { borrowernumber => $borrowernumber } );
+    if ($absolute_reservation_limit) {
+        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, ['COUNT(*)'], { borrowernumber => $borrowernumber } );
 
-    my $sth = $dbh->prepare($stmt);
-    $sth->execute(@bind);
-    my $bookings_quantity = $sth->fetchrow_array;
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+        my $bookings_quantity = $sth->fetchrow_array;
 
-    if ( $bookings_quantity >= $absolute_reservation_limit ) {
-        return [ 1, 'absolute' ];
+        if ( scalar $bookings_quantity >= $absolute_reservation_limit ) {
+            return ( 1, 'absolute' );
+        }
     }
 
     # Then we have to check whether the borrowernumber exceeds the daily reservation limit.
     # Therefore we have to check the daily reservation limit against the number of existing
     # bookings for the supplied day.
     my $daily_reservation_limit = $self->retrieve_data('daily_reservation_limit');
-    ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, ['COUNT(*)'], { borrowernumber => $borrowernumber, start => { like => $start . q{%} } } );
+    if ($daily_reservation_limit) {
+        my ( $stmt, @bind ) = $sql->select(
+            $BOOKINGS_TABLE,
+            ['COUNT(*)'],
+            {   borrowernumber => $borrowernumber,
+                start          => { 'like' => Time::Piece->strptime( $start, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d') . q{%} }
+            }
+        );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+        my $bookings_quantity = $sth->fetchrow_array;
 
-    $sth = $dbh->prepare($stmt);
-    $sth->execute(@bind);
-    $bookings_quantity = $sth->fetchrow_array;
-
-    if ( $bookings_quantity >= $daily_reservation_limit ) {
-        return [ 1, 'daily' ];
+        if ( scalar $bookings_quantity >= $daily_reservation_limit ) {
+            return ( 1, 'daily' );
+        }
     }
 
-    return [ 0, undef ];
+    return ( 0, undef );
 }
 
 1;
