@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::LMSCloud::RoomReservations::Controllers::Bookings;
+package Koha::Plugin::Com::LMSCloud::RoomReservations::Controllers::Public::Bookings;
 
 use 5.010;
 
@@ -32,7 +32,7 @@ sub list {
         my $dbh = C4::Context->dbh;
 
         my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, [ 'roomid', 'start', 'end', 'blackedout' ] );
-        my $sth   = $dbh->prepare($stmt);
+        my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
         my $bookings = $sth->fetchall_arrayref( {} );
@@ -51,84 +51,11 @@ sub add {
         my $json = $c->req->body;
         my $body = from_json($json);
 
+        if ( $body->{'borrowernumber'} eq q{} ) {
+            return $c->render( status => 400, openapi => { error => 'You need to login first to book rooms.' } );
+        }
+
         return _check_and_save_booking( $body, $c );
-    }
-    catch {
-        $c->unhandled_exception($_);
-    };
-}
-
-sub get {
-    my $c = shift->openapi->valid_input or return;
-
-    return try {
-        my $dbh = C4::Context->dbh;
-
-        my $booking_id = $c->validation->param('booking_id');
-        my $query      = "SELECT * FROM $BOOKINGS_TABLE WHERE bookingid = ?";
-        my $sth        = $dbh->prepare($query);
-        $sth->execute($booking_id);
-
-        my $booking = $sth->fetchrow_hashref;
-        if ( !$booking ) {
-            return $c->render(
-                status  => 404,
-                openapi => { error => 'No entry found for id' }
-            );
-        }
-
-        return $c->render( status => 200, openapi => $booking );
-    }
-    catch {
-        $c->unhandled_exception($_);
-    };
-}
-
-sub update {
-    my $c = shift->openapi->valid_input or return;
-
-    return try {
-        my $booking_id = $c->validation->param('booking_id');
-
-        my $json = $c->req->body;
-        my $body = from_json($json);
-
-        return _check_and_save_booking( $body, $c, $booking_id );
-    }
-    catch {
-        $c->unhandled_exception($_);
-    };
-}
-
-sub delete {
-    my $c = shift->openapi->valid_input or return;
-
-    return try {
-        my $booking_id = $c->validation->param('booking_id');
-
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
-
-        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, q{*}, { bookingid => $booking_id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $equipment = $sth->fetchrow_hashref();
-        if ( !$equipment ) {
-            return $c->render(
-                status  => 404,
-                openapi => { error => 'Object not found' }
-            );
-        }
-
-        ( $stmt, @bind ) = $sql->delete( $BOOKINGS_TABLE, { bookingid => $booking_id } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        return $c->render(
-            status  => 204,
-            openapi => q{},
-        );
     }
     catch {
         $c->unhandled_exception($_);

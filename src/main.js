@@ -42,7 +42,7 @@ function renderOnUpdate({
 function renderCalendar() {
   const currentDate = new Date();
   const options = { headers: { accept: "" } };
-  const response = fetch("/api/v1/contrib/roomreservations/bookings", options);
+  const response = fetch("/api/v1/contrib/roomreservations/public/bookings", options);
 
   const calendar = document.querySelector("lms-calendar");
   if (!calendar) {
@@ -60,7 +60,7 @@ function renderCalendar() {
     .then((result) => result.json())
     .then(async (entries) => {
       const response = await fetch(
-        "/api/v1/contrib/roomreservations/rooms",
+        "/api/v1/contrib/roomreservations/public/rooms",
         options
       );
       const rooms = await response.json();
@@ -96,7 +96,7 @@ function renderCalendar() {
 
 function renderOpenHours() {
   const entryPoint = document.getElementById("entry-point");
-  const endpoint = "/api/v1/contrib/roomreservations/open_hours";
+  const endpoint = "/api/v1/contrib/roomreservations/public/open_hours";
   const options = {
     headers: {
       Accept: "",

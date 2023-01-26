@@ -2453,11 +2453,11 @@
       const options = { headers: { accept: "" } };
       const [openHours, rooms, equipment, defaultMaxBookingTime] =
         await Promise.all([
-          fetch("/api/v1/contrib/roomreservations/open_hours", options),
-          fetch("/api/v1/contrib/roomreservations/rooms", options),
-          fetch("/api/v1/contrib/roomreservations/equipment", options),
+          fetch("/api/v1/contrib/roomreservations/public/open_hours", options),
+          fetch("/api/v1/contrib/roomreservations/public/rooms", options),
+          fetch("/api/v1/contrib/roomreservations/public/equipment", options),
           fetch(
-            "/api/v1/contrib/roomreservations/settings/default_max_booking_time",
+            "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time",
             options
           ),
         ]);
@@ -2528,20 +2528,23 @@
         .add(duration, "minute")
         .format("YYYY-MM-DDTHH:mm");
 
-      const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
-        method: "POST",
-        headers: {
-          accept: "",
-        },
-        body: JSON.stringify({
-          borrowernumber: this.borrowernumber,
-          roomid,
-          start,
-          end,
-          blackedout: 0,
-          equipment,
-        }),
-      });
+      const response = await fetch(
+        "/api/v1/contrib/roomreservations/public/bookings",
+        {
+          method: "POST",
+          headers: {
+            accept: "",
+          },
+          body: JSON.stringify({
+            borrowernumber: this.borrowernumber,
+            roomid,
+            start,
+            end,
+            blackedout: 0,
+            equipment,
+          }),
+        }
+      );
 
       if ([201].includes(response.status)) {
         inputs.forEach((input) => {
@@ -2566,7 +2569,7 @@
       const roomInput = this.renderRoot.getElementById("room");
       const options = [...roomInput.options];
       options.find((option) => option.value === e.target.id).selected = true;
-      
+
       const event = new Event("change");
       roomInput.dispatchEvent(event);
       roomInput.scrollIntoView();
@@ -2722,7 +2725,7 @@
               <tbody>
                 ${this._openHours
                   .filter((day) => day.branch === this._selectedRoom?.branch)
-                  .map(({day, start, end}) => {
+                  .map(({ day, start, end }) => {
                     return y`
                       <tr>
                         <td>${day}</td>
@@ -2816,7 +2819,7 @@
   function renderCalendar() {
     const currentDate = new Date();
     const options = { headers: { accept: "" } };
-    const response = fetch("/api/v1/contrib/roomreservations/bookings", options);
+    const response = fetch("/api/v1/contrib/roomreservations/public/bookings", options);
 
     const calendar = document.querySelector("lms-calendar");
     if (!calendar) {
@@ -2834,7 +2837,7 @@
       .then((result) => result.json())
       .then(async (entries) => {
         const response = await fetch(
-          "/api/v1/contrib/roomreservations/rooms",
+          "/api/v1/contrib/roomreservations/public/rooms",
           options
         );
         const rooms = await response.json();
@@ -2870,7 +2873,7 @@
 
   function renderOpenHours() {
     const entryPoint = document.getElementById("entry-point");
-    const endpoint = "/api/v1/contrib/roomreservations/open_hours";
+    const endpoint = "/api/v1/contrib/roomreservations/public/open_hours";
     const options = {
       headers: {
         Accept: "",

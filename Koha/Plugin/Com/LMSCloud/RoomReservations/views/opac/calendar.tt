@@ -25,13 +25,12 @@
             </div>
         </div>
     </div>
+
+[% INCLUDE 'opac-bottom.inc' %]
+[% BLOCK jsinclude %]
     <script>
         const lmsBookie = document.querySelector('lms-bookie');
         RoomReservationBundle.renderCalendar();
         lmsBookie.addEventListener('submitted', RoomReservationBundle.renderCalendar);
     </script>
-
-[% INCLUDE 'opac-bottom.inc' %]
-[% BLOCK jsinclude %]
-
 [% END %]

@@ -1,4 +1,68 @@
 {
+  "/public/rooms": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Rooms#list",
+      "operationId": "getRoomsPublic",
+      "tags": ["rooms"],
+      "responses": {
+        "200": {
+          "description": "A list of rooms",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "maxcapacity": {
+                  "type": "string",
+                  "description": "The maximum number of people that can be in the room"
+                },
+                "color": {
+                  "type": "string",
+                  "description": "The color of the room"
+                },
+                "image": {
+                  "type": "string",
+                  "description": "An image of the room"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "A description of the room"
+                },
+                "maxbookabletime": {
+                  "type": "string",
+                  "description": "The maximum amount of time that the room can be booked for"
+                },
+                "roomid": {
+                  "type": "string",
+                  "description": "The internal ID of the room"
+                },
+                "branch": {
+                  "type": "string",
+                  "description": "The branch where the room is located"
+                },
+                "roomnumber": {
+                  "type": "string",
+                  "description": "The number of the room"
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "No rooms were found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/rooms": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#list",
@@ -59,6 +123,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -165,6 +234,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     }
   },
@@ -235,6 +309,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -348,6 +427,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     },
     "delete": {
@@ -374,6 +458,58 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      }
+    }
+  },
+  "/public/equipment": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Equipment#list",
+      "tags": ["equipment"],
+      "summary": "Get a list of equipment items",
+      "operationId": "listEquipmentPublic",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "equipmentid": {
+                  "type": "integer"
+                },
+                "equipmentname": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "image": {
+                  "type": ["string", "null"]
+                },
+                "maxbookabletime": {
+                  "type": ["integer", "null"]
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
                 "type": "string"
               }
             }
@@ -425,6 +561,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -494,6 +635,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     }
   },
@@ -545,6 +691,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -623,6 +774,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     },
     "delete": {
@@ -652,6 +808,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     }
@@ -707,6 +868,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -767,6 +933,54 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      }
+    }
+  },
+  "/public/settings/{setting}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Settings#get",
+      "tags": ["settings"],
+      "summary": "Get a setting by its name",
+      "operationId": "getSettingPublic",
+      "parameters": [
+        {
+          "name": "setting",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "setting": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -809,6 +1023,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -863,6 +1082,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     },
     "delete": {
@@ -886,6 +1110,55 @@
             "properties": {
               "value": {
                 "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      }
+    }
+  },
+  "/public/open_hours": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::OpenHours#list",
+      "tags": ["open_hours"],
+      "summary": "Get opening and closing times for the whole week",
+      "operationId": "getOpenHoursPublic",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": "string"
+                },
+                "day": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -947,6 +1220,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -1022,6 +1300,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     }
   },
@@ -1080,6 +1363,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     },
     "put": {
@@ -1126,6 +1414,134 @@
             "type": "object",
             "properties": {
               "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      }
+    }
+  },
+  "/public/bookings": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Bookings#list",
+      "tags": ["bookings"],
+      "summary": "Get room bookings",
+      "operationId": "getBookingsPublic",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "roomid": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                },
+                "blackedout": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Bookings#add",
+      "operationId": "addBookingsPublic",
+      "tags": ["bookings"],
+      "summary": "Add room bookings",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "A JSON object or array of objects representing the added bookings",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "borrowernumber": {
+                "type": ["integer", "string"]
+              },
+              "roomid": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "blackedout": {
+                "type": "integer"
+              }
+            },
+            "required": ["borrowernumber", "roomid", "start", "end"]
+          }
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "borrowernumber": {
+                "type": "integer"
+              },
+              "roomid": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
                 "type": "string"
               }
             }
@@ -1197,6 +1613,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -1277,6 +1698,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     }
   },
@@ -1337,6 +1763,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     },
@@ -1411,6 +1842,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
       }
     },
     "delete": {
@@ -1441,6 +1877,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
         }
       }
     }
