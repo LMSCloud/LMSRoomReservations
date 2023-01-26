@@ -48,6 +48,7 @@
 
 lms-calendar {
   flex: 80%;
+  height: 90vh;
 }
 
 lms-bookie {

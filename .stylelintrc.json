@@ -1,6 +1,7 @@
 {
   "extends": "stylelint-config-standard",
   "ignoreFiles": [
+    "./create-koha-plugin/**/*",
     "./Koha/Plugin/Com/LMSCloud/RoomReservations/**/*",
     "./src/components/LMSCalendar/**/*",
     "./node_modules/**/*",

@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::LMSCloud::RoomReservations::Controllers::Public::Equipment;
+package Koha::Plugin::Com::LMSCloud::RoomReservations::Controllers::Equipment;
 
 use 5.010;
 
