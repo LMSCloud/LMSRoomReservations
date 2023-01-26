@@ -31,8 +31,8 @@ sub list {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, [ 'roomid', 'start', 'end', 'blackedout' ] );
-        my $sth   = $dbh->prepare($stmt);
+        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, q{*} );
+        my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
         my $bookings = $sth->fetchall_arrayref( {} );
@@ -158,6 +158,12 @@ sub _check_and_save_booking {
         return $c->render( status => 400, openapi => { error => 'There is a conflicting booking.' } );
     }
 
+    my ( $has_reached_reservation_limit, $message ) = _has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
+    if ($has_reached_reservation_limit) {
+        $dbh->rollback;    # rollback transaction
+        return $c->render( status => 400, openapi => { error => "The borrower has reached the $message maximum number of reservations." } );
+    }
+
     try {
         my $booking = {
             borrowernumber => $body->{'borrowernumber'},
@@ -274,6 +280,42 @@ sub _has_conflicting_booking {
     my ($conflict_count) = $check_sth->fetchrow_array;
 
     return $conflict_count > 0;
+}
+
+sub _has_reached_reservation_limit {
+    my ( $borrowernumber, $roomid, $start ) = @_;
+
+    my $sql = SQL::Abstract->new;
+    my $dbh = C4::Context->dbh;
+
+    # We have to check the bookings table for bookings with the given borrowernumber.
+    # and return 400 if the number of bookings is greater than the default_max_booking_time.
+    my $absolute_reservation_limit = $self->retrieve_data('absolute_reservation_limit');
+    my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, ['COUNT(*)'], { borrowernumber => $borrowernumber } );
+
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    my $bookings_quantity = $sth->fetchrow_array;
+
+    if ( $bookings_quantity >= $absolute_reservation_limit ) {
+        return [ 1, 'absolute' ];
+    }
+
+    # Then we have to check whether the borrowernumber exceeds the daily reservation limit.
+    # Therefore we have to check the daily reservation limit against the number of existing
+    # bookings for the supplied day.
+    my $daily_reservation_limit = $self->retrieve_data('daily_reservation_limit');
+    ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, ['COUNT(*)'], { borrowernumber => $borrowernumber, start => { like => $start . q{%} } } );
+
+    $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    $bookings_quantity = $sth->fetchrow_array;
+
+    if ( $bookings_quantity >= $daily_reservation_limit ) {
+        return [ 1, 'daily' ];
+    }
+
+    return [ 0, undef ];
 }
 
 1;
