@@ -1349,12 +1349,15 @@
         ),
       ];
 
-      const response = await fetch(`/api/v1/contrib/roomreservations/bookings/${bookingid}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "",
-        },
-      });
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "",
+          },
+        }
+      );
 
       if (response.status === 204) {
         this._getData();
@@ -1371,41 +1374,41 @@
 
       const result = await response.json();
 
-      if (result.length) {
-        this.data = result
-          .map((datum) =>
-            Object.keys(datum)
-              .sort((a, b) => {
-                const order = [
-                  "bookingid",
-                  "borrowernumber",
-                  "roomid",
-                  "start",
-                  "end",
-                  "blackedout",
-                  "created",
-                  "updated_at",
-                ];
-                return order.indexOf(a) - order.indexOf(b);
-              })
-              .reduce((acc, key) => ({ ...acc, [key]: datum[key] }), {})
-          )
-          .map((datum) =>
-            Object.keys(datum).reduce(
-              (acc, key) => ({
-                ...acc,
-                [key]: this._inputFromValue({
-                  key,
-                  value:
-                    typeof datum[key] !== "string"
-                      ? datum[key].toString()
-                      : datum[key],
-                }),
-              }),
-              {}
+      this.data = result.length
+        ? result
+            .map((datum) =>
+              Object.keys(datum)
+                .sort((a, b) => {
+                  const order = [
+                    "bookingid",
+                    "borrowernumber",
+                    "roomid",
+                    "start",
+                    "end",
+                    "blackedout",
+                    "created",
+                    "updated_at",
+                  ];
+                  return order.indexOf(a) - order.indexOf(b);
+                })
+                .reduce((acc, key) => ({ ...acc, [key]: datum[key] }), {})
             )
-          );
-      }
+            .map((datum) =>
+              Object.keys(datum).reduce(
+                (acc, key) => ({
+                  ...acc,
+                  [key]: this._inputFromValue({
+                    key,
+                    value:
+                      typeof datum[key] !== "string"
+                        ? datum[key].toString()
+                        : datum[key],
+                  }),
+                }),
+                {}
+              )
+            )
+        : result;
     }
 
     _inputFromValue({ key, value }) {
