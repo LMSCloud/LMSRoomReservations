@@ -129,8 +129,6 @@ sub _check_and_save_booking {
         $c->unhandled_exception($_);
     };
 
-    return $c->render( status => 500, openapi => { error => 'An error occurred while saving the booking.' } );
-
 }
 
 sub _is_bookable_time {

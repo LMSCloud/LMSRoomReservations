@@ -1547,6 +1547,17 @@
             }
           }
         },
+        "500": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
         "default": {
           "description": "Error response",
           "schema": {
@@ -1599,6 +1610,17 @@
                 "updated_at": {
                   "type": "string"
                 }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Error response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
               }
             }
           }
