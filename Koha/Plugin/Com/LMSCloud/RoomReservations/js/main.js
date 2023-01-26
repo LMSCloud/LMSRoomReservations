@@ -2369,6 +2369,7 @@
     div {
       height: 100%;
       width: 100%;
+      background-color: #fff;
       border-radius: var(--border-radius-lg);
       border: 1px solid var(--separator-light);
       font-family: var(--system-ui);
@@ -2433,11 +2434,12 @@
       }
 
       .room {
-        flex: 0 0 15vw;
+        flex: 0 0 100%;
       }
 
       .room img {
         aspect-ratio: 16 / 9;
+        object-fit: cover;
       }
 
       section:not(:last-child) {

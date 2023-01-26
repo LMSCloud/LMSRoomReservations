@@ -16,16 +16,8 @@
   --border-radius-lg: 12px;
 
   /* font */
-  --system-ui:
-    system,
-    -apple-system,
-    ".SFNSText-Regular",
-    "San Francisco",
-    "Roboto",
-    "Segoe UI",
-    "Helvetica Neue",
-    "Lucida Grande",
-    sans-serif;
+  --system-ui: system, -apple-system, ".SFNSText-Regular", "San Francisco",
+    "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
 
   /* color variables */
   --primary-color: #0074c2;
@@ -52,29 +44,27 @@
   --min-width-md: 768px;
   --min-width-lg: 1024px;
   --min-width-xl: 1440px;
-
-  /* Add media queries to change styles at different breakpoints */
-
-  /* @media (min-width: var(--min-width-sm)) {
-  }
-
-  @media (min-width: var(--min-width-md)) {
-  }
-
-  @media (min-width: var(--min-width-lg)) {
-  }
-
-  @media (min-width: var(--min-width-xl)) {
-  } */
 }
 
 lms-calendar {
-  width: 80%;
+  flex: 80%;
   height: 90vh;
 }
 
 lms-bookie {
-  width: 20%;
+  flex: 20%;
+}
+
+@media (max-width: 768px) {
+  .lmsr-content-block {
+    flex-direction: column;
+  }
+
+  lms-calendar,
+  lms-bookie {
+    flex: 100%;
+    font-size: small;
+  }
 }
 
 #lmsr {
