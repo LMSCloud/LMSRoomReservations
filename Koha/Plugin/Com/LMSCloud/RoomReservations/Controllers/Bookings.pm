@@ -158,10 +158,12 @@ sub _check_and_save_booking {
         return $c->render( status => 400, openapi => { error => 'There is a conflicting booking.' } );
     }
 
-    my ( $has_reached_reservation_limit, $message ) = _has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
-    if ($has_reached_reservation_limit) {
-        $dbh->rollback;    # rollback transaction
-        return $c->render( status => 400, openapi => { error => "The borrower has reached the $message limit of reservations." } );
+    if ( !$booking_id ) {
+        my ( $has_reached_reservation_limit, $message ) = _has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
+        if ($has_reached_reservation_limit) {
+            $dbh->rollback;    # rollback transaction
+            return $c->render( status => 400, openapi => { error => "The borrower has reached the $message limit of reservations." } );
+        }
     }
 
     try {

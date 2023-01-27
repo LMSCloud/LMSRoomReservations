@@ -1326,7 +1326,7 @@
         }
       );
 
-      if (response.status === 201) {
+      if ([200, 201].includes(response.status)) {
         // Implement success message
         inputs.forEach((input) => {
           input.disabled = true;
