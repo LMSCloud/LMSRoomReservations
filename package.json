@@ -1,8 +1,8 @@
 {
   "name": "koha-plugin-lms-room-reservations",
-  "version": "0.0.1",
+  "version": "4.0.0",
   "previous_version": "0.0.0",
-  "description": "Koha Room Reservations Plugin, modified by LMSCloud GmbH",
+  "description": "Koha Room Reservations Plugin",
   "devDependencies": {
     "autoprefixer": "^10.4.13",
     "eslint": "^8.20.0",
@@ -39,14 +39,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ldjamison/koha-plugin-room-reservations.git"
+    "url": "git+https://github.com/LMSCloud/LMSRoomReservations.git"
   },
-  "author": "Lee Jamison <ldjamison@marywood.edu>",
+  "author": "Paul Derscheid <paul.derscheid@lmscloud.de>",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/ldjamison/koha-plugin-room-reservations/issues"
+    "url": "https://github.com/LMSCloud/LMSRoomReservations/issues"
   },
-  "homepage": "https://github.com/ldjamison/koha-plugin-room-reservations#readme",
+  "homepage": "https://github.com/LMSCloud/LMSRoomReservations#readme",
   "dependencies": {
     "@granite-elements/granite-lit-bootstrap": "^4.6.0-0",
     "@granite-elements/granite-lit-spectre": "^0.5.9-2",
