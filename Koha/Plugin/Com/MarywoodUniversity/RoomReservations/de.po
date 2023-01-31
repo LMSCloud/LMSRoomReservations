@@ -30,7 +30,7 @@ msgstr ""
 
 #: bookas.tt:6
 msgid "Koha: Room Reservations Plugin: Reserve as patron"
-msgstr "Koha: Raumreservierungsplugin: Als Benutzer:in reservieren"
+msgstr "Koha: Raumreservierungsplugin: Als Benutzer*in reservieren"
 
 #: bookas.tt:18 configure.tt:62 tool.tt:59 opac/calendar.tt:148
 #: opac/calendar.tt:257 opac/calendar.tt:427
@@ -232,7 +232,7 @@ msgstr "Maximaler Buchungszeitraum"
 
 #: configure.tt:85
 msgid "Restrict daily reservations per patron"
-msgstr "Maximale Anzahl an Reservierung pro Nutzer:in begrenzen"
+msgstr "Maximale Anzahl an Reservierung pro Nutzer*in begrenzen"
 
 #: configure.tt:86 configure.tt:355
 msgid "Restrict patron categories"
