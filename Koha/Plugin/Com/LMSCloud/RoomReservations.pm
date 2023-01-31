@@ -41,16 +41,14 @@ our $MINIMUM_VERSION = "{MINIMUM_VERSION}";
 
 ## Here is our metadata, some keys are required, some are optional
 our $metadata = {
-    name            => 'Example Kitchen-Sink Plugin',
-    author          => 'Kyle M Hall',
+    name            => 'LMSRoomReservations',
+    author          => 'Paul Derscheid @ LMSCloud GmbH',
     date_authored   => '2009-01-27',
     date_updated    => "1900-01-01",
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
-    description     => 'This plugin implements every available feature '
-        . 'of the plugin system and is meant '
-        . 'to be documentation and a starting point for writing your own plugins!',
+    description     => 'This plugin allows you to manage bookable spaces in your institution.',
 };
 
 ## This is the minimum code required for a plugin's 'new' method
@@ -273,7 +271,14 @@ sub install() {
             }
         }
 
-        $self->store_data( { plugin_version => $VERSION } );
+        $self->store_data(
+            {   plugin_version             => $VERSION,
+                default_max_booking_time   => q{},
+                absolute_reservation_limit => q{},
+                daily_reservation_limit    => q{},
+                restrict_message           => q{},
+            }
+        );
 
         return 1;
     }
@@ -285,9 +290,6 @@ sub install() {
 
         return 0;
     };
-
-    carp 'Unexpected return value from install()';
-    return 0;
 }
 
 ## This is the 'upgrade' method. It will be triggered when a newer version of a
@@ -295,10 +297,20 @@ sub install() {
 sub upgrade {
     my ( $self, $args ) = @_;
 
-    my $dt = dt_from_string();
-    $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
+    try {
+        my $dt = dt_from_string();
+        $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
 
-    return 1;
+        return 1;
+    }
+    catch {
+        my $error = $_;
+        use Data::Dumper;
+        carp Dumper($error);
+        carp "UPGRADE ERROR: $error";
+
+        return 0;
+    };
 }
 
 ## This method will be run just before the plugin files are deleted
