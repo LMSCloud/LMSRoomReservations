@@ -423,7 +423,7 @@
         const availabilitySearchRoomSelect = document.getElementById('availability-search-room');
         const rooms = [% rooms.json %];
         const equipment = [% available_room_equipment.json %];
-        const blackouts = [% blackout_bookings.json %];
+        const blackouts = [% IF blackout_bookings %][% blackout_bookings.json %][% ELSE %][][% END %];
         const args = {
           blackoutsArgs: { entryPoint: 'lmsr-blackouts-display', blackouts },
           equipmentArgs: { entryPoint: 'lmsr-equipment-selection', rooms, equipment },
