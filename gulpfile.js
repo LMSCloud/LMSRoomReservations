@@ -26,6 +26,7 @@ gulp.task(
       run(`
       mkdir dist ;
       cp -r Koha dist/. ;
+      sed -i -e "s/{MINIMUM_VERSION}/${packageJson.minimum_koha_version}/g" ${pmFilePathFullDist} ;
       sed -i -e "s/{VERSION}/${packageJson.version}/g" ${pmFilePathFullDist} ;
       sed -i -e "s/1900-01-01/${today}/g" ${pmFilePathFullDist} ;
       cd dist ;
