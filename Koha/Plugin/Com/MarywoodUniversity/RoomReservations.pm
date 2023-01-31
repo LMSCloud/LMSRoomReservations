@@ -255,7 +255,7 @@ sub intranet_js {
     return <<~'JS';
         <script>
             $(document).ready(function() {
-                var buttonText = `Reserve room as patron`;
+                var buttonText = document.querySelector('html')?.lang.startsWith('de') ? 'Reserverie Raum als Benutzer' : 'Reserve room as patron';
                 var data = $("div.patroninfo h5").html();
 
                 if (typeof borrowernumber !== 'undefined') {
@@ -264,7 +264,7 @@ sub intranet_js {
                         var matches = regExp.exec(data);
                         if (matches) {
                             var cardnumber = matches[1];
-                            $('<a id="bookAsButton" target="_blank" class="btn btn-default btn-sm" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter($('#addnewmessageLabel'));
+                            $('<a id="bookAsButton" target="_blank" class="btn btn-default" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::MarywoodUniversity::RoomReservations&method=bookas&borrowernumber=' + borrowernumber + '"><i class="fa fa-search"></i>&nbsp;' + buttonText + '</a>').insertAfter($('#addnewmessageLabel'));
                         }
                     }
                 }
