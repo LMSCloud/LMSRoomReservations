@@ -119,6 +119,12 @@ sub update {
 
             my $roomid;
 
+            # We have to delete the entry from the junction table before we modify it
+            # or we'll get duplicate pk errors
+            ( $stmt, @bind ) = $sql->delete( $ROOMS_EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
+            $sth = $dbh->prepare($stmt);
+            $sth->execute(@bind);
+
             # Handles a new association
             if ( exists $new_equipment->{'roomid'} && $new_equipment->{'roomid'} ) {
                 $roomid = delete $new_equipment->{'roomid'};
