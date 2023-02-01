@@ -17,11 +17,11 @@
                   "description": "The maximum number of people that can be in the room"
                 },
                 "color": {
-                  "type": "string",
+                  "type": ["string", "null"],
                   "description": "The color of the room"
                 },
                 "image": {
-                  "type": "string",
+                  "type": ["string", "null"],
                   "description": "An image of the room"
                 },
                 "description": {
@@ -29,7 +29,7 @@
                   "description": "A description of the room"
                 },
                 "maxbookabletime": {
-                  "type": "string",
+                  "type": ["string", "null"],
                   "description": "The maximum amount of time that the room can be booked for"
                 },
                 "roomid": {
@@ -81,11 +81,11 @@
                   "description": "The maximum number of people that can be in the room"
                 },
                 "color": {
-                  "type": "string",
+                  "type": ["string", "null"],
                   "description": "The color of the room"
                 },
                 "image": {
-                  "type": "string",
+                  "type": ["string", "null"],
                   "description": "An image of the room"
                 },
                 "description": {
@@ -93,7 +93,7 @@
                   "description": "A description of the room"
                 },
                 "maxbookabletime": {
-                  "type": "string",
+                  "type": ["string", "null"],
                   "description": "The maximum amount of time that the room can be booked for"
                 },
                 "roomid": {
@@ -139,7 +139,7 @@
         {
           "name": "body",
           "in": "body",
-          "description": "A JSON object representing an order",
+          "description": "A JSON object representing a room",
           "required": true,
           "schema": {
             "type": "object",
@@ -149,11 +149,11 @@
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The color of the room"
               },
               "image": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "An image of the room"
               },
               "description": {
@@ -161,7 +161,7 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
@@ -192,11 +192,11 @@
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The color of the room"
               },
               "image": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "An image of the room"
               },
               "description": {
@@ -204,7 +204,7 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
@@ -268,11 +268,11 @@
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The color of the room"
               },
               "image": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "An image of the room"
               },
               "description": {
@@ -280,7 +280,7 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
@@ -342,11 +342,11 @@
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The color of the room"
               },
               "image": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "An image of the room"
               },
               "description": {
@@ -354,7 +354,7 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
@@ -385,11 +385,11 @@
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The color of the room"
               },
               "image": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "An image of the room"
               },
               "description": {
@@ -397,7 +397,7 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {

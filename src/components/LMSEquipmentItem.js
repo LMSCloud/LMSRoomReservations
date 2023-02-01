@@ -178,7 +178,7 @@ export default class LMSEquipmentItem extends LitElement {
             <select
               ?disabled=${!this.editable}
               @change=${(e) => {
-                this.roomid = e.target.value;
+                this.roomid = e.target.value === "No room associated" ? null : e.target.value;
               }}
               class="form-control"
               id="roomid"

@@ -379,10 +379,7 @@
           +
         </button>
       </div>
-      <div
-        class="backdrop"
-        ?hidden=${!this.isOpen}
-      ></div>
+      <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
         class="modal fade ${this.isOpen && "d-block show"}"
         id="lms-modal"
@@ -461,6 +458,7 @@
           @change=${(e) => {
             field.value = e.target.value;
           }}
+          ?required=${field.required}
         >
           ${field.entries.map(
             (entry) => y`<option value=${entry.value}>${entry.name}</option>`
@@ -479,6 +477,7 @@
           @input=${(e) => {
             field.value = e.target.value;
           }}
+          ?required=${field.required}
         />
         <label for=${field.name}>&nbsp;${field.desc}</label>
       </div>`;
@@ -496,6 +495,7 @@
         @input=${(e) => {
           field.value = e.target.value;
         }}
+        ?required=${field.required}
       />
     </div>`;
     }
@@ -509,10 +509,10 @@
     constructor() {
       super();
       this.fields = [
-        { name: "maxcapacity", type: "text", desc: "Max capacity" },
-        { name: "color", type: "color", desc: "Color" },
-        { name: "image", type: "text", desc: "Image" },
-        { name: "description", type: "text", desc: "description" },
+        { name: "maxcapacity", type: "text", desc: "Max capacity", required: true },
+        { name: "color", type: "color", desc: "Color", required: true },
+        { name: "image", type: "text", desc: "Image", required: true },
+        { name: "description", type: "text", desc: "description", required: true },
         { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
         { name: "roomid", type: "text" },
         {
@@ -527,8 +527,9 @@
               name: library.name,
             }));
           },
+          required: true,
         },
-        { name: "roomnumber", type: "text", desc: "Roomnumber" },
+        { name: "roomnumber", type: "text", desc: "Roomnumber", required: true },
       ];
       this.createOpts = {
         endpoint: "/api/v1/contrib/roomreservations/rooms",
@@ -717,7 +718,7 @@
             <select
               ?disabled=${!this.editable}
               @change=${(e) => {
-                this.roomid = e.target.value;
+                this.roomid = e.target.value === "No room associated" ? null : e.target.value;
               }}
               class="form-control"
               id="roomid"
@@ -756,9 +757,9 @@
       super();
       this.fields = [
         { name: "equipmentid", type: "text" },
-        { name: "equipmentname", type: "text", desc: "Equipmentname" },
-        { name: "description", type: "text", desc: "Description" },
-        { name: "image", type: "text", desc: "Image" },
+        { name: "equipmentname", type: "text", desc: "Equipmentname", required: true },
+        { name: "description", type: "text", desc: "Description", required: true },
+        { name: "image", type: "text", desc: "Image", required: true },
         { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
         {
           name: "info",
@@ -1440,7 +1441,7 @@
     constructor() {
       super();
       this.fields = [
-        { name: "borrowernumber", type: "number", desc: "Borrowernumber" },
+        { name: "borrowernumber", type: "number", desc: "Borrowernumber", required: true },
         {
           name: "roomid",
           type: "select",
@@ -1456,9 +1457,10 @@
               name: room.roomnumber,
             }));
           },
+          required: true
         },
-        { name: "start", type: "datetime-local", desc: "Starts at" },
-        { name: "end", type: "datetime-local", desc: "Ends at" },
+        { name: "start", type: "datetime-local", desc: "Starts at", required: true },
+        { name: "end", type: "datetime-local", desc: "Ends at", required: true },
         { name: "blackedout", type: "checkbox", desc: "Is blackout" },
         { name: "send_confirmation", type: "checkbox", desc: "Send confirmation email to patron" },
       ];

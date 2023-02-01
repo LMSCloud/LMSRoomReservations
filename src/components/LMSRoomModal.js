@@ -8,10 +8,10 @@ export default class LMSRoomModal extends LMSModal {
   constructor() {
     super();
     this.fields = [
-      { name: "maxcapacity", type: "text", desc: "Max capacity" },
-      { name: "color", type: "color", desc: "Color" },
-      { name: "image", type: "text", desc: "Image" },
-      { name: "description", type: "text", desc: "description" },
+      { name: "maxcapacity", type: "text", desc: "Max capacity", required: true },
+      { name: "color", type: "color", desc: "Color", required: true },
+      { name: "image", type: "text", desc: "Image", required: true },
+      { name: "description", type: "text", desc: "description", required: true },
       { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
       { name: "roomid", type: "text" },
       {
@@ -26,8 +26,9 @@ export default class LMSRoomModal extends LMSModal {
             name: library.name,
           }));
         },
+        required: true,
       },
-      { name: "roomnumber", type: "text", desc: "Roomnumber" },
+      { name: "roomnumber", type: "text", desc: "Roomnumber", required: true },
     ];
     this.createOpts = {
       endpoint: "/api/v1/contrib/roomreservations/rooms",

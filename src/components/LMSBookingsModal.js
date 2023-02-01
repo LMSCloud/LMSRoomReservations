@@ -8,7 +8,7 @@ export default class LMSBookingsModal extends LMSModal {
   constructor() {
     super();
     this.fields = [
-      { name: "borrowernumber", type: "number", desc: "Borrowernumber" },
+      { name: "borrowernumber", type: "number", desc: "Borrowernumber", required: true },
       {
         name: "roomid",
         type: "select",
@@ -24,9 +24,10 @@ export default class LMSBookingsModal extends LMSModal {
             name: room.roomnumber,
           }));
         },
+        required: true
       },
-      { name: "start", type: "datetime-local", desc: "Starts at" },
-      { name: "end", type: "datetime-local", desc: "Ends at" },
+      { name: "start", type: "datetime-local", desc: "Starts at", required: true },
+      { name: "end", type: "datetime-local", desc: "Ends at", required: true },
       { name: "blackedout", type: "checkbox", desc: "Is blackout" },
       { name: "send_confirmation", type: "checkbox", desc: "Send confirmation email to patron" },
     ];

@@ -9,9 +9,9 @@ export default class LMSEquipmentModal extends LMSModal {
     super();
     this.fields = [
       { name: "equipmentid", type: "text" },
-      { name: "equipmentname", type: "text", desc: "Equipmentname" },
-      { name: "description", type: "text", desc: "Description" },
-      { name: "image", type: "text", desc: "Image" },
+      { name: "equipmentname", type: "text", desc: "Equipmentname", required: true },
+      { name: "description", type: "text", desc: "Description", required: true },
+      { name: "image", type: "text", desc: "Image", required: true },
       { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
       {
         name: "info",

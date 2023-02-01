@@ -137,10 +137,7 @@ export default class LMSModal extends LitElement {
           +
         </button>
       </div>
-      <div
-        class="backdrop"
-        ?hidden=${!this.isOpen}
-      ></div>
+      <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
         class="modal fade ${this.isOpen && "d-block show"}"
         id="lms-modal"
@@ -219,6 +216,7 @@ export default class LMSModal extends LitElement {
           @change=${(e) => {
             field.value = e.target.value;
           }}
+          ?required=${field.required}
         >
           ${field.entries.map(
             (entry) => html`<option value=${entry.value}>${entry.name}</option>`
@@ -237,6 +235,7 @@ export default class LMSModal extends LitElement {
           @input=${(e) => {
             field.value = e.target.value;
           }}
+          ?required=${field.required}
         />
         <label for=${field.name}>&nbsp;${field.desc}</label>
       </div>`;
@@ -254,6 +253,7 @@ export default class LMSModal extends LitElement {
         @input=${(e) => {
           field.value = e.target.value;
         }}
+        ?required=${field.required}
       />
     </div>`;
   }
