@@ -14,6 +14,7 @@ use Time::Piece;
 
 use C4::Letters;
 use Koha::Patrons;
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Checks qw( is_allowed_to_book );
 
 our $VERSION = '1.0.0';
 
@@ -145,6 +146,11 @@ sub _check_and_save_booking {
     $dbh->begin_work;    # start transaction
 
     my $sql = SQL::Abstract->new;
+
+    if ( !is_allowed_to_book( $body->{'borrowernumber'} ) ) {
+        $dbh->rollback;    # rollback transaction
+        return $c->render( status => 400, openapi => { error => $self->retrieve_data('restrict_message') || 'The patron is not allowed to book rooms.' } );
+    }
 
     if ( !_is_bookable_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
         $dbh->rollback;    # rollback transaction
