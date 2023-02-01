@@ -52,6 +52,7 @@
     "@granite-elements/granite-lit-bootstrap": "^4.6.0-0",
     "@granite-elements/granite-lit-spectre": "^0.5.9-2",
     "datetime": "0.0.3",
+    "dayjs": "^1.11.7",
     "gulp-replace": "^0.6.1",
     "jsonfile": "^4.0.0",
     "lit": "^2.4.1",
