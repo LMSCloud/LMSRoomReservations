@@ -14,6 +14,7 @@ use Time::Piece;
 
 use C4::Letters;
 use Koha::Patrons;
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Checks qw( is_allowed_to_book );
 
 our $VERSION = '1.0.0';
 
