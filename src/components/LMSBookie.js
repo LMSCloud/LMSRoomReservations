@@ -239,6 +239,7 @@ export default class LMSBookie extends LitElement {
                 name="duration"
                 class="form-control"
                 aria-describedby="booking-help"
+                placeholder="In minutes, e.g. 60"
               />
               <datalist id="durations">
                 <!-- Check if this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime has a value, if not, output nothing
