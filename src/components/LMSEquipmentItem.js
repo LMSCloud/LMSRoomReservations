@@ -84,6 +84,12 @@ export default class LMSEquipmentItem extends LitElement {
       const event = new CustomEvent("modified", { bubbles: true });
       this.dispatchEvent(event);
     }
+
+    if (response.status >= 400) {
+      const error = await response.json();
+      const event = new CustomEvent("error", { bubbles: true, detail: error });
+      this.dispatchEvent(event);
+    }
   }
 
   async handleDelete() {

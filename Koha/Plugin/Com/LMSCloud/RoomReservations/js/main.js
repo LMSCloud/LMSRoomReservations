@@ -630,6 +630,12 @@
         const event = new CustomEvent("modified", { bubbles: true });
         this.dispatchEvent(event);
       }
+
+      if (response.status >= 400) {
+        const error = await response.json();
+        const event = new CustomEvent("error", { bubbles: true, detail: error });
+        this.dispatchEvent(event);
+      }
     }
 
     async handleDelete() {
@@ -2886,9 +2892,7 @@
       }, 1000);
 
       this.renderRoot.addEventListener("click", (e) => {
-        console.log(e.target);
         if (e.target.tagName === "SPAN") {
-          console.log('YES');
           this.remove();
         }
       });
@@ -2896,6 +2900,15 @@
       setTimeout(() => {
         this.remove();
       }, 10000);
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      this.renderRoot.removeEventListener("click", (e) => {
+        if (e.target.tagName === "SPAN") {
+          this.remove();
+        }
+      });
     }
   }
 
