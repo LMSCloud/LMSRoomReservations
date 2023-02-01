@@ -277,6 +277,7 @@ sub install() {
                 absolute_reservation_limit => q{},
                 daily_reservation_limit    => q{},
                 restrict_message           => q{},
+                reply_to_address           => q{},
             }
         );
 
