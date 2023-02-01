@@ -12,6 +12,7 @@ import LMSBookingsTable from "./components/LMSBookingsTable";
 import LMSBookingsModal from "./components/LMSBookingsModal";
 import LMSCalendar from "./components/LMSCalendar/lib/lms-calendar";
 import LMSBookie from "./components/LMSBookie";
+import LMSToast from "./components/LMSToast";
 
 function renderOnUpdate({
   entryPoint,
@@ -29,7 +30,7 @@ function renderOnUpdate({
       const result = await response.json();
       entryPointRef.innerHTML = "";
       result.forEach((item) => {
-        const element = document.createElement(tagname);
+        const element = document.createElement(tagname, { is: tagname });
         Object.keys(item).forEach((key) => {
           element.setAttribute(key, item[key]);
         });
@@ -39,10 +40,30 @@ function renderOnUpdate({
   });
 }
 
+function renderToastOnError({ entryPoint, eventName }) {
+  const entryPointRef = entryPoint;
+  entryPointRef.addEventListener(eventName, (e) => {
+    const { errors, status } = e.detail;
+    const element = document.createElement("lms-toast", { is: "lms-toast" });
+    element.setAttribute("heading", status);
+    element.setAttribute(
+      "message",
+      errors.reduce(
+        (acc, { message, path }) => `${acc} message: ${message} path: ${path};`,
+        ""
+      )
+    );
+    entryPointRef.appendChild(element);
+  });
+}
+
 function renderCalendar() {
   const currentDate = new Date();
   const options = { headers: { accept: "" } };
-  const response = fetch("/api/v1/contrib/roomreservations/public/bookings", options);
+  const response = fetch(
+    "/api/v1/contrib/roomreservations/public/bookings",
+    options
+  );
 
   const calendar = document.querySelector("lms-calendar");
   if (!calendar) {
@@ -167,7 +188,9 @@ export {
   LMSBookingsModal,
   LMSCalendar,
   LMSBookie,
+  LMSToast,
   renderOnUpdate,
   renderCalendar,
   renderOpenHours,
+  renderToastOnError,
 };

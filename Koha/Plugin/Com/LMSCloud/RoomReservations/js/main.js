@@ -79,8 +79,6 @@
     }
 
     async handleSave() {
-      this.editable = false;
-
       const response = await fetch(
         `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
         {
@@ -103,6 +101,14 @@
       if (response.status === 200) {
         // Emit an event with the current property values
         const event = new CustomEvent("modified", { bubbles: true });
+        this.dispatchEvent(event);
+        this.editable = false;
+        return;
+      }
+
+      if (response.status >= 400) {
+        const error = await response.json();
+        const event = new CustomEvent("error", { bubbles: true, detail: error });
         this.dispatchEvent(event);
       }
     }
@@ -2820,6 +2826,81 @@
   }
   customElements.define("lms-bookie", LMSBookie);
 
+  class LMSToast extends s {
+    static properties = {
+      heading: { type: String },
+      message: { type: String },
+      _elapsedTime: { state: true },
+    };
+
+    static styles = [
+      bootstrapStyles,
+      i$3`
+      div:first {
+        position: relative;
+        min-height: 200px;
+      }
+
+      .toast {
+        position: absolute;
+        bottom: 1em;
+        left: 50%;
+        opacity: 1;
+      }
+    `,
+    ];
+
+    constructor() {
+      super();
+      this.heading = "";
+      this.message = "";
+      this._elapsedTime = 0;
+    }
+
+    render() {
+      return y`
+      <div aria-live="polite" aria-atomic="true">
+        <div class="toast">
+          <div class="toast-header">
+            <strong class="mr-auto">${this.heading}</strong>
+            <small>${this._elapsedTime} sec ago</small>
+            <button
+              type="button"
+              class="ml-2 mb-1 close"
+              data-dismiss="toast"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">${this.message}</div>
+        </div>
+      </div>
+    `;
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      setInterval(() => {
+        this._elapsedTime++;
+      }, 1000);
+
+      this.renderRoot.addEventListener("click", (e) => {
+        console.log(e.target);
+        if (e.target.tagName === "SPAN") {
+          console.log('YES');
+          this.remove();
+        }
+      });
+
+      setTimeout(() => {
+        this.remove();
+      }, 10000);
+    }
+  }
+
+  customElements.define("lms-toast", LMSToast);
+
   function renderOnUpdate({
     entryPoint,
     tagname,
@@ -2836,7 +2917,7 @@
         const result = await response.json();
         entryPointRef.innerHTML = "";
         result.forEach((item) => {
-          const element = document.createElement(tagname);
+          const element = document.createElement(tagname, { is: tagname });
           Object.keys(item).forEach((key) => {
             element.setAttribute(key, item[key]);
           });
@@ -2846,10 +2927,30 @@
     });
   }
 
+  function renderToastOnError({ entryPoint, eventName }) {
+    const entryPointRef = entryPoint;
+    entryPointRef.addEventListener(eventName, (e) => {
+      const { errors, status } = e.detail;
+      const element = document.createElement("lms-toast", { is: "lms-toast" });
+      element.setAttribute("heading", status);
+      element.setAttribute(
+        "message",
+        errors.reduce(
+          (acc, { message, path }) => `${acc} message: ${message} path: ${path};`,
+          ""
+        )
+      );
+      entryPointRef.appendChild(element);
+    });
+  }
+
   function renderCalendar() {
     const currentDate = new Date();
     const options = { headers: { accept: "" } };
-    const response = fetch("/api/v1/contrib/roomreservations/public/bookings", options);
+    const response = fetch(
+      "/api/v1/contrib/roomreservations/public/bookings",
+      options
+    );
 
     const calendar = document.querySelector("lms-calendar");
     if (!calendar) {
@@ -2971,11 +3072,13 @@
   exports.LMSSearch = LMSSearch;
   exports.LMSSettingsTable = LMSSettingsTable;
   exports.LMSTable = LMSTable;
+  exports.LMSToast = LMSToast;
   exports.LitElement = s;
   exports.html = y;
   exports.renderCalendar = renderCalendar;
   exports.renderOnUpdate = renderOnUpdate;
   exports.renderOpenHours = renderOpenHours;
+  exports.renderToastOnError = renderToastOnError;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

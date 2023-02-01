@@ -40,8 +40,6 @@ export default class LMSRoom extends LitElement {
   }
 
   async handleSave() {
-    this.editable = false;
-
     const response = await fetch(
       `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
       {
@@ -64,6 +62,14 @@ export default class LMSRoom extends LitElement {
     if (response.status === 200) {
       // Emit an event with the current property values
       const event = new CustomEvent("modified", { bubbles: true });
+      this.dispatchEvent(event);
+      this.editable = false;
+      return;
+    }
+
+    if (response.status >= 400) {
+      const error = await response.json();
+      const event = new CustomEvent("error", { bubbles: true, detail: error });
       this.dispatchEvent(event);
     }
   }

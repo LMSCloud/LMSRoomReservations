@@ -41,6 +41,7 @@
     };
     RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'modified'});
     RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'deleted'});
+    RoomReservationBundle.renderToastOnError({ entryPoint, eventName: 'error'});
 
     const [eventTarget] = Array.from(document.getElementsByTagName('lms-room-modal'));
     RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'created', eventTarget});
