@@ -30,22 +30,25 @@ sub list {
             {   setting     => 'default_max_booking_time',
                 value       => $self->retrieve_data('default_max_booking_time'),
                 description => 'Default maximum bookable time for all rooms',
-                type        => 'number'
+                type        => 'number',
+                placeholder => 'A duration in minutes, e.g. 60 for an hour',
             },
             {   setting     => 'absolute_reservation_limit',
                 value       => $self->retrieve_data('absolute_reservation_limit'),
                 description => 'Absolute reservation limit per patron',
-                type        => 'number'
+                type        => 'number',
+                placeholder => 'A number, e.g. 5 for five reservations',
             },
             {   setting     => 'daily_reservation_limit',
                 value       => $self->retrieve_data('daily_reservation_limit'),
                 description => 'Daily reservation limit per patron',
-                type        => 'number'
+                type        => 'number',
+                placeholder => 'A number, e.g. 3 for three reservations',
             },
             {   setting     => 'restricted_patron_categories',
                 value       => $restricted_patron_categories,
                 description => 'Restricted patron categories which are not allowed to book rooms',
-                type        => 'array'
+                type        => 'array',
             },
             {   setting => 'patron_categories',
                 value   => sub {
@@ -55,17 +58,19 @@ sub list {
                 }
                     ->( { cmp_with => $restricted_patron_categories, cmp_on => $patron_categories } ),
                 description => 'Existing patron categories',
-                type        => 'array'
+                type        => 'array',
             },
             {   setting     => 'restrict_message',
                 value       => $self->retrieve_data('restrict_message'),
                 description => 'Message that is shown to restricted patron categories trying to book rooms',
-                type        => 'string'
+                type        => 'string',
+                placeholder => q{A message, e.g. 'You are not allowed to book rooms'},
             },
             {   setting     => 'reply_to_address',
                 value       => $self->retrieve_data('reply_to_address'),
                 description => 'Email address to which confirmation emails for patrons are mirrored',
-                type        => 'string'
+                type        => 'string',
+                placeholder => 'An email address, e.g. contact@institution.com',
             }
         ];
 
