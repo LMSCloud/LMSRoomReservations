@@ -1,5 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
+import dayjs from "dayjs";
 
 export default class LMSBookie extends LitElement {
   static properties = {
@@ -121,9 +122,6 @@ export default class LMSBookie extends LitElement {
       []
     );
 
-    /** Important note: This uses the dayjs library present in Koha
-     *  You'll find this included as an asset in views/opac/calendar.tt */
-    // eslint-disable-next-line no-undef
     const startDatetime = dayjs(start);
     const end = startDatetime
       .add(duration, "minute")
@@ -295,6 +293,18 @@ export default class LMSBookie extends LitElement {
                     </div>
                   `
                 )}
+            </div>
+            <div class="form-group">
+              <label for="confirmation">Confirmation Email</label>
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  id="confirmation-email"
+                  name="confirmation-email"
+                  class="form-check-input"
+                />
+                <label class="form-check-label" for="confirmation-email">Should we send you a confirmation email?</label>
+              </div>
             </div>
             <small class="form-text text-muted" id="booking-help"
               >Pick a room, a date, a time<span
