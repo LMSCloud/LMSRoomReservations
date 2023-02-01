@@ -61,6 +61,11 @@ sub list {
                 value       => $self->retrieve_data('restrict_message'),
                 description => 'Message that is shown to restricted patron categories trying to book rooms',
                 type        => 'string'
+            },
+            {   setting     => 'reply_to_address',
+                value       => $self->retrieve_data('reply_to_address'),
+                description => 'Email address to which confirmation emails for patrons are mirrored',
+                type        => 'string'
             }
         ];
 
