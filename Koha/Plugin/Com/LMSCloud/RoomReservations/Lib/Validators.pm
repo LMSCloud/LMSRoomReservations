@@ -8,7 +8,7 @@ our $VERSION = '1.0.0';
 use Exporter 'import';
 
 BEGIN {
-    our @EXPORT_OK = qw( is_valid_string is_valid_number is_valid_datetime );
+    our @EXPORT_OK = qw( is_valid_string is_valid_number is_valid_datetime is_valid_color );
 }
 
 use constant {
@@ -17,28 +17,29 @@ use constant {
 };
 
 sub is_valid_string {
-    my ( $value, $length ) = @_;
+    my ($args) = @_;
 
     # Return immediately if the given value is not defined.
-    return ( 0, ['The given value is not defined.'] ) if !defined $value;
+    return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
 
     # Uses a regular expression to check whether the given value is alphanumeric.
-    my $is_alphanumeric = $value =~ m/^[[:alpha:]\d]+$/smx;
+    my $is_alphanumeric = $args->{'value'} =~ m/^[[:alpha:]\d]+$/smx;
 
     # Uses a regular expression to check whether the given value has a certain length using the supplied length.
-    my $has_given_length = $value =~ m/^.{1,$length}$/smx;
+    my $has_given_length = defined $args->{'length'} ? $args->{'value'} =~ m/^.{1,$args->{'length'}}$/smx : 1;
 
     # Checks whether the given value exceeds the MAX_LENGTH_VARCHAR.
-    my $exceeds_max_length = length $value <= MAX_LENGTH_VARCHAR;
+    my $exceeds_max_length = length $args->{'value'} >= MAX_LENGTH_VARCHAR;
 
     if ( $is_alphanumeric && $has_given_length && !$exceeds_max_length ) {
         return (1);
     }
 
-    my $errors = [];
-    push @{$errors}, 'The given value is not alphanumeric.'        if !$is_alphanumeric;
-    push @{$errors}, 'The given value has not the given length.'   if !$has_given_length;
-    push @{$errors}, 'The given value exceeds the maximum length.' if !$exceeds_max_length;
+    my $errors         = [];
+    my $given_argument = defined $args->{'key'} ? "The given value for $args->{'key'}" : "The given value: $args->{'value'}";
+    push @{$errors}, "$given_argument is not alphanumeric."        if !$is_alphanumeric;
+    push @{$errors}, "$given_argument has not the given length."   if !$has_given_length;
+    push @{$errors}, "$given_argument exceeds the maximum length." if $exceeds_max_length;
 
     return ( 0, $errors );
 }
@@ -49,7 +50,7 @@ sub is_valid_number {
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
 
-    my ( $min, $max ) = @{ $args->{'range'} } || ( 0, MAX_LENGTH_INT );
+    my ( $min, $max ) = defined $args->{'range'} ? @{ $args->{'range'} } : ( 0, MAX_LENGTH_INT );
 
     # Uses a regular expression to check whether the given number is a number.
     my $is_number = $args->{'value'} =~ m/^\d+$/smx;
@@ -76,12 +77,13 @@ sub is_valid_number {
         return (1);
     }
 
-    my $errors = [];
-    push @{$errors}, 'The given value is not a number.'           if !$is_number;
-    push @{$errors}, 'The given value has not the given length.'  if !$has_given_length;
-    push @{$errors}, 'The given value is not positive.'           if !$is_positive;
-    push @{$errors}, 'The given value exceeds the maximum value.' if $exceeds_max_value;
-    push @{$errors}, 'The given value is not in the given range.' if !$is_in_range;
+    my $errors         = [];
+    my $given_argument = defined $args->{'key'} ? "The given value for $args->{'key'}" : "The given value: $args->{'value'}";
+    push @{$errors}, "$given_argument is not a number."           if !$is_number;
+    push @{$errors}, "$given_argument has not the given length."  if !$has_given_length;
+    push @{$errors}, "$given_argument is not positive."           if !$is_positive;
+    push @{$errors}, "$given_argument exceeds the maximum value." if $exceeds_max_value;
+    push @{$errors}, "$given_argument is not in the given range." if !$is_in_range;
 
     return ( 0, $errors );
 }
@@ -107,10 +109,35 @@ sub is_valid_datetime {
         return (1);
     }
 
-    my $errors = [];
-    push @{$errors}, 'The given value is not a datetime in the format YYYY-MM-DDTHH:mm.' if !$is_valid_datetime;
-    push @{$errors}, 'The given value is not after the current localtime.'               if !$is_after_localtime;
-    push @{$errors}, 'The given value is not before the given datetime.'                 if !$is_before;
+    my $errors         = [];
+    my $given_argument = defined $args->{'key'} ? "The given value for $args->{'key'}" : "The given value: $args->{'value'}";
+    push @{$errors}, "$given_argument is not a datetime in the format YYYY-MM-DDTHH:mm." if !$is_valid_datetime;
+    push @{$errors}, "$given_argument is not after the current localtime."               if !$is_after_localtime;
+    push @{$errors}, "$given_argument is not before the given datetime."                 if !$is_before;
+
+    return ( 0, $errors );
+}
+
+sub is_valid_color {
+    my ($args) = @_;
+
+    # Return immediately if the given value is not defined.
+    return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
+
+    # Uses a regular expression to check whether the given value is a color in the format
+    # #RRGGBB or
+    # rgb([0-9]{3}, [0-9]{3}, [0-9]{3}) or
+    # rgba([0-9]{3}, [0-9]{3}, [0-9]{3}, (0(\.\d+)?|1(\.0+)?)).
+    my $is_valid_color = $args->{'value'} =~ m/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx;
+
+    # Check if all options specified in args are true.
+    if ($is_valid_color) {
+        return (1);
+    }
+
+    my $errors         = [];
+    my $given_argument = defined $args->{'key'} ? "The given value for $args->{'key'}" : "The given value: $args->{'value'}";
+    push @{$errors}, "$given_argument is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0)." if !$is_valid_color;
 
     return ( 0, $errors );
 }
