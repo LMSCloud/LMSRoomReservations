@@ -85,9 +85,6 @@ lms-bookie {
 .lmsr-content-block {
   display: flex;
   gap: 1em;
-}
-
-.lmsr-content-block:has(lms-open-hours-table) {
   flex-wrap: wrap;
 }
 
