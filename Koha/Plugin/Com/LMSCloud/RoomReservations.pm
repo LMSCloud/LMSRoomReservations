@@ -28,13 +28,6 @@ use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
 use Try::Tiny;
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Bookings;
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Equipment;
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Limits;
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Misc;
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Rooms;
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Calendar::Times;
-
 ## Here we set our plugin version
 our $VERSION         = "{VERSION}";
 our $MINIMUM_VERSION = "{MINIMUM_VERSION}";
@@ -121,38 +114,15 @@ sub configure {
     my $operations = {
         q{} => sub {
             $template = $self->get_template( { file => 'views/configuration/settings.tt' } );
-
-            my $restricted_patron_categories = get_restricted_patron_categories();
-            my $patron_categories            = get_patron_categories();
-
-            $template->param(
-                op                           => $op,
-                default_max_booking_time     => $self->retrieve_data('default_max_booking_time'),
-                absolute_reservation_limit   => $self->retrieve_data('absolute_reservation_limit'),
-                daily_reservation_limit      => $self->retrieve_data('daily_reservation_limit'),
-                restricted_patron_categories => $restricted_patron_categories,
-                patron_categories            => sub {
-                    my $params    = shift;
-                    my %cmp_table = map { $_->{'categorycode'} => 1 } @{ $params->{'cmp_with'} };
-                    return [ grep { not exists $cmp_table{ $_->{'categorycode'} } } @{ $params->{'cmp_on'} } ];
-                }
-                    ->( { cmp_with => $restricted_patron_categories, cmp_on => $patron_categories } ),
-                restrict_message => $self->retrieve_data('restrict_message'),
-            );
+            $template->param( op => $op, );
         },
         q{rooms} => sub {
             $template = $self->get_template( { file => 'views/configuration/rooms.tt' } );
-            $template->param(
-                op    => $op,
-                rooms => list_table_items( $self->get_qualified_table_name('rooms') ),
-            );
+            $template->param( op => $op, );
         },
         q{equipment} => sub {
             $template = $self->get_template( { file => 'views/configuration/equipment.tt' } );
-            $template->param(
-                op        => $op,
-                equipment => list_table_items( $self->get_qualified_table_name('equipment') ),
-            );
+            $template->param( op => $op, );
         },
     };
 
