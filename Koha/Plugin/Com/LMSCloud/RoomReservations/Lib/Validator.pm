@@ -1,23 +1,45 @@
-package Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validators;
+package Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
 
-use Modern::Perl;
+use Moose;
 use utf8;
 use 5.010;
 
 our $VERSION = '1.0.0';
 use Exporter 'import';
 
-BEGIN {
-    our @EXPORT_OK = qw( is_valid_string is_valid_number is_valid_datetime is_valid_color );
-}
+has 'schema' => (
+    is       => 'ro',
+    isa      => 'ArrayRef',
+    required => 1,
+);
 
 use constant {
     MAX_LENGTH_VARCHAR => 255,
     MAX_LENGTH_INT     => 2_147_483_647,
 };
 
+sub validate {
+    my ($self) = shift;
+
+    my $errors = [];
+    for my $task ( @{ $self->schema } ) {
+        my $method = "is_valid_$task->{'type'}";
+
+        my ( $is_valid, $_errors ) = $self->$method(
+            {   key   => $task->{'key'},
+                value => $task->{'value'},
+                %{ $task->{'options'} // {} }
+            }
+        );
+        push @{$errors}, @{$_errors} if !$is_valid;
+    }
+    return ( 0, $errors ) if @{$errors};
+
+    return (1);
+}
+
 sub is_valid_string {
-    my ($args) = @_;
+    my ( $self, $args ) = @_;
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -45,7 +67,7 @@ sub is_valid_string {
 }
 
 sub is_valid_number {
-    my ($args) = @_;
+    my ( $self, $args ) = @_;
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -89,7 +111,7 @@ sub is_valid_number {
 }
 
 sub is_valid_datetime {
-    my ($args) = @_;
+    my ( $self, $args ) = @_;
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -119,7 +141,7 @@ sub is_valid_datetime {
 }
 
 sub is_valid_color {
-    my ($args) = @_;
+    my ( $self, $args ) = @_;
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -150,60 +172,22 @@ Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validators - A module contai
 
 =head1 SYNOPSIS
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validators;
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
 
-# The schema contains a hashref with fields to validate as keys
-# and a coderef plus arguments to supply to the coderef as values.
-my $schema = {
-    maxcapacity     => { validator => \&is_valid_number, },
-    color           => { validator => \&is_valid_color, },
-    maxbookabletime => { validator => \&is_valid_number, },
-    roomnumber      => {
-        validator => \&is_valid_string,
-        options   => { length => 20 }
-    },
-};
-
-# We use the method defined in the schema to validate the input
-for my $key ( keys %{$schema} ) {
-    my $validator = $schema->{$key}->{'validator'};
-    my $args      = {
-        key   => $key,
-        value => $room->{$key},
-        %{ $schema->{$key}->{'options'} // {} }
-    };
-    my ( $is_valid, $errors ) = $validator->($args);
-    if ( !$is_valid ) {
-        return $c->render(
-            status  => 400,
-            openapi => { error => join q{ ; }, @{$errors} }
-        );
+my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+    {   schema => [
+            { key => 'maxcapacity',     value => $room->{'maxcapacity'},     type => 'number' },
+            { key => 'color',           value => $room->{'color'},           type => 'color' },
+            { key => 'maxbookabletime', value => $room->{'maxbookabletime'}, type => 'number' },
+            {   key     => 'roomnumber',
+                value   => $room->{'roomnumber'},
+                type    => 'string',
+                options => { length => 20 }
+            },
+        ]
     }
-}
-
-=head1 DESCRIPTION
-
-This module contains functions to validate input.
-
-=head1 FUNCTIONS
-
-=head2 is_valid_string
-
-Checks whether the given value is a string and whether it has the given length.
-
-=head2 is_valid_number
-
-Checks whether the given value is a number and whether it is positive and whether it is in the given range.
-
-=head2 is_valid_datetime
-
-Checks whether the given value is a datetime in the format YYYY-MM-DDTHH:mm 
-and whether it is equal or greater than the current localtime if the after option is true 
-and whether it is equal or less than a supplied datetime in the format YYYY-MM-DDTHH:mm if the before option is defined.
-
-=head2 is_valid_color
-
-Checks whether the given value is a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0).
+);
+my ( $is_valid, $errors ) = $validator->validate();
 
 =head1 AUTHOR
 

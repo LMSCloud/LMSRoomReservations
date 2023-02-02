@@ -19,6 +19,9 @@ if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
 
 my $ROOMS_TABLE = $self ? $self->get_qualified_table_name('rooms') : undef;
 
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validators qw( is_valid_string is_valid_number is_valid_color );
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
+
 sub list {
     my $c = shift->openapi->valid_input or return;
 
@@ -66,12 +69,34 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $room  = $c->validation->param('body');
-        my $query = "INSERT INTO $ROOMS_TABLE (maxcapacity, color, image, description, maxbookabletime, branch, roomnumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        my $sth   = $dbh->prepare($query);
-        $sth->execute( $room->{maxcapacity}, $room->{color}, $room->{image}, $room->{description}, $room->{maxbookabletime}, $room->{branch}, $room->{roomnumber} );
+        my $room      = $c->validation->param('body');
+        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+            {   schema => [
+                    { key => 'maxcapacity',     value => $room->{'maxcapacity'},     type => 'number' },
+                    { key => 'color',           value => $room->{'color'},           type => 'color' },
+                    { key => 'maxbookabletime', value => $room->{'maxbookabletime'}, type => 'number' },
+                    {   key     => 'roomnumber',
+                        value   => $room->{'roomnumber'},
+                        type    => 'string',
+                        options => { length => 20 }
+                    },
+                ]
+            }
+        );
+        my ( $is_valid, $errors ) = $validator->validate();
+        if ( !$is_valid ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => join q{ & }, @{$errors} }
+            );
+        }
+
+        my ( $stmt, @bind ) = $sql->insert( $ROOMS_TABLE, $room );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         return $c->render(
             status  => 201,
