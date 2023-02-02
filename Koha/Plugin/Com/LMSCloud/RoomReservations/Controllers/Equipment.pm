@@ -20,6 +20,8 @@ if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
 my $EQUIPMENT_TABLE       = $self ? $self->get_qualified_table_name('equipment')       : undef;
 my $ROOMS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('rooms_equipment') : undef;
 
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
+
 sub list {
     my $c = shift->openapi->valid_input or return;
 
@@ -82,12 +84,26 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $sql = SQL::Abstract->new;
+        my $dbh = C4::Context->dbh;
+
         my $equipment = $c->validation->param('body');
-        my $sql       = SQL::Abstract->new;
+        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+            {   schema => [
+                    { key => equipmentname,   $value => $equipment->{'equipmentname'},   type => 'string', options => { length   => 20 } },
+                    { key => maxbookabletime, $value => $equipment->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
+                ]
+            }
+        );
+        my ( $is_valid, $errors ) = $validator->validate();
+        if ( !$is_valid ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => join q{ & }, @{$errors} }
+            );
+        }
 
         my ( $stmt, @bind ) = $sql->insert( $EQUIPMENT_TABLE, $equipment );
-
-        my $dbh = C4::Context->dbh;
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
@@ -116,6 +132,20 @@ sub update {
 
         if ($equipment) {
             my $new_equipment = $c->validation->param('body');
+            my $validator     = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+                {   schema => [
+                        { key => equipmentname,   $value => $new_equipment->{'equipmentname'},   type => 'string', options => { length   => 20 } },
+                        { key => maxbookabletime, $value => $new_equipment->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
+                    ]
+                }
+            );
+            my ( $is_valid, $errors ) = $validator->validate();
+            if ( !$is_valid ) {
+                return $c->render(
+                    status  => 400,
+                    openapi => { error => join q{ & }, @{$errors} }
+                );
+            }
 
             my $roomid;
 

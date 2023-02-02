@@ -112,6 +112,7 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
         my $roomid = $c->validation->param('roomid');
@@ -127,16 +128,31 @@ sub update {
             );
         }
 
-        my $new_room = $c->validation->param('body');
-        $query = "UPDATE $ROOMS_TABLE SET maxcapacity = ?, color = ?, image = ?, description = ?, maxbookabletime = ?, branch = ?, roomnumber = ? WHERE roomid = ?";
-        $sth   = $dbh->prepare($query);
-        $sth->execute(
-            $new_room->{maxcapacity},
-            $new_room->{color}, $new_room->{image},
-            $new_room->{description},
-            $new_room->{maxbookabletime},
-            $new_room->{branch}, $new_room->{roomnumber}, $roomid
+        my $new_room  = $c->validation->param('body');
+        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+            {   schema => [
+                    { key => 'maxcapacity',     value => $new_room->{'maxcapacity'},     type => 'number' },
+                    { key => 'color',           value => $new_room->{'color'},           type => 'color' },
+                    { key => 'maxbookabletime', value => $new_room->{'maxbookabletime'}, type => 'number' },
+                    {   key     => 'roomnumber',
+                        value   => $new_room->{'roomnumber'},
+                        type    => 'string',
+                        options => { length => 20 }
+                    },
+                ]
+            }
         );
+        my ( $is_valid, $errors ) = $validator->validate();
+        if ( !$is_valid ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => join q{ & }, @{$errors} }
+            );
+        }
+
+        my ( $stmt, @bind ) = $sql->update( $ROOMS_TABLE, $new_room, { roomid => $roomid } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         return $c->render(
             status  => 200,
