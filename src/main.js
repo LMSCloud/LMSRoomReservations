@@ -13,6 +13,7 @@ import LMSBookingsModal from "./components/LMSBookingsModal";
 import LMSCalendar from "./components/LMSCalendar/lib/lms-calendar";
 import LMSBookie from "./components/LMSBookie";
 import LMSToast from "./components/LMSToast";
+import "./main.css";
 
 function renderOnUpdate({
   entryPoint,

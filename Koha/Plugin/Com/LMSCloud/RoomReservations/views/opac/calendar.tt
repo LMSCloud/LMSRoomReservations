@@ -7,8 +7,8 @@
 
 [% INCLUDE 'doc-head-open.inc' %]
     <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha online[% END %] catalog &rsaquo; Room Reservations</title>
-    <link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/css/main.css">
-    <script type="text/javascript" src="/api/v1/contrib/roomreservations/static/js/main.js"></script>
+    <link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/bundle/main.css">
+    <script type="text/javascript" src="/api/v1/contrib/roomreservations/static/bundle/main.js"></script>
     [% Asset.js("lib/dayjs/dayjs.min.js") | $raw %]
     [% INCLUDE 'doc-head-close.inc' %]
 </head>
