@@ -38,8 +38,12 @@ sub validate {
     return (1);
 }
 
+# possible options: nullable: boolean, length: int
 sub is_valid_string {
     my ( $self, $args ) = @_;
+
+    # Return immediately if the given value is nullish and the nullable option is true.
+    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -66,8 +70,12 @@ sub is_valid_string {
     return ( 0, $errors );
 }
 
+# possible options: nullable: boolean, positive: boolean, max_value: int, range: arrayref
 sub is_valid_number {
     my ( $self, $args ) = @_;
+
+    # Return immediately if the given value is nullish and the nullable option is true.
+    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -110,8 +118,12 @@ sub is_valid_number {
     return ( 0, $errors );
 }
 
+# possible options: nullable: boolean, after: boolean, before: boolean
 sub is_valid_datetime {
     my ( $self, $args ) = @_;
+
+    # Return immediately if the given value is nullish and the nullable option is true.
+    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -140,8 +152,12 @@ sub is_valid_datetime {
     return ( 0, $errors );
 }
 
+# possible options: nullable: boolean
 sub is_valid_color {
     my ( $self, $args ) = @_;
+
+    # Return immediately if the given value is nullish and the nullable option is true.
+    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
