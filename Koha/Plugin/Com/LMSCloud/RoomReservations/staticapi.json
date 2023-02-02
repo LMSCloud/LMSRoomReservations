@@ -1,5 +1,5 @@
 {
-  "/bundle/main.css": {
+  "/dist/main.css": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -51,7 +51,7 @@
       }
     }
   },
-  "/bundle/main.css.map": {
+  "/dist/main.css.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -103,7 +103,7 @@
       }
     }
   },
-  "/bundle/main.js": {
+  "/dist/main.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -155,7 +155,7 @@
       }
     }
   },
-  "/bundle/main.js.map": {
+  "/dist/main.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [

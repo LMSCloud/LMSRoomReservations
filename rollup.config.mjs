@@ -11,7 +11,7 @@ export default [
   {
     input: "./src/main.js",
     output: {
-      dir: "./Koha/Plugin/Com/LMSCloud/RoomReservations/js/",
+      dir: "./Koha/Plugin/Com/LMSCloud/RoomReservations/dist/",
       format: "umd",
       name: "RoomReservationBundle",
       sourcemap: true,
@@ -26,7 +26,7 @@ export default [
           }),
         ],
         extract: path.resolve(
-          "Koha/Plugin/Com/LMSCloud/RoomReservations/js/main.css"
+          "Koha/Plugin/Com/LMSCloud/RoomReservations/dist/main.css"
         ),
         minimize: true,
         sourceMap: true,
