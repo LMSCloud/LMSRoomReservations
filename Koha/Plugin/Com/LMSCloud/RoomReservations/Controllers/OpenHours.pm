@@ -20,6 +20,8 @@ if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
 
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
 
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
+
 sub list {
     my $c = shift->openapi->valid_input or return;
 
@@ -117,6 +119,16 @@ sub update {
         }
 
         my $new_open_hours = $c->validation->param('body');
+        my $validator      = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+            { schema => [ { type => 'time', key => 'start', value => $new_open_hours->{'start'} }, { type => 'time', key => 'end', value => $new_open_hours->{'end'} }, ] } );
+        my ( $is_valid, $errors ) = $validator->validate();
+        if ( !$is_valid ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => join q{ & }, @{$errors} }
+            );
+        }
+
         ( $stmt, @bind ) = $sql->update( $OPEN_HOURS_TABLE, $new_open_hours, { branch => $branch, day => $day } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
