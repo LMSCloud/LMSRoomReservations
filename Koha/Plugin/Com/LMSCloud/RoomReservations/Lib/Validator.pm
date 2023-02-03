@@ -180,6 +180,30 @@ sub is_valid_color {
     return ( 0, $errors );
 }
 
+sub is_valid_time {
+    my ( $self, $args ) = @_;
+
+    # Return immediately if the given value is nullish and the nullable option is true.
+    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
+
+    # Return immediately if the given value is not defined.
+    return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
+
+    # Uses a regular expression to check whether the given value is a time in the format HH:mm.
+    my $is_valid_time = $args->{'value'} =~ m/^\d{2}:\d{2}$/smx;
+
+    # Check if all options specified in args are true.
+    if ($is_valid_time) {
+        return (1);
+    }
+
+    my $errors         = [];
+    my $given_argument = defined $args->{'key'} ? "The given value for $args->{'key'}" : "The given value: $args->{'value'}";
+    push @{$errors}, "$given_argument is not a time in the format HH:mm." if !$is_valid_time;
+
+    return ( 0, $errors );
+}
+
 =pod
 
 =head1 NAME
