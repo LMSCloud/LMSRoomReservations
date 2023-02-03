@@ -8,6 +8,7 @@ export default class LMSTable extends LitElement {
       data: { type: Array },
       _isEditable: { type: Boolean, attribute: false },
       _isDeletable: { type: Boolean, attribute: false },
+      _toast: { state: true },
     };
   }
 
@@ -27,6 +28,10 @@ export default class LMSTable extends LitElement {
     this._isDeletable = false;
     this._notImplementedInBaseMessage =
       "Implement this method in your extended LMSTable component.";
+    this._toast = {
+      heading: "",
+      message: "",
+    };
   }
 
   _handleEdit() {
@@ -41,15 +46,39 @@ export default class LMSTable extends LitElement {
     console.log(this._notImplementedInBaseMessage);
   }
 
+  _renderToast(status, result) {
+    if (result.error) {
+      this._toast = {
+        heading: status,
+        message: result.error,
+      };
+      return;
+    }
+
+    if (result.errors) {
+      this._toast = {
+        heading: status,
+        message: Object.values(result.errors)
+          .map(({ message, path }) => `Sorry! ${message} at ${path}`)
+          .join(" & "),
+      };
+    }
+
+    const lmsToast = document.createElement("lms-toast", { is: "lms-toast" });
+    lmsToast.heading = this._toast.heading;
+    lmsToast.message = this._toast.message;
+    this.renderRoot.appendChild(lmsToast);
+  }
+
   render() {
     const { data } = this;
-
+    const [headers] = data;
     return data?.length
       ? html`
           <table class="table table-striped table-bordered table-hover">
             <thead>
               <tr>
-                ${Object.keys(data[0]).map(
+                ${Object.keys(headers).map(
                   (key) => html`<th scope="col">${key}</th>`
                 )}
                 ${this._isEditable

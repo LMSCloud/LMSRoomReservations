@@ -107,9 +107,22 @@ export default class LMSModal extends LitElement {
       this.dispatchEvent(event);
     }
 
-    if ([400, 500].includes(response.status)) {
+    if (response.status >= 400) {
       const result = await response.json();
-      this._alertMessage = `Sorry! ${result.error}`;
+
+      /** We have to check whether we get a single error or an
+       *  errors object. If we get an errors object, we have to
+       *  loop through it and display each error message. */
+      if (result.error) {
+        this._alertMessage = `Sorry! ${result.error}`;
+        return;
+      }
+
+      if (result.errors) {
+        this._alertMessage = Object.values(result.errors)
+          .map(({ message, path }) => `Sorry! ${message} at ${path}`)
+          .join(" & ");
+      }
     }
   }
 

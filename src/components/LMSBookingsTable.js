@@ -57,6 +57,11 @@ export default class LMSBookingsTable extends LMSTable {
 
       this._getData();
     }
+
+    if (response.status >= 400) {
+      const result = await response.json();
+      this._renderToast(response.status, result);
+    }
   }
 
   async _handleDelete(e) {

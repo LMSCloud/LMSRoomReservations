@@ -107,28 +107,28 @@ export default class LMSSettingsTable extends LMSTable {
     const category = parent.firstElementChild.textContent;
     const action = actions[category];
     const [input] = inputs;
-    const status = action
+    const response = action
       ? await action()
-      : (
-          await fetch(
-            `/api/v1/contrib/roomreservations/settings/${input.name}`,
-            {
-              method: "PUT",
-              body: JSON.stringify({ value: input.value }),
-              headers: {
-                Accept: "",
-              },
-            }
-          )
-        ).status;
+      : await fetch(`/api/v1/contrib/roomreservations/settings/${input.name}`, {
+          method: "PUT",
+          body: JSON.stringify({ value: input.value }),
+          headers: {
+            Accept: "",
+          },
+        });
 
-    if ([201, 204].includes(status)) {
+    if ([201, 204].includes(response.status)) {
       // Implement success message
       inputs.forEach((input) => {
         input.disabled = true;
       });
 
       this.data = this._getData();
+    }
+
+    if (response.status >= 400) {
+      const result = await response.json();
+      this._renderToast(response.status, result);
     }
   }
 

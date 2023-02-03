@@ -55,6 +55,11 @@ export default class LMSOpenHoursTable extends LMSTable {
       // Implement success message
       [start, end].forEach((input) => (input.disabled = true));
     }
+
+    if (response.status >= 400) {
+      const result = await response.json();
+      this._renderToast(response.status, result);
+    }
   }
 
   async _setup() {

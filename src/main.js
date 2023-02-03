@@ -50,7 +50,8 @@ function renderToastOnError({ entryPoint, eventName }) {
     element.setAttribute(
       "message",
       errors.reduce(
-        (acc, { message, path }) => `${acc} message: ${message} path: ${path};`,
+        (acc, { message, path }, idx) =>
+          `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
         ""
       )
     );

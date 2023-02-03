@@ -355,9 +355,22 @@
         this.dispatchEvent(event);
       }
 
-      if ([400, 500].includes(response.status)) {
+      if (response.status >= 400) {
         const result = await response.json();
-        this._alertMessage = `Sorry! ${result.error}`;
+
+        /** We have to check whether we get a single error or an
+         *  errors object. If we get an errors object, we have to
+         *  loop through it and display each error message. */
+        if (result.error) {
+          this._alertMessage = `Sorry! ${result.error}`;
+          return;
+        }
+
+        if (result.errors) {
+          this._alertMessage = Object.values(result.errors)
+            .map(({ message, path }) => `Sorry! ${message} at ${path}`)
+            .join(" & ");
+        }
       }
     }
 
@@ -852,6 +865,7 @@
         data: { type: Array },
         _isEditable: { type: Boolean, attribute: false },
         _isDeletable: { type: Boolean, attribute: false },
+        _toast: { state: true },
       };
     }
 
@@ -871,6 +885,10 @@
       this._isDeletable = false;
       this._notImplementedInBaseMessage =
         "Implement this method in your extended LMSTable component.";
+      this._toast = {
+        heading: "",
+        message: "",
+      };
     }
 
     _handleEdit() {
@@ -885,15 +903,39 @@
       console.log(this._notImplementedInBaseMessage);
     }
 
+    _renderToast(status, result) {
+      if (result.error) {
+        this._toast = {
+          heading: status,
+          message: result.error,
+        };
+        return;
+      }
+
+      if (result.errors) {
+        this._toast = {
+          heading: status,
+          message: Object.values(result.errors)
+            .map(({ message, path }) => `Sorry! ${message} at ${path}`)
+            .join(" & "),
+        };
+      }
+
+      const lmsToast = document.createElement("lms-toast", { is: "lms-toast" });
+      lmsToast.heading = this._toast.heading;
+      lmsToast.message = this._toast.message;
+      this.renderRoot.appendChild(lmsToast);
+    }
+
     render() {
       const { data } = this;
-
+      const [headers] = data;
       return data?.length
         ? y`
           <table class="table table-striped table-bordered table-hover">
             <thead>
               <tr>
-                ${Object.keys(data[0]).map(
+                ${Object.keys(headers).map(
                   (key) => y`<th scope="col">${key}</th>`
                 )}
                 ${this._isEditable
@@ -1057,28 +1099,28 @@
       const category = parent.firstElementChild.textContent;
       const action = actions[category];
       const [input] = inputs;
-      const status = action
+      const response = action
         ? await action()
-        : (
-            await fetch(
-              `/api/v1/contrib/roomreservations/settings/${input.name}`,
-              {
-                method: "PUT",
-                body: JSON.stringify({ value: input.value }),
-                headers: {
-                  Accept: "",
-                },
-              }
-            )
-          ).status;
+        : await fetch(`/api/v1/contrib/roomreservations/settings/${input.name}`, {
+            method: "PUT",
+            body: JSON.stringify({ value: input.value }),
+            headers: {
+              Accept: "",
+            },
+          });
 
-      if ([201, 204].includes(status)) {
+      if ([201, 204].includes(response.status)) {
         // Implement success message
         inputs.forEach((input) => {
           input.disabled = true;
         });
 
         this.data = this._getData();
+      }
+
+      if (response.status >= 400) {
+        const result = await response.json();
+        this._renderToast(response.status, result);
       }
     }
 
@@ -1182,6 +1224,11 @@
       if (response.status === 201) {
         // Implement success message
         [start, end].forEach((input) => (input.disabled = true));
+      }
+
+      if (response.status >= 400) {
+        const result = await response.json();
+        this._renderToast(response.status, result);
       }
     }
 
@@ -1350,6 +1397,11 @@
         });
 
         this._getData();
+      }
+
+      if (response.status >= 400) {
+        const result = await response.json();
+        this._renderToast(response.status, result);
       }
     }
 
@@ -2949,7 +3001,8 @@
       element.setAttribute(
         "message",
         errors.reduce(
-          (acc, { message, path }) => `${acc} message: ${message} path: ${path};`,
+          (acc, { message, path }, idx) =>
+            `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
           ""
         )
       );
