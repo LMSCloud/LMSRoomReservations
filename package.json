@@ -22,7 +22,6 @@
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
-    "sass": "^1.58.0",
     "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0"
   },
@@ -51,7 +50,6 @@
   "homepage": "https://github.com/LMSCloud/LMSRoomReservations#readme",
   "dependencies": {
     "@granite-elements/granite-lit-bootstrap": "^4.6.0-0",
-    "@granite-elements/granite-lit-spectre": "^0.5.9-2",
     "datetime": "0.0.3",
     "dayjs": "^1.11.7",
     "gulp-replace": "^0.6.1",
