@@ -304,7 +304,9 @@ export default class LMSBookie extends LitElement {
                   name="confirmation-email"
                   class="form-check-input"
                 />
-                <label class="form-check-label" for="confirmation-email">Should we send you a confirmation email?</label>
+                <label class="form-check-label" for="confirmation-email"
+                  >Should we send you a confirmation email?</label
+                >
               </div>
             </div>
             <small class="form-text text-muted" id="booking-help"

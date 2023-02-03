@@ -46,53 +46,50 @@
   --spacing-md: 24px;
   --spacing-lg: 32px;
   --spacing-xl: 48px;
-
-  /* media query variables */
-  --min-width-sm: 425px;
-  --min-width-md: 768px;
-  --min-width-lg: 1024px;
-  --min-width-xl: 1440px;
-}
-
-lms-calendar {
-  flex: 80%;
-  height: 90vh;
-}
-
-lms-bookie {
-  flex: 20%;
-}
-
-@media (max-width: 768px) {
-  .lmsr-content-block {
-    flex-direction: column;
-  }
-
-  lms-calendar,
-  lms-bookie {
-    flex: 100%;
-    font-size: small;
-  }
 }
 
 #lmsr {
-  display: grid;
-  margin: 0 1em;
-  padding: 0 1em;
-  gap: 0.5em;
-}
-
-.lmsr-content-block {
-  display: flex;
-  gap: 1em;
-  flex-wrap: wrap;
+  padding: 0 var(--spacing-md);
+  margin-bottom: var(--spacing-md);
 }
 
 .lmsr-menu {
   display: flex;
-  gap: 1em;
+  gap: var(--spacing-md);
 }
 
 .lmsr-menu-item {
-  padding: 1em;
+  padding: var(--spacing-sm);
+}
+
+/* By default the lms-calendar takes up 80% of the width of the parent
+   while the lms-bookie takes up 20%. If the viewport shrinks to --min-width-md
+   and below, both elements take up 100% of the page */
+
+#lmsr-opac {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+}
+
+lms-calendar {
+  width: 80%;
+}
+
+lms-bookie {
+  width: 20%;
+}
+
+@media (max-width: 1200px) {
+  #lmsr-opac {
+    flex-direction: column;
+  }
+
+  lms-calendar {
+    width: 100%;
+  }
+
+  lms-bookie {
+    width: 100%;
+  }
 }

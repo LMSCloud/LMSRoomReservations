@@ -22,8 +22,10 @@
     <div id="lmsr">
         <div class="lmsr-content-main">
             <div class="lmsr-content-block">
-                <lms-calendar></lms-calendar>
-                <lms-bookie borrowernumber="[% borrowernumber %]"></lms-bookie>
+                <div id="lmsr-opac">
+                    <lms-calendar></lms-calendar>
+                    <lms-bookie borrowernumber="[% borrowernumber %]"></lms-bookie>
+                </div>
             </div>
         </div>
     </div>

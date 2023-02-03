@@ -2525,6 +2525,12 @@
         flex: 0 0 100%;
       }
 
+      @media (min-width: 1200px) {
+        .room {
+          flex: 0 0 min-content;
+        }
+      }
+
       .room img {
         aspect-ratio: 16 / 9;
         object-fit: cover;
@@ -2534,6 +2540,7 @@
         padding-bottom: 1em;
         border-bottom: 3px dotted var(--seperator-light);
       }
+
     `,
     ];
 
