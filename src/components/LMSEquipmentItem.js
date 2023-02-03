@@ -54,8 +54,6 @@ export default class LMSEquipmentItem extends LitElement {
   }
 
   async handleSave() {
-    this.editable = false;
-
     const response = await fetch(
       `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
       {
@@ -83,6 +81,7 @@ export default class LMSEquipmentItem extends LitElement {
       // Emit an event with the current property values
       const event = new CustomEvent("modified", { bubbles: true });
       this.dispatchEvent(event);
+      this.editable = false;
     }
 
     if (response.status >= 400) {
@@ -184,7 +183,10 @@ export default class LMSEquipmentItem extends LitElement {
             <select
               ?disabled=${!this.editable}
               @change=${(e) => {
-                this.roomid = e.target.value === "No room associated" ? null : e.target.value;
+                this.roomid =
+                  e.target.value === "No room associated"
+                    ? null
+                    : e.target.value;
               }}
               class="form-control"
               id="roomid"

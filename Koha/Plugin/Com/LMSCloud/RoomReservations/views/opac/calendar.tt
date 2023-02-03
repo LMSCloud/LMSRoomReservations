@@ -12,7 +12,9 @@
     [% Asset.js("lib/dayjs/dayjs.min.js") | $raw %]
     [% INCLUDE 'doc-head-close.inc' %]
 </head>
-[% BLOCK cssinclude %][% END %]
+[% BLOCK cssinclude %]
+
+[% END %]
 
 [% INCLUDE 'bodytag.inc' bodyid='opac-lms-room-reservations' %]
     [% INCLUDE 'masthead.inc' %]

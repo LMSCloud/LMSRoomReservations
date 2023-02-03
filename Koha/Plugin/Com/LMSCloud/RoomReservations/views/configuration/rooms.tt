@@ -2,48 +2,7 @@
 [% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
-  <div class="lmsr-content-block" id="entry-point"></div>
-  <lms-room-modal></lms-room-modal>
-
-  <script>
-    const entryPoint = document.getElementById('entry-point');
-    const endpoint = '/api/v1/contrib/roomreservations/rooms';
-    const options = {
-      headers: {
-        'Accept': '',
-      }
-    };
-    const rooms = fetch(endpoint, options);
-    rooms
-      .then((response) => response.json())
-      .then((result) => {
-        result.forEach((item) => {
-          const lmsRoom = document.createElement('lms-room', {
-            is: 'lms-room'
-          });
-          Array.from(Object.entries(item)).forEach((entry) => {
-            const [name, value] = entry;
-            lmsRoom.setAttribute(name, value);
-          });
-          entryPoint.appendChild(lmsRoom);
-        })
-      });
-
-    const renderOpts = {
-      entryPoint,
-      tagname: 'lms-room',
-      endpoint,
-      options: {
-        headers: {
-          Accept: '',
-        }
-      }
-    };
-    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'modified'});
-    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'deleted'});
-    RoomReservationBundle.renderToastOnError({ entryPoint, eventName: 'error'});
-
-    const [eventTarget] = Array.from(document.getElementsByTagName('lms-room-modal'));
-    RoomReservationBundle.renderOnUpdate({...renderOpts, eventName: 'created', eventTarget});
-  </script>
+    <div class="lmsr-content-block" id="entry-point">
+        <lms-rooms-container></lms-rooms-container>
+    </div>
 [% END %]

@@ -613,8 +613,6 @@
     }
 
     async handleSave() {
-      this.editable = false;
-
       const response = await fetch(
         `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
         {
@@ -642,6 +640,7 @@
         // Emit an event with the current property values
         const event = new CustomEvent("modified", { bubbles: true });
         this.dispatchEvent(event);
+        this.editable = false;
       }
 
       if (response.status >= 400) {
@@ -743,7 +742,10 @@
             <select
               ?disabled=${!this.editable}
               @change=${(e) => {
-                this.roomid = e.target.value === "No room associated" ? null : e.target.value;
+                this.roomid =
+                  e.target.value === "No room associated"
+                    ? null
+                    : e.target.value;
               }}
               class="form-control"
               id="roomid"
@@ -929,62 +931,64 @@
 
     render() {
       const { data } = this;
-      const [headers] = data;
+      const [headers] = data ?? [];
       return data?.length
         ? y`
-          <table class="table table-striped table-bordered table-hover">
-            <thead>
-              <tr>
-                ${Object.keys(headers).map(
-                  (key) => y`<th scope="col">${key}</th>`
+          <div class="container-fluid">
+            <table class="table table-striped table-bordered table-hover">
+              <thead>
+                <tr>
+                  ${Object.keys(headers).map(
+                    (key) => y`<th scope="col">${key}</th>`
+                  )}
+                  ${this._isEditable
+                    ? y`<th scope="col">actions</th>`
+                    : y``}
+                </tr>
+              </thead>
+              <tbody>
+                ${data.map(
+                  (item) => y`
+                    <tr>
+                      ${Object.keys(item).map(
+                        (key) => y`<td>${o(item[key])}</td>`
+                      )}
+                      ${this._isEditable
+                        ? y`
+                            <td>
+                              <div class="d-flex">
+                                <button
+                                  @click=${this._handleEdit}
+                                  type="button"
+                                  class="btn btn-dark mx-2"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  @click=${this._handleSave}
+                                  type="button"
+                                  class="btn btn-dark mx-2"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  @click=${this._handleDelete}
+                                  ?hidden=${!this._isDeletable}
+                                  type="button"
+                                  class="btn btn-danger mx-2"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          `
+                        : y``}
+                    </tr>
+                  `
                 )}
-                ${this._isEditable
-                  ? y`<th scope="col">actions</th>`
-                  : y``}
-              </tr>
-            </thead>
-            <tbody>
-              ${data.map(
-                (item) => y`
-                  <tr>
-                    ${Object.keys(item).map(
-                      (key) => y`<td>${o(item[key])}</td>`
-                    )}
-                    ${this._isEditable
-                      ? y`
-                          <td>
-                            <div class="d-flex">
-                              <button
-                                @click=${this._handleEdit}
-                                type="button"
-                                class="btn btn-dark mx-2"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                @click=${this._handleSave}
-                                type="button"
-                                class="btn btn-dark mx-2"
-                              >
-                                Save
-                              </button>
-                              <button
-                                @click=${this._handleDelete}
-                                ?hidden=${!this._isDeletable}
-                                type="button"
-                                class="btn btn-danger mx-2"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </td>
-                        `
-                      : y``}
-                  </tr>
-                `
-              )}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         `
         : y``;
     }
@@ -2966,6 +2970,265 @@
 
   customElements.define("lms-toast", LMSToast);
 
+  class LMSContainer extends s {
+    static get properties() {
+      return {
+        classes: { type: Array },
+        _elements: { state: true },
+      };
+    }
+
+    static styles = [bootstrapStyles, i$3``];
+
+    constructor() {
+      super();
+      this.classes = ["container"];
+      this._elements = [];
+    }
+
+    render() {
+      return y`
+      <div class=${this.classes.join(" ")}>
+        ${this._elements?.map((element) => y`${element}`) ??
+        y`<slot></slot>`}
+      </div>
+    `;
+    }
+  }
+  customElements.define("lms-container", LMSContainer);
+
+  class LMSRoomsContainer extends LMSContainer {
+    constructor() {
+      super();
+      this._endpoint = "/api/v1/contrib/roomreservations/rooms";
+      this.classes = ["container-fluid"];
+      this._init();
+    }
+
+    async _init() {
+      await this._getElements();
+    }
+
+    async _getElements() {
+      const response = await fetch(this._endpoint, { headers: { Accept: "" } });
+      const result = await response.json();
+
+      if (response.status === 200) {
+        this._elements = result.map((room) => {
+          const lmsRoom = document.createElement("lms-room", { is: "lms-room" });
+          Object.keys(room).forEach((key) => {
+            lmsRoom.setAttribute(key, room[key]);
+          });
+          return lmsRoom;
+        });
+      }
+    }
+
+    _handleCreated() {
+      this._getElements();
+    }
+
+    _handleModified() {
+      this._getElements();
+    }
+
+    _handleDeleted() {
+      this._getElements();
+    }
+
+    _handleError(e) {
+      const { errors, status } = e.detail;
+      const element = document.createElement("lms-toast", { is: "lms-toast" });
+      element.setAttribute("heading", status);
+      element.setAttribute(
+        "message",
+        errors.reduce(
+          (acc, { message, path }, idx) =>
+            `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
+          ""
+        )
+      );
+      this.renderRoot.appendChild(element);
+    }
+
+    render() {
+      return y`
+      <div
+        class=${this.classes.join(" ")}
+        @created=${this._handleCreated}
+        @modified=${this._handleModified}
+        @deleted=${this._handleDeleted}
+        @error=${this._handleError}
+      >
+        <div class="row justify-content-start">
+          ${this._elements?.map(
+            (element) => y`<div class="col">${element}</div>`
+          )}
+        </div>
+        <lms-room-modal></lms-room-modal>
+      </div>
+    `;
+    }
+  }
+  customElements.define("lms-rooms-container", LMSRoomsContainer);
+
+  class LMSEquipmentContainer extends LMSContainer {
+    constructor() {
+      super();
+      this._endpoint = "/api/v1/contrib/roomreservations/equipment";
+      this.classes = ["container-fluid"];
+      this._init();
+    }
+
+    async _init() {
+      await this._getElements();
+    }
+
+    async _getElements() {
+      const response = await fetch(this._endpoint, { headers: { Accept: "" } });
+      const result = await response.json();
+
+      if (response.status === 200) {
+        this._elements = result.map((equipmentItem) => {
+          const lmsEquipmentItem = document.createElement("lms-equipment-item", {
+            is: "lms-equipment-item",
+          });
+          Object.keys(equipmentItem).forEach((key) => {
+            lmsEquipmentItem.setAttribute(key, equipmentItem[key]);
+          });
+          return lmsEquipmentItem;
+        });
+      }
+    }
+
+    _handleCreated() {
+      this._getElements();
+    }
+
+    _handleModified() {
+      this._getElements();
+    }
+
+    _handleDeleted() {
+      this._getElements();
+    }
+
+    _handleError(e) {
+      const { errors, status } = e.detail;
+      const element = document.createElement("lms-toast", { is: "lms-toast" });
+      element.setAttribute("heading", status);
+      element.setAttribute(
+        "message",
+        errors.reduce(
+          (acc, { message, path }, idx) =>
+            `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
+          ""
+        )
+      );
+      this.renderRoot.appendChild(element);
+    }
+
+    render() {
+      return y`
+      <div
+        class=${this.classes.join(" ")}
+        @created=${this._handleCreated}
+        @modified=${this._handleModified}
+        @deleted=${this._handleDeleted}
+        @error=${this._handleError}
+      >
+        <div class="row justify-content-start">
+          ${this._elements?.map(
+            (element) => y`<div class="col">${element}</div>`
+          )}
+        </div>
+        <lms-equipment-modal></lms-equipment-modal>
+      </div>
+    `;
+    }
+  }
+  customElements.define("lms-equipment-container", LMSEquipmentContainer);
+
+  class LMSOpenHoursTablesContainer extends LMSContainer {
+    constructor() {
+      super();
+      this._endpoint = "/api/v1/contrib/roomreservations/public/open_hours";
+      this.classes = ["container-fluid", "mx-0"];
+      this._init();
+    }
+
+    async _init() {
+      await this._getElements();
+    }
+
+    async _getElements() {
+      const openHours = await fetch(this._endpoint, { headers: { Accept: "" } });
+
+      if (openHours.status === 200) {
+        const _openHours = await openHours.json();
+        if (_openHours.length) {
+          const groupedResult = this._groupBy(_openHours, (item) => item.branch);
+          let elements = [];
+          Array.from(Object.entries(groupedResult)).forEach(([branch, data]) => {
+            const lmsOpenHoursTable = document.createElement(
+              "lms-open-hours-table",
+              {
+                is: "lms-open-hours-table",
+              }
+            );
+            lmsOpenHoursTable.setAttribute("branch", branch);
+            lmsOpenHoursTable.setAttribute("data", JSON.stringify(data));
+            elements.push(lmsOpenHoursTable);
+          });
+          this._elements = elements;
+          return;
+        }
+
+        const libraries = await fetch("/api/v1/libraries");
+        const _libraries = await libraries.json();
+        let elements = [];
+        _libraries
+          .map((library) => ({
+            branch: library.library_id,
+          }))
+          .forEach(({ branch }) => {
+            const lmsOpenHoursTable = document.createElement(
+              "lms-open-hours-table",
+              {
+                is: "lms-open-hours-table",
+              }
+            );
+            lmsOpenHoursTable.setAttribute("branch", branch);
+            elements.push(lmsOpenHoursTable);
+          });
+        this._elements = elements;
+      }
+    }
+
+    _groupBy(array, predicate) {
+      return array.reduce((acc, value, index, array) => {
+        (acc[predicate(value, index, array)] ||= []).push(value);
+        return acc;
+      }, {});
+    }
+
+    render() {
+      return y`
+      <div class=${this.classes.join(" ")}>
+        <div class="row justify-content-start">
+          ${this._elements?.map(
+            (element) => y`<div class="col">${element}</div>`
+          )}
+        </div>
+      </div>
+    `;
+    }
+  }
+  customElements.define(
+    "lms-open-hours-tables-container",
+    LMSOpenHoursTablesContainer
+  );
+
   function renderOnUpdate({
     entryPoint,
     tagname,
@@ -3129,12 +3392,15 @@
   exports.LMSBookingsModal = LMSBookingsModal;
   exports.LMSBookingsTable = LMSBookingsTable;
   exports.LMSCalendar = LMSCalendar$1;
+  exports.LMSEquipmentContainer = LMSEquipmentContainer;
   exports.LMSEquipmentItem = LMSEquipmentItem;
   exports.LMSEquipmentModal = LMSEquipmentModal;
   exports.LMSModal = LMSModal;
   exports.LMSOpenHoursTable = LMSOpenHoursTable;
+  exports.LMSOpenHoursTablesContainer = LMSOpenHoursTablesContainer;
   exports.LMSRoom = LMSRoom;
   exports.LMSRoomModal = LMSRoomModal;
+  exports.LMSRoomsContainer = LMSRoomsContainer;
   exports.LMSSearch = LMSSearch;
   exports.LMSSettingsTable = LMSSettingsTable;
   exports.LMSTable = LMSTable;

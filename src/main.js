@@ -13,6 +13,9 @@ import LMSBookingsModal from "./components/LMSBookingsModal";
 import LMSCalendar from "./components/LMSCalendar/lib/lms-calendar";
 import LMSBookie from "./components/LMSBookie";
 import LMSToast from "./components/LMSToast";
+import LMSRoomsContainer from "./components/LMSRoomsContainer";
+import LMSEquipmentContainer from "./components/LMSEquipmentContainer";
+import LMSOpenHoursTablesContainer from "./components/LMSOpenHoursTablesContainer";
 import "./main.css";
 
 function renderOnUpdate({
@@ -191,6 +194,9 @@ export {
   LMSCalendar,
   LMSBookie,
   LMSToast,
+  LMSRoomsContainer,
+  LMSEquipmentContainer,
+  LMSOpenHoursTablesContainer,
   renderOnUpdate,
   renderCalendar,
   renderOpenHours,
