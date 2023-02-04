@@ -39,6 +39,12 @@ export default class LMSBookie extends LitElement {
         flex: 0 0 100%;
       }
 
+      @media (max-width: 1200px) {
+        .room {
+          flex: 0 0 18rem;
+        }
+      }
+
       .room img {
         aspect-ratio: 16 / 9;
         object-fit: cover;

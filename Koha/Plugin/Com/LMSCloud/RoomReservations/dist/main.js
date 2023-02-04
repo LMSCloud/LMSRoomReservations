@@ -2525,9 +2525,9 @@
         flex: 0 0 100%;
       }
 
-      @media (min-width: 1200px) {
+      @media (max-width: 1200px) {
         .room {
-          flex: 0 0 min-content;
+          flex: 0 0 18rem;
         }
       }
 
@@ -2540,7 +2540,6 @@
         padding-bottom: 1em;
         border-bottom: 3px dotted var(--seperator-light);
       }
-
     `,
     ];
 
@@ -2797,7 +2796,9 @@
                   name="confirmation-email"
                   class="form-check-input"
                 />
-                <label class="form-check-label" for="confirmation-email">Should we send you a confirmation email?</label>
+                <label class="form-check-label" for="confirmation-email"
+                  >Should we send you a confirmation email?</label
+                >
               </div>
             </div>
             <small class="form-text text-muted" id="booking-help"
