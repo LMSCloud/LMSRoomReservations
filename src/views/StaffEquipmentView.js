@@ -1,7 +1,7 @@
 import { html } from "lit";
-import { LMSContainer } from "./LMSContainer";
+import { LMSContainer } from "../components/LMSContainer";
 
-export default class LMSEquipmentContainer extends LMSContainer {
+export default class StaffEquipmentView extends LMSContainer {
   constructor() {
     super();
     this._endpoint = "/api/v1/contrib/roomreservations/equipment";
@@ -76,4 +76,4 @@ export default class LMSEquipmentContainer extends LMSContainer {
     `;
   }
 }
-customElements.define("lms-equipment-container", LMSEquipmentContainer);
+customElements.define("lms-staff-equipment-view", StaffEquipmentView);

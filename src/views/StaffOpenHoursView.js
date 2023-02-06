@@ -1,7 +1,7 @@
 import { html } from "lit";
-import { LMSContainer } from "./LMSContainer";
+import { LMSContainer } from "../components/LMSContainer";
 
-export default class LMSOpenHoursTablesContainer extends LMSContainer {
+export default class StaffOpenHoursView extends LMSContainer {
   constructor() {
     super();
     this._endpoint = "/api/v1/contrib/roomreservations/public/open_hours";
@@ -77,6 +77,6 @@ export default class LMSOpenHoursTablesContainer extends LMSContainer {
   }
 }
 customElements.define(
-  "lms-open-hours-tables-container",
-  LMSOpenHoursTablesContainer
+  "lms-staff-open-hours-view",
+  StaffOpenHoursView
 );

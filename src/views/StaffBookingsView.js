@@ -1,10 +1,10 @@
 import { html } from "lit";
-import { LMSContainer } from "./LMSContainer";
+import { LMSContainer } from "../components/LMSContainer";
 
-export default class LMSRoomsContainer extends LMSContainer {
+export default class StaffBookingsView extends LMSContainer {
   constructor() {
     super();
-    this._endpoint = "/api/v1/contrib/roomreservations/rooms";
+    this._endpoint = "/api/v1/contrib/roomreservations/bookings";
     this.classes = ["container-fluid"];
     this._init();
   }
@@ -18,13 +18,11 @@ export default class LMSRoomsContainer extends LMSContainer {
     const result = await response.json();
 
     if (response.status === 200) {
-      this._elements = result.map((room) => {
-        const lmsRoom = document.createElement("lms-room", { is: "lms-room" });
-        Object.keys(room).forEach((key) => {
-          lmsRoom.setAttribute(key, room[key]);
-        });
-        return lmsRoom;
+      const lmsBookingsTable = document.createElement("lms-bookings-table", {
+        is: "lms-bookings-table",
       });
+      lmsBookingsTable.setAttribute("data", JSON.stringify(result));
+      this._elements = [lmsBookingsTable];
     }
   }
 
@@ -69,9 +67,12 @@ export default class LMSRoomsContainer extends LMSContainer {
             (element) => html`<div class="col">${element}</div>`
           )}
         </div>
-        <lms-room-modal></lms-room-modal>
+        <lms-bookings-modal></lms-bookings-modal>
       </div>
     `;
   }
 }
-customElements.define("lms-rooms-container", LMSRoomsContainer);
+customElements.define(
+  "lms-staff-bookings-view",
+  StaffBookingsView
+);

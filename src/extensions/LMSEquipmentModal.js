@@ -1,4 +1,4 @@
-import LMSModal from "./LMSModal";
+import LMSModal from "../components/LMSModal";
 
 export default class LMSEquipmentModal extends LMSModal {
   static get properties() {

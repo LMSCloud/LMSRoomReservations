@@ -2,14 +2,11 @@
 
 [% USE Koha %]
 [% USE Branches %]
-[% USE Asset %]
-[% USE raw %]
 
 [% INCLUDE 'doc-head-open.inc' %]
     <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha online[% END %] catalog &rsaquo; Room Reservations</title>
     <link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/dist/main.css">
     <script type="text/javascript" src="/api/v1/contrib/roomreservations/static/dist/main.js"></script>
-    [% Asset.js("lib/dayjs/dayjs.min.js") | $raw %]
     [% INCLUDE 'doc-head-close.inc' %]
 </head>
 [% BLOCK cssinclude %]
@@ -22,19 +19,13 @@
     <div id="lmsr">
         <div class="lmsr-content-main">
             <div class="lmsr-content-block">
-                <div id="lmsr-opac">
-                    <lms-calendar></lms-calendar>
-                    <lms-bookie borrowernumber="[% borrowernumber %]"></lms-bookie>
-                </div>
+                <lms-room-reservations-view 
+                    borrowernumber="[% borrowernumber%]"
+                ></lms-room-reservations-view>
             </div>
         </div>
     </div>
 
 [% INCLUDE 'opac-bottom.inc' %]
 [% BLOCK jsinclude %]
-    <script>
-        const lmsBookie = document.querySelector('lms-bookie');
-        RoomReservationBundle.renderCalendar();
-        lmsBookie.addEventListener('submitted', RoomReservationBundle.renderCalendar);
-    </script>
 [% END %]

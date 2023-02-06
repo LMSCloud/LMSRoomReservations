@@ -9,28 +9,28 @@
    * Copyright 2019 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
-  const t$4=window,e$7=t$4.ShadowRoot&&(void 0===t$4.ShadyCSS||t$4.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$7=Symbol(),n$8=new WeakMap;class o$7{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$7)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$7&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$8.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$8.set(s,t));}return t}toString(){return this.cssText}}const r$5=t=>new o$7("string"==typeof t?t:t+"",void 0,s$7),i$4=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$7(n,t,s$7)},S$3=(s,n)=>{e$7?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$4.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$3=e$7?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$5(e)})(t):t;
+  const t$6=window,e$9=t$6.ShadowRoot&&(void 0===t$6.ShadyCSS||t$6.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$9=Symbol(),n$a=new WeakMap;class o$8{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$9)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$9&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$a.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$a.set(s,t));}return t}toString(){return this.cssText}}const r$6=t=>new o$8("string"==typeof t?t:t+"",void 0,s$9),i$6=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$8(n,t,s$9)},S$3=(s,n)=>{e$9?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$6.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$5=e$9?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$6(e)})(t):t;
 
   /**
    * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
-   */var s$6;const e$6=window,r$4=e$6.trustedTypes,h$3=r$4?r$4.emptyScript:"",o$6=e$6.reactiveElementPolyfillSupport,n$7={toAttribute(t,i){switch(i){case Boolean:t=t?h$3:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$3=(t,i)=>i!==t&&(i==i||t==t),l$5={attribute:!0,type:String,converter:n$7,reflect:!1,hasChanged:a$3};class d$3 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$5){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$5}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$3(i));}else void 0!==i&&s.push(c$3(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$3(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$5){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$7).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$7;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$3)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$3.finalized=!0,d$3.elementProperties=new Map,d$3.elementStyles=[],d$3.shadowRootOptions={mode:"open"},null==o$6||o$6({ReactiveElement:d$3}),(null!==(s$6=e$6.reactiveElementVersions)&&void 0!==s$6?s$6:e$6.reactiveElementVersions=[]).push("1.5.0");
+   */var s$8;const e$8=window,r$5=e$8.trustedTypes,h$5=r$5?r$5.emptyScript:"",o$7=e$8.reactiveElementPolyfillSupport,n$9={toAttribute(t,i){switch(i){case Boolean:t=t?h$5:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$3=(t,i)=>i!==t&&(i==i||t==t),l$6={attribute:!0,type:String,converter:n$9,reflect:!1,hasChanged:a$3};class d$3 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$6){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$6}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$5(i));}else void 0!==i&&s.push(c$5(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$3(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$6){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$9).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$9;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$3)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$3.finalized=!0,d$3.elementProperties=new Map,d$3.elementStyles=[],d$3.shadowRootOptions={mode:"open"},null==o$7||o$7({ReactiveElement:d$3}),(null!==(s$8=e$8.reactiveElementVersions)&&void 0!==s$8?s$8:e$8.reactiveElementVersions=[]).push("1.5.0");
 
   /**
    * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
-  var t$3;const i$3=window,s$5=i$3.trustedTypes,e$5=s$5?s$5.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$5=`lit$${(Math.random()+"").slice(9)}$`,n$6="?"+o$5,l$4=`<${n$6}>`,h$2=document,r$3=(t="")=>h$2.createComment(t),d$2=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u$1=Array.isArray,c$2=t=>u$1(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v$1=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a$2=/-->/g,f$1=/>/g,_$1=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m$1=/'/g,p$1=/"/g,$$1=/^(?:script|style|textarea|title)$/i,g$1=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y$1=g$1(1),x$1=Symbol.for("lit-noChange"),b$1=Symbol.for("lit-nothing"),T$1=new WeakMap,A$1=h$2.createTreeWalker(h$2,129,null,!1),E$1=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v$1;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v$1?"!--"===u[1]?d=a$2:void 0!==u[1]?d=f$1:void 0!==u[2]?($$1.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_$1):void 0!==u[3]&&(d=_$1):d===_$1?">"===u[0]?(d=null!=h?h:v$1,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_$1:'"'===u[3]?p$1:m$1):d===p$1||d===m$1?d=_$1:d===a$2||d===f$1?d=v$1:(d=_$1,h=void 0);const y=d===_$1&&t[i+1].startsWith("/>")?" ":"";r+=d===v$1?s+l$4:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$5+y):s+o$5+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$5?e$5.createHTML(u):u,n]};class C$1{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E$1(t,i);if(this.el=C$1.createElement(v,e),A$1.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A$1.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$5)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$5),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M$1:"?"===i[1]?k$1:"@"===i[1]?H$1:S$2});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($$1.test(l.tagName)){const t=l.textContent.split(o$5),i=t.length-1;if(i>0){l.textContent=s$5?s$5.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r$3()),A$1.nextNode(),c.push({type:2,index:++h});l.append(t[i],r$3());}}}else if(8===l.nodeType)if(l.data===n$6)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$5,t+1));)c.push({type:7,index:h}),t+=o$5.length-1;}h++;}}static createElement(t,i){const s=h$2.createElement("template");return s.innerHTML=t,s}}function P$1(t,i,s=t,e){var o,n,l,h;if(i===x$1)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d$2(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P$1(t,r._$AS(t,i.values),r,e)),i}class V$1{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h$2).importNode(s,!0);A$1.currentNode=o;let n=A$1.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N$1(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I$1(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A$1.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N$1{constructor(t,i,s,e){var o;this.type=2,this._$AH=b$1,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P$1(this,t,i),d$2(t)?t===b$1||null==t||""===t?(this._$AH!==b$1&&this._$AR(),this._$AH=b$1):t!==this._$AH&&t!==x$1&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c$2(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b$1&&d$2(this._$AH)?this._$AA.nextSibling.data=t:this.T(h$2.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C$1.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V$1(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T$1.get(t.strings);return void 0===i&&T$1.set(t.strings,i=new C$1(t)),i}k(t){u$1(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N$1(this.O(r$3()),this.O(r$3()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S$2{constructor(t,i,s,e,o){this.type=1,this._$AH=b$1,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b$1;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P$1(this,t,i,0),n=!d$2(t)||t!==this._$AH&&t!==x$1,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P$1(this,e[s+l],i,l),h===x$1&&(h=this._$AH[l]),n||(n=!d$2(h)||h!==this._$AH[l]),h===b$1?t=b$1:t!==b$1&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b$1?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M$1 extends S$2{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b$1?void 0:t;}}const R$1=s$5?s$5.emptyScript:"";class k$1 extends S$2{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b$1?this.element.setAttribute(this.name,R$1):this.element.removeAttribute(this.name);}}class H$1 extends S$2{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P$1(this,t,i,0))&&void 0!==s?s:b$1)===x$1)return;const e=this._$AH,o=t===b$1&&e!==b$1||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b$1&&(e===b$1||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I$1{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P$1(this,t);}}const z$1=i$3.litHtmlPolyfillSupport;null==z$1||z$1(C$1,N$1),(null!==(t$3=i$3.litHtmlVersions)&&void 0!==t$3?t$3:i$3.litHtmlVersions=[]).push("2.5.0");const Z$1=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N$1(i.insertBefore(r$3(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+  var t$5;const i$5=window,s$7=i$5.trustedTypes,e$7=s$7?s$7.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$6=`lit$${(Math.random()+"").slice(9)}$`,n$8="?"+o$6,l$5=`<${n$8}>`,h$4=document,r$4=(t="")=>h$4.createComment(t),d$2=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u$1=Array.isArray,c$4=t=>u$1(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v$1=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a$2=/-->/g,f$1=/>/g,_$1=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m$1=/'/g,p$1=/"/g,$$1=/^(?:script|style|textarea|title)$/i,g$1=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y$1=g$1(1),x$1=Symbol.for("lit-noChange"),b$1=Symbol.for("lit-nothing"),T$1=new WeakMap,A$1=h$4.createTreeWalker(h$4,129,null,!1),E$1=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v$1;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v$1?"!--"===u[1]?d=a$2:void 0!==u[1]?d=f$1:void 0!==u[2]?($$1.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_$1):void 0!==u[3]&&(d=_$1):d===_$1?">"===u[0]?(d=null!=h?h:v$1,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_$1:'"'===u[3]?p$1:m$1):d===p$1||d===m$1?d=_$1:d===a$2||d===f$1?d=v$1:(d=_$1,h=void 0);const y=d===_$1&&t[i+1].startsWith("/>")?" ":"";r+=d===v$1?s+l$5:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$6+y):s+o$6+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$7?e$7.createHTML(u):u,n]};class C$1{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E$1(t,i);if(this.el=C$1.createElement(v,e),A$1.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A$1.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$6)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$6),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M$1:"?"===i[1]?k$1:"@"===i[1]?H$1:S$2});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($$1.test(l.tagName)){const t=l.textContent.split(o$6),i=t.length-1;if(i>0){l.textContent=s$7?s$7.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r$4()),A$1.nextNode(),c.push({type:2,index:++h});l.append(t[i],r$4());}}}else if(8===l.nodeType)if(l.data===n$8)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$6,t+1));)c.push({type:7,index:h}),t+=o$6.length-1;}h++;}}static createElement(t,i){const s=h$4.createElement("template");return s.innerHTML=t,s}}function P$1(t,i,s=t,e){var o,n,l,h;if(i===x$1)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d$2(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P$1(t,r._$AS(t,i.values),r,e)),i}class V$1{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h$4).importNode(s,!0);A$1.currentNode=o;let n=A$1.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N$1(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I$1(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A$1.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N$1{constructor(t,i,s,e){var o;this.type=2,this._$AH=b$1,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P$1(this,t,i),d$2(t)?t===b$1||null==t||""===t?(this._$AH!==b$1&&this._$AR(),this._$AH=b$1):t!==this._$AH&&t!==x$1&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c$4(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b$1&&d$2(this._$AH)?this._$AA.nextSibling.data=t:this.T(h$4.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C$1.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V$1(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T$1.get(t.strings);return void 0===i&&T$1.set(t.strings,i=new C$1(t)),i}k(t){u$1(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N$1(this.O(r$4()),this.O(r$4()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S$2{constructor(t,i,s,e,o){this.type=1,this._$AH=b$1,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b$1;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P$1(this,t,i,0),n=!d$2(t)||t!==this._$AH&&t!==x$1,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P$1(this,e[s+l],i,l),h===x$1&&(h=this._$AH[l]),n||(n=!d$2(h)||h!==this._$AH[l]),h===b$1?t=b$1:t!==b$1&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b$1?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M$1 extends S$2{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b$1?void 0:t;}}const R$1=s$7?s$7.emptyScript:"";class k$1 extends S$2{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b$1?this.element.setAttribute(this.name,R$1):this.element.removeAttribute(this.name);}}class H$1 extends S$2{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P$1(this,t,i,0))&&void 0!==s?s:b$1)===x$1)return;const e=this._$AH,o=t===b$1&&e!==b$1||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b$1&&(e===b$1||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I$1{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P$1(this,t);}}const z$1=i$5.litHtmlPolyfillSupport;null==z$1||z$1(C$1,N$1),(null!==(t$5=i$5.litHtmlVersions)&&void 0!==t$5?t$5:i$5.litHtmlVersions=[]).push("2.5.0");const Z$1=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N$1(i.insertBefore(r$4(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
 
   /**
    * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
-   */var l$3,o$4;class s$4 extends d$3{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z$1(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x$1}}s$4.finalized=!0,s$4._$litElement$=!0,null===(l$3=globalThis.litElementHydrateSupport)||void 0===l$3||l$3.call(globalThis,{LitElement:s$4});const n$5=globalThis.litElementPolyfillSupport;null==n$5||n$5({LitElement:s$4});(null!==(o$4=globalThis.litElementVersions)&&void 0!==o$4?o$4:globalThis.litElementVersions=[]).push("3.2.2");
+   */var l$4,o$5;class s$6 extends d$3{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z$1(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x$1}}s$6.finalized=!0,s$6._$litElement$=!0,null===(l$4=globalThis.litElementHydrateSupport)||void 0===l$4||l$4.call(globalThis,{LitElement:s$6});const n$7=globalThis.litElementPolyfillSupport;null==n$7||n$7({LitElement:s$6});(null!==(o$5=globalThis.litElementVersions)&&void 0!==o$5?o$5:globalThis.litElementVersions=[]).push("3.2.2");
 
-  const bootstrapStyles = i$4`
+  const bootstrapStyles = i$6`
 /*!
  * Bootstrap v4.6.0 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
@@ -40,217 +40,766 @@
 /*# sourceMappingURL=bootstrap.min.css.map */
 `;
 
-  class LMSRoom extends s$4 {
-    static get properties() {
-      return {
-        maxcapacity: { type: String },
-        color: { type: String },
-        image: { type: String },
-        description: { type: String },
-        maxbookabletime: { type: String },
-        roomid: { type: String },
-        branch: { type: String },
-        roomnumber: { type: String },
-        editable: { type: Boolean },
-      };
-    }
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-    static styles = [
-      bootstrapStyles,
-      i$4`
-      .lms-room {
-        max-width: 18rem;
-      }
+  function createCommonjsModule(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
 
-      .lms-room-img {
-        aspect-ratio: 4 / 3;
-        object-fit: cover;
-      }
-    `,
-    ];
+  var dayjs_min = createCommonjsModule(function (module, exports) {
+  !function(t,e){module.exports=e();}(commonjsGlobal,(function(){var t=1e3,e=6e4,n=36e5,r="millisecond",i="second",s="minute",u="hour",a="day",o="week",f="month",h="quarter",c="year",d="date",l="Invalid Date",$=/^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/,y=/\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g,M={name:"en",weekdays:"Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),months:"January_February_March_April_May_June_July_August_September_October_November_December".split("_"),ordinal:function(t){var e=["th","st","nd","rd"],n=t%100;return "["+t+(e[(n-20)%10]||e[n]||e[0])+"]"}},m=function(t,e,n){var r=String(t);return !r||r.length>=e?t:""+Array(e+1-r.length).join(n)+t},v={s:m,z:function(t){var e=-t.utcOffset(),n=Math.abs(e),r=Math.floor(n/60),i=n%60;return (e<=0?"+":"-")+m(r,2,"0")+":"+m(i,2,"0")},m:function t(e,n){if(e.date()<n.date())return -t(n,e);var r=12*(n.year()-e.year())+(n.month()-e.month()),i=e.clone().add(r,f),s=n-i<0,u=e.clone().add(r+(s?-1:1),f);return +(-(r+(n-i)/(s?i-u:u-i))||0)},a:function(t){return t<0?Math.ceil(t)||0:Math.floor(t)},p:function(t){return {M:f,y:c,w:o,d:a,D:d,h:u,m:s,s:i,ms:r,Q:h}[t]||String(t||"").toLowerCase().replace(/s$/,"")},u:function(t){return void 0===t}},g="en",D={};D[g]=M;var p=function(t){return t instanceof _},S=function t(e,n,r){var i;if(!e)return g;if("string"==typeof e){var s=e.toLowerCase();D[s]&&(i=s),n&&(D[s]=n,i=s);var u=e.split("-");if(!i&&u.length>1)return t(u[0])}else {var a=e.name;D[a]=e,i=a;}return !r&&i&&(g=i),i||!r&&g},w=function(t,e){if(p(t))return t.clone();var n="object"==typeof e?e:{};return n.date=t,n.args=arguments,new _(n)},O=v;O.l=S,O.i=p,O.w=function(t,e){return w(t,{locale:e.$L,utc:e.$u,x:e.$x,$offset:e.$offset})};var _=function(){function M(t){this.$L=S(t.locale,null,!0),this.parse(t);}var m=M.prototype;return m.parse=function(t){this.$d=function(t){var e=t.date,n=t.utc;if(null===e)return new Date(NaN);if(O.u(e))return new Date;if(e instanceof Date)return new Date(e);if("string"==typeof e&&!/Z$/i.test(e)){var r=e.match($);if(r){var i=r[2]-1||0,s=(r[7]||"0").substring(0,3);return n?new Date(Date.UTC(r[1],i,r[3]||1,r[4]||0,r[5]||0,r[6]||0,s)):new Date(r[1],i,r[3]||1,r[4]||0,r[5]||0,r[6]||0,s)}}return new Date(e)}(t),this.$x=t.x||{},this.init();},m.init=function(){var t=this.$d;this.$y=t.getFullYear(),this.$M=t.getMonth(),this.$D=t.getDate(),this.$W=t.getDay(),this.$H=t.getHours(),this.$m=t.getMinutes(),this.$s=t.getSeconds(),this.$ms=t.getMilliseconds();},m.$utils=function(){return O},m.isValid=function(){return !(this.$d.toString()===l)},m.isSame=function(t,e){var n=w(t);return this.startOf(e)<=n&&n<=this.endOf(e)},m.isAfter=function(t,e){return w(t)<this.startOf(e)},m.isBefore=function(t,e){return this.endOf(e)<w(t)},m.$g=function(t,e,n){return O.u(t)?this[e]:this.set(n,t)},m.unix=function(){return Math.floor(this.valueOf()/1e3)},m.valueOf=function(){return this.$d.getTime()},m.startOf=function(t,e){var n=this,r=!!O.u(e)||e,h=O.p(t),l=function(t,e){var i=O.w(n.$u?Date.UTC(n.$y,e,t):new Date(n.$y,e,t),n);return r?i:i.endOf(a)},$=function(t,e){return O.w(n.toDate()[t].apply(n.toDate("s"),(r?[0,0,0,0]:[23,59,59,999]).slice(e)),n)},y=this.$W,M=this.$M,m=this.$D,v="set"+(this.$u?"UTC":"");switch(h){case c:return r?l(1,0):l(31,11);case f:return r?l(1,M):l(0,M+1);case o:var g=this.$locale().weekStart||0,D=(y<g?y+7:y)-g;return l(r?m-D:m+(6-D),M);case a:case d:return $(v+"Hours",0);case u:return $(v+"Minutes",1);case s:return $(v+"Seconds",2);case i:return $(v+"Milliseconds",3);default:return this.clone()}},m.endOf=function(t){return this.startOf(t,!1)},m.$set=function(t,e){var n,o=O.p(t),h="set"+(this.$u?"UTC":""),l=(n={},n[a]=h+"Date",n[d]=h+"Date",n[f]=h+"Month",n[c]=h+"FullYear",n[u]=h+"Hours",n[s]=h+"Minutes",n[i]=h+"Seconds",n[r]=h+"Milliseconds",n)[o],$=o===a?this.$D+(e-this.$W):e;if(o===f||o===c){var y=this.clone().set(d,1);y.$d[l]($),y.init(),this.$d=y.set(d,Math.min(this.$D,y.daysInMonth())).$d;}else l&&this.$d[l]($);return this.init(),this},m.set=function(t,e){return this.clone().$set(t,e)},m.get=function(t){return this[O.p(t)]()},m.add=function(r,h){var d,l=this;r=Number(r);var $=O.p(h),y=function(t){var e=w(l);return O.w(e.date(e.date()+Math.round(t*r)),l)};if($===f)return this.set(f,this.$M+r);if($===c)return this.set(c,this.$y+r);if($===a)return y(1);if($===o)return y(7);var M=(d={},d[s]=e,d[u]=n,d[i]=t,d)[$]||1,m=this.$d.getTime()+r*M;return O.w(m,this)},m.subtract=function(t,e){return this.add(-1*t,e)},m.format=function(t){var e=this,n=this.$locale();if(!this.isValid())return n.invalidDate||l;var r=t||"YYYY-MM-DDTHH:mm:ssZ",i=O.z(this),s=this.$H,u=this.$m,a=this.$M,o=n.weekdays,f=n.months,h=function(t,n,i,s){return t&&(t[n]||t(e,r))||i[n].slice(0,s)},c=function(t){return O.s(s%12||12,t,"0")},d=n.meridiem||function(t,e,n){var r=t<12?"AM":"PM";return n?r.toLowerCase():r},$={YY:String(this.$y).slice(-2),YYYY:this.$y,M:a+1,MM:O.s(a+1,2,"0"),MMM:h(n.monthsShort,a,f,3),MMMM:h(f,a),D:this.$D,DD:O.s(this.$D,2,"0"),d:String(this.$W),dd:h(n.weekdaysMin,this.$W,o,2),ddd:h(n.weekdaysShort,this.$W,o,3),dddd:o[this.$W],H:String(s),HH:O.s(s,2,"0"),h:c(1),hh:c(2),a:d(s,u,!0),A:d(s,u,!1),m:String(u),mm:O.s(u,2,"0"),s:String(this.$s),ss:O.s(this.$s,2,"0"),SSS:O.s(this.$ms,3,"0"),Z:i};return r.replace(y,(function(t,e){return e||$[t]||i.replace(":","")}))},m.utcOffset=function(){return 15*-Math.round(this.$d.getTimezoneOffset()/15)},m.diff=function(r,d,l){var $,y=O.p(d),M=w(r),m=(M.utcOffset()-this.utcOffset())*e,v=this-M,g=O.m(this,M);return g=($={},$[c]=g/12,$[f]=g,$[h]=g/3,$[o]=(v-m)/6048e5,$[a]=(v-m)/864e5,$[u]=v/n,$[s]=v/e,$[i]=v/t,$)[y]||v,l?g:O.a(g)},m.daysInMonth=function(){return this.endOf(f).$D},m.$locale=function(){return D[this.$L]},m.locale=function(t,e){if(!t)return this.$L;var n=this.clone(),r=S(t,e,!0);return r&&(n.$L=r),n},m.clone=function(){return O.w(this.$d,this)},m.toDate=function(){return new Date(this.valueOf())},m.toJSON=function(){return this.isValid()?this.toISOString():null},m.toISOString=function(){return this.$d.toISOString()},m.toString=function(){return this.$d.toUTCString()},M}(),T=_.prototype;return w.prototype=T,[["$ms",r],["$s",i],["$m",s],["$H",u],["$W",a],["$M",f],["$y",c],["$D",d]].forEach((function(t){T[t[1]]=function(e){return this.$g(e,t[0],t[1])};})),w.extend=function(t,e){return t.$i||(t(e,_,w),t.$i=!0),w},w.locale=S,w.isDayjs=p,w.unix=function(t){return w(1e3*t)},w.en=D[g],w.Ls=D,w.p={},w}));
+  });
 
-    constructor() {
-      super();
-      this.editable = false;
-    }
+  /*! gettext.js - Guillaume Potier - MIT Licensed */
+  var i18n = function (options) {
+   options = options || {};
+   this && (this.__version = '1.1.1');
 
-    handleEdit() {
-      this.editable = true;
-    }
+   // default values that could be overriden in i18n() construct
+   var defaults = {
+     domain: 'messages',
+     locale: (typeof document !== 'undefined' ? document.documentElement.getAttribute('lang') : false) || 'en',
+     plural_func: function (n) { return { nplurals: 2, plural: (n!=1) ? 1 : 0 }; },
+     ctxt_delimiter: String.fromCharCode(4) // \u0004
+   };
 
-    async handleSave() {
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
-        {
-          method: "PUT",
-          headers: {
-            Accept: "",
-          },
-          body: JSON.stringify({
-            maxcapacity: this.maxcapacity,
-            color: this.color,
-            image: this.image,
-            description: this.description,
-            maxbookabletime: this.maxbookabletime,
-            branch: this.branch,
-            roomnumber: this.roomnumber,
-          }),
+   // handy mixins taken from underscode.js
+   var _ = {
+     isObject: function (obj) {
+       var type = typeof obj;
+       return type === 'function' || type === 'object' && !!obj;
+     },
+     isArray: function (obj) {
+       return toString.call(obj) === '[object Array]';
+     }
+   };
+
+   var
+     _plural_funcs = {},
+     _locale = options.locale || defaults.locale,
+     _domain = options.domain || defaults.domain,
+     _dictionary = {},
+     _plural_forms = {},
+     _ctxt_delimiter = options.ctxt_delimiter || defaults.ctxt_delimiter;
+
+     if (options.messages) {
+       _dictionary[_domain] = {};
+       _dictionary[_domain][_locale] = options.messages;
+     }
+
+     if (options.plural_forms) {
+       _plural_forms[_locale] = options.plural_forms;
+     }
+
+     // sprintf equivalent, takes a string and some arguments to make a computed string
+     // eg: strfmt("%1 dogs are in %2", 7, "the kitchen"); => "7 dogs are in the kitchen"
+     // eg: strfmt("I like %1, bananas and %1", "apples"); => "I like apples, bananas and apples"
+     // NB: removes msg context if there is one present
+     var strfmt = function (fmt) {
+        var args = arguments;
+
+        return fmt
+         // put space after double % to prevent placeholder replacement of such matches
+         .replace(/%%/g, '%% ')
+         // replace placeholders
+         .replace(/%(\d+)/g, function (str, p1) {
+           return args[p1];
+         })
+         // replace double % and space with single %
+         .replace(/%% /g, '%')
+     };
+
+     var removeContext = function(str) {
+        // if there is context, remove it
+        if (str.indexOf(_ctxt_delimiter) !== -1) {
+          var parts = str.split(_ctxt_delimiter);
+          return parts[1];
         }
-      );
 
-      if (response.status === 200) {
-        // Emit an event with the current property values
-        const event = new CustomEvent("modified", { bubbles: true });
-        this.dispatchEvent(event);
-        this.editable = false;
+      return str;
+     };
+
+     var expand_locale = function(locale) {
+         var locales = [locale],
+             i = locale.lastIndexOf('-');
+         while (i > 0) {
+             locale = locale.slice(0, i);
+             locales.push(locale);
+             i = locale.lastIndexOf('-');
+         }
+         return locales;
+     };
+
+     var normalizeLocale = function (locale) {
+        // Convert locale to BCP 47. If the locale is in POSIX format, locale variant and encoding is discarded.
+        locale = locale.replace('_', '-');
+        var i = locale.search(/[.@]/);
+        if (i != -1) locale = locale.slice(0, i);
+        return locale;
+     };
+
+     var getPluralFunc = function (plural_form) {
+       // Plural form string regexp
+       // taken from https://github.com/Orange-OpenSource/gettext.js/blob/master/lib.gettext.js
+       // plural forms list available here http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
+       var pf_re = new RegExp('^\\s*nplurals\\s*=\\s*[0-9]+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_\(\)])+');
+
+       if (!pf_re.test(plural_form))
+         throw new Error(strfmt('The plural form "%1" is not valid', plural_form));
+
+       // Careful here, this is a hidden eval() equivalent..
+       // Risk should be reasonable though since we test the plural_form through regex before
+       // taken from https://github.com/Orange-OpenSource/gettext.js/blob/master/lib.gettext.js
+       // TODO: should test if https://github.com/soney/jsep present and use it if so
+       return new Function("n", 'var plural, nplurals; '+ plural_form +' return { nplurals: nplurals, plural: (plural === true ? 1 : (plural ? plural : 0)) };');
+     };
+
+     // Proper translation function that handle plurals and directives
+     // Contains juicy parts of https://github.com/Orange-OpenSource/gettext.js/blob/master/lib.gettext.js
+     var t = function (messages, n, options /* ,extra */) {
+       // Singular is very easy, just pass dictionnary message through strfmt
+       if (!options.plural_form)
+        return strfmt.apply(this, [removeContext(messages[0])].concat(Array.prototype.slice.call(arguments, 3)));
+
+       var plural;
+
+       // if a plural func is given, use that one
+       if (options.plural_func) {
+         plural = options.plural_func(n);
+
+       // if plural form never interpreted before, do it now and store it
+       } else if (!_plural_funcs[_locale]) {
+         _plural_funcs[_locale] = getPluralFunc(_plural_forms[_locale]);
+         plural = _plural_funcs[_locale](n);
+
+       // we have the plural function, compute the plural result
+       } else {
+         plural = _plural_funcs[_locale](n);
+       }
+
+       // If there is a problem with plurals, fallback to singular one
+       if ('undefined' === typeof plural.plural || plural.plural > plural.nplurals || messages.length <= plural.plural)
+         plural.plural = 0;
+
+       return strfmt.apply(this, [removeContext(messages[plural.plural]), n].concat(Array.prototype.slice.call(arguments, 3)));
+     };
+
+   return {
+     strfmt: strfmt, // expose strfmt util
+     expand_locale: expand_locale, // expose expand_locale util
+
+     // Declare shortcuts
+     __: function () { return this.gettext.apply(this, arguments); },
+     _n: function () { return this.ngettext.apply(this, arguments); },
+     _p: function () { return this.pgettext.apply(this, arguments); },
+
+     setMessages: function (domain, locale, messages, plural_forms) {
+       if (!domain || !locale || !messages)
+         throw new Error('You must provide a domain, a locale and messages');
+
+       if ('string' !== typeof domain || 'string' !== typeof locale || !_.isObject(messages))
+         throw new Error('Invalid arguments');
+
+       locale = normalizeLocale(locale);
+
+       if (plural_forms)
+         _plural_forms[locale] = plural_forms;
+
+       if (!_dictionary[domain])
+         _dictionary[domain] = {};
+
+       _dictionary[domain][locale] = messages;
+
+       return this;
+     },
+     loadJSON: function (jsonData, domain) {
+       if (!_.isObject(jsonData))
+         jsonData = JSON.parse(jsonData);
+
+       if (!jsonData[''] || !jsonData['']['language'] || !jsonData['']['plural-forms'])
+         throw new Error('Wrong JSON, it must have an empty key ("") with "language" and "plural-forms" information');
+
+       var headers = jsonData[''];
+       delete jsonData[''];
+
+       return this.setMessages(domain || defaults.domain, headers['language'], jsonData, headers['plural-forms']);
+     },
+     setLocale: function (locale) {
+       _locale = normalizeLocale(locale);
+       return this;
+     },
+     getLocale: function () {
+       return _locale;
+     },
+     // getter/setter for domain
+     textdomain: function (domain) {
+       if (!domain)
+         return _domain;
+       _domain = domain;
+       return this;
+     },
+     gettext: function (msgid /* , extra */) {
+       return this.dcnpgettext.apply(this, [undefined, undefined, msgid, undefined, undefined].concat(Array.prototype.slice.call(arguments, 1)));
+     },
+     ngettext: function (msgid, msgid_plural, n /* , extra */) {
+       return this.dcnpgettext.apply(this, [undefined, undefined, msgid, msgid_plural, n].concat(Array.prototype.slice.call(arguments, 3)));
+     },
+     pgettext: function (msgctxt, msgid /* , extra */) {
+       return this.dcnpgettext.apply(this, [undefined, msgctxt, msgid, undefined, undefined].concat(Array.prototype.slice.call(arguments, 2)));
+     },
+     dcnpgettext: function (domain, msgctxt, msgid, msgid_plural, n /* , extra */) {
+       domain = domain || _domain;
+
+       if ('string' !== typeof msgid)
+         throw new Error(this.strfmt('Msgid "%1" is not a valid translatable string', msgid));
+
+       var
+         translation,
+         options = { plural_form: false },
+         key = msgctxt ? msgctxt + _ctxt_delimiter + msgid : msgid,
+         exist,
+         locale,
+         locales = expand_locale(_locale);
+
+       for (var i in locales) {
+          locale = locales[i];
+          exist = _dictionary[domain] && _dictionary[domain][locale] && _dictionary[domain][locale][key];
+
+          // because it's not possible to define both a singular and a plural form of the same msgid,
+          // we need to check that the stored form is the same as the expected one.
+          // if not, we'll just ignore the translation and consider it as not translated.
+          if (msgid_plural) {
+            exist = exist && "string" !== typeof _dictionary[domain][locale][key];
+          } else {
+            exist = exist && "string" === typeof _dictionary[domain][locale][key];
+          }
+          if (exist) {
+            break;
+          }
+       }
+
+       if (!exist) {
+         translation = msgid;
+         options.plural_func = defaults.plural_func;
+       } else {
+         translation = _dictionary[domain][locale][key];
+       }
+
+       // Singular form
+       if (!msgid_plural)
+         return t.apply(this, [[translation], n, options].concat(Array.prototype.slice.call(arguments, 5)));
+
+       // Plural one
+       options.plural_form = true;
+       return t.apply(this, [exist ? translation : [msgid, msgid_plural], n, options].concat(Array.prototype.slice.call(arguments, 5)));
+     }
+   };
+  };
+
+  class TranslationHandler {
+    constructor() {
+      this._i18n = i18n();
+      this._locale = window.navigator.language;
+    }
+
+    async loadTranslations() {
+      /** Loading translations via API */
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/static/locales/${this._locale}.json`
+        );
+        const translations = await response.json();
+        
+        if (response.status === 200) {
+          this._i18n.loadJSON(translations, "messages");
+          this._i18n.setLocale(this._locale);
+          console.log(this._locale);
         return;
       }
 
       if (response.status >= 400) {
-        const error = await response.json();
-        const event = new CustomEvent("error", { bubbles: true, detail: error });
-        this.dispatchEvent(event);
+        throw Error(`[${response.status}] Error: ${response.error}`);
       }
     }
 
-    async handleDelete() {
+    set locale(locale) {
+      this._locale = locale;
+    }
+
+    get locale() {
+      return this._locale;
+    }
+
+    get i18n() {
+      return this._i18n;
+    }
+  }
+
+  /**
+   * @license
+   * Copyright 2020 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */const t$4=o=>null===o||"object"!=typeof o&&"function"!=typeof o,e$6=o=>void 0===o.strings;
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  const t$3={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e$5=t=>(...e)=>({_$litDirective$:t,values:e});class i$4{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */const s$5=(i,t)=>{var e,o;const r=i._$AN;if(void 0===r)return !1;for(const i of r)null===(o=(e=i)._$AO)||void 0===o||o.call(e,t,!1),s$5(i,t);return !0},o$4=i=>{let t,e;do{if(void 0===(t=i._$AM))break;e=t._$AN,e.delete(i),i=t;}while(0===(null==e?void 0:e.size))},r$3=i=>{for(let t;t=i._$AM;i=t){let e=t._$AN;if(void 0===e)t._$AN=e=new Set;else if(e.has(i))break;e.add(i),l$3(t);}};function n$6(i){void 0!==this._$AN?(o$4(this),this._$AM=i,r$3(this)):this._$AM=i;}function h$3(i,t=!1,e=0){const r=this._$AH,n=this._$AN;if(void 0!==n&&0!==n.size)if(t)if(Array.isArray(r))for(let i=e;i<r.length;i++)s$5(r[i],!1),o$4(r[i]);else null!=r&&(s$5(r,!1),o$4(r));else s$5(this,i);}const l$3=i=>{var t,s,o,r;i.type==t$3.CHILD&&(null!==(t=(o=i)._$AP)&&void 0!==t||(o._$AP=h$3),null!==(s=(r=i)._$AQ)&&void 0!==s||(r._$AQ=n$6));};class c$3 extends i$4{constructor(){super(...arguments),this._$AN=void 0;}_$AT(i,t,e){super._$AT(i,t,e),r$3(this),this.isConnected=i._$AU;}_$AO(i,t=!0){var e,r;i!==this.isConnected&&(this.isConnected=i,i?null===(e=this.reconnected)||void 0===e||e.call(this):null===(r=this.disconnected)||void 0===r||r.call(this)),t&&(s$5(this,i),o$4(this));}setValue(t){if(e$6(this._$Ct))this._$Ct._$AI(t,this);else {const i=[...this._$Ct._$AH];i[this._$Ci]=t,this._$Ct._$AI(i,this,0);}}disconnected(){}reconnected(){}}
+
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  class s$4{constructor(t){this.Y=t;}disconnect(){this.Y=void 0;}reconnect(t){this.Y=t;}deref(){return this.Y}}class i$3{constructor(){this.Z=void 0,this.q=void 0;}get(){return this.Z}pause(){var t;null!==(t=this.Z)&&void 0!==t||(this.Z=new Promise((t=>this.q=t)));}resume(){var t;null===(t=this.q)||void 0===t||t.call(this),this.Z=this.q=void 0;}}
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */const n$5=t=>!t$4(t)&&"function"==typeof t.then;class h$2 extends c$3{constructor(){super(...arguments),this._$Cwt=1073741823,this._$Cyt=[],this._$CK=new s$4(this),this._$CX=new i$3;}render(...s){var i;return null!==(i=s.find((t=>!n$5(t))))&&void 0!==i?i:x$1}update(s,i){const r=this._$Cyt;let e=r.length;this._$Cyt=i;const o=this._$CK,h=this._$CX;this.isConnected||this.disconnected();for(let t=0;t<i.length&&!(t>this._$Cwt);t++){const s=i[t];if(!n$5(s))return this._$Cwt=t,s;t<e&&s===r[t]||(this._$Cwt=1073741823,e=0,Promise.resolve(s).then((async t=>{for(;h.get();)await h.get();const i=o.deref();if(void 0!==i){const r=i._$Cyt.indexOf(s);r>-1&&r<i._$Cwt&&(i._$Cwt=r,i.setValue(t));}})));}return x$1}disconnected(){this._$CK.disconnect(),this._$CX.pause();}reconnected(){this._$CK.reconnect(this),this._$CX.resume();}}const c$2=e$5(h$2);
+
+  class LMSBookie extends s$6 {
+    static properties = {
+      borrowernumber: { type: String },
+      _openHours: { state: true },
+      _rooms: { state: true },
+      _equipment: { state: true },
+      _alertMessage: { state: true },
+      _selectedRoom: { state: true },
+      _defaultMaxBookingTime: { state: true },
+      _i18n: { state: true },
+    };
+
+    static styles = [
+      bootstrapStyles,
+      i$6`
+      :host > div {
+        padding: 16px;
+        box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+        border: 1px solid var(--seperator-light);
+        border-radius: var(--border-radius-lg);
+        font-family: var(--system-ui);
+        background: white;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+      }
+
+      #rooms {
+        display: flex;
+        overflow-y: scroll;
+        flex-wrap: nowrap;
+        gap: 1em;
+      }
+
+      .room {
+        flex: 0 0 100%;
+      }
+
+      @media (max-width: 1200px) {
+        .room {
+          flex: 0 0 18rem;
+        }
+      }
+
+      .room img {
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+      }
+
+      section:not(:last-child) {
+        padding-bottom: 1em;
+        border-bottom: 3px dotted var(--seperator-light);
+      }
+    `,
+    ];
+
+    async _init() {
+      const translationHandler = new TranslationHandler();
+      await translationHandler.loadTranslations();
+      this._i18n = translationHandler.i18n;
+
+      console.log(this._i18n.locale);
+      console.log(this._i18n.gettext("Current Bookings"));
+
+      const options = { headers: { accept: "" } };
+      const [openHours, rooms, equipment, defaultMaxBookingTime] =
+        await Promise.all([
+          fetch("/api/v1/contrib/roomreservations/public/open_hours", options),
+          fetch("/api/v1/contrib/roomreservations/public/rooms", options),
+          fetch("/api/v1/contrib/roomreservations/public/equipment", options),
+          fetch(
+            "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time",
+            options
+          ),
+        ]);
+
+      if (openHours.ok) {
+        this._openHours = await openHours.json();
+      } else {
+        console.error("Error fetching open hours");
+      }
+
+      if (rooms.ok) {
+        this._rooms = await rooms.json();
+        [this._selectedRoom] = this._rooms;
+      } else {
+        console.error("Error fetching rooms");
+      }
+
+      if (equipment.ok) {
+        this._equipment = await equipment.json();
+      } else {
+        console.error("Error fetching equipment");
+      }
+
+      if (defaultMaxBookingTime.ok) {
+        this._defaultMaxBookingTime = await defaultMaxBookingTime.json();
+      } else {
+        console.error("Error fetching default max booking time");
+      }
+    }
+
+    constructor() {
+      super();
+      this.borrowernumber = "";
+      this._openHours = [];
+      this._rooms = [];
+      this._equipment = [];
+      this._alertMessage = "";
+      this._defaultMaxBookingTime = undefined;
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      c$2(this._init(), "Translating...");
+    }
+
+    async _handleSubmit() {
+      const inputs = [
+        this.renderRoot.getElementById("room"),
+        this.renderRoot.getElementById("start-datetime"),
+        this.renderRoot.getElementById("duration"),
+        this.renderRoot.querySelectorAll(".equipment-item"),
+      ];
+      const [roomid, start, duration] = inputs.map((input) => input.value);
+
+      /** We filter for checked checkbox inputs here. */
+      const [, , , equipmentInputs] = inputs;
+      const equipment = [...equipmentInputs].reduce(
+        (accumulator, equipmentInput) => {
+          if (equipmentInput.checked) {
+            accumulator.push(equipmentInput.id);
+          }
+          return accumulator;
+        },
+        []
+      );
+
+      const startDatetime = dayjs_min(start);
+      const end = startDatetime
+        .add(duration, "minute")
+        .format("YYYY-MM-DDTHH:mm");
+
       const response = await fetch(
-        `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
+        "/api/v1/contrib/roomreservations/public/bookings",
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
-            Accept: "",
+            accept: "",
           },
+          body: JSON.stringify({
+            borrowernumber: this.borrowernumber,
+            roomid,
+            start,
+            end,
+            blackedout: 0,
+            equipment,
+          }),
         }
       );
 
-      if (response.status === 204) {
-        // Emit an event with the current property values
-        const event = new CustomEvent("deleted", { bubbles: true });
+      if ([201].includes(response.status)) {
+        inputs.forEach((input) => {
+          input.value = "";
+        });
+        this._alertMessage = `${this._i18n.gettext(
+        "Success"
+      )}! ${this._i18n.gettext("Your booking is set")}.`;
+
+        const event = new CustomEvent("submitted", { bubbles: true });
         this.dispatchEvent(event);
+        return;
       }
+
+      const result = await response.json();
+      this._alertMessage = `${this._i18n.gettext("Sorry")}! ${result.error}`;
+    }
+
+    _dismissAlert() {
+      this._alertMessage = "";
+    }
+
+    _selectRoom(e) {
+      const roomInput = this.renderRoot.getElementById("room");
+      const options = [...roomInput.options];
+      options.find((option) => option.value === e.target.id).selected = true;
+
+      const event = new Event("change");
+      roomInput.dispatchEvent(event);
+      roomInput.scrollIntoView();
     }
 
     render() {
       return y$1`
-      <div class="card lms-room">
-        <img
-          class="card-img-top lms-room-img"
-          ?hidden=${!this.image}
-          src=${this.image ?? "..."}
-          alt="Image for ${this.roomnumber}"
-        />
-        <div class="card-body">
-          <h5 class="card-title">
-            <span class="badge badge-primary">${this.roomid}</span>
-          </h5>
-          <div class="form-group">
-            <label for="roomnumber">Room Number</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.roomnumber}
-              @input=${(e) => {
-                this.roomnumber = e.target.value;
-              }}
-              class="form-control"
-              id="roomnumber"
-            />
+      <div ?hidden=${!this._rooms.length}>
+        <section>
+          <h5>Book a room</h5>
+          <div
+            class="alert alert-${this._alertMessage.includes(
+              `${this._i18n.gettext("Success")}!`
+            )
+              ? "success"
+              : "warning"} alert-dismissible fade show"
+            role="alert"
+            ?hidden=${!this._alertMessage}
+          >
+            ${this._alertMessage}
+            <button
+              @click=${this._dismissAlert}
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          <div class="form-group">
-            <label for="maxcapacity">Max Capacity</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.maxcapacity}
-              @input=${(e) => {
-                this.maxcapacity = e.target.value;
-              }}
-              class="form-control"
-              id="maxcapacity"
-            />
+          <div id="booking">
+            <div class="form-group">
+              <label for="room">${this._i18n.gettext("Room")}</label>
+              <select
+                id="room"
+                name="room"
+                class="form-control"
+                aria-describedby="booking-help"
+                @change=${(e) => {
+                  this._selectedRoom = this._rooms.find(
+                    (room) => room.roomid === e.target.value
+                  );
+                }}
+              >
+                ${this._rooms.length &&
+                this._rooms.map(
+                  (room) =>
+                    y$1`<option value="${room.roomid}">
+                      ${room.roomnumber}
+                    </option>`
+                )}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="start-datetime"
+                >${this._i18n.gettext("Date & Time")}</label
+              >
+              <input
+                type="datetime-local"
+                id="start-datetime"
+                name="start-datetime"
+                class="form-control"
+                aria-describedby="booking-help"
+              />
+            </div>
+            <div class="form-group">
+              <label for="duration">${this._i18n.gettext("Duration")}</label>
+              <input
+                type="number"
+                list="durations"
+                id="duration"
+                name="duration"
+                class="form-control"
+                aria-describedby="booking-help"
+                placeholder="In minutes, e.g. 60"
+              />
+              <datalist id="durations">
+                <!-- Check if this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime has a value, if not, output nothing
+                Else, create an array with chunks of 30, using this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime, 
+                if the value is not divisible by 30, add the value as the last element of the array, 
+                and then use map function to create <option> elements with each value of the array -->
+                ${this._selectedRoom?.maxbookabletime ||
+                this._defaultMaxBookingTime
+                  ? Array.from(
+                      {
+                        length: Math.floor(
+                          (this._selectedRoom.maxbookabletime ||
+                            this._defaultMaxBookingTime) / 30
+                        ),
+                      },
+                      (_, i) => (i + 1) * 30
+                    )
+                      .concat(
+                        (this._selectedRoom.maxbookabletime ||
+                          this._defaultMaxBookingTime) %
+                          30 ===
+                          0
+                          ? []
+                          : this._selectedRoom.maxbookabletime ||
+                              this._defaultMaxBookingTime
+                      )
+                      .map((timespan) => y$1`<option>${timespan}</option>`)
+                  : ""}
+              </datalist>
+            </div>
+            <div
+              ?hidden=${!this._equipment.length ||
+              !this._equipment.filter(
+                (item) => item.roomid == this._selectedRoom.roomid
+              ).length}
+              class="form-group"
+            >
+              <label for="equipment">${this._i18n.gettext("Equipment")}</label>
+              ${this._equipment
+                .filter((item) => item.roomid == this._selectedRoom.roomid)
+                .map(
+                  (item) => y$1`
+                    <div class="form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input equipment-item"
+                        id="${item.equipmentid}"
+                      />
+                      <label class="form-check-label" for="${item.equipmentid}"
+                        >${item.equipmentname}</label
+                      >
+                    </div>
+                  `
+                )}
+            </div>
+            <div class="form-group">
+              <label for="confirmation"
+                >${this._i18n.gettext("Confirmation Email")}</label
+              >
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  id="confirmation-email"
+                  name="confirmation-email"
+                  class="form-check-input"
+                />
+                <label class="form-check-label" for="confirmation-email"
+                  >${this._i18n.gettext(
+                    "Should we send you a confirmation email"
+                  )}?</label
+                >
+              </div>
+            </div>
+            <small class="form-text text-muted" id="booking-help"
+              >${this._i18n.gettext("Pick a room, a date, a time")}<span
+                ?hidden=${!this._equipment.length}
+                >, ${this._i18n.gettext("items you'd like to use")}</span
+              >
+              ${this._i18n.gettext(
+                "and the duration of your reservation"
+              )}.</small
+            >
+            <button
+              type="submit"
+              @click=${this._handleSubmit}
+              class="btn btn-primary mt-2 float-right"
+            >
+              ${this._i18n.gettext("Submit")}
+            </button>
           </div>
-          <div class="form-group">
-            <label for="description">Description</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.description}
-              @input=${(e) => {
-                this.description = e.target.value;
-              }}
-              class="form-control"
-              id="description"
-            />
+        </section>
+        <section ?hidden=${!this._openHours.length}>
+          <h5>${this._i18n.gettext("Open hours")}</h5>
+          <div id="open-hours">
+            <table class="table table-striped table-bordered table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">${this._i18n.gettext("Day")}</th>
+                  <th scope="col">${this._i18n.gettext("Open from")}</th>
+                  <th scope="col">${this._i18n.gettext("Closed after")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${this._openHours
+                  .filter((day) => day.branch === this._selectedRoom?.branch)
+                  .map(({ day, start, end }) => {
+                    return y$1`
+                      <tr>
+                        <td>${day}</td>
+                        <td>${start.slice(0, -3)}</td>
+                        <td>${end.slice(0, -3)}</td>
+                      </tr>
+                    `;
+                  })}
+              </tbody>
+            </table>
           </div>
-          <div class="form-group">
-            <label for="color">Color</label>
-            <input
-              ?disabled=${!this.editable}
-              type="color"
-              .value=${this.color}
-              @input=${(e) => {
-                this.color = e.target.value;
-              }}
-              class="form-control"
-              id="color"
-            />
+        </section>
+        <section>
+          <h5>${this._i18n.gettext("Rooms")}</h5>
+          <div id="rooms">
+            ${this._rooms.map(
+              (room) => y$1`
+                <div class="room card">
+                  <img
+                    class="card-img-top"
+                    src="${room.image}"
+                    alt="Image for ${room.roomnumber}"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">${room.roomnumber}</h5>
+                    <p class="card-text">${room.description}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <strong>${this._i18n.gettext("Branch")}</strong
+                      >&nbsp;<span>${room.branch}</span>
+                    </li>
+                    <li class="list-group-item">
+                      <strong>${this._i18n.gettext("Max bookable time")}</strong
+                      >&nbsp;<span>${room.maxbookabletime}</span>
+                    </li>
+                    <li class="list-group-item">
+                      <strong>${this._i18n.gettext("Max Capacity")}</strong
+                      >&nbsp;<span>${room.maxcapacity}</span>
+                    </li>
+                  </ul>
+                  <div class="card-body">
+                    <a
+                      href="#"
+                      class="card-link"
+                      id=${room.roomid}
+                      @click=${(e) => {
+                        this._selectRoom(e);
+                      }}
+                      >${this._i18n.gettext("Book this room")}</a
+                    >
+                  </div>
+                </div>
+              `
+            )}
           </div>
-          <div class="form-group">
-            <label for="image">Image</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.image}
-              @input=${(e) => {
-                this.image = e.target.value;
-              }}
-              class="form-control"
-              id="image"
-            />
-          </div>
-          <div class="form-group">
-            <label for="branch">Branch</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.branch}
-              @input=${(e) => {
-                this.branch = e.target.value;
-              }}
-              class="form-control"
-              id="branch"
-            />
-          </div>
-          <div class="form-group">
-            <label for="maxbookabletime">Max Bookable Time</label>
-            <input
-              ?disabled=${!this.editable}
-              type="number"
-              .value=${this.maxbookabletime}
-              @input=${(e) => {
-                this.maxbookabletime = e.target.value;
-              }}
-              class="form-control"
-              id="maxbookabletime"
-            />
-          </div>
-          <button @click=${this.handleEdit} class="btn btn-dark">Edit</button>
-          <button @click=${this.handleSave} class="btn btn-dark">Save</button>
-          <button @click=${this.handleDelete} class="btn btn-danger">
-            Delete
-          </button>
-        </div>
+        </section>
       </div>
     `;
     }
   }
-
-  customElements.define("lms-room", LMSRoom);
+  customElements.define("lms-bookie", LMSBookie);
 
   /* eslint-disable no-underscore-dangle */
 
-  class LMSModal extends s$4 {
+  class LMSModal extends s$6 {
     static get properties() {
       return {
         fields: { type: Array },
@@ -264,7 +813,7 @@
     static get styles() {
       return [
         bootstrapStyles,
-        i$4`
+        i$6`
         .btn-modal-wrapper {
           position: fixed;
           bottom: 1em;
@@ -520,7 +1069,451 @@
     }
   }
 
-  class LMSRoomModal extends LMSModal {
+  class LMSSearch extends s$6 {
+    static get properties() {
+      return {
+        tagName: { type: String },
+        search: { type: String },
+      };
+    }
+
+    constructor() {
+      super();
+      this.tagName = '';
+      this.search = '';
+      this.indexedContent = [];
+    }
+
+    firstUpdated() {
+      this.indexedContent = [...document.getElementsByTagName(this.tagName)];
+    }
+
+    update(changedProperties) {
+      if (changedProperties.has('search')) {
+        this.indexedContent.forEach((element) => {
+          if (element.textContent.includes(this.search)) {
+            element.style.display = 'block';
+          } else {
+            element.style.display = 'none';
+          }
+        });
+      }
+
+      super.update(changedProperties);
+    }
+
+    render() {
+      return y$1` <input type="text" @input="${this.handleSearchChange}" /> `;
+    }
+
+    handleSearchChange(event) {
+      this.search = event.target.value;
+    }
+  }
+
+  customElements.define('lms-search', LMSSearch);
+
+  class LMSTable extends s$6 {
+    static get properties() {
+      return {
+        data: { type: Array },
+        _isEditable: { type: Boolean, attribute: false },
+        _isDeletable: { type: Boolean, attribute: false },
+        _toast: { state: true },
+      };
+    }
+
+    static styles = [
+      bootstrapStyles,
+      i$6`
+      table {
+        background: white;
+        padding: 1em;
+      }
+    `,
+    ];
+
+    constructor() {
+      super();
+      this._isEditable = false;
+      this._isDeletable = false;
+      this._notImplementedInBaseMessage =
+        "Implement this method in your extended LMSTable component.";
+      this._toast = {
+        heading: "",
+        message: "",
+      };
+    }
+
+    _handleEdit() {
+      console.log(this._notImplementedInBaseMessage);
+    }
+
+    _handleSave() {
+      console.log(this._notImplementedInBaseMessage);
+    }
+
+    _handleDelete() {
+      console.log(this._notImplementedInBaseMessage);
+    }
+
+    _renderToast(status, result) {
+      if (result.error) {
+        this._toast = {
+          heading: status,
+          message: result.error,
+        };
+        return;
+      }
+
+      if (result.errors) {
+        this._toast = {
+          heading: status,
+          message: Object.values(result.errors)
+            .map(({ message, path }) => `Sorry! ${message} at ${path}`)
+            .join(" & "),
+        };
+      }
+
+      const lmsToast = document.createElement("lms-toast", { is: "lms-toast" });
+      lmsToast.heading = this._toast.heading;
+      lmsToast.message = this._toast.message;
+      this.renderRoot.appendChild(lmsToast);
+    }
+
+    render() {
+      const { data } = this;
+
+      const hasData = data?.length > 0 ?? false;
+      const [headers] = hasData ? data : [] ?? [];
+
+      if (hasData) {
+        return y$1`
+        <div class="container-fluid mx-0 px-0">
+          <table class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                ${Object.keys(headers).map(
+                  (key) => y$1`<th scope="col">${key}</th>`
+                )}
+                ${this._isEditable
+                  ? y$1`<th scope="col">actions</th>`
+                  : y$1``}
+              </tr>
+            </thead>
+            <tbody>
+              ${data.map(
+                (item) => y$1`
+                  <tr>
+                    ${Object.keys(item).map(
+                      (key) => y$1`<td>${item[key]}</td>`
+                    )}
+                    ${this._isEditable
+                      ? y$1`
+                          <td>
+                            <div class="d-flex">
+                              <button
+                                @click=${this._handleEdit}
+                                type="button"
+                                class="btn btn-dark mx-2"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                @click=${this._handleSave}
+                                type="button"
+                                class="btn btn-dark mx-2"
+                              >
+                                Save
+                              </button>
+                              <button
+                                @click=${this._handleDelete}
+                                ?hidden=${!this._isDeletable}
+                                type="button"
+                                class="btn btn-danger mx-2"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        `
+                      : y$1``}
+                  </tr>
+                `
+              )}
+            </tbody>
+          </table>
+        </div>
+      `;
+      }
+
+      return b$1;
+    }
+  }
+
+  customElements.define("lms-table", LMSTable);
+
+  class LMSToast extends s$6 {
+    static properties = {
+      heading: { type: String },
+      message: { type: String },
+      _elapsedTime: { state: true },
+    };
+
+    static styles = [
+      bootstrapStyles,
+      i$6`
+      div:first {
+        position: relative;
+        min-height: 200px;
+      }
+
+      .toast {
+        position: absolute;
+        bottom: 1em;
+        left: 50%;
+        opacity: 1;
+      }
+    `,
+    ];
+
+    constructor() {
+      super();
+      this.heading = "";
+      this.message = "";
+      this._elapsedTime = 0;
+    }
+
+    render() {
+      return y$1`
+      <div aria-live="polite" aria-atomic="true">
+        <div class="toast">
+          <div class="toast-header">
+            <strong class="mr-auto">${this.heading}</strong>
+            <small>${this._elapsedTime} sec ago</small>
+            <button
+              type="button"
+              class="ml-2 mb-1 close"
+              data-dismiss="toast"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">${this.message}</div>
+        </div>
+      </div>
+    `;
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      setInterval(() => {
+        this._elapsedTime++;
+      }, 1000);
+
+      this.renderRoot.addEventListener("click", (e) => {
+        if (e.target.tagName === "SPAN") {
+          this.remove();
+        }
+      });
+
+      setTimeout(() => {
+        this.remove();
+      }, 10000);
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      this.renderRoot.removeEventListener("click", (e) => {
+        if (e.target.tagName === "SPAN") {
+          this.remove();
+        }
+      });
+    }
+  }
+
+  customElements.define("lms-toast", LMSToast);
+
+  class LMSBookingsTable extends LMSTable {
+    static properties = {
+      data: { type: Array },
+      _isEditable: { type: Boolean, attribute: false },
+    };
+
+    _handleEdit(e) {
+      let parent = e.target.parentElement;
+      while (parent.tagName !== "TR") {
+        parent = parent.parentElement;
+      }
+
+      const inputs = parent.querySelectorAll("input");
+      inputs.forEach((input) => {
+        input.disabled = false;
+      });
+    }
+
+    async _handleSave(e) {
+      let parent = e.target.parentElement;
+      while (parent.tagName !== "TR") {
+        parent = parent.parentElement;
+      }
+
+      /** The api expects integers so we convert them */
+      const [bookingid, borrowernumber] = [
+        ...Array.from(parent.children).map((element) =>
+          parseInt(element.textContent, 10)
+        ),
+      ];
+      const inputs = Array.from(parent.querySelectorAll("input"));
+      /** Same here, roomid needs to be an integer */
+      const [roomid, start, end] = [
+        ...inputs.map((input, index) =>
+          index === 0 ? parseInt(input.value, 10) : input.value
+        ),
+      ];
+
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ borrowernumber, roomid, start, end }),
+          headers: {
+            Accept: "",
+          },
+        }
+      );
+
+      if ([200, 201].includes(response.status)) {
+        // Implement success message
+        inputs.forEach((input) => {
+          input.disabled = true;
+        });
+
+        this._getData();
+      }
+
+      if (response.status >= 400) {
+        const result = await response.json();
+        this._renderToast(response.status, result);
+      }
+    }
+
+    async _handleDelete(e) {
+      let parent = e.target.parentElement;
+      while (parent.tagName !== "TR") {
+        parent = parent.parentElement;
+      }
+
+      /** The api expects integers so we convert them */
+      const [bookingid] = [
+        ...Array.from(parent.children).map((element) =>
+          parseInt(element.textContent, 10)
+        ),
+      ];
+
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "",
+          },
+        }
+      );
+
+      if (response.status === 204) {
+        this._getData();
+      }
+    }
+
+    async _getData() {
+      const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
+        method: "GET",
+        headers: {
+          Accept: "",
+        },
+      });
+
+      const result = await response.json();
+
+      this.data = result.length
+        ? result
+            .map((datum) =>
+              Object.keys(datum)
+                .sort((a, b) => {
+                  const order = [
+                    "bookingid",
+                    "borrowernumber",
+                    "roomid",
+                    "start",
+                    "end",
+                    "blackedout",
+                    "created",
+                    "updated_at",
+                  ];
+                  return order.indexOf(a) - order.indexOf(b);
+                })
+                .reduce((acc, key) => ({ ...acc, [key]: datum[key] }), {})
+            )
+            .map((datum) =>
+              Object.keys(datum).reduce(
+                (acc, key) => ({
+                  ...acc,
+                  [key]: this._inputFromValue({
+                    key,
+                    value:
+                      typeof datum[key] !== "string"
+                        ? datum[key].toString()
+                        : datum[key],
+                  }),
+                }),
+                {}
+              )
+            )
+        : result;
+    }
+
+    _inputFromValue({ key, value }) {
+      return (
+        {
+          start: y$1`<input
+          class="form-control"
+          type="datetime-local"
+          name="start"
+          value="${value}"
+          disabled
+        />`,
+          end: y$1`<input
+          class="form-control"
+          type="datetime-local"
+          name="end"
+          value="${value}"
+          disabled
+        />`,
+          roomid: y$1`<input
+          class="form-control"
+          type="number"
+          name="roomid"
+          value="${value}"
+          disabled
+        />`,
+        }[key] || value
+      );
+    }
+
+    constructor() {
+      super();
+      this._isEditable = true;
+      this._isDeletable = true;
+      this.data = [];
+      this._getData();
+    }
+  }
+
+  customElements.define("lms-bookings-table", LMSBookingsTable);
+
+  class LMSBookingsModal extends LMSModal {
     static get properties() {
       return { fields: { type: Array } };
     }
@@ -528,39 +1521,40 @@
     constructor() {
       super();
       this.fields = [
-        { name: "maxcapacity", type: "text", desc: "Max capacity", required: true },
-        { name: "color", type: "color", desc: "Color", required: true },
-        { name: "image", type: "text", desc: "Image", required: true },
-        { name: "description", type: "text", desc: "description", required: true },
-        { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
-        { name: "roomid", type: "text" },
+        { name: "borrowernumber", type: "number", desc: "Borrowernumber", required: true },
         {
-          name: "branch",
+          name: "roomid",
           type: "select",
-          desc: "Branch",
+          desc: "Roomid",
           logic: async () => {
-            const response = await fetch("/api/v1/libraries");
+            const response = await fetch(
+              "/api/v1/contrib/roomreservations/rooms",
+              { headers: { accept: "" } }
+            );
             const result = await response.json();
-            return result.map((library) => ({
-              value: library.library_id,
-              name: library.name,
+            return result.map((room) => ({
+              value: room.roomid,
+              name: room.roomnumber,
             }));
           },
-          required: true,
+          required: true
         },
-        { name: "roomnumber", type: "text", desc: "Roomnumber", required: true },
+        { name: "start", type: "datetime-local", desc: "Starts at", required: true },
+        { name: "end", type: "datetime-local", desc: "Ends at", required: true },
+        { name: "blackedout", type: "checkbox", desc: "Is blackout" },
+        { name: "send_confirmation", type: "checkbox", desc: "Send confirmation email to patron" },
       ];
       this.createOpts = {
-        endpoint: "/api/v1/contrib/roomreservations/rooms",
+        endpoint: "/api/v1/contrib/roomreservations/bookings",
         method: "POST",
       };
-      this._modalTitle = "Add a Room";
+      this._modalTitle = "Add Booking";
     }
   }
 
-  customElements.define("lms-room-modal", LMSRoomModal);
+  customElements.define("lms-bookings-modal", LMSBookingsModal);
 
-  class LMSEquipmentItem extends s$4 {
+  class LMSEquipmentItem extends s$6 {
     static get properties() {
       return {
         equipmentid: { type: String },
@@ -576,7 +1570,7 @@
 
     static styles = [
       bootstrapStyles,
-      i$4`
+      i$6`
       .lms-equipment-item {
         max-width: 18rem;
       }
@@ -804,372 +1798,6 @@
 
   customElements.define("lms-equipment-modal", LMSEquipmentModal);
 
-  class LMSSearch extends s$4 {
-    static get properties() {
-      return {
-        tagName: { type: String },
-        search: { type: String },
-      };
-    }
-
-    constructor() {
-      super();
-      this.tagName = '';
-      this.search = '';
-      this.indexedContent = [];
-    }
-
-    firstUpdated() {
-      this.indexedContent = [...document.getElementsByTagName(this.tagName)];
-    }
-
-    update(changedProperties) {
-      if (changedProperties.has('search')) {
-        this.indexedContent.forEach((element) => {
-          if (element.textContent.includes(this.search)) {
-            element.style.display = 'block';
-          } else {
-            element.style.display = 'none';
-          }
-        });
-      }
-
-      super.update(changedProperties);
-    }
-
-    render() {
-      return y$1` <input type="text" @input="${this.handleSearchChange}" /> `;
-    }
-
-    handleSearchChange(event) {
-      this.search = event.target.value;
-    }
-  }
-
-  customElements.define('lms-search', LMSSearch);
-
-  class LMSTable extends s$4 {
-    static get properties() {
-      return {
-        data: { type: Array },
-        _isEditable: { type: Boolean, attribute: false },
-        _isDeletable: { type: Boolean, attribute: false },
-        _toast: { state: true },
-      };
-    }
-
-    static styles = [
-      bootstrapStyles,
-      i$4`
-      table {
-        background: white;
-        padding: 1em;
-      }
-    `,
-    ];
-
-    constructor() {
-      super();
-      this._isEditable = false;
-      this._isDeletable = false;
-      this._notImplementedInBaseMessage =
-        "Implement this method in your extended LMSTable component.";
-      this._toast = {
-        heading: "",
-        message: "",
-      };
-    }
-
-    _handleEdit() {
-      console.log(this._notImplementedInBaseMessage);
-    }
-
-    _handleSave() {
-      console.log(this._notImplementedInBaseMessage);
-    }
-
-    _handleDelete() {
-      console.log(this._notImplementedInBaseMessage);
-    }
-
-    _renderToast(status, result) {
-      if (result.error) {
-        this._toast = {
-          heading: status,
-          message: result.error,
-        };
-        return;
-      }
-
-      if (result.errors) {
-        this._toast = {
-          heading: status,
-          message: Object.values(result.errors)
-            .map(({ message, path }) => `Sorry! ${message} at ${path}`)
-            .join(" & "),
-        };
-      }
-
-      const lmsToast = document.createElement("lms-toast", { is: "lms-toast" });
-      lmsToast.heading = this._toast.heading;
-      lmsToast.message = this._toast.message;
-      this.renderRoot.appendChild(lmsToast);
-    }
-
-    render() {
-      const { data } = this;
-
-      const hasData = data?.length > 0 ?? false;
-      const [headers] = hasData ? data : [] ?? [];
-
-      if (hasData) {
-        return y$1`
-        <div class="container-fluid mx-0 px-0">
-          <table class="table table-striped table-bordered table-hover">
-            <thead>
-              <tr>
-                ${Object.keys(headers).map(
-                  (key) => y$1`<th scope="col">${key}</th>`
-                )}
-                ${this._isEditable
-                  ? y$1`<th scope="col">actions</th>`
-                  : y$1``}
-              </tr>
-            </thead>
-            <tbody>
-              ${data.map(
-                (item) => y$1`
-                  <tr>
-                    ${Object.keys(item).map(
-                      (key) => y$1`<td>${item[key]}</td>`
-                    )}
-                    ${this._isEditable
-                      ? y$1`
-                          <td>
-                            <div class="d-flex">
-                              <button
-                                @click=${this._handleEdit}
-                                type="button"
-                                class="btn btn-dark mx-2"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                @click=${this._handleSave}
-                                type="button"
-                                class="btn btn-dark mx-2"
-                              >
-                                Save
-                              </button>
-                              <button
-                                @click=${this._handleDelete}
-                                ?hidden=${!this._isDeletable}
-                                type="button"
-                                class="btn btn-danger mx-2"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </td>
-                        `
-                      : y$1``}
-                  </tr>
-                `
-              )}
-            </tbody>
-          </table>
-        </div>
-      `;
-      }
-
-      return b$1;
-    }
-  }
-
-  customElements.define("lms-table", LMSTable);
-
-  class LMSSettingsTable extends LMSTable {
-    static get properties() {
-      return {
-        data: { type: Array },
-        _isEditable: { type: Boolean, attribute: false },
-      };
-    }
-
-    async _getData() {
-      const response = await fetch("/api/v1/contrib/roomreservations/settings", {
-        headers: {
-          Accept: "",
-        },
-      });
-
-      const result = await response.json();
-
-      let order = ["setting", "value", "description"];
-      this.data = result
-        .map((setting) => ({
-          ...setting,
-          value: this._getFieldMarkup(setting),
-        }))
-        .map((obj) => {
-          // eslint-disable-next-line no-unused-vars
-          const { placeholder, type, ...setting } = obj;
-          return setting;
-        })
-        .map((obj) =>
-          Object.fromEntries(
-            Object.entries(obj).sort(
-              ([a], [b]) => order.indexOf(a) - order.indexOf(b)
-            )
-          )
-        );
-    }
-
-    _handleEdit(e) {
-      let parent = e.target.parentElement;
-      while (parent.tagName !== "TR") {
-        parent = parent.parentElement;
-      }
-
-      const inputs = parent.querySelectorAll("input");
-      inputs.forEach((input) => {
-        input.disabled = false;
-      });
-    }
-
-    async _handleSave(e) {
-      let parent = e.target.parentElement;
-      while (parent.tagName !== "TR") {
-        parent = parent.parentElement;
-      }
-
-      const inputs = Array.from(parent.querySelectorAll("input"));
-      const actions = {
-        restricted_patron_categories: async () => {
-          const data = inputs
-            .filter((input) => !input.checked)
-            .map((input) => ({
-              setting: `rcat_${input.name}`,
-            }));
-
-          const responses = [];
-          data.forEach(async (datum) => {
-            responses.push(
-              fetch(
-                `/api/v1/contrib/roomreservations/settings/${datum.setting}`,
-                {
-                  method: "DELETE",
-                  headers: {
-                    Accept: "",
-                  },
-                }
-              )
-            );
-          });
-
-          const response = await Promise.all(responses);
-          return {
-            ...response,
-            status: response.every((res) => res.status === 204) ? 204 : 207,
-          };
-        },
-        patron_categories: async () => {
-          const data = inputs
-            .filter((input) => input.checked)
-            .map((input) => ({
-              setting: `rcat_${input.name}`,
-              value: input.name,
-            }));
-
-          const response = await fetch(
-            "/api/v1/contrib/roomreservations/settings",
-            {
-              method: "POST",
-              body: JSON.stringify(data),
-              headers: {
-                Accept: "",
-              },
-            }
-          );
-          return response;
-        },
-      };
-
-      const category = parent.firstElementChild.textContent;
-      const action = actions[category];
-      const [input] = inputs;
-      const response = action
-        ? await action()
-        : await fetch(`/api/v1/contrib/roomreservations/settings/${input.name}`, {
-            method: "PUT",
-            body: JSON.stringify({ value: input.value }),
-            headers: {
-              Accept: "",
-            },
-          });
-
-      if ([201, 204].includes(response.status)) {
-        // Implement success message
-        inputs.forEach((input) => {
-          input.disabled = true;
-        });
-
-        this.data = this._getData();
-      }
-
-      if (response.status >= 400) {
-        const result = await response.json();
-        this._renderToast(response.status, result);
-      }
-    }
-
-    constructor() {
-      super();
-      this._isEditable = true;
-      this._getData();
-    }
-
-    _getFieldMarkup(field) {
-      /** The field properties are coming from the list method of the settings endpoint */
-      if (["number", "string"].includes(field.type)) {
-        return y$1`<input
-        class="form-control"
-        type="${field.type}"
-        name="${field.setting}"
-        value="${field.value}"
-        placeholder="${field.placeholder || ""}"
-        disabled
-      />`;
-      }
-
-      if (field.type === "array") {
-        return field.value.length
-          ? field.value.reduce(
-              (accumulator, category) => y$1`${accumulator}
-              <div class="form-check d-inline">
-                <input
-                  type="checkbox"
-                  name="${category.categorycode}"
-                  ?checked=${field.setting === "restricted_patron_categories"}
-                  disabled
-                  class="form-check-input"
-                  id=${category.categorycode}
-                />
-                <label for="${category.categorycode}" class="form-check-label"
-                  >&nbsp;${category.description}&nbsp;</label
-                >
-              </div>`,
-              ""
-            )
-          : y$1`<p>
-            There are currently no <code>${field.setting}</code> selected.
-          </p>`;
-      }
-    }
-  }
-
-  customElements.define("lms-settings-table", LMSSettingsTable);
-
   class LMSOpenHoursTable extends LMSTable {
     static get properties() {
       return {
@@ -1352,11 +1980,290 @@
 
   customElements.define("lms-open-hours-table", LMSOpenHoursTable);
 
-  class LMSBookingsTable extends LMSTable {
-    static properties = {
-      data: { type: Array },
-      _isEditable: { type: Boolean, attribute: false },
-    };
+  class LMSRoom extends s$6 {
+    static get properties() {
+      return {
+        maxcapacity: { type: String },
+        color: { type: String },
+        image: { type: String },
+        description: { type: String },
+        maxbookabletime: { type: String },
+        roomid: { type: String },
+        branch: { type: String },
+        roomnumber: { type: String },
+        editable: { type: Boolean },
+      };
+    }
+
+    static styles = [
+      bootstrapStyles,
+      i$6`
+      .lms-room {
+        max-width: 18rem;
+      }
+
+      .lms-room-img {
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+    `,
+    ];
+
+    constructor() {
+      super();
+      this.editable = false;
+    }
+
+    handleEdit() {
+      this.editable = true;
+    }
+
+    async handleSave() {
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "",
+          },
+          body: JSON.stringify({
+            maxcapacity: this.maxcapacity,
+            color: this.color,
+            image: this.image,
+            description: this.description,
+            maxbookabletime: this.maxbookabletime,
+            branch: this.branch,
+            roomnumber: this.roomnumber,
+          }),
+        }
+      );
+
+      if (response.status === 200) {
+        // Emit an event with the current property values
+        const event = new CustomEvent("modified", { bubbles: true });
+        this.dispatchEvent(event);
+        this.editable = false;
+        return;
+      }
+
+      if (response.status >= 400) {
+        const error = await response.json();
+        const event = new CustomEvent("error", { bubbles: true, detail: error });
+        this.dispatchEvent(event);
+      }
+    }
+
+    async handleDelete() {
+      const response = await fetch(
+        `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "",
+          },
+        }
+      );
+
+      if (response.status === 204) {
+        // Emit an event with the current property values
+        const event = new CustomEvent("deleted", { bubbles: true });
+        this.dispatchEvent(event);
+      }
+    }
+
+    render() {
+      return y$1`
+      <div class="card lms-room">
+        <img
+          class="card-img-top lms-room-img"
+          ?hidden=${!this.image}
+          src=${this.image ?? "..."}
+          alt="Image for ${this.roomnumber}"
+        />
+        <div class="card-body">
+          <h5 class="card-title">
+            <span class="badge badge-primary">${this.roomid}</span>
+          </h5>
+          <div class="form-group">
+            <label for="roomnumber">Room Number</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.roomnumber}
+              @input=${(e) => {
+                this.roomnumber = e.target.value;
+              }}
+              class="form-control"
+              id="roomnumber"
+            />
+          </div>
+          <div class="form-group">
+            <label for="maxcapacity">Max Capacity</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.maxcapacity}
+              @input=${(e) => {
+                this.maxcapacity = e.target.value;
+              }}
+              class="form-control"
+              id="maxcapacity"
+            />
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.description}
+              @input=${(e) => {
+                this.description = e.target.value;
+              }}
+              class="form-control"
+              id="description"
+            />
+          </div>
+          <div class="form-group">
+            <label for="color">Color</label>
+            <input
+              ?disabled=${!this.editable}
+              type="color"
+              .value=${this.color}
+              @input=${(e) => {
+                this.color = e.target.value;
+              }}
+              class="form-control"
+              id="color"
+            />
+          </div>
+          <div class="form-group">
+            <label for="image">Image</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.image}
+              @input=${(e) => {
+                this.image = e.target.value;
+              }}
+              class="form-control"
+              id="image"
+            />
+          </div>
+          <div class="form-group">
+            <label for="branch">Branch</label>
+            <input
+              ?disabled=${!this.editable}
+              type="text"
+              .value=${this.branch}
+              @input=${(e) => {
+                this.branch = e.target.value;
+              }}
+              class="form-control"
+              id="branch"
+            />
+          </div>
+          <div class="form-group">
+            <label for="maxbookabletime">Max Bookable Time</label>
+            <input
+              ?disabled=${!this.editable}
+              type="number"
+              .value=${this.maxbookabletime}
+              @input=${(e) => {
+                this.maxbookabletime = e.target.value;
+              }}
+              class="form-control"
+              id="maxbookabletime"
+            />
+          </div>
+          <button @click=${this.handleEdit} class="btn btn-dark">Edit</button>
+          <button @click=${this.handleSave} class="btn btn-dark">Save</button>
+          <button @click=${this.handleDelete} class="btn btn-danger">
+            Delete
+          </button>
+        </div>
+      </div>
+    `;
+    }
+  }
+
+  customElements.define("lms-room", LMSRoom);
+
+  class LMSRoomModal extends LMSModal {
+    static get properties() {
+      return { fields: { type: Array } };
+    }
+
+    constructor() {
+      super();
+      this.fields = [
+        { name: "maxcapacity", type: "text", desc: "Max capacity", required: true },
+        { name: "color", type: "color", desc: "Color", required: true },
+        { name: "image", type: "text", desc: "Image", required: true },
+        { name: "description", type: "text", desc: "description", required: true },
+        { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
+        { name: "roomid", type: "text" },
+        {
+          name: "branch",
+          type: "select",
+          desc: "Branch",
+          logic: async () => {
+            const response = await fetch("/api/v1/libraries");
+            const result = await response.json();
+            return result.map((library) => ({
+              value: library.library_id,
+              name: library.name,
+            }));
+          },
+          required: true,
+        },
+        { name: "roomnumber", type: "text", desc: "Roomnumber", required: true },
+      ];
+      this.createOpts = {
+        endpoint: "/api/v1/contrib/roomreservations/rooms",
+        method: "POST",
+      };
+      this._modalTitle = "Add a Room";
+    }
+  }
+
+  customElements.define("lms-room-modal", LMSRoomModal);
+
+  class LMSSettingsTable extends LMSTable {
+    static get properties() {
+      return {
+        data: { type: Array },
+        _isEditable: { type: Boolean, attribute: false },
+      };
+    }
+
+    async _getData() {
+      const response = await fetch("/api/v1/contrib/roomreservations/settings", {
+        headers: {
+          Accept: "",
+        },
+      });
+
+      const result = await response.json();
+
+      let order = ["setting", "value", "description"];
+      this.data = result
+        .map((setting) => ({
+          ...setting,
+          value: this._getFieldMarkup(setting),
+        }))
+        .map((obj) => {
+          // eslint-disable-next-line no-unused-vars
+          const { placeholder, type, ...setting } = obj;
+          return setting;
+        })
+        .map((obj) =>
+          Object.fromEntries(
+            Object.entries(obj).sort(
+              ([a], [b]) => order.indexOf(a) - order.indexOf(b)
+            )
+          )
+        );
+    }
 
     _handleEdit(e) {
       let parent = e.target.parentElement;
@@ -1376,38 +2283,78 @@
         parent = parent.parentElement;
       }
 
-      /** The api expects integers so we convert them */
-      const [bookingid, borrowernumber] = [
-        ...Array.from(parent.children).map((element) =>
-          parseInt(element.textContent, 10)
-        ),
-      ];
       const inputs = Array.from(parent.querySelectorAll("input"));
-      /** Same here, roomid needs to be an integer */
-      const [roomid, start, end] = [
-        ...inputs.map((input, index) =>
-          index === 0 ? parseInt(input.value, 10) : input.value
-        ),
-      ];
+      const actions = {
+        restricted_patron_categories: async () => {
+          const data = inputs
+            .filter((input) => !input.checked)
+            .map((input) => ({
+              setting: `rcat_${input.name}`,
+            }));
 
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
-        {
-          method: "PUT",
-          body: JSON.stringify({ borrowernumber, roomid, start, end }),
-          headers: {
-            Accept: "",
-          },
-        }
-      );
+          const responses = [];
+          data.forEach(async (datum) => {
+            responses.push(
+              fetch(
+                `/api/v1/contrib/roomreservations/settings/${datum.setting}`,
+                {
+                  method: "DELETE",
+                  headers: {
+                    Accept: "",
+                  },
+                }
+              )
+            );
+          });
 
-      if ([200, 201].includes(response.status)) {
+          const response = await Promise.all(responses);
+          return {
+            ...response,
+            status: response.every((res) => res.status === 204) ? 204 : 207,
+          };
+        },
+        patron_categories: async () => {
+          const data = inputs
+            .filter((input) => input.checked)
+            .map((input) => ({
+              setting: `rcat_${input.name}`,
+              value: input.name,
+            }));
+
+          const response = await fetch(
+            "/api/v1/contrib/roomreservations/settings",
+            {
+              method: "POST",
+              body: JSON.stringify(data),
+              headers: {
+                Accept: "",
+              },
+            }
+          );
+          return response;
+        },
+      };
+
+      const category = parent.firstElementChild.textContent;
+      const action = actions[category];
+      const [input] = inputs;
+      const response = action
+        ? await action()
+        : await fetch(`/api/v1/contrib/roomreservations/settings/${input.name}`, {
+            method: "PUT",
+            body: JSON.stringify({ value: input.value }),
+            headers: {
+              Accept: "",
+            },
+          });
+
+      if ([201, 204].includes(response.status)) {
         // Implement success message
         inputs.forEach((input) => {
           input.disabled = true;
         });
 
-        this._getData();
+        this.data = this._getData();
       }
 
       if (response.status >= 400) {
@@ -1416,160 +2363,52 @@
       }
     }
 
-    async _handleDelete(e) {
-      let parent = e.target.parentElement;
-      while (parent.tagName !== "TR") {
-        parent = parent.parentElement;
-      }
-
-      /** The api expects integers so we convert them */
-      const [bookingid] = [
-        ...Array.from(parent.children).map((element) =>
-          parseInt(element.textContent, 10)
-        ),
-      ];
-
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
-        {
-          method: "DELETE",
-          headers: {
-            Accept: "",
-          },
-        }
-      );
-
-      if (response.status === 204) {
-        this._getData();
-      }
-    }
-
-    async _getData() {
-      const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
-        method: "GET",
-        headers: {
-          Accept: "",
-        },
-      });
-
-      const result = await response.json();
-
-      this.data = result.length
-        ? result
-            .map((datum) =>
-              Object.keys(datum)
-                .sort((a, b) => {
-                  const order = [
-                    "bookingid",
-                    "borrowernumber",
-                    "roomid",
-                    "start",
-                    "end",
-                    "blackedout",
-                    "created",
-                    "updated_at",
-                  ];
-                  return order.indexOf(a) - order.indexOf(b);
-                })
-                .reduce((acc, key) => ({ ...acc, [key]: datum[key] }), {})
-            )
-            .map((datum) =>
-              Object.keys(datum).reduce(
-                (acc, key) => ({
-                  ...acc,
-                  [key]: this._inputFromValue({
-                    key,
-                    value:
-                      typeof datum[key] !== "string"
-                        ? datum[key].toString()
-                        : datum[key],
-                  }),
-                }),
-                {}
-              )
-            )
-        : result;
-    }
-
-    _inputFromValue({ key, value }) {
-      return (
-        {
-          start: y$1`<input
-          class="form-control"
-          type="datetime-local"
-          name="start"
-          value="${value}"
-          disabled
-        />`,
-          end: y$1`<input
-          class="form-control"
-          type="datetime-local"
-          name="end"
-          value="${value}"
-          disabled
-        />`,
-          roomid: y$1`<input
-          class="form-control"
-          type="number"
-          name="roomid"
-          value="${value}"
-          disabled
-        />`,
-        }[key] || value
-      );
-    }
-
     constructor() {
       super();
       this._isEditable = true;
-      this._isDeletable = true;
-      this.data = [];
       this._getData();
     }
-  }
 
-  customElements.define("lms-bookings-table", LMSBookingsTable);
+    _getFieldMarkup(field) {
+      /** The field properties are coming from the list method of the settings endpoint */
+      if (["number", "string"].includes(field.type)) {
+        return y$1`<input
+        class="form-control"
+        type="${field.type}"
+        name="${field.setting}"
+        value="${field.value}"
+        placeholder="${field.placeholder || ""}"
+        disabled
+      />`;
+      }
 
-  class LMSBookingsModal extends LMSModal {
-    static get properties() {
-      return { fields: { type: Array } };
-    }
-
-    constructor() {
-      super();
-      this.fields = [
-        { name: "borrowernumber", type: "number", desc: "Borrowernumber", required: true },
-        {
-          name: "roomid",
-          type: "select",
-          desc: "Roomid",
-          logic: async () => {
-            const response = await fetch(
-              "/api/v1/contrib/roomreservations/rooms",
-              { headers: { accept: "" } }
-            );
-            const result = await response.json();
-            return result.map((room) => ({
-              value: room.roomid,
-              name: room.roomnumber,
-            }));
-          },
-          required: true
-        },
-        { name: "start", type: "datetime-local", desc: "Starts at", required: true },
-        { name: "end", type: "datetime-local", desc: "Ends at", required: true },
-        { name: "blackedout", type: "checkbox", desc: "Is blackout" },
-        { name: "send_confirmation", type: "checkbox", desc: "Send confirmation email to patron" },
-      ];
-      this.createOpts = {
-        endpoint: "/api/v1/contrib/roomreservations/bookings",
-        method: "POST",
-      };
-      this._modalTitle = "Add Booking";
+      if (field.type === "array") {
+        return field.value.length
+          ? field.value.reduce(
+              (accumulator, category) => y$1`${accumulator}
+              <div class="form-check d-inline">
+                <input
+                  type="checkbox"
+                  name="${category.categorycode}"
+                  ?checked=${field.setting === "restricted_patron_categories"}
+                  disabled
+                  class="form-check-input"
+                  id=${category.categorycode}
+                />
+                <label for="${category.categorycode}" class="form-check-label"
+                  >&nbsp;${category.description}&nbsp;</label
+                >
+              </div>`,
+              ""
+            )
+          : y$1`<p>
+            There are currently no <code>${field.setting}</code> selected.
+          </p>`;
+      }
     }
   }
 
-  customElements.define("lms-bookings-modal", LMSBookingsModal);
+  customElements.define("lms-settings-table", LMSSettingsTable);
 
   /**
    * @license
@@ -3140,773 +3979,7 @@
   ], LMSCalendar);
   var LMSCalendar$1 = LMSCalendar;
 
-  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
-  }
-
-  var dayjs_min = createCommonjsModule(function (module, exports) {
-  !function(t,e){module.exports=e();}(commonjsGlobal,(function(){var t=1e3,e=6e4,n=36e5,r="millisecond",i="second",s="minute",u="hour",a="day",o="week",f="month",h="quarter",c="year",d="date",l="Invalid Date",$=/^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/,y=/\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g,M={name:"en",weekdays:"Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),months:"January_February_March_April_May_June_July_August_September_October_November_December".split("_"),ordinal:function(t){var e=["th","st","nd","rd"],n=t%100;return "["+t+(e[(n-20)%10]||e[n]||e[0])+"]"}},m=function(t,e,n){var r=String(t);return !r||r.length>=e?t:""+Array(e+1-r.length).join(n)+t},v={s:m,z:function(t){var e=-t.utcOffset(),n=Math.abs(e),r=Math.floor(n/60),i=n%60;return (e<=0?"+":"-")+m(r,2,"0")+":"+m(i,2,"0")},m:function t(e,n){if(e.date()<n.date())return -t(n,e);var r=12*(n.year()-e.year())+(n.month()-e.month()),i=e.clone().add(r,f),s=n-i<0,u=e.clone().add(r+(s?-1:1),f);return +(-(r+(n-i)/(s?i-u:u-i))||0)},a:function(t){return t<0?Math.ceil(t)||0:Math.floor(t)},p:function(t){return {M:f,y:c,w:o,d:a,D:d,h:u,m:s,s:i,ms:r,Q:h}[t]||String(t||"").toLowerCase().replace(/s$/,"")},u:function(t){return void 0===t}},g="en",D={};D[g]=M;var p=function(t){return t instanceof _},S=function t(e,n,r){var i;if(!e)return g;if("string"==typeof e){var s=e.toLowerCase();D[s]&&(i=s),n&&(D[s]=n,i=s);var u=e.split("-");if(!i&&u.length>1)return t(u[0])}else {var a=e.name;D[a]=e,i=a;}return !r&&i&&(g=i),i||!r&&g},w=function(t,e){if(p(t))return t.clone();var n="object"==typeof e?e:{};return n.date=t,n.args=arguments,new _(n)},O=v;O.l=S,O.i=p,O.w=function(t,e){return w(t,{locale:e.$L,utc:e.$u,x:e.$x,$offset:e.$offset})};var _=function(){function M(t){this.$L=S(t.locale,null,!0),this.parse(t);}var m=M.prototype;return m.parse=function(t){this.$d=function(t){var e=t.date,n=t.utc;if(null===e)return new Date(NaN);if(O.u(e))return new Date;if(e instanceof Date)return new Date(e);if("string"==typeof e&&!/Z$/i.test(e)){var r=e.match($);if(r){var i=r[2]-1||0,s=(r[7]||"0").substring(0,3);return n?new Date(Date.UTC(r[1],i,r[3]||1,r[4]||0,r[5]||0,r[6]||0,s)):new Date(r[1],i,r[3]||1,r[4]||0,r[5]||0,r[6]||0,s)}}return new Date(e)}(t),this.$x=t.x||{},this.init();},m.init=function(){var t=this.$d;this.$y=t.getFullYear(),this.$M=t.getMonth(),this.$D=t.getDate(),this.$W=t.getDay(),this.$H=t.getHours(),this.$m=t.getMinutes(),this.$s=t.getSeconds(),this.$ms=t.getMilliseconds();},m.$utils=function(){return O},m.isValid=function(){return !(this.$d.toString()===l)},m.isSame=function(t,e){var n=w(t);return this.startOf(e)<=n&&n<=this.endOf(e)},m.isAfter=function(t,e){return w(t)<this.startOf(e)},m.isBefore=function(t,e){return this.endOf(e)<w(t)},m.$g=function(t,e,n){return O.u(t)?this[e]:this.set(n,t)},m.unix=function(){return Math.floor(this.valueOf()/1e3)},m.valueOf=function(){return this.$d.getTime()},m.startOf=function(t,e){var n=this,r=!!O.u(e)||e,h=O.p(t),l=function(t,e){var i=O.w(n.$u?Date.UTC(n.$y,e,t):new Date(n.$y,e,t),n);return r?i:i.endOf(a)},$=function(t,e){return O.w(n.toDate()[t].apply(n.toDate("s"),(r?[0,0,0,0]:[23,59,59,999]).slice(e)),n)},y=this.$W,M=this.$M,m=this.$D,v="set"+(this.$u?"UTC":"");switch(h){case c:return r?l(1,0):l(31,11);case f:return r?l(1,M):l(0,M+1);case o:var g=this.$locale().weekStart||0,D=(y<g?y+7:y)-g;return l(r?m-D:m+(6-D),M);case a:case d:return $(v+"Hours",0);case u:return $(v+"Minutes",1);case s:return $(v+"Seconds",2);case i:return $(v+"Milliseconds",3);default:return this.clone()}},m.endOf=function(t){return this.startOf(t,!1)},m.$set=function(t,e){var n,o=O.p(t),h="set"+(this.$u?"UTC":""),l=(n={},n[a]=h+"Date",n[d]=h+"Date",n[f]=h+"Month",n[c]=h+"FullYear",n[u]=h+"Hours",n[s]=h+"Minutes",n[i]=h+"Seconds",n[r]=h+"Milliseconds",n)[o],$=o===a?this.$D+(e-this.$W):e;if(o===f||o===c){var y=this.clone().set(d,1);y.$d[l]($),y.init(),this.$d=y.set(d,Math.min(this.$D,y.daysInMonth())).$d;}else l&&this.$d[l]($);return this.init(),this},m.set=function(t,e){return this.clone().$set(t,e)},m.get=function(t){return this[O.p(t)]()},m.add=function(r,h){var d,l=this;r=Number(r);var $=O.p(h),y=function(t){var e=w(l);return O.w(e.date(e.date()+Math.round(t*r)),l)};if($===f)return this.set(f,this.$M+r);if($===c)return this.set(c,this.$y+r);if($===a)return y(1);if($===o)return y(7);var M=(d={},d[s]=e,d[u]=n,d[i]=t,d)[$]||1,m=this.$d.getTime()+r*M;return O.w(m,this)},m.subtract=function(t,e){return this.add(-1*t,e)},m.format=function(t){var e=this,n=this.$locale();if(!this.isValid())return n.invalidDate||l;var r=t||"YYYY-MM-DDTHH:mm:ssZ",i=O.z(this),s=this.$H,u=this.$m,a=this.$M,o=n.weekdays,f=n.months,h=function(t,n,i,s){return t&&(t[n]||t(e,r))||i[n].slice(0,s)},c=function(t){return O.s(s%12||12,t,"0")},d=n.meridiem||function(t,e,n){var r=t<12?"AM":"PM";return n?r.toLowerCase():r},$={YY:String(this.$y).slice(-2),YYYY:this.$y,M:a+1,MM:O.s(a+1,2,"0"),MMM:h(n.monthsShort,a,f,3),MMMM:h(f,a),D:this.$D,DD:O.s(this.$D,2,"0"),d:String(this.$W),dd:h(n.weekdaysMin,this.$W,o,2),ddd:h(n.weekdaysShort,this.$W,o,3),dddd:o[this.$W],H:String(s),HH:O.s(s,2,"0"),h:c(1),hh:c(2),a:d(s,u,!0),A:d(s,u,!1),m:String(u),mm:O.s(u,2,"0"),s:String(this.$s),ss:O.s(this.$s,2,"0"),SSS:O.s(this.$ms,3,"0"),Z:i};return r.replace(y,(function(t,e){return e||$[t]||i.replace(":","")}))},m.utcOffset=function(){return 15*-Math.round(this.$d.getTimezoneOffset()/15)},m.diff=function(r,d,l){var $,y=O.p(d),M=w(r),m=(M.utcOffset()-this.utcOffset())*e,v=this-M,g=O.m(this,M);return g=($={},$[c]=g/12,$[f]=g,$[h]=g/3,$[o]=(v-m)/6048e5,$[a]=(v-m)/864e5,$[u]=v/n,$[s]=v/e,$[i]=v/t,$)[y]||v,l?g:O.a(g)},m.daysInMonth=function(){return this.endOf(f).$D},m.$locale=function(){return D[this.$L]},m.locale=function(t,e){if(!t)return this.$L;var n=this.clone(),r=S(t,e,!0);return r&&(n.$L=r),n},m.clone=function(){return O.w(this.$d,this)},m.toDate=function(){return new Date(this.valueOf())},m.toJSON=function(){return this.isValid()?this.toISOString():null},m.toISOString=function(){return this.$d.toISOString()},m.toString=function(){return this.$d.toUTCString()},M}(),T=_.prototype;return w.prototype=T,[["$ms",r],["$s",i],["$m",s],["$H",u],["$W",a],["$M",f],["$y",c],["$D",d]].forEach((function(t){T[t[1]]=function(e){return this.$g(e,t[0],t[1])};})),w.extend=function(t,e){return t.$i||(t(e,_,w),t.$i=!0),w},w.locale=S,w.isDayjs=p,w.unix=function(t){return w(1e3*t)},w.en=D[g],w.Ls=D,w.p={},w}));
-  });
-
-  /*! gettext.js - Guillaume Potier - MIT Licensed */
-  var i18n$1 = function (options) {
-   options = options || {};
-   this && (this.__version = '1.1.1');
-
-   // default values that could be overriden in i18n() construct
-   var defaults = {
-     domain: 'messages',
-     locale: (typeof document !== 'undefined' ? document.documentElement.getAttribute('lang') : false) || 'en',
-     plural_func: function (n) { return { nplurals: 2, plural: (n!=1) ? 1 : 0 }; },
-     ctxt_delimiter: String.fromCharCode(4) // \u0004
-   };
-
-   // handy mixins taken from underscode.js
-   var _ = {
-     isObject: function (obj) {
-       var type = typeof obj;
-       return type === 'function' || type === 'object' && !!obj;
-     },
-     isArray: function (obj) {
-       return toString.call(obj) === '[object Array]';
-     }
-   };
-
-   var
-     _plural_funcs = {},
-     _locale = options.locale || defaults.locale,
-     _domain = options.domain || defaults.domain,
-     _dictionary = {},
-     _plural_forms = {},
-     _ctxt_delimiter = options.ctxt_delimiter || defaults.ctxt_delimiter;
-
-     if (options.messages) {
-       _dictionary[_domain] = {};
-       _dictionary[_domain][_locale] = options.messages;
-     }
-
-     if (options.plural_forms) {
-       _plural_forms[_locale] = options.plural_forms;
-     }
-
-     // sprintf equivalent, takes a string and some arguments to make a computed string
-     // eg: strfmt("%1 dogs are in %2", 7, "the kitchen"); => "7 dogs are in the kitchen"
-     // eg: strfmt("I like %1, bananas and %1", "apples"); => "I like apples, bananas and apples"
-     // NB: removes msg context if there is one present
-     var strfmt = function (fmt) {
-        var args = arguments;
-
-        return fmt
-         // put space after double % to prevent placeholder replacement of such matches
-         .replace(/%%/g, '%% ')
-         // replace placeholders
-         .replace(/%(\d+)/g, function (str, p1) {
-           return args[p1];
-         })
-         // replace double % and space with single %
-         .replace(/%% /g, '%')
-     };
-
-     var removeContext = function(str) {
-        // if there is context, remove it
-        if (str.indexOf(_ctxt_delimiter) !== -1) {
-          var parts = str.split(_ctxt_delimiter);
-          return parts[1];
-        }
-
-      return str;
-     };
-
-     var expand_locale = function(locale) {
-         var locales = [locale],
-             i = locale.lastIndexOf('-');
-         while (i > 0) {
-             locale = locale.slice(0, i);
-             locales.push(locale);
-             i = locale.lastIndexOf('-');
-         }
-         return locales;
-     };
-
-     var normalizeLocale = function (locale) {
-        // Convert locale to BCP 47. If the locale is in POSIX format, locale variant and encoding is discarded.
-        locale = locale.replace('_', '-');
-        var i = locale.search(/[.@]/);
-        if (i != -1) locale = locale.slice(0, i);
-        return locale;
-     };
-
-     var getPluralFunc = function (plural_form) {
-       // Plural form string regexp
-       // taken from https://github.com/Orange-OpenSource/gettext.js/blob/master/lib.gettext.js
-       // plural forms list available here http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
-       var pf_re = new RegExp('^\\s*nplurals\\s*=\\s*[0-9]+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_\(\)])+');
-
-       if (!pf_re.test(plural_form))
-         throw new Error(strfmt('The plural form "%1" is not valid', plural_form));
-
-       // Careful here, this is a hidden eval() equivalent..
-       // Risk should be reasonable though since we test the plural_form through regex before
-       // taken from https://github.com/Orange-OpenSource/gettext.js/blob/master/lib.gettext.js
-       // TODO: should test if https://github.com/soney/jsep present and use it if so
-       return new Function("n", 'var plural, nplurals; '+ plural_form +' return { nplurals: nplurals, plural: (plural === true ? 1 : (plural ? plural : 0)) };');
-     };
-
-     // Proper translation function that handle plurals and directives
-     // Contains juicy parts of https://github.com/Orange-OpenSource/gettext.js/blob/master/lib.gettext.js
-     var t = function (messages, n, options /* ,extra */) {
-       // Singular is very easy, just pass dictionnary message through strfmt
-       if (!options.plural_form)
-        return strfmt.apply(this, [removeContext(messages[0])].concat(Array.prototype.slice.call(arguments, 3)));
-
-       var plural;
-
-       // if a plural func is given, use that one
-       if (options.plural_func) {
-         plural = options.plural_func(n);
-
-       // if plural form never interpreted before, do it now and store it
-       } else if (!_plural_funcs[_locale]) {
-         _plural_funcs[_locale] = getPluralFunc(_plural_forms[_locale]);
-         plural = _plural_funcs[_locale](n);
-
-       // we have the plural function, compute the plural result
-       } else {
-         plural = _plural_funcs[_locale](n);
-       }
-
-       // If there is a problem with plurals, fallback to singular one
-       if ('undefined' === typeof plural.plural || plural.plural > plural.nplurals || messages.length <= plural.plural)
-         plural.plural = 0;
-
-       return strfmt.apply(this, [removeContext(messages[plural.plural]), n].concat(Array.prototype.slice.call(arguments, 3)));
-     };
-
-   return {
-     strfmt: strfmt, // expose strfmt util
-     expand_locale: expand_locale, // expose expand_locale util
-
-     // Declare shortcuts
-     __: function () { return this.gettext.apply(this, arguments); },
-     _n: function () { return this.ngettext.apply(this, arguments); },
-     _p: function () { return this.pgettext.apply(this, arguments); },
-
-     setMessages: function (domain, locale, messages, plural_forms) {
-       if (!domain || !locale || !messages)
-         throw new Error('You must provide a domain, a locale and messages');
-
-       if ('string' !== typeof domain || 'string' !== typeof locale || !_.isObject(messages))
-         throw new Error('Invalid arguments');
-
-       locale = normalizeLocale(locale);
-
-       if (plural_forms)
-         _plural_forms[locale] = plural_forms;
-
-       if (!_dictionary[domain])
-         _dictionary[domain] = {};
-
-       _dictionary[domain][locale] = messages;
-
-       return this;
-     },
-     loadJSON: function (jsonData, domain) {
-       if (!_.isObject(jsonData))
-         jsonData = JSON.parse(jsonData);
-
-       if (!jsonData[''] || !jsonData['']['language'] || !jsonData['']['plural-forms'])
-         throw new Error('Wrong JSON, it must have an empty key ("") with "language" and "plural-forms" information');
-
-       var headers = jsonData[''];
-       delete jsonData[''];
-
-       return this.setMessages(domain || defaults.domain, headers['language'], jsonData, headers['plural-forms']);
-     },
-     setLocale: function (locale) {
-       _locale = normalizeLocale(locale);
-       return this;
-     },
-     getLocale: function () {
-       return _locale;
-     },
-     // getter/setter for domain
-     textdomain: function (domain) {
-       if (!domain)
-         return _domain;
-       _domain = domain;
-       return this;
-     },
-     gettext: function (msgid /* , extra */) {
-       return this.dcnpgettext.apply(this, [undefined, undefined, msgid, undefined, undefined].concat(Array.prototype.slice.call(arguments, 1)));
-     },
-     ngettext: function (msgid, msgid_plural, n /* , extra */) {
-       return this.dcnpgettext.apply(this, [undefined, undefined, msgid, msgid_plural, n].concat(Array.prototype.slice.call(arguments, 3)));
-     },
-     pgettext: function (msgctxt, msgid /* , extra */) {
-       return this.dcnpgettext.apply(this, [undefined, msgctxt, msgid, undefined, undefined].concat(Array.prototype.slice.call(arguments, 2)));
-     },
-     dcnpgettext: function (domain, msgctxt, msgid, msgid_plural, n /* , extra */) {
-       domain = domain || _domain;
-
-       if ('string' !== typeof msgid)
-         throw new Error(this.strfmt('Msgid "%1" is not a valid translatable string', msgid));
-
-       var
-         translation,
-         options = { plural_form: false },
-         key = msgctxt ? msgctxt + _ctxt_delimiter + msgid : msgid,
-         exist,
-         locale,
-         locales = expand_locale(_locale);
-
-       for (var i in locales) {
-          locale = locales[i];
-          exist = _dictionary[domain] && _dictionary[domain][locale] && _dictionary[domain][locale][key];
-
-          // because it's not possible to define both a singular and a plural form of the same msgid,
-          // we need to check that the stored form is the same as the expected one.
-          // if not, we'll just ignore the translation and consider it as not translated.
-          if (msgid_plural) {
-            exist = exist && "string" !== typeof _dictionary[domain][locale][key];
-          } else {
-            exist = exist && "string" === typeof _dictionary[domain][locale][key];
-          }
-          if (exist) {
-            break;
-          }
-       }
-
-       if (!exist) {
-         translation = msgid;
-         options.plural_func = defaults.plural_func;
-       } else {
-         translation = _dictionary[domain][locale][key];
-       }
-
-       // Singular form
-       if (!msgid_plural)
-         return t.apply(this, [[translation], n, options].concat(Array.prototype.slice.call(arguments, 5)));
-
-       // Plural one
-       options.plural_form = true;
-       return t.apply(this, [exist ? translation : [msgid, msgid_plural], n, options].concat(Array.prototype.slice.call(arguments, 5)));
-     }
-   };
-  };
-
-  const i18n = i18n$1();
-
-  class LMSBookie extends s$4 {
-    static properties = {
-      borrowernumber: { type: String },
-      _openHours: { state: true },
-      _rooms: { state: true },
-      _equipment: { state: true },
-      _alertMessage: { state: true },
-      _selectedRoom: { state: true },
-      _defaultMaxBookingTime: { state: true },
-    };
-
-    static styles = [
-      bootstrapStyles,
-      i$4`
-      :host > div {
-        padding: 16px;
-        box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-        border: 1px solid var(--seperator-light);
-        border-radius: var(--border-radius-lg);
-        font-family: var(--system-ui);
-        background: white;
-        display: flex;
-        flex-direction: column;
-        gap: 1em;
-      }
-
-      #rooms {
-        display: flex;
-        overflow-y: scroll;
-        flex-wrap: nowrap;
-        gap: 1em;
-      }
-
-      .room {
-        flex: 0 0 100%;
-      }
-
-      @media (max-width: 1200px) {
-        .room {
-          flex: 0 0 18rem;
-        }
-      }
-
-      .room img {
-        aspect-ratio: 16 / 9;
-        object-fit: cover;
-      }
-
-      section:not(:last-child) {
-        padding-bottom: 1em;
-        border-bottom: 3px dotted var(--seperator-light);
-      }
-    `,
-    ];
-
-    async _init() {
-      /** Loading translations via API */
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/static/locales/${window.navigator.language}.json`
-      );
-      const translations = await response.json();
-
-      if (response.status === 200) {
-        i18n.loadJSON(translations, "messages");
-      }
-
-      const options = { headers: { accept: "" } };
-      const [openHours, rooms, equipment, defaultMaxBookingTime] =
-        await Promise.all([
-          fetch("/api/v1/contrib/roomreservations/public/open_hours", options),
-          fetch("/api/v1/contrib/roomreservations/public/rooms", options),
-          fetch("/api/v1/contrib/roomreservations/public/equipment", options),
-          fetch(
-            "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time",
-            options
-          ),
-        ]);
-
-      if (openHours.ok) {
-        this._openHours = await openHours.json();
-      } else {
-        console.error("Error fetching open hours");
-      }
-
-      if (rooms.ok) {
-        this._rooms = await rooms.json();
-        [this._selectedRoom] = this._rooms;
-      } else {
-        console.error("Error fetching rooms");
-      }
-
-      if (equipment.ok) {
-        this._equipment = await equipment.json();
-      } else {
-        console.error("Error fetching equipment");
-      }
-
-      if (defaultMaxBookingTime.ok) {
-        this._defaultMaxBookingTime = await defaultMaxBookingTime.json();
-      } else {
-        console.error("Error fetching default max booking time");
-      }
-    }
-
-    constructor() {
-      super();
-      this.borrowernumber = "";
-      this._openHours = [];
-      this._rooms = [];
-      this._equipment = [];
-      this._alertMessage = "";
-      this._defaultMaxBookingTime = undefined;
-      this._init();
-    }
-
-    async _handleSubmit() {
-      const inputs = [
-        this.renderRoot.getElementById("room"),
-        this.renderRoot.getElementById("start-datetime"),
-        this.renderRoot.getElementById("duration"),
-        this.renderRoot.querySelectorAll(".equipment-item"),
-      ];
-      const [roomid, start, duration] = inputs.map((input) => input.value);
-
-      /** We filter for checked checkbox inputs here. */
-      const [, , , equipmentInputs] = inputs;
-      const equipment = [...equipmentInputs].reduce(
-        (accumulator, equipmentInput) => {
-          if (equipmentInput.checked) {
-            accumulator.push(equipmentInput.id);
-          }
-          return accumulator;
-        },
-        []
-      );
-
-      const startDatetime = dayjs_min(start);
-      const end = startDatetime
-        .add(duration, "minute")
-        .format("YYYY-MM-DDTHH:mm");
-
-      const response = await fetch(
-        "/api/v1/contrib/roomreservations/public/bookings",
-        {
-          method: "POST",
-          headers: {
-            accept: "",
-          },
-          body: JSON.stringify({
-            borrowernumber: this.borrowernumber,
-            roomid,
-            start,
-            end,
-            blackedout: 0,
-            equipment,
-          }),
-        }
-      );
-
-      if ([201].includes(response.status)) {
-        inputs.forEach((input) => {
-          input.value = "";
-        });
-        this._alertMessage = `${i18n.gettext("Success")}! ${i18n.gettext(
-        "Your booking is set"
-      )}.`;
-
-        const event = new CustomEvent("submitted", { bubbles: true });
-        this.dispatchEvent(event);
-        return;
-      }
-
-      const result = await response.json();
-      this._alertMessage = `${i18n.gettext("Sorry")}! ${result.error}`;
-    }
-
-    _dismissAlert() {
-      this._alertMessage = "";
-    }
-
-    _selectRoom(e) {
-      const roomInput = this.renderRoot.getElementById("room");
-      const options = [...roomInput.options];
-      options.find((option) => option.value === e.target.id).selected = true;
-
-      const event = new Event("change");
-      roomInput.dispatchEvent(event);
-      roomInput.scrollIntoView();
-    }
-
-    render() {
-      return y$1`
-      <div ?hidden=${!this._rooms.length}>
-        <section>
-          <h5>Book a room</h5>
-          <div
-            class="alert alert-${this._alertMessage.includes(
-              `${i18n.gettext("Success")}!`
-            )
-              ? "success"
-              : "warning"} alert-dismissible fade show"
-            role="alert"
-            ?hidden=${!this._alertMessage}
-          >
-            ${this._alertMessage}
-            <button
-              @click=${this._dismissAlert}
-              type="button"
-              class="close"
-              data-dismiss="alert"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div id="booking">
-            <div class="form-group">
-              <label for="room">${i18n.gettext("Room")}</label>
-              <select
-                id="room"
-                name="room"
-                class="form-control"
-                aria-describedby="booking-help"
-                @change=${(e) => {
-                  this._selectedRoom = this._rooms.find(
-                    (room) => room.roomid === e.target.value
-                  );
-                }}
-              >
-                ${this._rooms.length &&
-                this._rooms.map(
-                  (room) =>
-                    y$1`<option value="${room.roomid}">
-                      ${room.roomnumber}
-                    </option>`
-                )}
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="start-datetime">${i18n.gettext("Date & Time")}</label>
-              <input
-                type="datetime-local"
-                id="start-datetime"
-                name="start-datetime"
-                class="form-control"
-                aria-describedby="booking-help"
-              />
-            </div>
-            <div class="form-group">
-              <label for="duration">${i18n.gettext("Duration")}</label>
-              <input
-                type="number"
-                list="durations"
-                id="duration"
-                name="duration"
-                class="form-control"
-                aria-describedby="booking-help"
-                placeholder="In minutes, e.g. 60"
-              />
-              <datalist id="durations">
-                <!-- Check if this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime has a value, if not, output nothing
-                Else, create an array with chunks of 30, using this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime, 
-                if the value is not divisible by 30, add the value as the last element of the array, 
-                and then use map function to create <option> elements with each value of the array -->
-                ${this._selectedRoom?.maxbookabletime ||
-                this._defaultMaxBookingTime
-                  ? Array.from(
-                      {
-                        length: Math.floor(
-                          (this._selectedRoom.maxbookabletime ||
-                            this._defaultMaxBookingTime) / 30
-                        ),
-                      },
-                      (_, i) => (i + 1) * 30
-                    )
-                      .concat(
-                        (this._selectedRoom.maxbookabletime ||
-                          this._defaultMaxBookingTime) %
-                          30 ===
-                          0
-                          ? []
-                          : this._selectedRoom.maxbookabletime ||
-                              this._defaultMaxBookingTime
-                      )
-                      .map((timespan) => y$1`<option>${timespan}</option>`)
-                  : ""}
-              </datalist>
-            </div>
-            <div
-              ?hidden=${!this._equipment.length ||
-              !this._equipment.filter(
-                (item) => item.roomid == this._selectedRoom.roomid
-              ).length}
-              class="form-group"
-            >
-              <label for="equipment">${i18n.gettext("Equipment")}</label>
-              ${this._equipment
-                .filter((item) => item.roomid == this._selectedRoom.roomid)
-                .map(
-                  (item) => y$1`
-                    <div class="form-check">
-                      <input
-                        type="checkbox"
-                        class="form-check-input equipment-item"
-                        id="${item.equipmentid}"
-                      />
-                      <label class="form-check-label" for="${item.equipmentid}"
-                        >${item.equipmentname}</label
-                      >
-                    </div>
-                  `
-                )}
-            </div>
-            <div class="form-group">
-              <label for="confirmation"
-                >${i18n.gettext("Confirmation Email")}</label
-              >
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  id="confirmation-email"
-                  name="confirmation-email"
-                  class="form-check-input"
-                />
-                <label class="form-check-label" for="confirmation-email"
-                  >${i18n.gettext(
-                    "Should we send you a confirmation email"
-                  )}?</label
-                >
-              </div>
-            </div>
-            <small class="form-text text-muted" id="booking-help"
-              >${i18n.gettext("Pick a room, a date, a time")}<span
-                ?hidden=${!this._equipment.length}
-                >, ${i18n.gettext("items you'd like to use")}</span
-              >
-              ${i18n.gettext("and the duration of your reservation")}.</small
-            >
-            <button
-              type="submit"
-              @click=${this._handleSubmit}
-              class="btn btn-primary mt-2 float-right"
-            >
-              ${i18n.gettext("Submit")}
-            </button>
-          </div>
-        </section>
-        <section ?hidden=${!this._openHours.length}>
-          <h5>${i18n.gettext("Open hours")}</h5>
-          <div id="open-hours">
-            <table class="table table-striped table-bordered table-sm">
-              <thead>
-                <tr>
-                  <th scope="col">${i18n.gettext("Day")}</th>
-                  <th scope="col">${i18n.gettext("Open from")}</th>
-                  <th scope="col">${i18n.gettext("Closed after")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${this._openHours
-                  .filter((day) => day.branch === this._selectedRoom?.branch)
-                  .map(({ day, start, end }) => {
-                    return y$1`
-                      <tr>
-                        <td>${day}</td>
-                        <td>${start.slice(0, -3)}</td>
-                        <td>${end.slice(0, -3)}</td>
-                      </tr>
-                    `;
-                  })}
-              </tbody>
-            </table>
-          </div>
-        </section>
-        <section>
-          <h5>${i18n.gettext("Rooms")}</h5>
-          <div id="rooms">
-            ${this._rooms.map(
-              (room) => y$1`
-                <div class="room card">
-                  <img
-                    class="card-img-top"
-                    src="${room.image}"
-                    alt="Image for ${room.roomnumber}"
-                  />
-                  <div class="card-body">
-                    <h5 class="card-title">${room.roomnumber}</h5>
-                    <p class="card-text">${room.description}</p>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                      <strong>${i18n.gettext("Branch")}</strong>&nbsp;<span
-                        >${room.branch}</span
-                      >
-                    </li>
-                    <li class="list-group-item">
-                      <strong>${i18n.gettext("Max bookable time")}</strong
-                      >&nbsp;<span>${room.maxbookabletime}</span>
-                    </li>
-                    <li class="list-group-item">
-                      <strong>${i18n.gettext("Max Capacity")}</strong
-                      >&nbsp;<span>${room.maxcapacity}</span>
-                    </li>
-                  </ul>
-                  <div class="card-body">
-                    <a
-                      href="#"
-                      class="card-link"
-                      id=${room.roomid}
-                      @click=${(e) => {
-                        this._selectRoom(e);
-                      }}
-                      >${i18n.gettext("Book this room")}</a
-                    >
-                  </div>
-                </div>
-              `
-            )}
-          </div>
-        </section>
-      </div>
-    `;
-    }
-  }
-  customElements.define("lms-bookie", LMSBookie);
-
-  class LMSToast extends s$4 {
-    static properties = {
-      heading: { type: String },
-      message: { type: String },
-      _elapsedTime: { state: true },
-    };
-
-    static styles = [
-      bootstrapStyles,
-      i$4`
-      div:first {
-        position: relative;
-        min-height: 200px;
-      }
-
-      .toast {
-        position: absolute;
-        bottom: 1em;
-        left: 50%;
-        opacity: 1;
-      }
-    `,
-    ];
-
-    constructor() {
-      super();
-      this.heading = "";
-      this.message = "";
-      this._elapsedTime = 0;
-    }
-
-    render() {
-      return y$1`
-      <div aria-live="polite" aria-atomic="true">
-        <div class="toast">
-          <div class="toast-header">
-            <strong class="mr-auto">${this.heading}</strong>
-            <small>${this._elapsedTime} sec ago</small>
-            <button
-              type="button"
-              class="ml-2 mb-1 close"
-              data-dismiss="toast"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="toast-body">${this.message}</div>
-        </div>
-      </div>
-    `;
-    }
-
-    connectedCallback() {
-      super.connectedCallback();
-      setInterval(() => {
-        this._elapsedTime++;
-      }, 1000);
-
-      this.renderRoot.addEventListener("click", (e) => {
-        if (e.target.tagName === "SPAN") {
-          this.remove();
-        }
-      });
-
-      setTimeout(() => {
-        this.remove();
-      }, 10000);
-    }
-
-    disconnectedCallback() {
-      super.disconnectedCallback();
-      this.renderRoot.removeEventListener("click", (e) => {
-        if (e.target.tagName === "SPAN") {
-          this.remove();
-        }
-      });
-    }
-  }
-
-  customElements.define("lms-toast", LMSToast);
-
-  class LMSContainer extends s$4 {
+  class LMSContainer extends s$6 {
     static get properties() {
       return {
         classes: { type: Array },
@@ -3914,7 +3987,7 @@
       };
     }
 
-    static styles = [bootstrapStyles, i$4``];
+    static styles = [bootstrapStyles, i$6``];
 
     constructor() {
       super();
@@ -3933,10 +4006,10 @@
   }
   customElements.define("lms-container", LMSContainer);
 
-  class LMSRoomsContainer extends LMSContainer {
+  class StaffBookingsView extends LMSContainer {
     constructor() {
       super();
-      this._endpoint = "/api/v1/contrib/roomreservations/rooms";
+      this._endpoint = "/api/v1/contrib/roomreservations/bookings";
       this.classes = ["container-fluid"];
       this._init();
     }
@@ -3950,13 +4023,11 @@
       const result = await response.json();
 
       if (response.status === 200) {
-        this._elements = result.map((room) => {
-          const lmsRoom = document.createElement("lms-room", { is: "lms-room" });
-          Object.keys(room).forEach((key) => {
-            lmsRoom.setAttribute(key, room[key]);
-          });
-          return lmsRoom;
+        const lmsBookingsTable = document.createElement("lms-bookings-table", {
+          is: "lms-bookings-table",
         });
+        lmsBookingsTable.setAttribute("data", JSON.stringify(result));
+        this._elements = [lmsBookingsTable];
       }
     }
 
@@ -4001,14 +4072,17 @@
             (element) => y$1`<div class="col">${element}</div>`
           )}
         </div>
-        <lms-room-modal></lms-room-modal>
+        <lms-bookings-modal></lms-bookings-modal>
       </div>
     `;
     }
   }
-  customElements.define("lms-rooms-container", LMSRoomsContainer);
+  customElements.define(
+    "lms-staff-bookings-view",
+    StaffBookingsView
+  );
 
-  class LMSEquipmentContainer extends LMSContainer {
+  class StaffEquipmentView extends LMSContainer {
     constructor() {
       super();
       this._endpoint = "/api/v1/contrib/roomreservations/equipment";
@@ -4083,9 +4157,9 @@
     `;
     }
   }
-  customElements.define("lms-equipment-container", LMSEquipmentContainer);
+  customElements.define("lms-staff-equipment-view", StaffEquipmentView);
 
-  class LMSOpenHoursTablesContainer extends LMSContainer {
+  class StaffOpenHoursView extends LMSContainer {
     constructor() {
       super();
       this._endpoint = "/api/v1/contrib/roomreservations/public/open_hours";
@@ -4161,14 +4235,14 @@
     }
   }
   customElements.define(
-    "lms-open-hours-tables-container",
-    LMSOpenHoursTablesContainer
+    "lms-staff-open-hours-view",
+    StaffOpenHoursView
   );
 
-  class LMSBookingsTableContainer extends LMSContainer {
+  class StaffRoomsView extends LMSContainer {
     constructor() {
       super();
-      this._endpoint = "/api/v1/contrib/roomreservations/bookings";
+      this._endpoint = "/api/v1/contrib/roomreservations/rooms";
       this.classes = ["container-fluid"];
       this._init();
     }
@@ -4182,11 +4256,13 @@
       const result = await response.json();
 
       if (response.status === 200) {
-        const lmsBookingsTable = document.createElement("lms-bookings-table", {
-          is: "lms-bookings-table",
+        this._elements = result.map((room) => {
+          const lmsRoom = document.createElement("lms-room", { is: "lms-room" });
+          Object.keys(room).forEach((key) => {
+            lmsRoom.setAttribute(key, room[key]);
+          });
+          return lmsRoom;
         });
-        lmsBookingsTable.setAttribute("data", JSON.stringify(result));
-        this._elements = [lmsBookingsTable];
       }
     }
 
@@ -4231,95 +4307,177 @@
             (element) => y$1`<div class="col">${element}</div>`
           )}
         </div>
-        <lms-bookings-modal></lms-bookings-modal>
+        <lms-room-modal></lms-room-modal>
       </div>
     `;
     }
   }
-  customElements.define(
-    "lms-bookings-table-container",
-    LMSBookingsTableContainer
-  );
+  customElements.define("lms-staff-rooms-view", StaffRoomsView);
 
-  function renderCalendar() {
-    const i18n = i18n$1();
-
-    const currentDate = new Date();
-    const options = { headers: { accept: "" } };
-    const response = fetch(
-      "/api/v1/contrib/roomreservations/public/bookings",
-      options
-    );
-
-    const calendar = document.querySelector("lms-calendar");
-    if (!calendar) {
-      throw Error("No calendar reference found.");
+  class RoomReservationsView extends s$6 {
+    static get properties() {
+      return {
+        borrowernumber: { type: String },
+        _endpoints: { type: Object, attribute: false },
+        _currentDate: { type: String, attribute: false },
+        _i18n: { state: true },
+        _lmsCalendar: { state: true },
+        _bookings: { state: true },
+        _rooms: { state: true },
+      };
     }
 
-    calendar.heading = i18n.gettext("Current Bookings");
-    calendar.activeDate = {
-      day: currentDate.getDate(),
-      month: currentDate.getMonth() + 1,
-      year: currentDate.getFullYear(),
-    };
+    static get styles() {
+      return [
+        i$6`
+        div {
+          display: flex;
+          flex-direction: row;
+          gap: var(--spacing-md);
+        }
 
-    response
-      .then((result) => result.json())
-      .then(async (entries) => {
-        const response = await fetch(
-          "/api/v1/contrib/roomreservations/public/rooms",
-          options
-        );
-        const rooms = await response.json();
+        lms-calendar {
+          width: 80%;
+          max-height: 90vh;
+        }
 
-        calendar.entries = entries.map(({ roomid, start, end }) => {
-          const [s, e] = [new Date(start), new Date(end)];
-          const _roomid = roomid;
-          const room = rooms.find(({ roomid }) => roomid == _roomid);
-          return {
-            date: {
-              start: {
-                day: s.getDate(),
-                month: s.getMonth() + 1,
-                year: s.getFullYear(),
-              },
-              end: {
-                day: e.getDate(),
-                month: e.getMonth() + 1,
-                year: e.getFullYear(),
-              },
-            },
-            time: {
-              start: { hours: s.getHours(), minutes: s.getMinutes() },
-              end: { hours: e.getHours(), minutes: e.getMinutes() },
-            },
-            heading: room.roomnumber,
-            content: i18n.gettext("booked"),
-            color: room.color,
-          };
-        });
+        lms-bookie {
+          width: 20%;
+        }
+
+        @media (max-width: 1200px) {
+          div {
+            flex-direction: column;
+          }
+
+          lms-calendar {
+            width: 100%;
+            height: 75vh;
+          }
+
+          lms-bookie {
+            width: 100%;
+          }
+        }
+      `,
+      ];
+    }
+
+    constructor() {
+      super();
+      this.borrowernumber = undefined;
+      this._endpoints = {
+        bookings: "/api/v1/contrib/roomreservations/bookings",
+        rooms: "/api/v1/contrib/roomreservations/rooms",
+      };
+      this._currentDate = new Date();
+      this._lmsCalendar = undefined;
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      this._init();
+    }
+
+    async _init() {
+      const translationHandler = new TranslationHandler();
+      await translationHandler.loadTranslations();
+      this._i18n = translationHandler.i18n;
+
+      this._lmsCalendar = this.renderRoot.querySelector("lms-calendar");
+      this._lmsCalendar.heading = this._i18n.gettext("Current Bookings");
+      this._lmsCalendar.activeDate = {
+        day: this._currentDate.getDate(),
+        month: this._currentDate.getMonth() + 1,
+        year: this._currentDate.getFullYear(),
+      };
+
+      const [bookings, rooms] = await Promise.all([
+        fetch(this._endpoints.bookings, { headers: { accept: "" } }),
+        fetch(this._endpoints.rooms, { headers: { accept: "" } }),
+      ]);
+
+      this._bookings = await bookings.json();
+      this._rooms = await rooms.json();
+
+      this._getEntries();
+    }
+
+    async _getBookings() {
+      const response = await fetch(this._endpoints.bookings, {
+        headers: { accept: "" },
       });
+      this._bookings = await response.json();
+    }
+
+    async _getEntries() {
+      this._lmsCalendar.entries = this._bookings.map(({ roomid, start, end }) => {
+        const [s, e] = [new Date(start), new Date(end)];
+        const bookedRoomid = roomid;
+        const room = this._rooms.find(({ roomid }) => roomid == bookedRoomid);
+
+        return {
+          date: {
+            start: {
+              day: s.getDate(),
+              month: s.getMonth() + 1,
+              year: s.getFullYear(),
+            },
+            end: {
+              day: e.getDate(),
+              month: e.getMonth() + 1,
+              year: e.getFullYear(),
+            },
+          },
+          time: {
+            start: { hours: s.getHours(), minutes: s.getMinutes() },
+            end: { hours: e.getHours(), minutes: e.getMinutes() },
+          },
+          heading: room.roomnumber,
+          content: this._i18n.gettext("booked"),
+          color: room.color,
+        };
+      });
+    }
+
+    async _handleSubmit() {
+      await this._getBookings();
+      this._getEntries();
+    }
+
+    render() {
+      return y$1`
+      <div>
+        <lms-calendar></lms-calendar>
+        <lms-bookie
+          .borrowernumber=${this.borrowernumber}
+          @submitted=${this._handleSubmit}
+        ></lms-bookie>
+      </div>
+    `;
+    }
   }
+  customElements.define("lms-room-reservations-view", RoomReservationsView);
 
   exports.LMSBookie = LMSBookie;
   exports.LMSBookingsModal = LMSBookingsModal;
   exports.LMSBookingsTable = LMSBookingsTable;
-  exports.LMSBookingsTableContainer = LMSBookingsTableContainer;
   exports.LMSCalendar = LMSCalendar$1;
-  exports.LMSEquipmentContainer = LMSEquipmentContainer;
   exports.LMSEquipmentItem = LMSEquipmentItem;
   exports.LMSEquipmentModal = LMSEquipmentModal;
   exports.LMSModal = LMSModal;
   exports.LMSOpenHoursTable = LMSOpenHoursTable;
-  exports.LMSOpenHoursTablesContainer = LMSOpenHoursTablesContainer;
   exports.LMSRoom = LMSRoom;
   exports.LMSRoomModal = LMSRoomModal;
-  exports.LMSRoomsContainer = LMSRoomsContainer;
   exports.LMSSearch = LMSSearch;
   exports.LMSSettingsTable = LMSSettingsTable;
   exports.LMSTable = LMSTable;
   exports.LMSToast = LMSToast;
-  exports.renderCalendar = renderCalendar;
+  exports.RoomReservationsView = RoomReservationsView;
+  exports.StaffBookingsView = StaffBookingsView;
+  exports.StaffEquipmentView = StaffEquipmentView;
+  exports.StaffOpenHoursView = StaffOpenHoursView;
+  exports.StaffRoomsView = StaffRoomsView;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

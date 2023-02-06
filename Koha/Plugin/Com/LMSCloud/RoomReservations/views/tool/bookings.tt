@@ -3,6 +3,6 @@
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
     <div class="lmsr-content-block" id="entry-point">
-        <lms-bookings-table-container></lms-bookings-table-container>
+        <lms-staff-bookings-view></lms-staff-bookings-view>
     </div>
 [% END %]

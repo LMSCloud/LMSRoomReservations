@@ -1,5 +1,5 @@
 import { html } from "lit";
-import LMSTable from "./LMSTable";
+import LMSTable from "../components/LMSTable";
 
 export default class LMSOpenHoursTable extends LMSTable {
   static get properties() {
