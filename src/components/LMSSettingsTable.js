@@ -1,3 +1,4 @@
+import { html } from "lit";
 import LMSTable from "./LMSTable";
 
 export default class LMSSettingsTable extends LMSTable {
@@ -80,7 +81,10 @@ export default class LMSSettingsTable extends LMSTable {
         });
 
         const response = await Promise.all(responses);
-        return {...response, status: response.every((res) => res.status === 204) ? 204 : 207 };
+        return {
+          ...response,
+          status: response.every((res) => res.status === 204) ? 204 : 207,
+        };
       },
       patron_categories: async () => {
         const data = inputs
@@ -141,7 +145,7 @@ export default class LMSSettingsTable extends LMSTable {
   _getFieldMarkup(field) {
     /** The field properties are coming from the list method of the settings endpoint */
     if (["number", "string"].includes(field.type)) {
-      return `<input
+      return html`<input
         class="form-control"
         type="${field.type}"
         name="${field.setting}"
@@ -154,25 +158,25 @@ export default class LMSSettingsTable extends LMSTable {
     if (field.type === "array") {
       return field.value.length
         ? field.value.reduce(
-            (accumulator, category) => `${accumulator}
-          <div class="form-check d-inline">
-          <input
-            type="checkbox"
-            name="${category.categorycode}"
-            ${field.setting === "restricted_patron_categories" && "checked"}
-            disabled
-            class="form-check-input"
-            id="${category.categorycode}
-          />
-          <label for="${
-            category.categorycode
-          }" class="form-check-label">&nbsp;${
-              category.description
-            }&nbsp;</label>
-          </div>`,
+            (accumulator, category) => html`${accumulator}
+              <div class="form-check d-inline">
+                <input
+                  type="checkbox"
+                  name="${category.categorycode}"
+                  ?checked=${field.setting === "restricted_patron_categories"}
+                  disabled
+                  class="form-check-input"
+                  id=${category.categorycode}
+                />
+                <label for="${category.categorycode}" class="form-check-label"
+                  >&nbsp;${category.description}&nbsp;</label
+                >
+              </div>`,
             ""
           )
-        : `<p>There are currently no <code>${field.setting}</code> selected.`;
+        : html`<p>
+            There are currently no <code>${field.setting}</code> selected.
+          </p>`;
     }
   }
 }

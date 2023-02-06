@@ -1,3 +1,4 @@
+import { html } from "lit";
 import LMSTable from "./LMSTable";
 
 export default class LMSBookingsTable extends LMSTable {
@@ -142,9 +143,27 @@ export default class LMSBookingsTable extends LMSTable {
   _inputFromValue({ key, value }) {
     return (
       {
-        start: `<input class="form-control" type="datetime-local" name="start" value="${value}" disabled />`,
-        end: `<input class="form-control" type="datetime-local" name="end" value="${value}" disabled />`,
-        roomid: `<input class="form-control" type="number" name="roomid" value="${value}" disabled />`,
+        start: html`<input
+          class="form-control"
+          type="datetime-local"
+          name="start"
+          value="${value}"
+          disabled
+        />`,
+        end: html`<input
+          class="form-control"
+          type="datetime-local"
+          name="end"
+          value="${value}"
+          disabled
+        />`,
+        roomid: html`<input
+          class="form-control"
+          type="number"
+          name="roomid"
+          value="${value}"
+          disabled
+        />`,
       }[key] || value
     );
   }

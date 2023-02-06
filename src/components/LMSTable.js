@@ -1,5 +1,4 @@
 import { html, css, LitElement, nothing } from "lit";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 
 export default class LMSTable extends LitElement {
@@ -72,13 +71,13 @@ export default class LMSTable extends LitElement {
 
   render() {
     const { data } = this;
-    
+
     const hasData = data?.length > 0 ?? false;
     const [headers] = hasData ? data : [] ?? [];
 
     if (hasData) {
       return html`
-        <div class="container-fluid">
+        <div class="container-fluid mx-0 px-0">
           <table class="table table-striped table-bordered table-hover">
             <thead>
               <tr>
@@ -95,7 +94,7 @@ export default class LMSTable extends LitElement {
                 (item) => html`
                   <tr>
                     ${Object.keys(item).map(
-                      (key) => html`<td>${unsafeHTML(item[key])}</td>`
+                      (key) => html`<td>${item[key]}</td>`
                     )}
                     ${this._isEditable
                       ? html`
