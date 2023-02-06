@@ -9,28 +9,28 @@
    * Copyright 2019 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
-  const t$3=window,e$6=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$4=new WeakMap;class o$4{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$6&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$4.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$4.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$4("string"==typeof t?t:t+"",void 0,s$3),i$3=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$4(n,t,s$3)},S$1=(s,n)=>{e$6?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$6?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+  const t$5=window,e$9=t$5.ShadowRoot&&(void 0===t$5.ShadyCSS||t$5.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$7=Symbol(),n$8=new WeakMap;class o$8{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$7)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$9&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$8.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$8.set(s,t));}return t}toString(){return this.cssText}}const r$5=t=>new o$8("string"==typeof t?t:t+"",void 0,s$7),i$5=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$8(n,t,s$7)},S$3=(s,n)=>{e$9?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$5.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$3=e$9?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$5(e)})(t):t;
 
   /**
    * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
-   */var s$2;const e$5=window,r$1=e$5.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$3=e$5.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$2={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$2){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$2}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$2){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$3||o$3({ReactiveElement:d$1}),(null!==(s$2=e$5.reactiveElementVersions)&&void 0!==s$2?s$2:e$5.reactiveElementVersions=[]).push("1.5.0");
+   */var s$6;const e$8=window,r$4=e$8.trustedTypes,h$3=r$4?r$4.emptyScript:"",o$7=e$8.reactiveElementPolyfillSupport,n$7={toAttribute(t,i){switch(i){case Boolean:t=t?h$3:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$3=(t,i)=>i!==t&&(i==i||t==t),l$5={attribute:!0,type:String,converter:n$7,reflect:!1,hasChanged:a$3};class d$3 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$5){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$5}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$3(i));}else void 0!==i&&s.push(c$3(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$3(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$5){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$7).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$7;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$3)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$3.finalized=!0,d$3.elementProperties=new Map,d$3.elementStyles=[],d$3.shadowRootOptions={mode:"open"},null==o$7||o$7({ReactiveElement:d$3}),(null!==(s$6=e$8.reactiveElementVersions)&&void 0!==s$6?s$6:e$8.reactiveElementVersions=[]).push("1.6.1");
 
   /**
    * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
-  var t$2;const i$2=window,s$1=i$2.trustedTypes,e$4=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$2=`lit$${(Math.random()+"").slice(9)}$`,n$2="?"+o$2,l$1=`<${n$2}>`,h=document,r=(t="")=>h.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h.createTreeWalker(h,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$1:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$2+y):s+o$2+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$4?e$4.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$2)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$2),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$2),i=t.length-1;if(i>0){l.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r());}}}else if(8===l.nodeType)if(l.data===n$2)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$2,t+1));)c.push({type:7,index:h}),t+=o$2.length-1;}h++;}}static createElement(t,i){const s=h.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r()),this.O(r()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$1?s$1.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const z=i$2.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t$2=i$2.litHtmlVersions)&&void 0!==t$2?t$2:i$2.litHtmlVersions=[]).push("2.5.0");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+  var t$4;const i$4=window,s$5=i$4.trustedTypes,e$7=s$5?s$5.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$6=`lit$${(Math.random()+"").slice(9)}$`,n$6="?"+o$6,l$4=`<${n$6}>`,h$2=document,r$3=(t="")=>h$2.createComment(t),d$2=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u$1=Array.isArray,c$2=t=>u$1(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v$1=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a$2=/-->/g,f$1=/>/g,_$1=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m$1=/'/g,p$1=/"/g,$$1=/^(?:script|style|textarea|title)$/i,g$1=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y$1=g$1(1),x$1=Symbol.for("lit-noChange"),b$1=Symbol.for("lit-nothing"),T$1=new WeakMap,A$1=h$2.createTreeWalker(h$2,129,null,!1),E$1=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v$1;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v$1?"!--"===u[1]?d=a$2:void 0!==u[1]?d=f$1:void 0!==u[2]?($$1.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_$1):void 0!==u[3]&&(d=_$1):d===_$1?">"===u[0]?(d=null!=h?h:v$1,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_$1:'"'===u[3]?p$1:m$1):d===p$1||d===m$1?d=_$1:d===a$2||d===f$1?d=v$1:(d=_$1,h=void 0);const y=d===_$1&&t[i+1].startsWith("/>")?" ":"";r+=d===v$1?s+l$4:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$6+y):s+o$6+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$7?e$7.createHTML(u):u,n]};class C$1{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E$1(t,i);if(this.el=C$1.createElement(v,e),A$1.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A$1.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$6)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$6),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M$1:"?"===i[1]?k$1:"@"===i[1]?H$1:S$2});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($$1.test(l.tagName)){const t=l.textContent.split(o$6),i=t.length-1;if(i>0){l.textContent=s$5?s$5.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r$3()),A$1.nextNode(),c.push({type:2,index:++h});l.append(t[i],r$3());}}}else if(8===l.nodeType)if(l.data===n$6)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$6,t+1));)c.push({type:7,index:h}),t+=o$6.length-1;}h++;}}static createElement(t,i){const s=h$2.createElement("template");return s.innerHTML=t,s}}function P$1(t,i,s=t,e){var o,n,l,h;if(i===x$1)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d$2(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P$1(t,r._$AS(t,i.values),r,e)),i}class V$1{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h$2).importNode(s,!0);A$1.currentNode=o;let n=A$1.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N$1(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I$1(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A$1.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N$1{constructor(t,i,s,e){var o;this.type=2,this._$AH=b$1,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P$1(this,t,i),d$2(t)?t===b$1||null==t||""===t?(this._$AH!==b$1&&this._$AR(),this._$AH=b$1):t!==this._$AH&&t!==x$1&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c$2(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b$1&&d$2(this._$AH)?this._$AA.nextSibling.data=t:this.T(h$2.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C$1.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V$1(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T$1.get(t.strings);return void 0===i&&T$1.set(t.strings,i=new C$1(t)),i}k(t){u$1(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N$1(this.O(r$3()),this.O(r$3()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S$2{constructor(t,i,s,e,o){this.type=1,this._$AH=b$1,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b$1;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P$1(this,t,i,0),n=!d$2(t)||t!==this._$AH&&t!==x$1,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P$1(this,e[s+l],i,l),h===x$1&&(h=this._$AH[l]),n||(n=!d$2(h)||h!==this._$AH[l]),h===b$1?t=b$1:t!==b$1&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b$1?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M$1 extends S$2{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b$1?void 0:t;}}const R$1=s$5?s$5.emptyScript:"";class k$1 extends S$2{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b$1?this.element.setAttribute(this.name,R$1):this.element.removeAttribute(this.name);}}class H$1 extends S$2{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P$1(this,t,i,0))&&void 0!==s?s:b$1)===x$1)return;const e=this._$AH,o=t===b$1&&e!==b$1||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b$1&&(e===b$1||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I$1{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P$1(this,t);}}const z$1=i$4.litHtmlPolyfillSupport;null==z$1||z$1(C$1,N$1),(null!==(t$4=i$4.litHtmlVersions)&&void 0!==t$4?t$4:i$4.litHtmlVersions=[]).push("2.6.1");const Z$1=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N$1(i.insertBefore(r$3(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
 
   /**
    * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
-   */var l,o$1;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}}s.finalized=!0,s._$litElement$=!0,null===(l=globalThis.litElementHydrateSupport)||void 0===l||l.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o$1=globalThis.litElementVersions)&&void 0!==o$1?o$1:globalThis.litElementVersions=[]).push("3.2.2");
+   */var l$3,o$5;class s$4 extends d$3{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z$1(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x$1}}s$4.finalized=!0,s$4._$litElement$=!0,null===(l$3=globalThis.litElementHydrateSupport)||void 0===l$3||l$3.call(globalThis,{LitElement:s$4});const n$5=globalThis.litElementPolyfillSupport;null==n$5||n$5({LitElement:s$4});(null!==(o$5=globalThis.litElementVersions)&&void 0!==o$5?o$5:globalThis.litElementVersions=[]).push("3.2.2");
 
-  const bootstrapStyles = i$3`
+  const bootstrapStyles = i$5`
 /*!
  * Bootstrap v4.6.0 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
@@ -40,7 +40,7 @@
 /*# sourceMappingURL=bootstrap.min.css.map */
 `;
 
-  class LMSRoom extends s {
+  class LMSRoom extends s$4 {
     static get properties() {
       return {
         maxcapacity: { type: String },
@@ -57,7 +57,7 @@
 
     static styles = [
       bootstrapStyles,
-      i$3`
+      i$5`
       .lms-room {
         max-width: 18rem;
       }
@@ -132,7 +132,7 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div class="card lms-room">
         <img
           class="card-img-top lms-room-img"
@@ -250,7 +250,7 @@
 
   /* eslint-disable no-underscore-dangle */
 
-  class LMSModal extends s {
+  class LMSModal extends s$4 {
     static get properties() {
       return {
         fields: { type: Array },
@@ -264,7 +264,7 @@
     static get styles() {
       return [
         bootstrapStyles,
-        i$3`
+        i$5`
         .btn-modal-wrapper {
           position: fixed;
           bottom: 1em;
@@ -388,7 +388,7 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div class="btn-modal-wrapper">
         <button
           @click=${this._toggleModal}
@@ -462,13 +462,13 @@
     }
 
     _getFieldMarkup(field) {
-      if (!field.desc) return y``;
+      if (!field.desc) return y$1``;
       if (field.type === "select" && field.entries) {
         /** We have to initialize the select with a default
          *  value because otherwise NULL is supplied until
          *  the first change event occurs. */
         [{ value: field.value }] = field.entries;
-        return y` <div class="form-group">
+        return y$1` <div class="form-group">
         <label for=${field.name}>${field.desc}</label>
         <select
           name=${field.name}
@@ -480,13 +480,13 @@
           ?required=${field.required}
         >
           ${field.entries.map(
-            (entry) => y`<option value=${entry.value}>${entry.name}</option>`
+            (entry) => y$1`<option value=${entry.value}>${entry.name}</option>`
           )}
         </select>
       </div>`;
       }
       if (field.type === "checkbox") {
-        return y` <div class="form-check">
+        return y$1` <div class="form-check">
         <input
           type=${field.type}
           name=${field.name}
@@ -502,9 +502,9 @@
       </div>`;
       }
       if (field.type === "info") {
-        return y` <p>${field.desc}</p> `;
+        return y$1` <p>${field.desc}</p> `;
       }
-      return y` <div class="form-group">
+      return y$1` <div class="form-group">
       <label for=${field.name}>${field.desc}</label>
       <input
         type=${field.type}
@@ -560,7 +560,7 @@
 
   customElements.define("lms-room-modal", LMSRoomModal);
 
-  class LMSEquipmentItem extends s {
+  class LMSEquipmentItem extends s$4 {
     static get properties() {
       return {
         equipmentid: { type: String },
@@ -576,7 +576,7 @@
 
     static styles = [
       bootstrapStyles,
-      i$3`
+      i$5`
       .lms-equipment-item {
         max-width: 18rem;
       }
@@ -669,7 +669,7 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div class="card lms-equipment-item">
         <img
           class="card-img-top lms-equipment-item-img"
@@ -752,7 +752,7 @@
             >
               ${this._rooms.map(
                 (room) =>
-                  y`<option
+                  y$1`<option
                     ?selected=${room.value == this.roomid}
                     value="${room.value}"
                   >
@@ -804,7 +804,7 @@
 
   customElements.define("lms-equipment-modal", LMSEquipmentModal);
 
-  class LMSSearch extends s {
+  class LMSSearch extends s$4 {
     static get properties() {
       return {
         tagName: { type: String },
@@ -838,7 +838,7 @@
     }
 
     render() {
-      return y` <input type="text" @input="${this.handleSearchChange}" /> `;
+      return y$1` <input type="text" @input="${this.handleSearchChange}" /> `;
     }
 
     handleSearchChange(event) {
@@ -853,15 +853,15 @@
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
-  const t$1={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e$3=t=>(...e)=>({_$litDirective$:t,values:e});class i$1{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+  const t$3={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e$6=t=>(...e)=>({_$litDirective$:t,values:e});class i$3{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
 
   /**
    * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
-   */class e$2 extends i$1{constructor(i){if(super(i),this.it=b,i.type!==t$1.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(r){if(r===b||null==r)return this._t=void 0,this.it=r;if(r===x)return r;if("string"!=typeof r)throw Error(this.constructor.directiveName+"() called with a non-string value");if(r===this.it)return this._t;this.it=r;const s=[r];return s.raw=s,this._t={_$litType$:this.constructor.resultType,strings:s,values:[]}}}e$2.directiveName="unsafeHTML",e$2.resultType=1;const o=e$3(e$2);
+   */class e$5 extends i$3{constructor(i){if(super(i),this.it=b$1,i.type!==t$3.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(r){if(r===b$1||null==r)return this._t=void 0,this.it=r;if(r===x$1)return r;if("string"!=typeof r)throw Error(this.constructor.directiveName+"() called with a non-string value");if(r===this.it)return this._t;this.it=r;const s=[r];return s.raw=s,this._t={_$litType$:this.constructor.resultType,strings:s,values:[]}}}e$5.directiveName="unsafeHTML",e$5.resultType=1;const o$4=e$6(e$5);
 
-  class LMSTable extends s {
+  class LMSTable extends s$4 {
     static get properties() {
       return {
         data: { type: Array },
@@ -873,7 +873,7 @@
 
     static styles = [
       bootstrapStyles,
-      i$3`
+      i$5`
       table {
         background: white;
         padding: 1em;
@@ -931,66 +931,71 @@
 
     render() {
       const { data } = this;
-      const [headers] = data ?? [];
-      return data?.length
-        ? y`
-          <div class="container-fluid">
-            <table class="table table-striped table-bordered table-hover">
-              <thead>
-                <tr>
-                  ${Object.keys(headers).map(
-                    (key) => y`<th scope="col">${key}</th>`
-                  )}
-                  ${this._isEditable
-                    ? y`<th scope="col">actions</th>`
-                    : y``}
-                </tr>
-              </thead>
-              <tbody>
-                ${data.map(
-                  (item) => y`
-                    <tr>
-                      ${Object.keys(item).map(
-                        (key) => y`<td>${o(item[key])}</td>`
-                      )}
-                      ${this._isEditable
-                        ? y`
-                            <td>
-                              <div class="d-flex">
-                                <button
-                                  @click=${this._handleEdit}
-                                  type="button"
-                                  class="btn btn-dark mx-2"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  @click=${this._handleSave}
-                                  type="button"
-                                  class="btn btn-dark mx-2"
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  @click=${this._handleDelete}
-                                  ?hidden=${!this._isDeletable}
-                                  type="button"
-                                  class="btn btn-danger mx-2"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </td>
-                          `
-                        : y``}
-                    </tr>
-                  `
+      
+      const hasData = data?.length > 0 ?? false;
+      const [headers] = hasData ? data : [] ?? [];
+
+      if (hasData) {
+        return y$1`
+        <div class="container-fluid">
+          <table class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                ${Object.keys(headers).map(
+                  (key) => y$1`<th scope="col">${key}</th>`
                 )}
-              </tbody>
-            </table>
-          </div>
-        `
-        : y``;
+                ${this._isEditable
+                  ? y$1`<th scope="col">actions</th>`
+                  : y$1``}
+              </tr>
+            </thead>
+            <tbody>
+              ${data.map(
+                (item) => y$1`
+                  <tr>
+                    ${Object.keys(item).map(
+                      (key) => y$1`<td>${o$4(item[key])}</td>`
+                    )}
+                    ${this._isEditable
+                      ? y$1`
+                          <td>
+                            <div class="d-flex">
+                              <button
+                                @click=${this._handleEdit}
+                                type="button"
+                                class="btn btn-dark mx-2"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                @click=${this._handleSave}
+                                type="button"
+                                class="btn btn-dark mx-2"
+                              >
+                                Save
+                              </button>
+                              <button
+                                @click=${this._handleDelete}
+                                ?hidden=${!this._isDeletable}
+                                type="button"
+                                class="btn btn-danger mx-2"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        `
+                      : y$1``}
+                  </tr>
+                `
+              )}
+            </tbody>
+          </table>
+        </div>
+      `;
+      }
+
+      return b$1;
     }
   }
 
@@ -1296,7 +1301,7 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <h4><span class="badge badge-secondary">${this.branch}</span></h4>
       ${super.render()}
     `;
@@ -1548,6 +1553,32 @@
 
   /**
    * @license
+   * Copyright 2019 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  const t$2=window,e$4=t$2.ShadowRoot&&(void 0===t$2.ShadyCSS||t$2.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$4=new WeakMap;class o$3{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$4&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$4.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$4.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$3("string"==typeof t?t:t+"",void 0,s$3),i$2=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$3(n,t,s$3)},S$1=(s,n)=>{e$4?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$2.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$4?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */var s$2;const e$3=window,r$1=e$3.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$2=e$3.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$2={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$2){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$2}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$2){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$2||o$2({ReactiveElement:d$1}),(null!==(s$2=e$3.reactiveElementVersions)&&void 0!==s$2?s$2:e$3.reactiveElementVersions=[]).push("1.6.1");
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  var t$1;const i$1=window,s$1=i$1.trustedTypes,e$2=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$1=`lit$${(Math.random()+"").slice(9)}$`,n$2="?"+o$1,l$1=`<${n$2}>`,h=document,r=(t="")=>h.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h.createTreeWalker(h,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$1:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$1+y):s+o$1+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$2?e$2.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$1)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$1),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$1),i=t.length-1;if(i>0){l.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r());}}}else if(8===l.nodeType)if(l.data===n$2)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$1,t+1));)c.push({type:7,index:h}),t+=o$1.length-1;}h++;}}static createElement(t,i){const s=h.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r()),this.O(r()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$1?s$1.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const z=i$1.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t$1=i$1.litHtmlVersions)&&void 0!==t$1?t$1:i$1.litHtmlVersions=[]).push("2.6.1");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */var l,o;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}}s.finalized=!0,s._$litElement$=!0,null===(l=globalThis.litElementHydrateSupport)||void 0===l||l.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o=globalThis.litElementVersions)&&void 0!==o?o:globalThis.litElementVersions=[]).push("3.2.2");
+
+  /**
+   * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
@@ -1572,6 +1603,513 @@
    * SPDX-License-Identifier: BSD-3-Clause
    */var n;null!=(null===(n=window.HTMLSlotElement)||void 0===n?void 0:n.prototype.assignedElements)?(o,n)=>o.assignedElements(n):(o,n)=>o.assignedNodes(n).filter((o=>o.nodeType===Node.ELEMENT_NODE));
 
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  const isStrTagged = (val) => typeof val !== 'string' && 'strTag' in val;
+  /**
+   * Render the result of a `str` tagged template to a string. Note we don't need
+   * to do this for Lit templates, since Lit itself handles rendering.
+   */
+  const joinStringsAndValues = (strings, values, valueOrder) => {
+      let concat = strings[0];
+      for (let i = 1; i < strings.length; i++) {
+          concat += values[valueOrder ? valueOrder[i - 1] : i - 1];
+          concat += strings[i];
+      }
+      return concat;
+  };
+
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  /**
+   * Default identity msg implementation. Simply returns the input template with
+   * no awareness of translations. If the template is str-tagged, returns it in
+   * string form.
+   */
+  const defaultMsg = ((template) => isStrTagged(template)
+      ? joinStringsAndValues(template.strings, template.values)
+      : template);
+
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  /**
+   * Name of the event dispatched to `window` whenever a locale change starts,
+   * finishes successfully, or fails. Only relevant to runtime mode.
+   *
+   * The `detail` of this event is an object with a `status` string that can be:
+   * "loading", "ready", or "error", along with the relevant locale code, and
+   * error message if applicable.
+   *
+   * You can listen for this event to know when your application should be
+   * re-rendered following a locale change. See also the Localized mixin, which
+   * automatically re-renders LitElement classes using this event.
+   */
+  const LOCALE_STATUS_EVENT = 'lit-localize-status';
+
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  class LocalizeController {
+      constructor(host) {
+          this.__litLocalizeEventHandler = (event) => {
+              if (event.detail.status === 'ready') {
+                  this.host.requestUpdate();
+              }
+          };
+          this.host = host;
+      }
+      hostConnected() {
+          window.addEventListener(LOCALE_STATUS_EVENT, this.__litLocalizeEventHandler);
+      }
+      hostDisconnected() {
+          window.removeEventListener(LOCALE_STATUS_EVENT, this.__litLocalizeEventHandler);
+      }
+  }
+  /**
+   * Re-render the given LitElement whenever a new active locale has loaded.
+   *
+   * See also {@link localized} for the same functionality as a decorator.
+   *
+   * When using lit-localize in transform mode, calls to this function are
+   * replaced with undefined.
+   *
+   * Usage:
+   *
+   *   import {LitElement, html} from 'lit';
+   *   import {msg, updateWhenLocaleChanges} from '@lit/localize';
+   *
+   *   class MyElement extends LitElement {
+   *     constructor() {
+   *       super();
+   *       updateWhenLocaleChanges(this);
+   *     }
+   *
+   *     render() {
+   *       return html`<b>${msg('Hello World')}</b>`;
+   *     }
+   *   }
+   */
+  const _updateWhenLocaleChanges = (host) => host.addController(new LocalizeController(host));
+  const updateWhenLocaleChanges = _updateWhenLocaleChanges;
+
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  /**
+   * Class decorator to enable re-rendering the given LitElement whenever a new
+   * active locale has loaded.
+   *
+   * See also {@link updateWhenLocaleChanges} for the same functionality without
+   * the use of decorators.
+   *
+   * When using lit-localize in transform mode, applications of this decorator are
+   * removed.
+   *
+   * Usage:
+   *
+   *   import {LitElement, html} from 'lit';
+   *   import {customElement} from 'lit/decorators.js';
+   *   import {msg, localized} from '@lit/localize';
+   *
+   *   @localized()
+   *   @customElement('my-element')
+   *   class MyElement extends LitElement {
+   *     render() {
+   *       return html`<b>${msg('Hello World')}</b>`;
+   *     }
+   *   }
+   */
+  const _localized = () => (classOrDescriptor) => typeof classOrDescriptor === 'function'
+      ? legacyLocalized(classOrDescriptor)
+      : standardLocalized(classOrDescriptor);
+  const localized = _localized;
+  const standardLocalized = ({ kind, elements }) => {
+      return {
+          kind,
+          elements,
+          finisher(clazz) {
+              clazz.addInitializer(updateWhenLocaleChanges);
+          },
+      };
+  };
+  const legacyLocalized = (clazz) => {
+      clazz.addInitializer(updateWhenLocaleChanges);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return clazz;
+  };
+
+  /**
+   * @license
+   * Copyright 2020 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  class Deferred {
+      constructor() {
+          this.settled = false;
+          this.promise = new Promise((resolve, reject) => {
+              this._resolve = resolve;
+              this._reject = reject;
+          });
+      }
+      resolve(value) {
+          this.settled = true;
+          this._resolve(value);
+      }
+      reject(error) {
+          this.settled = true;
+          this._reject(error);
+      }
+  }
+
+  /**
+   * @license
+   * Copyright 2014 Travis Webb
+   * SPDX-License-Identifier: MIT
+   */
+  // This module is derived from the file:
+  // https://github.com/tjwebb/fnv-plus/blob/1e2ce68a07cb7dd4c3c85364f3d8d96c95919474/index.js#L309
+  //
+  // Changes:
+  // - Only the _hash64_1a_fast function is included.
+  // - Removed loop unrolling.
+  // - Converted to TypeScript ES module.
+  // - var -> let/const
+  //
+  // TODO(aomarks) Upstream improvements to https://github.com/tjwebb/fnv-plus/.
+  const hl = [];
+  for (let i = 0; i < 256; i++) {
+      hl[i] = ((i >> 4) & 15).toString(16) + (i & 15).toString(16);
+  }
+  /**
+   * Perform a FNV-1A 64-bit hash of the given string (as UTF-16 code units), and
+   * return a hexadecimal digest (left zero padded to 16 characters).
+   *
+   * @see {@link http://tools.ietf.org/html/draft-eastlake-fnv-06}
+   */
+  function fnv1a64(str) {
+      let t0 = 0, v0 = 0x2325, t1 = 0, v1 = 0x8422, t2 = 0, v2 = 0x9ce4, t3 = 0, v3 = 0xcbf2;
+      for (let i = 0; i < str.length; i++) {
+          v0 ^= str.charCodeAt(i);
+          t0 = v0 * 435;
+          t1 = v1 * 435;
+          t2 = v2 * 435;
+          t3 = v3 * 435;
+          t2 += v0 << 8;
+          t3 += v1 << 8;
+          t1 += t0 >>> 16;
+          v0 = t0 & 65535;
+          t2 += t1 >>> 16;
+          v1 = t1 & 65535;
+          v3 = (t3 + (t2 >>> 16)) & 65535;
+          v2 = t2 & 65535;
+      }
+      return (hl[v3 >> 8] +
+          hl[v3 & 255] +
+          hl[v2 >> 8] +
+          hl[v2 & 255] +
+          hl[v1 >> 8] +
+          hl[v1 & 255] +
+          hl[v0 >> 8] +
+          hl[v0 & 255]);
+  }
+
+  /**
+   * @license
+   * Copyright 2020 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  /**
+   * Delimiter used between each template string component before hashing. Used to
+   * prevent e.g. "foobar" and "foo${baz}bar" from sharing a hash.
+   *
+   * This is the "record separator" ASCII character.
+   */
+  const HASH_DELIMITER = '\x1e';
+  /**
+   * Id prefix on html-tagged templates to distinguish e.g. `<b>x</b>` from
+   * html`<b>x</b>`.
+   */
+  const HTML_PREFIX = 'h';
+  /**
+   * Id prefix on plain string templates to distinguish e.g. `<b>x</b>` from
+   * html`<b>x</b>`.
+   */
+  const STRING_PREFIX = 's';
+  /**
+   * Generate a unique ID for a lit-localize message.
+   *
+   * Example:
+   *   Template: html`Hello <b>${who}</b>!`
+   *     Params: ["Hello <b>", "</b>!"], true
+   *     Output: h82ccc38d4d46eaa9
+   *
+   * The ID is constructed as:
+   *
+   *   [0]    Kind of template: [h]tml or [s]tring.
+   *   [1,16] 64-bit FNV-1a hash hex digest of the template strings, as UTF-16
+   *          code points, delineated by an ASCII "record separator" character.
+   *
+   * We choose FNV-1a because:
+   *
+   *   1. It's pretty fast (e.g. much faster than SHA-1).
+   *   2. It's pretty small (0.25 KiB minified + brotli).
+   *   3. We don't require cryptographic security, and 64 bits should give
+   *      sufficient collision resistance for any one application. Worst
+   *      case, we will always detect collisions during analysis.
+   *   4. We can't use Web Crypto API (e.g. SHA-1), because it's asynchronous.
+   *   5. It's a well known non-cryptographic hash with implementations in many
+   *      languages.
+   *   6. There was an existing JavaScript implementation that doesn't require
+   *      BigInt, for IE11 compatibility.
+   */
+  function generateMsgId(strings, isHtmlTagged) {
+      return ((isHtmlTagged ? HTML_PREFIX : STRING_PREFIX) +
+          fnv1a64(typeof strings === 'string' ? strings : strings.join(HASH_DELIMITER)));
+  }
+
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  const expressionOrders = new WeakMap();
+  const hashCache = new Map();
+  function runtimeMsg(templates, template, options) {
+      var _a;
+      if (templates) {
+          const id = (_a = options === null || options === void 0 ? void 0 : options.id) !== null && _a !== void 0 ? _a : generateId(template);
+          const localized = templates[id];
+          if (localized) {
+              if (typeof localized === 'string') {
+                  // E.g. "Hello World!"
+                  return localized;
+              }
+              else if ('strTag' in localized) {
+                  // E.g. str`Hello ${name}!`
+                  //
+                  // Localized templates have ${number} in place of real template
+                  // expressions. They can't have real template values, because the
+                  // variable scope would be wrong. The number tells us the index of the
+                  // source value to substitute in its place, because expressions can be
+                  // moved to a different position during translation.
+                  return joinStringsAndValues(localized.strings, 
+                  // Cast `template` because its type wasn't automatically narrowed (but
+                  // we know it must be the same type as `localized`).
+                  template.values, localized.values);
+              }
+              else {
+                  // E.g. html`Hello <b>${name}</b>!`
+                  //
+                  // We have to keep our own mapping of expression ordering because we do
+                  // an in-place update of `values`, and otherwise we'd lose ordering for
+                  // subsequent renders.
+                  let order = expressionOrders.get(localized);
+                  if (order === undefined) {
+                      order = localized.values;
+                      expressionOrders.set(localized, order);
+                  }
+                  return {
+                      ...localized,
+                      values: order.map((i) => template.values[i]),
+                  };
+              }
+          }
+      }
+      return defaultMsg(template);
+  }
+  function generateId(template) {
+      const strings = typeof template === 'string' ? template : template.strings;
+      let id = hashCache.get(strings);
+      if (id === undefined) {
+          id = generateMsgId(strings, typeof template !== 'string' && !('strTag' in template));
+          hashCache.set(strings, id);
+      }
+      return id;
+  }
+
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  /**
+   * Dispatch a "lit-localize-status" event to `window` with the given detail.
+   */
+  function dispatchStatusEvent(detail) {
+      window.dispatchEvent(new CustomEvent(LOCALE_STATUS_EVENT, { detail }));
+  }
+  let activeLocale = '';
+  let loadingLocale;
+  let sourceLocale$1;
+  let validLocales;
+  let loadLocale;
+  let templates;
+  let loading = new Deferred();
+  // The loading promise must be initially resolved, because that's what we should
+  // return if the user immediately calls setLocale(sourceLocale).
+  loading.resolve();
+  let requestId = 0;
+  /**
+   * Set configuration parameters for lit-localize when in runtime mode. Returns
+   * an object with functions:
+   *
+   * - `getLocale`: Return the active locale code.
+   * - `setLocale`: Set the active locale code.
+   *
+   * Throws if called more than once.
+   */
+  const configureLocalization = (config) => {
+      _installMsgImplementation(((template, options) => runtimeMsg(templates, template, options)));
+      activeLocale = sourceLocale$1 = config.sourceLocale;
+      validLocales = new Set(config.targetLocales);
+      validLocales.add(config.sourceLocale);
+      loadLocale = config.loadLocale;
+      return { getLocale: getLocale$1, setLocale: setLocale$1 };
+  };
+  /**
+   * Return the active locale code.
+   */
+  const getLocale$1 = () => {
+      return activeLocale;
+  };
+  /**
+   * Set the active locale code, and begin loading templates for that locale using
+   * the `loadLocale` function that was passed to `configureLocalization`. Returns
+   * a promise that resolves when the next locale is ready to be rendered.
+   *
+   * Note that if a second call to `setLocale` is made while the first requested
+   * locale is still loading, then the second call takes precedence, and the
+   * promise returned from the first call will resolve when second locale is
+   * ready. If you need to know whether a particular locale was loaded, check
+   * `getLocale` after the promise resolves.
+   *
+   * Throws if the given locale is not contained by the configured `sourceLocale`
+   * or `targetLocales`.
+   */
+  const setLocale$1 = (newLocale) => {
+      if (newLocale === (loadingLocale !== null && loadingLocale !== void 0 ? loadingLocale : activeLocale)) {
+          return loading.promise;
+      }
+      if (!validLocales || !loadLocale) {
+          throw new Error('Internal error');
+      }
+      if (!validLocales.has(newLocale)) {
+          throw new Error('Invalid locale code');
+      }
+      requestId++;
+      const thisRequestId = requestId;
+      loadingLocale = newLocale;
+      if (loading.settled) {
+          loading = new Deferred();
+      }
+      dispatchStatusEvent({ status: 'loading', loadingLocale: newLocale });
+      const localePromise = newLocale === sourceLocale$1
+          ? // We could switch to the source locale synchronously, but we prefer to
+              // queue it on a microtask so that switching locales is consistently
+              // asynchronous.
+              Promise.resolve({ templates: undefined })
+          : loadLocale(newLocale);
+      localePromise.then((mod) => {
+          if (requestId === thisRequestId) {
+              activeLocale = newLocale;
+              loadingLocale = undefined;
+              templates = mod.templates;
+              dispatchStatusEvent({ status: 'ready', readyLocale: newLocale });
+              loading.resolve();
+          }
+          // Else another locale was requested in the meantime. Don't resolve or
+          // reject, because the newer load call is going to use the same promise.
+          // Note the user can call getLocale() after the promise resolves if they
+          // need to check if the locale is still the one they expected to load.
+      }, (err) => {
+          if (requestId === thisRequestId) {
+              dispatchStatusEvent({
+                  status: 'error',
+                  errorLocale: newLocale,
+                  errorMessage: err.toString(),
+              });
+              loading.reject(err);
+          }
+      });
+      return loading.promise;
+  };
+
+  /**
+   * @license
+   * Copyright 2020 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  /**
+   * Make a string or lit-html template localizable.
+   *
+   * @param template A string, a lit-html template, or a function that returns
+   * either a string or lit-html template.
+   * @param options Optional configuration object with the following properties:
+   *   - id: Optional project-wide unique identifier for this template. If
+   *     omitted, an id will be automatically generated from the template strings.
+   *   - desc: Optional description
+   */
+  let msg = defaultMsg;
+  let installed = false;
+  /**
+   * Internal only. Do not use this function.
+   *
+   * Installs an implementation of the msg function to replace the default
+   * identity function. Throws if called more than once.
+   *
+   * @internal
+   */
+  function _installMsgImplementation(impl) {
+      if (installed) {
+          throw new Error('lit-localize can only be configured once');
+      }
+      msg = impl;
+      installed = true;
+  }
+
+  // Do not modify this file by hand!
+  // Re-generate this file by running lit-localize.
+  /**
+   * The locale code that templates in this source code are written in.
+   */
+  const sourceLocale = `en`;
+  /**
+   * The other locale codes that this application is localized into. Sorted
+   * lexicographically.
+   */
+  const targetLocales = [
+      `de`,
+      `de-DE`,
+  ];
+
+  /**
+   * @license
+   * Copyright 2020 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+  const { getLocale, setLocale } = configureLocalization({
+      sourceLocale,
+      targetLocales,
+      loadLocale: (locale) => import(`/lib/generated/locales/${locale}.js`),
+  });
+  const setLocaleFromLangAttribute = async () => {
+      const locale = window.navigator.language || sourceLocale;
+      await setLocale(locale);
+  };
+
   function isEmptyObjectOrUndefined(object) {
       if (!object) {
           return true;
@@ -1591,7 +2129,7 @@
           return y `<div class="controls">
       <div class="info">
         <span>
-          <strong>${this.heading}</strong>
+          <strong>${this.heading || msg('Current Month')}</strong>
         </span>
         <br />
         <span class="day" ?hidden=${isEmptyObjectOrUndefined(this.expandedDate)}
@@ -1604,28 +2142,29 @@
         <span
           ?data-active=${!isEmptyObjectOrUndefined(this.expandedDate)}
           data-context="day"
-          >Day</span
+          >${msg('Day')}</span
         >
         <span
           ?data-active=${isEmptyObjectOrUndefined(this.expandedDate)}
           data-context="month"
-          >Month</span
+          >${msg('Month')}</span
         >
       </div>
-      <div class="buttons" @click=${this._dispatchSwitchMonth}>
+      <div class="buttons" @click=${this._dispatchSwitchDate}>
         <button name="previous">«</button>
         <button name="next">»</button>
       </div>
     </div>`;
       }
-      _dispatchSwitchMonth(e) {
+      _dispatchSwitchDate(e) {
           const target = e.target;
           const direction = e.target === e.currentTarget ? 'container' : target.name;
-          const event = new CustomEvent('switchmonth', {
+          const event = new CustomEvent('switchdate', {
               detail: { direction },
               bubbles: true,
               composed: true,
           });
+          console.log(event);
           this.dispatchEvent(event);
       }
       _dispatchSwitchView(e) {
@@ -1639,7 +2178,7 @@
           this.dispatchEvent(event);
       }
   };
-  Header.styles = i$3 `
+  Header.styles = i$2 `
     .controls {
       height: 3.5em;
       width: 100%;
@@ -1651,6 +2190,13 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--separator-light);
+    }
+
+    @media (max-width: 360px) {
+      .controls {
+        font-size: small;
+        height: 4.5em;
+      }
     }
     .info {
       padding-left: 1em;
@@ -1701,21 +2247,65 @@
       e({ type: Object })
   ], Header.prototype, "expandedDate", void 0);
   Header = __decorate$5([
+      localized(),
       e$1('lms-calendar-header')
   ], Header);
 
-  function getDateByMonthInDirection(date, direction) {
-      if (direction === 'previous') {
-          return date.month - 1 === 0
-              ? { ...date, year: date.year - 1, month: 12 }
-              : { ...date, month: date.month - 1 };
+  class DateTransformer {
+      constructor({ date, direction = undefined, }) {
+          this.date = date;
+          this.direction = direction;
       }
-      if (direction === 'next') {
-          return date.month + 1 === 13
-              ? { ...date, year: date.year + 1, month: 1 }
-              : { ...date, month: date.month + 1 };
+      set _date(date) {
+          this.date = date;
       }
-      return date;
+      set _direction(direction) {
+          this.direction = direction;
+      }
+      getDateByDayInDirection() {
+          if (!this.date) {
+              throw Error('Date is not defined.');
+          }
+          if (!this.direction) {
+              throw Error('Direction is not defined.');
+          }
+          if (this.direction === 'previous') {
+              const newDate = new Date(this.date.year, this.date.month - 1, this.date.day - 1);
+              return {
+                  day: newDate.getDate(),
+                  month: newDate.getMonth() + 1,
+                  year: newDate.getFullYear(),
+              };
+          }
+          if (this.direction === 'next') {
+              const newDate = new Date(this.date.year, this.date.month - 1, this.date.day + 1);
+              return {
+                  day: newDate.getDate(),
+                  month: newDate.getMonth() + 1,
+                  year: newDate.getFullYear(),
+              };
+          }
+          return this.date;
+      }
+      getDateByMonthInDirection() {
+          if (!this.date) {
+              throw Error('Date is not defined.');
+          }
+          if (!this.direction) {
+              throw Error('Direction is not defined.');
+          }
+          if (this.direction === 'previous') {
+              return this.date.month - 1 === 0
+                  ? { ...this.date, year: this.date.year - 1, month: 12 }
+                  : { ...this.date, month: this.date.month - 1 };
+          }
+          if (this.direction === 'next') {
+              return this.date.month + 1 === 13
+                  ? { ...this.date, year: this.date.year + 1, month: 1 }
+                  : { ...this.date, month: this.date.month + 1 };
+          }
+          return this.date;
+      }
   }
 
   var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
@@ -1786,15 +2376,20 @@
           if (!this.activeDate) {
               return;
           }
-          const previousMonth = this._getDatesInMonthAsArray(getDateByMonthInDirection(this.activeDate, 'previous'), this._getOffsetOfFirstDayInMonth(this.activeDate)
+          const dateTransformer = new DateTransformer({
+              date: this.activeDate || { day: 1, month: 1, year: 2022 },
+          });
+          dateTransformer._direction = 'previous';
+          const previousMonth = this._getDatesInMonthAsArray(dateTransformer.getDateByMonthInDirection(), this._getOffsetOfFirstDayInMonth(this.activeDate)
               ? [this._getOffsetOfFirstDayInMonth(this.activeDate) * -1]
               : [-0, -0]);
           const activeMonth = this._getDatesInMonthAsArray(this.activeDate, []);
-          const nextMonth = this._getDatesInMonthAsArray(getDateByMonthInDirection(this.activeDate, 'next'), [0, 42 - (previousMonth.length + activeMonth.length)]);
+          dateTransformer._direction = 'next';
+          const nextMonth = this._getDatesInMonthAsArray(dateTransformer.getDateByMonthInDirection(), [0, 42 - (previousMonth.length + activeMonth.length)]);
           return previousMonth.concat(activeMonth, nextMonth);
       }
   };
-  Month.styles = i$3 `
+  Month.styles = i$2 `
     .month {
       /* Header: 3.5em, Context: 2em, Border: 2px */
       height: calc(100% - 5.5em + 2px);
@@ -1821,7 +2416,7 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      overflow-y: scroll;
+      overflow-x: hidden;
       gap: 1px;
     }
 
@@ -1830,6 +2425,7 @@
       top: 0.25em;
       text-align: right;
       padding: 0 0.25em;
+      margin-bottom: 0.25em;
       text-align: left;
     }
   `;
@@ -1850,10 +2446,11 @@
       constructor() {
           super(...arguments);
           this._hours = [...Array(25).keys()];
+          this._hasActiveSidebar = false;
       }
       render() {
           return y `<div class="container">
-      <div class="main">
+      <div class="main w-${!this._hasActiveSidebar ? '100' : '70' }">
         ${this._hours.map((hour, index) => y `
               <div class="hour" style=${this._getHourIndicator(hour)}>
                 <span class="indicator">
@@ -1869,7 +2466,10 @@
               <slot name="${hour}" class="entry"></slot>
             `)}
       </div>
-      <div class="sidebar"></div>
+      <div
+        class="sidebar w-${!this._hasActiveSidebar ? '0' : '30' }"
+        ?hidden=${!this._hasActiveSidebar}
+      ></div>
     </div>`;
       }
       _getHourIndicator(hour) {
@@ -1878,7 +2478,7 @@
               : 'grid-row: 1440';
       }
   };
-  Day.styles = i$3 `
+  Day.styles = i$2 `
     .container {
       display: flex;
       /* Header: 3.5em */
@@ -1890,7 +2490,6 @@
       display: grid;
       grid-template-columns: 4em 1fr;
       grid-template-rows: repeat(1440, 1fr);
-      width: 70%;
       height: calc(100% - 1em);
       gap: 1px;
       overflow-y: scroll;
@@ -1913,18 +2512,36 @@
       border-top: 1px solid var(--separator-light);
       position: absolute;
       width: 100%;
-      z-index: -1;
+      z-index: 0;
     }
 
     .sidebar {
-      width: 30%;
       height: 100%;
       border-left: 1px solid var(--separator-light);
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .w-70 {
+      width: 70%;
+    }
+
+    .w-30 {
+      width: 30%;
+    }
+
+    .w-0 {
+      width: 0;
     }
   `;
   __decorate$3([
       t()
   ], Day.prototype, "_hours", void 0);
+  __decorate$3([
+      t()
+  ], Day.prototype, "_hasActiveSidebar", void 0);
   Day = __decorate$3([
       e$1('lms-calendar-day')
   ], Day);
@@ -1936,19 +2553,19 @@
       return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   let Context = class Context extends s {
-      constructor() {
-          super(...arguments);
-          this.weekdays = [];
-      }
       render() {
-          return this.weekdays
-              ? y `<div>
-          ${this.weekdays.map((item) => y `<span>${item}</span>`)}
-        </div>`
-              : b;
+          return y ` <div>
+      <span>${msg('Mon')}</span>
+      <span>${msg('Tues')}</span>
+      <span>${msg('Wed')}</span>
+      <span>${msg('Thurs')}</span>
+      <span>${msg('Fri')}</span>
+      <span>${msg('Sat')}</span>
+      <span>${msg('Sun')}</span>
+    </div>`;
       }
   };
-  Context.styles = i$3 `
+  Context.styles = i$2 `
     div {
       height: 1.75em;
       display: grid;
@@ -1959,10 +2576,8 @@
       text-align: left;
     }
   `;
-  __decorate$2([
-      e({ attribute: false })
-  ], Context.prototype, "weekdays", void 0);
   Context = __decorate$2([
+      localized(),
       e$1('lms-calendar-context')
   ], Context);
 
@@ -1979,7 +2594,6 @@
           this.isContinuation = false;
       }
       render() {
-          var _a;
           return y `
       <div
         class="main"
@@ -1993,23 +2607,28 @@
           >
         </span>
         ${this.isContinuation
-            ? y `<span>
-              ${(_a = this.time) === null || _a === void 0 ? void 0 : _a.start.hours}:${this.time
-                ? this.time.start.minutes < 10
-                    ? `0${this.time.start.minutes}`
-                    : this.time.start.minutes
-                : '00'}
-            </span>`
+            ? y `<span>${this._displayStartTime(this.time)}</span>`
             : y ``}
       </div>
     `;
       }
+      _displayStartTime(time) {
+          if (!time) {
+              return 'Error: No time provided';
+          }
+          const hours = time.start.hours;
+          let minutes = time.start.minutes;
+          if (minutes < 10) {
+              minutes = `0${minutes}`;
+          }
+          return `${hours}:${minutes}` === '0:00' ? '•' : `${hours}:${minutes}`;
+      }
       _handleClick() {
-          this._highlighted = true;
-          this._extended = true;
+          this._highlighted = !this._highlighted;
+          this._extended = !this._extended;
       }
   };
-  Entry.styles = i$3 `
+  Entry.styles = i$2 `
     :host {
       font-size: small;
       grid-column: 2;
@@ -2020,6 +2639,8 @@
       margin: var(--entry-m);
       background-color: var(--entry-bc);
       color: var(--entry-c);
+      /* z-index of separators in day view is 0 */
+      z-index: 1;
     }
 
     .main {
@@ -2208,6 +2829,35 @@
       return result;
   }
 
+  class EntryTransformer {
+      constructor(entry, startDate, index) {
+          this.entry = entry;
+          this.startDate = startDate;
+          this.index = index;
+          this.entry = entry;
+          this.startDate = startDate;
+          this.currentStartDate = new Date(this.startDate.getTime() + this.index * (1000 * 3600 * 24));
+          this.currentEndDate = new Date(this.currentStartDate.getTime() + 1000 * 3600 * 24 - 1);
+      }
+      getEntry() {
+          return {
+              ...this.entry,
+              date: {
+                  start: {
+                      day: this.currentStartDate.getDate(),
+                      month: this.currentStartDate.getMonth() + 1,
+                      year: this.currentStartDate.getFullYear(),
+                  },
+                  end: {
+                      day: this.currentEndDate.getDate(),
+                      month: this.currentEndDate.getMonth() + 1,
+                      year: this.currentEndDate.getFullYear(),
+                  },
+              },
+          };
+      }
+  }
+
   var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
       var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
       if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2217,21 +2867,25 @@
   let LMSCalendar = class LMSCalendar extends s {
       constructor() {
           super(...arguments);
-          this.heading = 'Current Bookings';
+          this.heading = '';
           this.activeDate = {
               day: 1,
               month: 1,
               year: 2022,
           };
-          this.weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
           this.entries = [];
           this.color = '#000000';
+          this._viewportWidth = window.innerWidth;
+      }
+      connectedCallback() {
+          super.connectedCallback();
+          this._setLocale();
       }
       render() {
           return y `
       <div>
         <lms-calendar-header
-          @switchmonth=${this._handleSwitchMonth}
+          @switchdate=${this._handleSwitchDate}
           @switchview=${this._handleSwitchView}
           .heading=${this.heading}
           .activeDate=${this.activeDate}
@@ -2240,7 +2894,6 @@
         </lms-calendar-header>
 
         <lms-calendar-context
-          .weekdays=${this.weekdays}
           ?hidden=${!isEmptyObjectOrUndefined(this._expandedDate)}
         >
         </lms-calendar-context>
@@ -2261,109 +2914,87 @@
       </div>
     `;
       }
-      _handleSwitchMonth(e) {
-          this.activeDate = getDateByMonthInDirection(this.activeDate, e.detail.direction);
+      async _setLocale() {
+          try {
+              // Defer first render until our initial locale is ready, to avoid a flash of
+              // the wrong locale.
+              await setLocaleFromLangAttribute();
+          }
+          catch (e) {
+              // Either the URL locale code was invalid, or there was a problem loading
+              // the locale module.
+              console.error(`Error loading locale: ${e.message}`);
+          }
+      }
+      _handleSwitchDate(e) {
+          console.log('Fired');
+          const dateTransformer = new DateTransformer({});
+          dateTransformer._direction = e.detail.direction;
+          if (this._expandedDate) {
+              dateTransformer._date = this._expandedDate;
+              const dateInDirection = dateTransformer.getDateByDayInDirection();
+              this._expandedDate = dateInDirection;
+              this.activeDate = dateInDirection;
+              return;
+          }
+          dateTransformer._date = this.activeDate;
+          this.activeDate = dateTransformer.getDateByMonthInDirection();
       }
       _handleSwitchView(e) {
+          var _a;
           if (e.detail.view === 'day') {
               this._expandedDate = !isEmptyObjectOrUndefined(this._expandedDate)
                   ? this._expandedDate
                   : this.activeDate;
           }
           if (e.detail.view === 'month') {
+              this.activeDate = (_a = this._expandedDate) !== null && _a !== void 0 ? _a : this.activeDate;
               this._expandedDate = undefined;
           }
       }
       _handleExpand(e) {
           this._expandedDate = e.detail.date;
       }
-      // _getEntries() {
-      //   return this.entries.length !== 0
-      //     ? html`${this.entries
-      //         .sort(
-      //           (a, b) =>
-      //             a.time.start.hours - b.time.start.hours ||
-      //             a.time.start.minutes - b.time.start.minutes
-      //         )
-      //         .map(({date, time, heading, color}, index) => {
-      //           const [background, text] = getColorTextWithContrast(color);
-      //           return html`
-      //             <style>
-      //               lms-calendar-entry.${`_${index}`} {
-      //                 --entry-m: 0 0.25em 0 1.5em;
-      //                 --entry-bc: ${background};
-      //                 --entry-c: ${text};
-      //               }
-      //             </style>
-      //             <lms-calendar-entry
-      //               class=${`_${index}`}
-      //               slot="${date.start.year}-${date.start.month}-${date.start.day}"
-      //               .time=${time}
-      //               .heading=${heading}
-      //             >
-      //             </lms-calendar-entry>
-      //           `;
-      //         })}`
-      //     : html``;
-      // }
       _getEntries() {
-          return this.entries.length !== 0
-              ? y `${this.entries
-                .sort((a, b) => a.time.start.hours - b.time.start.hours ||
-                a.time.start.minutes - b.time.start.minutes)
-                .map(({ date, time, heading, color }, index) => {
-                const [background, text] = getColorTextWithContrast(color);
-                // Calculate the number of days the entry spans
-                const startDate = new Date(date.start.year, date.start.month - 1, date.start.day);
-                const endDate = new Date(date.end.year, date.end.month - 1, date.end.day);
-                const rangeDays = (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
-                // Create an array of <lms-calendar-entry> elements for each day the entry spans
-                const entries = [];
-                for (let i = 0; i < rangeDays; i++) {
-                    // Calculate the start and end date for the current entry
-                    const currentStartDate = new Date(startDate.getTime() + i * (1000 * 3600 * 24));
-                    const currentEndDate = new Date(currentStartDate.getTime() + (1000 * 3600 * 24) - 1);
-                    // Create the entry object for the current day
-                    const currentEntry = {
-                        date: {
-                            start: {
-                                day: currentStartDate.getDate(),
-                                month: currentStartDate.getMonth() + 1,
-                                year: currentStartDate.getFullYear(),
-                            },
-                            end: {
-                                day: currentEndDate.getDate(),
-                                month: currentEndDate.getMonth() + 1,
-                                year: currentEndDate.getFullYear(),
-                            },
-                        },
-                        time,
-                        heading,
-                        color,
-                    };
-                    // Add the <lms-calendar-entry> element to the array
-                    entries.push(y `
-                <style>
-                  lms-calendar-entry.${`_${index}`} {
-                    --entry-br: ${rangeDays > 1 ? 0 : `var(--border-radius-sm)`};
-                    --entry-m: 0 ${i !== 0 ? 0 : `0.25em`} 0 ${i !== 0 ? 0 : `1.5em`};
-                    --entry-bc: ${background};
-                    --entry-c: ${text};
-                  }
-                </style>
-                <lms-calendar-entry
-                  class=${`_${index}`}
-                  slot="${currentEntry.date.start.year}-${currentEntry.date.start.month}-${currentEntry.date.start.day}"
-                  .time=${currentEntry.time}
-                  .heading=${rangeDays > 1 && i > 0 ? '' : currentEntry.heading}
-                >
-                </lms-calendar-entry>
-              `);
+          if (this.entries.length) {
+              const chronologicalEntries = this.entries.sort((a, b) => a.time.start.hours - b.time.start.hours ||
+                  a.time.start.minutes - b.time.start.minutes);
+              const entriesTemplateResults = chronologicalEntries.map(({ date, time, heading, color }, index) => {
+                  const [background, text] = getColorTextWithContrast(color);
+                  const [startDate, , rangeDays] = this._getDaysRange(date);
+                  /** Create an array of <lms-calendar-entry> elements for each day the entry spans
+                   *  and add them to the entries array. */
+                  const entries = [];
+                  for (let i = 0; i < rangeDays; i++) {
+                      const currentEntry = new EntryTransformer({ date, time, heading, color, content: '' }, startDate, i).getEntry();
+                      const isContinuation = i > 0 && rangeDays > 1;
+                      const lmsCalendarEntry = y `
+              <style>
+                lms-calendar-entry.${`_${index}`} {
+                  --entry-br: ${rangeDays > 1 ? 0 : `var(--border-radius-sm)`};
+                  --entry-m: 0 ${i !== 0 ? 0 : `0.25em`} 0
+                    ${i !== 0 ? 0 : `1.5em`};
+                  --entry-bc: ${background};
+                  --entry-c: ${text};
                 }
-                // Return the array of <lms-calendar-entry> elements
-                return entries;
-            })}`
-              : y ``;
+              </style>
+              <lms-calendar-entry
+                class=${`_${index}`}
+                slot="${currentEntry.date.start.year}-${currentEntry.date.start
+                        .month}-${currentEntry.date.start.day}"
+                .time=${currentEntry.time}
+                .heading=${isContinuation ? '' : currentEntry.heading}
+                .isContinuation=${isContinuation}
+              >
+              </lms-calendar-entry>
+            `;
+                      entries.push(lmsCalendarEntry);
+                  }
+                  return entries;
+              });
+              return entriesTemplateResults.flat();
+          }
+          return b;
       }
       _getEntriesByDate() {
           if (isEmptyObjectOrUndefined(this._expandedDate)) {
@@ -2421,8 +3052,18 @@
               .map(([start, end]) => [parseInt(start, 10), parseInt(end, 10)])
               .map(([start, end]) => ({ start, end })));
       }
+      _getDaysRange(date) {
+          const { start, end } = date;
+          const startDate = new Date(start.year, start.month - 1, start.day);
+          const endDate = new Date(end.year, end.month - 1, end.day);
+          return [
+              startDate,
+              endDate,
+              (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1,
+          ];
+      }
   };
-  LMSCalendar.styles = i$3 `
+  LMSCalendar.styles = i$2 `
     :host {
       --shadow-sm: rgba(0, 0, 0, 0.18) 0px 2px 4px;
       --shadow-md: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
@@ -2463,9 +3104,6 @@
   ], LMSCalendar.prototype, "activeDate", void 0);
   __decorate([
       e({ type: Array })
-  ], LMSCalendar.prototype, "weekdays", void 0);
-  __decorate([
-      e({ type: Array })
   ], LMSCalendar.prototype, "entries", void 0);
   __decorate([
       e({ type: String })
@@ -2473,7 +3111,11 @@
   __decorate([
       t()
   ], LMSCalendar.prototype, "_expandedDate", void 0);
+  __decorate([
+      t()
+  ], LMSCalendar.prototype, "_viewportWidth", void 0);
   LMSCalendar = __decorate([
+      localized(),
       e$1('lms-calendar')
   ], LMSCalendar);
   var LMSCalendar$1 = LMSCalendar;
@@ -2488,7 +3130,7 @@
   !function(t,e){module.exports=e();}(commonjsGlobal,(function(){var t=1e3,e=6e4,n=36e5,r="millisecond",i="second",s="minute",u="hour",a="day",o="week",f="month",h="quarter",c="year",d="date",l="Invalid Date",$=/^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/,y=/\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g,M={name:"en",weekdays:"Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),months:"January_February_March_April_May_June_July_August_September_October_November_December".split("_"),ordinal:function(t){var e=["th","st","nd","rd"],n=t%100;return "["+t+(e[(n-20)%10]||e[n]||e[0])+"]"}},m=function(t,e,n){var r=String(t);return !r||r.length>=e?t:""+Array(e+1-r.length).join(n)+t},v={s:m,z:function(t){var e=-t.utcOffset(),n=Math.abs(e),r=Math.floor(n/60),i=n%60;return (e<=0?"+":"-")+m(r,2,"0")+":"+m(i,2,"0")},m:function t(e,n){if(e.date()<n.date())return -t(n,e);var r=12*(n.year()-e.year())+(n.month()-e.month()),i=e.clone().add(r,f),s=n-i<0,u=e.clone().add(r+(s?-1:1),f);return +(-(r+(n-i)/(s?i-u:u-i))||0)},a:function(t){return t<0?Math.ceil(t)||0:Math.floor(t)},p:function(t){return {M:f,y:c,w:o,d:a,D:d,h:u,m:s,s:i,ms:r,Q:h}[t]||String(t||"").toLowerCase().replace(/s$/,"")},u:function(t){return void 0===t}},g="en",D={};D[g]=M;var p=function(t){return t instanceof _},S=function t(e,n,r){var i;if(!e)return g;if("string"==typeof e){var s=e.toLowerCase();D[s]&&(i=s),n&&(D[s]=n,i=s);var u=e.split("-");if(!i&&u.length>1)return t(u[0])}else {var a=e.name;D[a]=e,i=a;}return !r&&i&&(g=i),i||!r&&g},w=function(t,e){if(p(t))return t.clone();var n="object"==typeof e?e:{};return n.date=t,n.args=arguments,new _(n)},O=v;O.l=S,O.i=p,O.w=function(t,e){return w(t,{locale:e.$L,utc:e.$u,x:e.$x,$offset:e.$offset})};var _=function(){function M(t){this.$L=S(t.locale,null,!0),this.parse(t);}var m=M.prototype;return m.parse=function(t){this.$d=function(t){var e=t.date,n=t.utc;if(null===e)return new Date(NaN);if(O.u(e))return new Date;if(e instanceof Date)return new Date(e);if("string"==typeof e&&!/Z$/i.test(e)){var r=e.match($);if(r){var i=r[2]-1||0,s=(r[7]||"0").substring(0,3);return n?new Date(Date.UTC(r[1],i,r[3]||1,r[4]||0,r[5]||0,r[6]||0,s)):new Date(r[1],i,r[3]||1,r[4]||0,r[5]||0,r[6]||0,s)}}return new Date(e)}(t),this.$x=t.x||{},this.init();},m.init=function(){var t=this.$d;this.$y=t.getFullYear(),this.$M=t.getMonth(),this.$D=t.getDate(),this.$W=t.getDay(),this.$H=t.getHours(),this.$m=t.getMinutes(),this.$s=t.getSeconds(),this.$ms=t.getMilliseconds();},m.$utils=function(){return O},m.isValid=function(){return !(this.$d.toString()===l)},m.isSame=function(t,e){var n=w(t);return this.startOf(e)<=n&&n<=this.endOf(e)},m.isAfter=function(t,e){return w(t)<this.startOf(e)},m.isBefore=function(t,e){return this.endOf(e)<w(t)},m.$g=function(t,e,n){return O.u(t)?this[e]:this.set(n,t)},m.unix=function(){return Math.floor(this.valueOf()/1e3)},m.valueOf=function(){return this.$d.getTime()},m.startOf=function(t,e){var n=this,r=!!O.u(e)||e,h=O.p(t),l=function(t,e){var i=O.w(n.$u?Date.UTC(n.$y,e,t):new Date(n.$y,e,t),n);return r?i:i.endOf(a)},$=function(t,e){return O.w(n.toDate()[t].apply(n.toDate("s"),(r?[0,0,0,0]:[23,59,59,999]).slice(e)),n)},y=this.$W,M=this.$M,m=this.$D,v="set"+(this.$u?"UTC":"");switch(h){case c:return r?l(1,0):l(31,11);case f:return r?l(1,M):l(0,M+1);case o:var g=this.$locale().weekStart||0,D=(y<g?y+7:y)-g;return l(r?m-D:m+(6-D),M);case a:case d:return $(v+"Hours",0);case u:return $(v+"Minutes",1);case s:return $(v+"Seconds",2);case i:return $(v+"Milliseconds",3);default:return this.clone()}},m.endOf=function(t){return this.startOf(t,!1)},m.$set=function(t,e){var n,o=O.p(t),h="set"+(this.$u?"UTC":""),l=(n={},n[a]=h+"Date",n[d]=h+"Date",n[f]=h+"Month",n[c]=h+"FullYear",n[u]=h+"Hours",n[s]=h+"Minutes",n[i]=h+"Seconds",n[r]=h+"Milliseconds",n)[o],$=o===a?this.$D+(e-this.$W):e;if(o===f||o===c){var y=this.clone().set(d,1);y.$d[l]($),y.init(),this.$d=y.set(d,Math.min(this.$D,y.daysInMonth())).$d;}else l&&this.$d[l]($);return this.init(),this},m.set=function(t,e){return this.clone().$set(t,e)},m.get=function(t){return this[O.p(t)]()},m.add=function(r,h){var d,l=this;r=Number(r);var $=O.p(h),y=function(t){var e=w(l);return O.w(e.date(e.date()+Math.round(t*r)),l)};if($===f)return this.set(f,this.$M+r);if($===c)return this.set(c,this.$y+r);if($===a)return y(1);if($===o)return y(7);var M=(d={},d[s]=e,d[u]=n,d[i]=t,d)[$]||1,m=this.$d.getTime()+r*M;return O.w(m,this)},m.subtract=function(t,e){return this.add(-1*t,e)},m.format=function(t){var e=this,n=this.$locale();if(!this.isValid())return n.invalidDate||l;var r=t||"YYYY-MM-DDTHH:mm:ssZ",i=O.z(this),s=this.$H,u=this.$m,a=this.$M,o=n.weekdays,f=n.months,h=function(t,n,i,s){return t&&(t[n]||t(e,r))||i[n].slice(0,s)},c=function(t){return O.s(s%12||12,t,"0")},d=n.meridiem||function(t,e,n){var r=t<12?"AM":"PM";return n?r.toLowerCase():r},$={YY:String(this.$y).slice(-2),YYYY:this.$y,M:a+1,MM:O.s(a+1,2,"0"),MMM:h(n.monthsShort,a,f,3),MMMM:h(f,a),D:this.$D,DD:O.s(this.$D,2,"0"),d:String(this.$W),dd:h(n.weekdaysMin,this.$W,o,2),ddd:h(n.weekdaysShort,this.$W,o,3),dddd:o[this.$W],H:String(s),HH:O.s(s,2,"0"),h:c(1),hh:c(2),a:d(s,u,!0),A:d(s,u,!1),m:String(u),mm:O.s(u,2,"0"),s:String(this.$s),ss:O.s(this.$s,2,"0"),SSS:O.s(this.$ms,3,"0"),Z:i};return r.replace(y,(function(t,e){return e||$[t]||i.replace(":","")}))},m.utcOffset=function(){return 15*-Math.round(this.$d.getTimezoneOffset()/15)},m.diff=function(r,d,l){var $,y=O.p(d),M=w(r),m=(M.utcOffset()-this.utcOffset())*e,v=this-M,g=O.m(this,M);return g=($={},$[c]=g/12,$[f]=g,$[h]=g/3,$[o]=(v-m)/6048e5,$[a]=(v-m)/864e5,$[u]=v/n,$[s]=v/e,$[i]=v/t,$)[y]||v,l?g:O.a(g)},m.daysInMonth=function(){return this.endOf(f).$D},m.$locale=function(){return D[this.$L]},m.locale=function(t,e){if(!t)return this.$L;var n=this.clone(),r=S(t,e,!0);return r&&(n.$L=r),n},m.clone=function(){return O.w(this.$d,this)},m.toDate=function(){return new Date(this.valueOf())},m.toJSON=function(){return this.isValid()?this.toISOString():null},m.toISOString=function(){return this.$d.toISOString()},m.toString=function(){return this.$d.toUTCString()},M}(),T=_.prototype;return w.prototype=T,[["$ms",r],["$s",i],["$m",s],["$H",u],["$W",a],["$M",f],["$y",c],["$D",d]].forEach((function(t){T[t[1]]=function(e){return this.$g(e,t[0],t[1])};})),w.extend=function(t,e){return t.$i||(t(e,_,w),t.$i=!0),w},w.locale=S,w.isDayjs=p,w.unix=function(t){return w(1e3*t)},w.en=D[g],w.Ls=D,w.p={},w}));
   });
 
-  class LMSBookie extends s {
+  class LMSBookie extends s$4 {
     static properties = {
       borrowernumber: { type: String },
       _openHours: { state: true },
@@ -2501,7 +3143,7 @@
 
     static styles = [
       bootstrapStyles,
-      i$3`
+      i$5`
       :host > div {
         padding: 16px;
         box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
@@ -2667,7 +3309,7 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div ?hidden=${!this._rooms.length}>
         <section>
           <h5>Book a room</h5>
@@ -2706,7 +3348,7 @@
                 ${this._rooms.length &&
                 this._rooms.map(
                   (room) =>
-                    y`<option value="${room.roomid}">
+                    y$1`<option value="${room.roomid}">
                       ${room.roomnumber}
                     </option>`
                 )}
@@ -2758,7 +3400,7 @@
                           : this._selectedRoom.maxbookabletime ||
                               this._defaultMaxBookingTime
                       )
-                      .map((timespan) => y`<option>${timespan}</option>`)
+                      .map((timespan) => y$1`<option>${timespan}</option>`)
                   : ""}
               </datalist>
             </div>
@@ -2773,7 +3415,7 @@
               ${this._equipment
                 .filter((item) => item.roomid == this._selectedRoom.roomid)
                 .map(
-                  (item) => y`
+                  (item) => y$1`
                     <div class="form-check">
                       <input
                         type="checkbox"
@@ -2832,7 +3474,7 @@
                 ${this._openHours
                   .filter((day) => day.branch === this._selectedRoom?.branch)
                   .map(({ day, start, end }) => {
-                    return y`
+                    return y$1`
                       <tr>
                         <td>${day}</td>
                         <td>${start.slice(0, -3)}</td>
@@ -2848,7 +3490,7 @@
           <h5>Rooms</h5>
           <div id="rooms">
             ${this._rooms.map(
-              (room) => y`
+              (room) => y$1`
                 <div class="room card">
                   <img
                     class="card-img-top"
@@ -2896,7 +3538,7 @@
   }
   customElements.define("lms-bookie", LMSBookie);
 
-  class LMSToast extends s {
+  class LMSToast extends s$4 {
     static properties = {
       heading: { type: String },
       message: { type: String },
@@ -2905,7 +3547,7 @@
 
     static styles = [
       bootstrapStyles,
-      i$3`
+      i$5`
       div:first {
         position: relative;
         min-height: 200px;
@@ -2928,7 +3570,7 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div aria-live="polite" aria-atomic="true">
         <div class="toast">
           <div class="toast-header">
@@ -2978,7 +3620,7 @@
 
   customElements.define("lms-toast", LMSToast);
 
-  class LMSContainer extends s {
+  class LMSContainer extends s$4 {
     static get properties() {
       return {
         classes: { type: Array },
@@ -2986,7 +3628,7 @@
       };
     }
 
-    static styles = [bootstrapStyles, i$3``];
+    static styles = [bootstrapStyles, i$5``];
 
     constructor() {
       super();
@@ -2995,10 +3637,10 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div class=${this.classes.join(" ")}>
-        ${this._elements?.map((element) => y`${element}`) ??
-        y`<slot></slot>`}
+        ${this._elements?.map((element) => y$1`${element}`) ??
+        y$1`<slot></slot>`}
       </div>
     `;
     }
@@ -3060,7 +3702,7 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div
         class=${this.classes.join(" ")}
         @created=${this._handleCreated}
@@ -3070,7 +3712,7 @@
       >
         <div class="row justify-content-start">
           ${this._elements?.map(
-            (element) => y`<div class="col">${element}</div>`
+            (element) => y$1`<div class="col">${element}</div>`
           )}
         </div>
         <lms-room-modal></lms-room-modal>
@@ -3137,7 +3779,7 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div
         class=${this.classes.join(" ")}
         @created=${this._handleCreated}
@@ -3147,7 +3789,7 @@
       >
         <div class="row justify-content-start">
           ${this._elements?.map(
-            (element) => y`<div class="col">${element}</div>`
+            (element) => y$1`<div class="col">${element}</div>`
           )}
         </div>
         <lms-equipment-modal></lms-equipment-modal>
@@ -3221,11 +3863,11 @@
     }
 
     render() {
-      return y`
+      return y$1`
       <div class=${this.classes.join(" ")}>
         <div class="row justify-content-start">
           ${this._elements?.map(
-            (element) => y`<div class="col">${element}</div>`
+            (element) => y$1`<div class="col">${element}</div>`
           )}
         </div>
       </div>
@@ -3312,8 +3954,6 @@
   exports.LMSSettingsTable = LMSSettingsTable;
   exports.LMSTable = LMSTable;
   exports.LMSToast = LMSToast;
-  exports.LitElement = s;
-  exports.html = y;
   exports.renderCalendar = renderCalendar;
 
   Object.defineProperty(exports, '__esModule', { value: true });

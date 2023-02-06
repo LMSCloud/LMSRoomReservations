@@ -1,4 +1,3 @@
-import { html, LitElement } from "lit";
 import LMSRoom from "./components/LMSRoom";
 import LMSModal from "./components/LMSModal";
 import LMSRoomModal from "./components/LMSRoomModal";
@@ -77,8 +76,6 @@ function renderCalendar() {
 }
 
 export {
-  html,
-  LitElement,
   LMSRoom,
   LMSModal,
   LMSRoomModal,
