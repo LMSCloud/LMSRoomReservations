@@ -18,7 +18,11 @@ import LMSOpenHoursTablesContainer from "./components/LMSOpenHoursTablesContaine
 import LMSBookingsTableContainer from "./components/LMSBookingsTableContainer";
 import "./main.css";
 
+import Gettext from "gettext.js";
+
 function renderCalendar() {
+  const i18n = Gettext();
+
   const currentDate = new Date();
   const options = { headers: { accept: "" } };
   const response = fetch(
@@ -31,7 +35,7 @@ function renderCalendar() {
     throw Error("No calendar reference found.");
   }
 
-  calendar.heading = "Current Bookings";
+  calendar.heading = i18n.gettext("Current Bookings");
   calendar.activeDate = {
     day: currentDate.getDate(),
     month: currentDate.getMonth() + 1,
@@ -69,7 +73,7 @@ function renderCalendar() {
             end: { hours: e.getHours(), minutes: e.getMinutes() },
           },
           heading: room.roomnumber,
-          content: "booked",
+          content: i18n.gettext("booked"),
           color: room.color,
         };
       });

@@ -1,6 +1,9 @@
 import { LitElement, html, css } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 import dayjs from "dayjs";
+import gettext from "gettext.js";
+
+const i18n = gettext();
 
 export default class LMSBookie extends LitElement {
   static properties = {
@@ -58,6 +61,16 @@ export default class LMSBookie extends LitElement {
   ];
 
   async _init() {
+    /** Loading translations via API */
+    const response = await fetch(
+      `/api/v1/contrib/roomreservations/static/locales/${window.navigator.language}.json`
+    );
+    const translations = await response.json();
+
+    if (response.status === 200) {
+      i18n.loadJSON(translations, "messages");
+    }
+
     const options = { headers: { accept: "" } };
     const [openHours, rooms, equipment, defaultMaxBookingTime] =
       await Promise.all([
@@ -155,7 +168,9 @@ export default class LMSBookie extends LitElement {
       inputs.forEach((input) => {
         input.value = "";
       });
-      this._alertMessage = "Success! Your booking is set.";
+      this._alertMessage = `${i18n.gettext("Success")}! ${i18n.gettext(
+        "Your booking is set"
+      )}.`;
 
       const event = new CustomEvent("submitted", { bubbles: true });
       this.dispatchEvent(event);
@@ -163,7 +178,7 @@ export default class LMSBookie extends LitElement {
     }
 
     const result = await response.json();
-    this._alertMessage = `Sorry! ${result.error}`;
+    this._alertMessage = `${i18n.gettext("Sorry")}! ${result.error}`;
   }
 
   _dismissAlert() {
@@ -186,7 +201,9 @@ export default class LMSBookie extends LitElement {
         <section>
           <h5>Book a room</h5>
           <div
-            class="alert alert-${this._alertMessage.includes("Success!")
+            class="alert alert-${this._alertMessage.includes(
+              `${i18n.gettext("Success")}!`
+            )
               ? "success"
               : "warning"} alert-dismissible fade show"
             role="alert"
@@ -205,7 +222,7 @@ export default class LMSBookie extends LitElement {
           </div>
           <div id="booking">
             <div class="form-group">
-              <label for="room">Room</label>
+              <label for="room">${i18n.gettext("Room")}</label>
               <select
                 id="room"
                 name="room"
@@ -227,7 +244,7 @@ export default class LMSBookie extends LitElement {
               </select>
             </div>
             <div class="form-group">
-              <label for="start-datetime">Date & Time</label>
+              <label for="start-datetime">${i18n.gettext("Date & Time")}</label>
               <input
                 type="datetime-local"
                 id="start-datetime"
@@ -237,7 +254,7 @@ export default class LMSBookie extends LitElement {
               />
             </div>
             <div class="form-group">
-              <label for="duration">Duration</label>
+              <label for="duration">${i18n.gettext("Duration")}</label>
               <input
                 type="number"
                 list="durations"
@@ -283,7 +300,7 @@ export default class LMSBookie extends LitElement {
               ).length}
               class="form-group"
             >
-              <label for="equipment">Equipment</label>
+              <label for="equipment">${i18n.gettext("Equipment")}</label>
               ${this._equipment
                 .filter((item) => item.roomid == this._selectedRoom.roomid)
                 .map(
@@ -302,7 +319,9 @@ export default class LMSBookie extends LitElement {
                 )}
             </div>
             <div class="form-group">
-              <label for="confirmation">Confirmation Email</label>
+              <label for="confirmation"
+                >${i18n.gettext("Confirmation Email")}</label
+              >
               <div class="form-check">
                 <input
                   type="checkbox"
@@ -311,35 +330,37 @@ export default class LMSBookie extends LitElement {
                   class="form-check-input"
                 />
                 <label class="form-check-label" for="confirmation-email"
-                  >Should we send you a confirmation email?</label
+                  >${i18n.gettext(
+                    "Should we send you a confirmation email"
+                  )}?</label
                 >
               </div>
             </div>
             <small class="form-text text-muted" id="booking-help"
-              >Pick a room, a date, a time<span
+              >${i18n.gettext("Pick a room, a date, a time")}<span
                 ?hidden=${!this._equipment.length}
-                >, items you'd like to use</span
+                >, ${i18n.gettext("items you'd like to use")}</span
               >
-              and the duration of your reservation.</small
+              ${i18n.gettext("and the duration of your reservation")}.</small
             >
             <button
               type="submit"
               @click=${this._handleSubmit}
               class="btn btn-primary mt-2 float-right"
             >
-              Submit
+              ${i18n.gettext("Submit")}
             </button>
           </div>
         </section>
         <section ?hidden=${!this._openHours.length}>
-          <h5>Open hours</h5>
+          <h5>${i18n.gettext("Open hours")}</h5>
           <div id="open-hours">
             <table class="table table-striped table-bordered table-sm">
               <thead>
                 <tr>
-                  <th scope="col">Day</th>
-                  <th scope="col">Open from</th>
-                  <th scope="col">Closed after</th>
+                  <th scope="col">${i18n.gettext("Day")}</th>
+                  <th scope="col">${i18n.gettext("Open from")}</th>
+                  <th scope="col">${i18n.gettext("Closed after")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -359,7 +380,7 @@ export default class LMSBookie extends LitElement {
           </div>
         </section>
         <section>
-          <h5>Rooms</h5>
+          <h5>${i18n.gettext("Rooms")}</h5>
           <div id="rooms">
             ${this._rooms.map(
               (room) => html`
@@ -375,17 +396,17 @@ export default class LMSBookie extends LitElement {
                   </div>
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                      <strong>Branch</strong>&nbsp;<span>${room.branch}</span>
-                    </li>
-                    <li class="list-group-item">
-                      <strong>Max bookable time</strong>&nbsp;<span
-                        >${room.maxbookabletime}</span
+                      <strong>${i18n.gettext("Branch")}</strong>&nbsp;<span
+                        >${room.branch}</span
                       >
                     </li>
                     <li class="list-group-item">
-                      <strong>Max Capacity</strong>&nbsp;<span
-                        >${room.maxcapacity}</span
-                      >
+                      <strong>${i18n.gettext("Max bookable time")}</strong
+                      >&nbsp;<span>${room.maxbookabletime}</span>
+                    </li>
+                    <li class="list-group-item">
+                      <strong>${i18n.gettext("Max Capacity")}</strong
+                      >&nbsp;<span>${room.maxcapacity}</span>
                     </li>
                   </ul>
                   <div class="card-body">
@@ -396,7 +417,7 @@ export default class LMSBookie extends LitElement {
                       @click=${(e) => {
                         this._selectRoom(e);
                       }}
-                      >Book this room</a
+                      >${i18n.gettext("Book this room")}</a
                     >
                   </div>
                 </div>
