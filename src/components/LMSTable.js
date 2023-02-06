@@ -1,4 +1,4 @@
-import { html, css, LitElement } from "lit";
+import { html, css, LitElement, nothing } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 
@@ -72,66 +72,71 @@ export default class LMSTable extends LitElement {
 
   render() {
     const { data } = this;
-    const [headers] = data ?? [];
-    return data?.length
-      ? html`
-          <div class="container-fluid">
-            <table class="table table-striped table-bordered table-hover">
-              <thead>
-                <tr>
-                  ${Object.keys(headers).map(
-                    (key) => html`<th scope="col">${key}</th>`
-                  )}
-                  ${this._isEditable
-                    ? html`<th scope="col">actions</th>`
-                    : html``}
-                </tr>
-              </thead>
-              <tbody>
-                ${data.map(
-                  (item) => html`
-                    <tr>
-                      ${Object.keys(item).map(
-                        (key) => html`<td>${unsafeHTML(item[key])}</td>`
-                      )}
-                      ${this._isEditable
-                        ? html`
-                            <td>
-                              <div class="d-flex">
-                                <button
-                                  @click=${this._handleEdit}
-                                  type="button"
-                                  class="btn btn-dark mx-2"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  @click=${this._handleSave}
-                                  type="button"
-                                  class="btn btn-dark mx-2"
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  @click=${this._handleDelete}
-                                  ?hidden=${!this._isDeletable}
-                                  type="button"
-                                  class="btn btn-danger mx-2"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </td>
-                          `
-                        : html``}
-                    </tr>
-                  `
+    
+    const hasData = data?.length > 0 ?? false;
+    const [headers] = hasData ? data : [] ?? [];
+
+    if (hasData) {
+      return html`
+        <div class="container-fluid">
+          <table class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                ${Object.keys(headers).map(
+                  (key) => html`<th scope="col">${key}</th>`
                 )}
-              </tbody>
-            </table>
-          </div>
-        `
-      : html``;
+                ${this._isEditable
+                  ? html`<th scope="col">actions</th>`
+                  : html``}
+              </tr>
+            </thead>
+            <tbody>
+              ${data.map(
+                (item) => html`
+                  <tr>
+                    ${Object.keys(item).map(
+                      (key) => html`<td>${unsafeHTML(item[key])}</td>`
+                    )}
+                    ${this._isEditable
+                      ? html`
+                          <td>
+                            <div class="d-flex">
+                              <button
+                                @click=${this._handleEdit}
+                                type="button"
+                                class="btn btn-dark mx-2"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                @click=${this._handleSave}
+                                type="button"
+                                class="btn btn-dark mx-2"
+                              >
+                                Save
+                              </button>
+                              <button
+                                @click=${this._handleDelete}
+                                ?hidden=${!this._isDeletable}
+                                type="button"
+                                class="btn btn-danger mx-2"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        `
+                      : html``}
+                  </tr>
+                `
+              )}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    return nothing;
   }
 }
 
