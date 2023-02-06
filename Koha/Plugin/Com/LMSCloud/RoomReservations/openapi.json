@@ -48,6 +48,21 @@
             }
           }
         },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Permission denied"
+        },
         "404": {
           "description": "No rooms were found",
           "schema": {
@@ -59,6 +74,9 @@
               }
             }
           }
+        },
+        "500": {
+          "description": "Internal server error"
         }
       }
     }
