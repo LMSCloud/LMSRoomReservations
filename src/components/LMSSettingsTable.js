@@ -80,7 +80,7 @@ export default class LMSSettingsTable extends LMSTable {
         });
 
         const response = await Promise.all(responses);
-        return response.every((res) => res.status === 204) ? 204 : 207;
+        return {...response, status: response.every((res) => res.status === 204) ? 204 : 207 };
       },
       patron_categories: async () => {
         const data = inputs
@@ -100,7 +100,7 @@ export default class LMSSettingsTable extends LMSTable {
             },
           }
         );
-        return response.status;
+        return response;
       },
     };
 
