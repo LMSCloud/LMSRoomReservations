@@ -71,6 +71,12 @@ sub list {
                 description => 'Email address to which confirmation emails for patrons are mirrored',
                 type        => 'string',
                 placeholder => 'An email address, e.g. contact@institution.com',
+            },
+            {   setting     => 'remove_past_reservations_after',
+                value       => $self->retrieve_data('reply_to_address'),
+                description => 'Days after which past reservations are removed from the system',
+                type        => 'number',
+                placeholder => '14',
             }
         ];
 
