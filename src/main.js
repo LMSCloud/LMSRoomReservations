@@ -15,6 +15,7 @@ import LMSToast from "./components/LMSToast";
 import LMSRoomsContainer from "./components/LMSRoomsContainer";
 import LMSEquipmentContainer from "./components/LMSEquipmentContainer";
 import LMSOpenHoursTablesContainer from "./components/LMSOpenHoursTablesContainer";
+import LMSBookingsTableContainer from "./components/LMSBookingsTableContainer";
 import "./main.css";
 
 function renderCalendar() {
@@ -93,5 +94,6 @@ export {
   LMSRoomsContainer,
   LMSEquipmentContainer,
   LMSOpenHoursTablesContainer,
+  LMSBookingsTableContainer,
   renderCalendar,
 };

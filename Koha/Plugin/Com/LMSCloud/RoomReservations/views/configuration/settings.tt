@@ -2,5 +2,5 @@
 [% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
-  <lms-settings-table></lms-settings-table>
+    <lms-settings-table></lms-settings-table>
 [% END %]
