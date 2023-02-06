@@ -39,7 +39,6 @@ gulp.task("translations", (done) => {
         const jsonFile = `${localesPath}/${locale}.json`;
         po2json.parseFile(
           `locales/${file}`,
-          { format: "raw" },
           (err, data) => {
             if (err) {
               throw Error(err);
