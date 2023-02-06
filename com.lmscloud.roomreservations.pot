@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 18:59+0100\n"
+"POT-Creation-Date: 2023-02-06 23:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,90 +17,98 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/components/LMSBookie.js:162 src/components/LMSBookie.js:193
+#: src/views/RoomReservationsView.js:75 src/components/LMSBookie.js:68
+msgid "Current Bookings"
+msgstr "Aktuelle Buchungen"
+
+#: src/views/RoomReservationsView.js:124
+msgid "booked"
+msgstr "gebucht"
+
+#: src/components/LMSBookie.js:172 src/components/LMSBookie.js:205
 msgid "Success"
-msgstr ""
+msgstr "Wunderbar"
 
-#: src/components/LMSBookie.js:162
+#: src/components/LMSBookie.js:173
 msgid "Your booking is set"
-msgstr ""
+msgstr "Ihre Buchung wurde eingetragen"
 
-#: src/components/LMSBookie.js:170
+#: src/components/LMSBookie.js:181
 msgid "Sorry"
-msgstr ""
+msgstr "Sorry"
 
-#: src/components/LMSBookie.js:212
+#: src/components/LMSBookie.js:225
 msgid "Room"
-msgstr ""
+msgstr "Raum"
 
-#: src/components/LMSBookie.js:234
+#: src/components/LMSBookie.js:248
 msgid "Date & Time"
-msgstr ""
+msgstr "Datum & Uhrzeit"
 
-#: src/components/LMSBookie.js:244
+#: src/components/LMSBookie.js:259
 msgid "Duration"
-msgstr ""
+msgstr "Dauer"
 
-#: src/components/LMSBookie.js:290
+#: src/components/LMSBookie.js:305
 msgid "Equipment"
-msgstr ""
-
-#: src/components/LMSBookie.js:309
-msgid "Confirmation Email"
-msgstr ""
-
-#: src/components/LMSBookie.js:318
-msgid "Should we send you a confirmation email"
-msgstr ""
-
-#: src/components/LMSBookie.js:323
-msgid "Pick a room, a date, a time"
-msgstr ""
+msgstr "Austattung"
 
 #: src/components/LMSBookie.js:325
-msgid "items you'd like to use"
-msgstr ""
+msgid "Confirmation Email"
+msgstr "Bestätigungsmail"
 
-#: src/components/LMSBookie.js:327
-msgid "and the duration of your reservation"
-msgstr ""
+#: src/components/LMSBookie.js:336
+msgid "Should we send you a confirmation email"
+msgstr "Möchten Sie eine Bestätigungsmail erhalten"
 
-#: src/components/LMSBookie.js:334
-msgid "Submit"
-msgstr ""
-
-#: src/components/LMSBookie.js:339
-msgid "Open hours"
-msgstr ""
+#: src/components/LMSBookie.js:342
+msgid "Pick a room, a date, a time"
+msgstr "Wählen Sie einen Raum, ein Datum, eine Uhrzeit"
 
 #: src/components/LMSBookie.js:344
+msgid "items you'd like to use"
+msgstr "Gegenstände, die Sie nutzen möchten "
+
+#: src/components/LMSBookie.js:347
+msgid "and the duration of your reservation"
+msgstr "und die Dauer Ihrer Reservierung"
+
+#: src/components/LMSBookie.js:355
+msgid "Submit"
+msgstr "Abschicken"
+
+#: src/components/LMSBookie.js:360
+msgid "Open hours"
+msgstr "Öffnungszeiten"
+
+#: src/components/LMSBookie.js:365
 msgid "Day"
-msgstr ""
-
-#: src/components/LMSBookie.js:345
-msgid "Open from"
-msgstr ""
-
-#: src/components/LMSBookie.js:346
-msgid "Closed after"
-msgstr ""
+msgstr "Tag"
 
 #: src/components/LMSBookie.js:366
+msgid "Open from"
+msgstr "Geöffnet von"
+
+#: src/components/LMSBookie.js:367
+msgid "Closed after"
+msgstr "Geschlossen nach"
+
+#: src/components/LMSBookie.js:387
 msgid "Rooms"
-msgstr ""
-
-#: src/components/LMSBookie.js:382
-msgid "Branch"
-msgstr ""
-
-#: src/components/LMSBookie.js:385
-msgid "Max bookable time"
-msgstr ""
-
-#: src/components/LMSBookie.js:390
-msgid "Max Capacity"
-msgstr ""
+msgstr "Räume"
 
 #: src/components/LMSBookie.js:403
+msgid "Branch"
+msgstr "Zweigstelle"
+
+#: src/components/LMSBookie.js:407
+msgid "Max bookable time"
+msgstr "Maximale Buchungszeit"
+
+#: src/components/LMSBookie.js:411
+msgid "Max Capacity"
+msgstr "Maximale Kapazität"
+
+#: src/components/LMSBookie.js:423
 msgid "Book this room"
-msgstr ""
+msgstr "Diesen Raum buchen"
