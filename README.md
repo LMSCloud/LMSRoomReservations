@@ -50,6 +50,11 @@ To include the translations in our client-side code, we use ```npx gulp translat
 to json. This uses ```po2json@next```. The output format ```mf``` works but we have to append metadata in an empty key as the library
 doesn't add it for this format.
 
+
+#### Updating translations
+
+If want to add translations for new modules or fix the spelling in the source locale you just have to update the pot file with xgettext and then use Poedit to update the translations from the pot file __Translation -> Update from POT file__.
+
 ### Infuriating errors
 
 #### Install hook weirdness
