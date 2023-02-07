@@ -27,30 +27,44 @@ gulp.task("translations", (done) => {
       if (err) {
         throw Error(err);
       }
-      files.forEach((file) => {
-        const locale = file.split(".")[0];
-        const localesPath = `${pmFilePath}/${pmFile.replace(
-          ".pm",
-          ""
-        )}/locales`;
-        if (!fs.existsSync(localesPath)) {
-          fs.mkdirSync(localesPath);
-        }
-        const jsonFile = `${localesPath}/${locale}.json`;
-        po2json.parseFile(
-          `locales/${file}`,
-          (err, data) => {
-            if (err) {
-              throw Error(err);
-            }
-            fs.writeFile(jsonFile, JSON.stringify(data), (err) => {
+      files
+        .filter((file) => file.endsWith(".po"))
+        .forEach((file) => {
+          const locale = file.split(".")[0];
+          const localesPath = `${pmFilePath}/${pmFile.replace(
+            ".pm",
+            ""
+          )}/locales`;
+          if (!fs.existsSync(localesPath)) {
+            fs.mkdirSync(localesPath);
+          }
+          const jsonFile = `${localesPath}/${locale}.json`;
+          po2json.parseFile(
+            `locales/${file}`,
+            { format: "mf" },
+            (err, data) => {
               if (err) {
                 throw Error(err);
               }
-            });
-          }
-        );
-      });
+              /** We need to add metadata to the jsonFile for
+               *  compatibility with gettext.js:
+               * "": {
+               *  "language": "locale",
+               *  "plural-forms": "nplurals=2; plural=n>1"
+               * }
+               */
+              data[""] = {
+                language: locale,
+                "plural-forms": "nplurals=2; plural=n>1",
+              };
+              fs.writeFile(jsonFile, JSON.stringify(data), (err) => {
+                if (err) {
+                  throw Error(err);
+                }
+              });
+            }
+          );
+        });
     });
     done();
   } catch (err) {

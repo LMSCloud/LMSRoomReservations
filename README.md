@@ -30,6 +30,26 @@ Here we grant access to the plugins directory to get around circumvent problems.
 
 - There is one component in the src/components dir that is a git submodule: **LMSCalendar**. Changes to this submodule must be staged and committed seperately.
 
+### Translating
+
+To generate the pot file we use ```xgettext``` and include all dirs, perl or JavaScript where translated strings show up.
+It's important to include shorthands like ```__```. Otherwise those strings will be skipped.
+```bash
+xgettext --output=com.lmscloud.roomreservations.pot --from-code=utf-8 --language=JavaScript --force-po --keyword=__ src/extensions/*.js src/views/*.js src/components/*.js
+```
+
+If the pot file is created we use ```msginit``` to create a po file for our locale.
+Then we translate our strings within that po file.
+```bash
+msginit --input=com.lmscloud.roomreservations.pot --locale=de -o locales/de.po 
+```
+
+#### JS
+
+To include the translations in our client-side code, we use ```npx gulp translations``` to run the parsing and conversion
+to json. This uses ```po2json@next```. The output format ```mf``` works but we have to append metadata in an empty key as the library
+doesn't add it for this format.
+
 ### Infuriating errors
 
 #### Install hook weirdness
