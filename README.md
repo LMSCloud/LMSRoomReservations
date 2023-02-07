@@ -47,8 +47,7 @@ msginit --input=com.lmscloud.roomreservations.pot --locale=de -o locales/de.po
 #### JS
 
 To include the translations in our client-side code, we use ```npx gulp translations``` to run the parsing and conversion
-to json. This uses ```po2json@next```. The output format ```mf``` works but we have to append metadata in an empty key as the library
-doesn't add it for this format.
+to json. This uses ```po2json@next```. The output format ```mf``` works but we have to append metadata in an empty key as the library doesn't add it for this format.
 
 
 #### Updating translations
