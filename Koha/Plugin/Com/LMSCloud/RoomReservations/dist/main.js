@@ -307,17 +307,23 @@
       const response = await fetch(
         `/api/v1/contrib/roomreservations/static/locales/${this._locale}.json`
       );
-      const translations = await response.json();
 
       if (response.status === 200) {
+        const translations = await response.json();
         this._i18n.loadJSON(translations, "messages");
         this._i18n.setLocale(this._locale);
         return;
       }
 
+      /** If there is no json for the locale we don't interpolate
+       *  and output that the translation is missing. */
       if (response.status >= 400) {
-        throw Error(`[${response.status}] Error: ${response.error}`);
+        console.info(
+          `No translations found for locale ${this._locale}. Using default locale.`
+        );
       }
+
+      this._i18n.setLocale("en");
     }
 
     set locale(locale) {
@@ -788,6 +794,7 @@
         editable: { type: Boolean },
         isOpen: { type: Boolean },
         _alertMessage: { state: true },
+        _i18n: { state: true },
       };
     }
 
@@ -843,6 +850,18 @@
       ];
     }
 
+    async _init() {
+      const translationHandler = new TranslationHandler();
+      this._i18n = new Promise((resolve, reject) => {
+        translationHandler
+          .loadTranslations()
+          .then(() => {
+            resolve(translationHandler.i18n);
+          })
+          .catch((err) => reject(err));
+      });
+    }
+
     constructor() {
       super();
       this.fields = [];
@@ -856,6 +875,33 @@
       this.isOpen = false;
       this._alertMessage = "";
       this._modalTitle = "";
+      this._i18n = undefined;
+      this._init();
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      this._i18n.then(() => {
+        this.fields
+          .filter((field) => field.logic)
+          .map((asyncFetcher) =>
+            asyncFetcher
+              .logic()
+              .then((entries) => (asyncFetcher.entries = entries))
+          );
+      });
+    }
+
+    updated() {
+      /** We have to set the _i18n attribute to the actual
+       *  class after the promise has been resolved.
+       *  We also want to cover the case were this._i18n
+       *  is defined but not yet a Promise. */
+      if (this._i18n instanceof Promise) {
+        this._i18n.then((i18n) => {
+          this._i18n = i18n;
+        });
+      }
     }
 
     _toggleModal() {
@@ -908,87 +954,83 @@
       this._alertMessage = "";
     }
 
-    connectedCallback() {
-      super.connectedCallback();
-      this.fields
-        .filter((field) => field.logic)
-        .map((_field) =>
-          _field.logic().then((entries) => (_field.entries = entries))
-        );
-    }
-
     render() {
-      return y$1`
-      <div class="btn-modal-wrapper">
-        <button
-          @click=${this._toggleModal}
-          class="btn-modal ${this.isOpen && "tilted"}"
-          type="button"
-        >
-          +
-        </button>
-      </div>
-      <div class="backdrop" ?hidden=${!this.isOpen}></div>
-      <div
-        class="modal fade ${this.isOpen && "d-block show"}"
-        id="lms-modal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="lms-modal-title"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="lms-modal-title">
-                ${this._modalTitle || "Add"}
-              </h5>
-              <button
-                @click=${this._toggleModal}
-                type="button"
-                class="close"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <form @submit="${this._create}">
-              <div class="modal-body">
-                <div
-                  role="alert"
-                  ?hidden=${!this._alertMessage}
-                  class="alert alert-${this._alertMessage.includes("Sorry!") &&
-                  "danger"} alert-dismissible fade show"
-                >
-                  ${this._alertMessage}
+      return !this._i18n?.gettext
+        ? b$1
+        : y$1`
+          <div class="btn-modal-wrapper">
+            <button
+              @click=${this._toggleModal}
+              class="btn-modal ${this.isOpen && "tilted"}"
+              type="button"
+            >
+              +
+            </button>
+          </div>
+          <div class="backdrop" ?hidden=${!this.isOpen}></div>
+          <div
+            class="modal fade ${this.isOpen && "d-block show"}"
+            id="lms-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="lms-modal-title"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="lms-modal-title">
+                    ${this._modalTitle || "Add"}
+                  </h5>
                   <button
-                    @click=${this._dismissAlert}
+                    @click=${this._toggleModal}
                     type="button"
                     class="close"
-                    data-dismiss="alert"
                     aria-label="Close"
                   >
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                ${this.fields.map((field) => this._getFieldMarkup(field))}
+                <form @submit="${this._create}">
+                  <div class="modal-body">
+                    <div
+                      role="alert"
+                      ?hidden=${!this._alertMessage}
+                      class="alert alert-${this._alertMessage.includes(
+                        "Sorry!"
+                      ) && "danger"} alert-dismissible fade show"
+                    >
+                      ${this._alertMessage}
+                      <button
+                        @click=${this._dismissAlert}
+                        type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    ${this.fields.map((field) => this._getFieldMarkup(field))}
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                      @click=${this._toggleModal}
+                    >
+                      ${this._i18n.gettext("Close")}
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      ${this._i18n.gettext("Create")}
+                    </button>
+                  </div>
+                </form>
               </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-dismiss="modal"
-                  @click=${this._toggleModal}
-                >
-                  Close
-                </button>
-                <button type="submit" class="btn btn-primary">Create</button>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
-      </div>
-    `;
+        `;
     }
 
     _getFieldMarkup(field) {
@@ -1501,35 +1543,64 @@
 
     constructor() {
       super();
-      this.fields = [
-        { name: "borrowernumber", type: "number", desc: "Borrowernumber", required: true },
-        {
-          name: "roomid",
-          type: "select",
-          desc: "Roomid",
-          logic: async () => {
-            const response = await fetch(
-              "/api/v1/contrib/roomreservations/rooms",
-              { headers: { accept: "" } }
-            );
-            const result = await response.json();
-            return result.map((room) => ({
-              value: room.roomid,
-              name: room.roomnumber,
-            }));
-          },
-          required: true
-        },
-        { name: "start", type: "datetime-local", desc: "Starts at", required: true },
-        { name: "end", type: "datetime-local", desc: "Ends at", required: true },
-        { name: "blackedout", type: "checkbox", desc: "Is blackout" },
-        { name: "send_confirmation", type: "checkbox", desc: "Send confirmation email to patron" },
-      ];
       this.createOpts = {
         endpoint: "/api/v1/contrib/roomreservations/bookings",
         method: "POST",
       };
-      this._modalTitle = "Add Booking";
+      this._i18n
+        .then((i18n) => {
+          this._modalTitle = i18n.gettext("Add Booking");
+          this.fields = [
+            {
+              name: "borrowernumber",
+              type: "number",
+              desc: i18n.gettext("Borrowernumber"),
+              required: true,
+            },
+            {
+              name: "roomid",
+              type: "select",
+              desc: i18n.gettext("Roomid"),
+              logic: async () => {
+                const response = await fetch(
+                  "/api/v1/contrib/roomreservations/rooms",
+                  { headers: { accept: "" } }
+                );
+                const result = await response.json();
+                return result.map((room) => ({
+                  value: room.roomid,
+                  name: room.roomnumber,
+                }));
+              },
+              required: true,
+            },
+            {
+              name: "start",
+              type: "datetime-local",
+              desc: i18n.gettext("Starts at"),
+              required: true,
+            },
+            {
+              name: "end",
+              type: "datetime-local",
+              desc: i18n.gettext("Ends at"),
+              required: true,
+            },
+            {
+              name: "blackedout",
+              type: "checkbox",
+              desc: i18n.gettext("Is blackout"),
+            },
+            {
+              name: "send_confirmation",
+              type: "checkbox",
+              desc: i18n.gettext("Send confirmation to patron"),
+            },
+          ];
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
   }
 
@@ -1544,8 +1615,9 @@
         image: { type: String },
         maxbookabletime: { type: String },
         roomid: { type: Number },
-        _rooms: { state: true },
         editable: { type: Boolean },
+        _rooms: { state: true },
+        _i18n: { state: true },
       };
     }
 
@@ -1553,7 +1625,7 @@
       bootstrapStyles,
       i$4`
       .lms-equipment-item {
-        max-width: 18rem;
+        max-width: 24rem;
       }
 
       .lms-equipment-item-img {
@@ -1571,6 +1643,10 @@
     }
 
     async _init() {
+      const translationHandler = new TranslationHandler();
+      await translationHandler.loadTranslations();
+      this._i18n = translationHandler.i18n;
+
       const response = await fetch("/api/v1/contrib/roomreservations/rooms", {
         headers: {
           Accept: "",
@@ -1644,107 +1720,123 @@
     }
 
     render() {
-      return y$1`
-      <div class="card lms-equipment-item">
-        <img
-          class="card-img-top lms-equipment-item-img"
-          ?hidden=${!this.image}
-          src="${this.image ?? "..."}"
-          alt="Image for ${this.equipmentname}"
-        />
-        <div class="card-body">
-          <h5 class="card-title">
-            <span class="badge badge-primary">${this.equipmentid}</span>
-          </h5>
-          <div class="form-group">
-            <label for="name">Equipmentname</label>
-            <input
-              type="text"
-              ?disabled=${!this.editable}
-              .value=${this.equipmentname}
-              @input=${(e) => {
-                this.equipmentname = e.target.value;
-              }}
-              class="form-control"
-              id="name"
+      return !this._i18n?.gettext
+        ? b$1
+        : y$1`
+          <div class="card lms-equipment-item">
+            <img
+              class="card-img-top lms-equipment-item-img"
+              ?hidden=${!this.image}
+              src="${this.image ?? "..."}"
+              alt="Image for ${this.equipmentname}"
             />
-          </div>
-          <div class="form-group">
-            <label for="description">Description</label>
-            <input
-              type="text"
-              ?disabled=${!this.editable}
-              .value=${this.description.match(/^null$/i)
-                ? null
-                : this.description ?? ""}
-              @input=${(e) => {
-                this.description = e.target.value;
-              }}
-              class="form-control"
-              id="description"
-            />
-          </div>
-          <div class="form-group">
-            <label for="image">Image</label>
-            <input
-              type="text"
-              ?disabled=${!this.editable}
-              .value=${this.image.match(/^null$/i) ? null : this.image ?? ""}
-              @input=${(e) => {
-                this.image = e.target.value;
-              }}
-              class="form-control"
-              id="image"
-            />
-          </div>
-          <div class="form-group">
-            <label for="maxbookabletime">Max bookable time</label>
-            <input
-              type="text"
-              ?disabled=${!this.editable}
-              .value=${this.maxbookabletime.match(/^null$/i)
-                ? null
-                : this.maxbookabletime ?? ""}
-              @input=${(e) => {
-                this.maxbookabletime = e.target.value;
-              }}
-              class="form-control"
-              id="maxbookabletime"
-            />
-          </div>
-          <div class="form-group" ?hidden=${!this._rooms.length}>
-            <label for="roomid">Roomid</label>
-            <select
-              ?disabled=${!this.editable}
-              @change=${(e) => {
-                this.roomid =
-                  e.target.value === "No room associated"
+            <div class="card-body">
+              <h5 class="card-title">
+                <span class="badge badge-primary">${this.equipmentid}</span>
+              </h5>
+              <div class="form-group">
+                <label for="name">${this._i18n.gettext("Equipmentname")}</label>
+                <input
+                  type="text"
+                  ?disabled=${!this.editable}
+                  .value=${this.equipmentname}
+                  @input=${(e) => {
+                    this.equipmentname = e.target.value;
+                  }}
+                  class="form-control"
+                  id="name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="description"
+                  >${this._i18n.gettext("Description")}</label
+                >
+                <input
+                  type="text"
+                  ?disabled=${!this.editable}
+                  .value=${this.description.match(/^null$/i)
                     ? null
-                    : e.target.value;
-              }}
-              class="form-control"
-              id="roomid"
-            >
-              ${this._rooms.map(
-                (room) =>
-                  y$1`<option
-                    ?selected=${room.value == this.roomid}
-                    value="${room.value}"
-                  >
-                    ${room.name}
-                  </option>`
-              )}
-              <option ?selected=${!this.roomid}>No room associated</option>
-            </select>
+                    : this.description ?? ""}
+                  @input=${(e) => {
+                    this.description = e.target.value;
+                  }}
+                  class="form-control"
+                  id="description"
+                />
+              </div>
+              <div class="form-group">
+                <label for="image">${this._i18n.gettext("Image")}</label>
+                <input
+                  type="text"
+                  ?disabled=${!this.editable}
+                  .value=${this.image.match(/^null$/i)
+                    ? null
+                    : this.image ?? ""}
+                  @input=${(e) => {
+                    this.image = e.target.value;
+                  }}
+                  class="form-control"
+                  id="image"
+                />
+              </div>
+              <div class="form-group">
+                <label for="maxbookabletime"
+                  >${this._i18n.gettext("Max bookable time")}</label
+                >
+                <input
+                  type="text"
+                  ?disabled=${!this.editable}
+                  .value=${this.maxbookabletime.match(/^null$/i)
+                    ? null
+                    : this.maxbookabletime ?? ""}
+                  @input=${(e) => {
+                    this.maxbookabletime = e.target.value;
+                  }}
+                  class="form-control"
+                  id="maxbookabletime"
+                />
+              </div>
+              <div class="form-group" ?hidden=${!this._rooms.length}>
+                <label for="roomid">${this._i18n.gettext("Roomid")}</label>
+                <select
+                  ?disabled=${!this.editable}
+                  @change=${(e) => {
+                    this.roomid =
+                      e.target.value === "No room associated"
+                        ? null
+                        : e.target.value;
+                  }}
+                  class="form-control"
+                  id="roomid"
+                >
+                  ${this._rooms.map(
+                    (room) =>
+                      y$1`<option
+                        ?selected=${room.value == this.roomid}
+                        value="${room.value}"
+                      >
+                        ${room.name}
+                      </option>`
+                  )}
+                  <option ?selected=${!this.roomid}>
+                    ${this._i18n.gettext("No room associated")}
+                  </option>
+                </select>
+              </div>
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-dark" @click=${this.handleEdit}>
+                  ${this._i18n.gettext("Edit")}
+                </button>
+                <button class="btn btn-dark" @click=${this.handleSave}>
+                  ${this._i18n.gettext("Save")}
+                </button>
+                <button class="btn btn-danger" @click=${this.handleDelete}>
+                  ${this._i18n.gettext("Delete")}
+                </button>
+              </div>
+            </div>
           </div>
-          <button class="btn btn-dark" @click=${this.handleEdit}>Edit</button>
-          <button class="btn btn-dark" @click=${this.handleSave}>Save</button>
-          <button class="btn btn-danger" @click=${this.handleDelete}>
-            Delete
-          </button>
-        </div>
-      </div>
-    `;
+        `;
     }
   }
 
@@ -1757,23 +1849,50 @@
 
     constructor() {
       super();
-      this.fields = [
-        { name: "equipmentid", type: "text" },
-        { name: "equipmentname", type: "text", desc: "Equipmentname", required: true },
-        { name: "description", type: "text", desc: "Description", required: true },
-        { name: "image", type: "text", desc: "Image", required: true },
-        { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
-        {
-          name: "info",
-          type: "info",
-          desc: "You can assign this item to a room once its created.",
-        },
-      ];
       this.createOpts = {
         endpoint: "/api/v1/contrib/roomreservations/equipment",
         method: "POST",
       };
-      this._modalTitle = "Add Equipment";
+      this._i18n
+        .then((i18n) => {
+          this._modalTitle = i18n.gettext("Add Equipment");
+          this.fields = [
+            { name: "equipmentid", type: "text" },
+            {
+              name: "equipmentname",
+              type: "text",
+              desc: i18n.gettext("Equipmentname"),
+              required: true,
+            },
+            {
+              name: "description",
+              type: "text",
+              desc: i18n.gettext("Description"),
+              required: true,
+            },
+            {
+              name: "image",
+              type: "text",
+              desc: i18n.gettext("Image"),
+              required: true,
+            },
+            {
+              name: "maxbookabletime",
+              type: "text",
+              desc: i18n.gettext("Max bookable time"),
+            },
+            {
+              name: "info",
+              type: "info",
+              desc: i18n.gettext(
+                "You can assign this item to a room once its created."
+              ),
+            },
+          ];
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
   }
 
@@ -1973,6 +2092,7 @@
         branch: { type: String },
         roomnumber: { type: String },
         editable: { type: Boolean },
+        _i18n: { state: true },
       };
     }
 
@@ -1980,7 +2100,7 @@
       bootstrapStyles,
       i$4`
       .lms-room {
-        max-width: 18rem;
+        max-width: 24rem;
       }
 
       .lms-room-img {
@@ -1990,9 +2110,17 @@
     `,
     ];
 
+    async _init() {
+      const translationHandler = new TranslationHandler();
+      await translationHandler.loadTranslations();
+      this._i18n = translationHandler.i18n;
+    }
+
     constructor() {
       super();
       this.editable = false;
+      this._i18n = undefined;
+      this._init();
     }
 
     handleEdit() {
@@ -2053,117 +2181,133 @@
     }
 
     render() {
-      return y$1`
-      <div class="card lms-room">
-        <img
-          class="card-img-top lms-room-img"
-          ?hidden=${!this.image}
-          src=${this.image ?? "..."}
-          alt="Image for ${this.roomnumber}"
-        />
-        <div class="card-body">
-          <h5 class="card-title">
-            <span class="badge badge-primary">${this.roomid}</span>
-          </h5>
-          <div class="form-group">
-            <label for="roomnumber">Room Number</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.roomnumber}
-              @input=${(e) => {
-                this.roomnumber = e.target.value;
-              }}
-              class="form-control"
-              id="roomnumber"
+      return !this._i18n?.gettext
+        ? b$1
+        : y$1`
+          <div class="card lms-room">
+            <img
+              class="card-img-top lms-room-img"
+              ?hidden=${!this.image}
+              src=${this.image ?? "..."}
+              alt="Image for ${this.roomnumber}"
             />
+            <div class="card-body">
+              <h5 class="card-title">
+                <span class="badge badge-primary">${this.roomid}</span>
+              </h5>
+              <div class="form-group">
+                <label for="roomnumber">${this._i18n.gettext(
+                  "Room Number"
+                )}</label>
+                <input
+                  ?disabled=${!this.editable}
+                  type="text"
+                  .value=${this.roomnumber}
+                  @input=${(e) => {
+                    this.roomnumber = e.target.value;
+                  }}
+                  class="form-control"
+                  id="roomnumber"
+                />
+              </div>
+              <div class="form-group">
+                <label for="maxcapacity"></label>${this._i18n.gettext(
+                  "Max Capacity"
+                )}</label>
+                <input
+                  ?disabled=${!this.editable}
+                  type="text"
+                  .value=${this.maxcapacity}
+                  @input=${(e) => {
+                    this.maxcapacity = e.target.value;
+                  }}
+                  class="form-control"
+                  id="maxcapacity"
+                />
+              </div>
+              <div class="form-group">
+                <label for="description">${this._i18n.gettext(
+                  "Description"
+                )}</label>
+                <input
+                  ?disabled=${!this.editable}
+                  type="text"
+                  .value=${this.description}
+                  @input=${(e) => {
+                    this.description = e.target.value;
+                  }}
+                  class="form-control"
+                  id="description"
+                />
+              </div>
+              <div class="form-group">
+                <label for="color">${this._i18n.gettext("Color")}</label>
+                <input
+                  ?disabled=${!this.editable}
+                  type="color"
+                  .value=${this.color}
+                  @input=${(e) => {
+                    this.color = e.target.value;
+                  }}
+                  class="form-control"
+                  id="color"
+                />
+              </div>
+              <div class="form-group">
+                <label for="image">${this._i18n.gettext("Image")}</label>
+                <input
+                  ?disabled=${!this.editable}
+                  type="text"
+                  .value=${this.image}
+                  @input=${(e) => {
+                    this.image = e.target.value;
+                  }}
+                  class="form-control"
+                  id="image"
+                />
+              </div>
+              <div class="form-group">
+                <label for="branch">${this._i18n.gettext("Branch")}</label>
+                <input
+                  ?disabled=${!this.editable}
+                  type="text"
+                  .value=${this.branch}
+                  @input=${(e) => {
+                    this.branch = e.target.value;
+                  }}
+                  class="form-control"
+                  id="branch"
+                />
+              </div>
+              <div class="form-group">
+                <label for="maxbookabletime">${this._i18n.gettext(
+                  "Max Bookable Time"
+                )}</label>
+                <input
+                  ?disabled=${!this.editable}
+                  type="number"
+                  .value=${this.maxbookabletime}
+                  @input=${(e) => {
+                    this.maxbookabletime = e.target.value;
+                  }}
+                  class="form-control"
+                  id="maxbookabletime"
+                />
+              </div>
+              <div class="d-flex justify-content-between">
+                <button @click=${this.handleEdit} class="btn btn-dark">
+                  ${this._i18n.gettext("Edit")}
+                </button>
+                <button @click=${this.handleSave} class="btn btn-dark">
+                  ${this._i18n.gettext("Save")}
+                </button>
+                <button @click=${this.handleDelete} class="btn btn-danger">
+                  ${this._i18n.gettext("Delete")}
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="maxcapacity">Max Capacity</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.maxcapacity}
-              @input=${(e) => {
-                this.maxcapacity = e.target.value;
-              }}
-              class="form-control"
-              id="maxcapacity"
-            />
-          </div>
-          <div class="form-group">
-            <label for="description">Description</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.description}
-              @input=${(e) => {
-                this.description = e.target.value;
-              }}
-              class="form-control"
-              id="description"
-            />
-          </div>
-          <div class="form-group">
-            <label for="color">Color</label>
-            <input
-              ?disabled=${!this.editable}
-              type="color"
-              .value=${this.color}
-              @input=${(e) => {
-                this.color = e.target.value;
-              }}
-              class="form-control"
-              id="color"
-            />
-          </div>
-          <div class="form-group">
-            <label for="image">Image</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.image}
-              @input=${(e) => {
-                this.image = e.target.value;
-              }}
-              class="form-control"
-              id="image"
-            />
-          </div>
-          <div class="form-group">
-            <label for="branch">Branch</label>
-            <input
-              ?disabled=${!this.editable}
-              type="text"
-              .value=${this.branch}
-              @input=${(e) => {
-                this.branch = e.target.value;
-              }}
-              class="form-control"
-              id="branch"
-            />
-          </div>
-          <div class="form-group">
-            <label for="maxbookabletime">Max Bookable Time</label>
-            <input
-              ?disabled=${!this.editable}
-              type="number"
-              .value=${this.maxbookabletime}
-              @input=${(e) => {
-                this.maxbookabletime = e.target.value;
-              }}
-              class="form-control"
-              id="maxbookabletime"
-            />
-          </div>
-          <button @click=${this.handleEdit} class="btn btn-dark">Edit</button>
-          <button @click=${this.handleSave} class="btn btn-dark">Save</button>
-          <button @click=${this.handleDelete} class="btn btn-danger">
-            Delete
-          </button>
-        </div>
-      </div>
-    `;
+        `;
     }
   }
 
@@ -2176,34 +2320,69 @@
 
     constructor() {
       super();
-      this.fields = [
-        { name: "maxcapacity", type: "text", desc: "Max capacity", required: true },
-        { name: "color", type: "color", desc: "Color", required: true },
-        { name: "image", type: "text", desc: "Image", required: true },
-        { name: "description", type: "text", desc: "description", required: true },
-        { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
-        { name: "roomid", type: "text" },
-        {
-          name: "branch",
-          type: "select",
-          desc: "Branch",
-          logic: async () => {
-            const response = await fetch("/api/v1/libraries");
-            const result = await response.json();
-            return result.map((library) => ({
-              value: library.library_id,
-              name: library.name,
-            }));
-          },
-          required: true,
-        },
-        { name: "roomnumber", type: "text", desc: "Roomnumber", required: true },
-      ];
       this.createOpts = {
         endpoint: "/api/v1/contrib/roomreservations/rooms",
         method: "POST",
       };
-      this._modalTitle = "Add a Room";
+      this._i18n
+        .then((i18n) => {
+          this._modalTitle = i18n.gettext("Add a Room");
+          this.fields = [
+            {
+              name: "maxcapacity",
+              type: "text",
+              desc: i18n.gettext("Max capacity"),
+              required: true,
+            },
+            {
+              name: "color",
+              type: "color",
+              desc: i18n.gettext("Color"),
+              required: true,
+            },
+            {
+              name: "image",
+              type: "text",
+              desc: i18n.gettext("Image"),
+              required: true,
+            },
+            {
+              name: "description",
+              type: "text",
+              desc: i18n.gettext("Description"),
+              required: true,
+            },
+            {
+              name: "maxbookabletime",
+              type: "text",
+              desc: i18n.gettext("Max bookable time"),
+            },
+            { name: "roomid", type: "text" },
+            {
+              name: "branch",
+              type: "select",
+              desc: i18n.gettext("Branch"),
+              logic: async () => {
+                const response = await fetch("/api/v1/libraries");
+                const result = await response.json();
+                return result.map((library) => ({
+                  value: library.library_id,
+                  name: library.name,
+                }));
+              },
+              required: true,
+            },
+            {
+              name: "roomnumber",
+              type: "text",
+              desc: i18n.gettext("Roomnumber"),
+              required: true,
+            },
+          ];
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }
 
@@ -4130,7 +4309,12 @@
       >
         <div class="row justify-content-start">
           ${this._elements?.map(
-            (element) => y$1`<div class="col">${element}</div>`
+            (element) =>
+              y$1`<div
+                class="col-xl-2 col-lg-3 col-lg-2 col-md-4 col-sm-6 col-xs-12"
+              >
+                ${element}
+              </div>`
           )}
         </div>
         <lms-equipment-modal></lms-equipment-modal>
@@ -4283,9 +4467,14 @@
         @deleted=${this._handleDeleted}
         @error=${this._handleError}
       >
-        <div class="row justify-content-start">
+        <div class="row">
           ${this._elements?.map(
-            (element) => y$1`<div class="col">${element}</div>`
+            (element) =>
+              y$1`<div
+                class="col-xl-2 col-lg-3 col-lg-2 col-md-4 col-sm-6 col-xs-12"
+              >
+                ${element}
+              </div>`
           )}
         </div>
         <lms-room-modal></lms-room-modal>

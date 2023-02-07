@@ -7,23 +7,50 @@ export default class LMSEquipmentModal extends LMSModal {
 
   constructor() {
     super();
-    this.fields = [
-      { name: "equipmentid", type: "text" },
-      { name: "equipmentname", type: "text", desc: "Equipmentname", required: true },
-      { name: "description", type: "text", desc: "Description", required: true },
-      { name: "image", type: "text", desc: "Image", required: true },
-      { name: "maxbookabletime", type: "text", desc: "Max bookable time" },
-      {
-        name: "info",
-        type: "info",
-        desc: "You can assign this item to a room once its created.",
-      },
-    ];
     this.createOpts = {
       endpoint: "/api/v1/contrib/roomreservations/equipment",
       method: "POST",
     };
-    this._modalTitle = "Add Equipment";
+    this._i18n
+      .then((i18n) => {
+        this._modalTitle = i18n.gettext("Add Equipment");
+        this.fields = [
+          { name: "equipmentid", type: "text" },
+          {
+            name: "equipmentname",
+            type: "text",
+            desc: i18n.gettext("Equipmentname"),
+            required: true,
+          },
+          {
+            name: "description",
+            type: "text",
+            desc: i18n.gettext("Description"),
+            required: true,
+          },
+          {
+            name: "image",
+            type: "text",
+            desc: i18n.gettext("Image"),
+            required: true,
+          },
+          {
+            name: "maxbookabletime",
+            type: "text",
+            desc: i18n.gettext("Max bookable time"),
+          },
+          {
+            name: "info",
+            type: "info",
+            desc: i18n.gettext(
+              "You can assign this item to a room once its created."
+            ),
+          },
+        ];
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 }
 

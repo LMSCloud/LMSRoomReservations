@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import { LitElement, html, css } from "lit";
+import { LitElement, html, css, nothing } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
+import TranslationHandler from "../lib/TranslationHandler";
 
 export default class LMSModal extends LitElement {
   static get properties() {
@@ -10,6 +11,7 @@ export default class LMSModal extends LitElement {
       editable: { type: Boolean },
       isOpen: { type: Boolean },
       _alertMessage: { state: true },
+      _i18n: { state: true },
     };
   }
 
@@ -65,6 +67,18 @@ export default class LMSModal extends LitElement {
     ];
   }
 
+  async _init() {
+    const translationHandler = new TranslationHandler();
+    this._i18n = new Promise((resolve, reject) => {
+      translationHandler
+        .loadTranslations()
+        .then(() => {
+          resolve(translationHandler.i18n);
+        })
+        .catch((err) => reject(err));
+    });
+  }
+
   constructor() {
     super();
     this.fields = [];
@@ -78,6 +92,33 @@ export default class LMSModal extends LitElement {
     this.isOpen = false;
     this._alertMessage = "";
     this._modalTitle = "";
+    this._i18n = undefined;
+    this._init();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._i18n.then(() => {
+      this.fields
+        .filter((field) => field.logic)
+        .map((asyncFetcher) =>
+          asyncFetcher
+            .logic()
+            .then((entries) => (asyncFetcher.entries = entries))
+        );
+    });
+  }
+
+  updated() {
+    /** We have to set the _i18n attribute to the actual
+     *  class after the promise has been resolved.
+     *  We also want to cover the case were this._i18n
+     *  is defined but not yet a Promise. */
+    if (this._i18n instanceof Promise) {
+      this._i18n.then((i18n) => {
+        this._i18n = i18n;
+      });
+    }
   }
 
   _toggleModal() {
@@ -130,87 +171,83 @@ export default class LMSModal extends LitElement {
     this._alertMessage = "";
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.fields
-      .filter((field) => field.logic)
-      .map((_field) =>
-        _field.logic().then((entries) => (_field.entries = entries))
-      );
-  }
-
   render() {
-    return html`
-      <div class="btn-modal-wrapper">
-        <button
-          @click=${this._toggleModal}
-          class="btn-modal ${this.isOpen && "tilted"}"
-          type="button"
-        >
-          +
-        </button>
-      </div>
-      <div class="backdrop" ?hidden=${!this.isOpen}></div>
-      <div
-        class="modal fade ${this.isOpen && "d-block show"}"
-        id="lms-modal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="lms-modal-title"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="lms-modal-title">
-                ${this._modalTitle || "Add"}
-              </h5>
-              <button
-                @click=${this._toggleModal}
-                type="button"
-                class="close"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <form @submit="${this._create}">
-              <div class="modal-body">
-                <div
-                  role="alert"
-                  ?hidden=${!this._alertMessage}
-                  class="alert alert-${this._alertMessage.includes("Sorry!") &&
-                  "danger"} alert-dismissible fade show"
-                >
-                  ${this._alertMessage}
+    return !this._i18n?.gettext
+      ? nothing
+      : html`
+          <div class="btn-modal-wrapper">
+            <button
+              @click=${this._toggleModal}
+              class="btn-modal ${this.isOpen && "tilted"}"
+              type="button"
+            >
+              +
+            </button>
+          </div>
+          <div class="backdrop" ?hidden=${!this.isOpen}></div>
+          <div
+            class="modal fade ${this.isOpen && "d-block show"}"
+            id="lms-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="lms-modal-title"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="lms-modal-title">
+                    ${this._modalTitle || "Add"}
+                  </h5>
                   <button
-                    @click=${this._dismissAlert}
+                    @click=${this._toggleModal}
                     type="button"
                     class="close"
-                    data-dismiss="alert"
                     aria-label="Close"
                   >
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                ${this.fields.map((field) => this._getFieldMarkup(field))}
+                <form @submit="${this._create}">
+                  <div class="modal-body">
+                    <div
+                      role="alert"
+                      ?hidden=${!this._alertMessage}
+                      class="alert alert-${this._alertMessage.includes(
+                        "Sorry!"
+                      ) && "danger"} alert-dismissible fade show"
+                    >
+                      ${this._alertMessage}
+                      <button
+                        @click=${this._dismissAlert}
+                        type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    ${this.fields.map((field) => this._getFieldMarkup(field))}
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                      @click=${this._toggleModal}
+                    >
+                      ${this._i18n.gettext("Close")}
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      ${this._i18n.gettext("Create")}
+                    </button>
+                  </div>
+                </form>
               </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-dismiss="modal"
-                  @click=${this._toggleModal}
-                >
-                  Close
-                </button>
-                <button type="submit" class="btn btn-primary">Create</button>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
-      </div>
-    `;
+        `;
   }
 
   _getFieldMarkup(field) {

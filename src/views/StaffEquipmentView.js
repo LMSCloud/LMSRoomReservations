@@ -68,7 +68,12 @@ export default class StaffEquipmentView extends LMSContainer {
       >
         <div class="row justify-content-start">
           ${this._elements?.map(
-            (element) => html`<div class="col">${element}</div>`
+            (element) =>
+              html`<div
+                class="col-xl-2 col-lg-3 col-lg-2 col-md-4 col-sm-6 col-xs-12"
+              >
+                ${element}
+              </div>`
           )}
         </div>
         <lms-equipment-modal></lms-equipment-modal>

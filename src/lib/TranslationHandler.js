@@ -11,17 +11,23 @@ export default class TranslationHandler {
     const response = await fetch(
       `/api/v1/contrib/roomreservations/static/locales/${this._locale}.json`
     );
-    const translations = await response.json();
 
     if (response.status === 200) {
+      const translations = await response.json();
       this._i18n.loadJSON(translations, "messages");
       this._i18n.setLocale(this._locale);
       return;
     }
 
+    /** If there is no json for the locale we don't interpolate
+     *  and output that the translation is missing. */
     if (response.status >= 400) {
-      throw Error(`[${response.status}] Error: ${response.error}`);
+      console.info(
+        `No translations found for locale ${this._locale}. Using default locale.`
+      );
     }
+
+    this._i18n.setLocale("en");
   }
 
   set locale(locale) {

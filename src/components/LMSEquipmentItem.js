@@ -1,6 +1,6 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html, css, nothing } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
-
+import TranslationHandler from "../lib/TranslationHandler.js";
 export default class LMSEquipmentItem extends LitElement {
   static get properties() {
     return {
@@ -10,8 +10,9 @@ export default class LMSEquipmentItem extends LitElement {
       image: { type: String },
       maxbookabletime: { type: String },
       roomid: { type: Number },
-      _rooms: { state: true },
       editable: { type: Boolean },
+      _rooms: { state: true },
+      _i18n: { state: true },
     };
   }
 
@@ -19,7 +20,7 @@ export default class LMSEquipmentItem extends LitElement {
     bootstrapStyles,
     css`
       .lms-equipment-item {
-        max-width: 18rem;
+        max-width: 24rem;
       }
 
       .lms-equipment-item-img {
@@ -37,6 +38,10 @@ export default class LMSEquipmentItem extends LitElement {
   }
 
   async _init() {
+    const translationHandler = new TranslationHandler();
+    await translationHandler.loadTranslations();
+    this._i18n = translationHandler.i18n;
+
     const response = await fetch("/api/v1/contrib/roomreservations/rooms", {
       headers: {
         Accept: "",
@@ -110,107 +115,123 @@ export default class LMSEquipmentItem extends LitElement {
   }
 
   render() {
-    return html`
-      <div class="card lms-equipment-item">
-        <img
-          class="card-img-top lms-equipment-item-img"
-          ?hidden=${!this.image}
-          src="${this.image ?? "..."}"
-          alt="Image for ${this.equipmentname}"
-        />
-        <div class="card-body">
-          <h5 class="card-title">
-            <span class="badge badge-primary">${this.equipmentid}</span>
-          </h5>
-          <div class="form-group">
-            <label for="name">Equipmentname</label>
-            <input
-              type="text"
-              ?disabled=${!this.editable}
-              .value=${this.equipmentname}
-              @input=${(e) => {
-                this.equipmentname = e.target.value;
-              }}
-              class="form-control"
-              id="name"
+    return !this._i18n?.gettext
+      ? nothing
+      : html`
+          <div class="card lms-equipment-item">
+            <img
+              class="card-img-top lms-equipment-item-img"
+              ?hidden=${!this.image}
+              src="${this.image ?? "..."}"
+              alt="Image for ${this.equipmentname}"
             />
-          </div>
-          <div class="form-group">
-            <label for="description">Description</label>
-            <input
-              type="text"
-              ?disabled=${!this.editable}
-              .value=${this.description.match(/^null$/i)
-                ? null
-                : this.description ?? ""}
-              @input=${(e) => {
-                this.description = e.target.value;
-              }}
-              class="form-control"
-              id="description"
-            />
-          </div>
-          <div class="form-group">
-            <label for="image">Image</label>
-            <input
-              type="text"
-              ?disabled=${!this.editable}
-              .value=${this.image.match(/^null$/i) ? null : this.image ?? ""}
-              @input=${(e) => {
-                this.image = e.target.value;
-              }}
-              class="form-control"
-              id="image"
-            />
-          </div>
-          <div class="form-group">
-            <label for="maxbookabletime">Max bookable time</label>
-            <input
-              type="text"
-              ?disabled=${!this.editable}
-              .value=${this.maxbookabletime.match(/^null$/i)
-                ? null
-                : this.maxbookabletime ?? ""}
-              @input=${(e) => {
-                this.maxbookabletime = e.target.value;
-              }}
-              class="form-control"
-              id="maxbookabletime"
-            />
-          </div>
-          <div class="form-group" ?hidden=${!this._rooms.length}>
-            <label for="roomid">Roomid</label>
-            <select
-              ?disabled=${!this.editable}
-              @change=${(e) => {
-                this.roomid =
-                  e.target.value === "No room associated"
+            <div class="card-body">
+              <h5 class="card-title">
+                <span class="badge badge-primary">${this.equipmentid}</span>
+              </h5>
+              <div class="form-group">
+                <label for="name">${this._i18n.gettext("Equipmentname")}</label>
+                <input
+                  type="text"
+                  ?disabled=${!this.editable}
+                  .value=${this.equipmentname}
+                  @input=${(e) => {
+                    this.equipmentname = e.target.value;
+                  }}
+                  class="form-control"
+                  id="name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="description"
+                  >${this._i18n.gettext("Description")}</label
+                >
+                <input
+                  type="text"
+                  ?disabled=${!this.editable}
+                  .value=${this.description.match(/^null$/i)
                     ? null
-                    : e.target.value;
-              }}
-              class="form-control"
-              id="roomid"
-            >
-              ${this._rooms.map(
-                (room) =>
-                  html`<option
-                    ?selected=${room.value == this.roomid}
-                    value="${room.value}"
-                  >
-                    ${room.name}
-                  </option>`
-              )}
-              <option ?selected=${!this.roomid}>No room associated</option>
-            </select>
+                    : this.description ?? ""}
+                  @input=${(e) => {
+                    this.description = e.target.value;
+                  }}
+                  class="form-control"
+                  id="description"
+                />
+              </div>
+              <div class="form-group">
+                <label for="image">${this._i18n.gettext("Image")}</label>
+                <input
+                  type="text"
+                  ?disabled=${!this.editable}
+                  .value=${this.image.match(/^null$/i)
+                    ? null
+                    : this.image ?? ""}
+                  @input=${(e) => {
+                    this.image = e.target.value;
+                  }}
+                  class="form-control"
+                  id="image"
+                />
+              </div>
+              <div class="form-group">
+                <label for="maxbookabletime"
+                  >${this._i18n.gettext("Max bookable time")}</label
+                >
+                <input
+                  type="text"
+                  ?disabled=${!this.editable}
+                  .value=${this.maxbookabletime.match(/^null$/i)
+                    ? null
+                    : this.maxbookabletime ?? ""}
+                  @input=${(e) => {
+                    this.maxbookabletime = e.target.value;
+                  }}
+                  class="form-control"
+                  id="maxbookabletime"
+                />
+              </div>
+              <div class="form-group" ?hidden=${!this._rooms.length}>
+                <label for="roomid">${this._i18n.gettext("Roomid")}</label>
+                <select
+                  ?disabled=${!this.editable}
+                  @change=${(e) => {
+                    this.roomid =
+                      e.target.value === "No room associated"
+                        ? null
+                        : e.target.value;
+                  }}
+                  class="form-control"
+                  id="roomid"
+                >
+                  ${this._rooms.map(
+                    (room) =>
+                      html`<option
+                        ?selected=${room.value == this.roomid}
+                        value="${room.value}"
+                      >
+                        ${room.name}
+                      </option>`
+                  )}
+                  <option ?selected=${!this.roomid}>
+                    ${this._i18n.gettext("No room associated")}
+                  </option>
+                </select>
+              </div>
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-dark" @click=${this.handleEdit}>
+                  ${this._i18n.gettext("Edit")}
+                </button>
+                <button class="btn btn-dark" @click=${this.handleSave}>
+                  ${this._i18n.gettext("Save")}
+                </button>
+                <button class="btn btn-danger" @click=${this.handleDelete}>
+                  ${this._i18n.gettext("Delete")}
+                </button>
+              </div>
+            </div>
           </div>
-          <button class="btn btn-dark" @click=${this.handleEdit}>Edit</button>
-          <button class="btn btn-dark" @click=${this.handleSave}>Save</button>
-          <button class="btn btn-danger" @click=${this.handleDelete}>
-            Delete
-          </button>
-        </div>
-      </div>
-    `;
+        `;
   }
 }
 
