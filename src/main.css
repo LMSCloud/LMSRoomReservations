@@ -46,6 +46,16 @@
   --spacing-md: 24px;
   --spacing-lg: 32px;
   --spacing-xl: 48px;
+
+  /* boostrap breakpoints */
+
+  /*
+  xs: 0;
+  sm: 576px;
+  md: 768px;
+  lg: 992px;
+  xl: 1200px;
+  */
 }
 
 #lmsr {
@@ -60,4 +70,14 @@
 
 .lmsr-menu-item {
   padding: var(--spacing-sm);
+}
+
+@media (max-width: 576px) {
+  .lmsr-menu {
+    gap: var(--spacing-sm);
+  }
+
+  .lmsr-menu-item span {
+    display: none;
+  }
 }
