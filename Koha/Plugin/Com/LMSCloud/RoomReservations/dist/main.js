@@ -1967,29 +1967,30 @@
     }
 
     _init(data) {
-      return (
-        data?.map((datum) => {
-          const { day, start, end } = datum;
-          const weekday = Object.keys(this._dayConversionMap)[day];
-          return {
-            day: y$1`${weekday}`,
-            start: y$1`<input
-            class="form-control"
-            type="time"
-            name="${weekday}"
-            value="${start}"
-            disabled
-          />`,
-            end: y$1`<input
-            class="form-control"
-            type="time"
-            name="${weekday}"
-            value="${end}"
-            disabled
-          />`,
-          };
-        }) ?? []
-      );
+      // If no data provided, return empty array
+      if (!data) return [];
+
+      return data.map((datum) => {
+        const { day, start, end } = datum;
+        const weekday = Object.keys(this._dayConversionMap)[day];
+        return {
+          day: y$1`${weekday}`,
+          start: y$1`<input
+          class="form-control"
+          type="time"
+          name="${weekday}"
+          value="${start}"
+          disabled
+        />`,
+          end: y$1`<input
+          class="form-control"
+          type="time"
+          name="${weekday}"
+          value="${end}"
+          disabled
+        />`,
+        };
+      });
     }
 
     connectedCallback() {

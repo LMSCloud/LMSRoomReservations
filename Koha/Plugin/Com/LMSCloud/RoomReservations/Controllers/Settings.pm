@@ -10,12 +10,25 @@ use C4::Context;
 use Try::Tiny;
 use JSON;
 use SQL::Abstract;
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
+use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
+use POSIX qw(setlocale);
+use Encode;
 
 our $VERSION = '1.0.0';
 
 my $self = undef;
 if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+    my $locale = C4::Context->preference('language');
+
+    $ENV{LANGUAGE}       = 'de';
+    $ENV{OUTPUT_CHARSET} = 'UTF-8';
+    setlocale Locale::Messages::LC_MESSAGES(), q{};
+    textdomain 'com.lmscloud.roomreservations';
+    bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+    bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
+
 }
 
 sub list {
@@ -29,25 +42,25 @@ sub list {
         my $settings = [
             {   setting     => 'default_max_booking_time',
                 value       => $self->retrieve_data('default_max_booking_time'),
-                description => 'Default maximum bookable time for all rooms',
+                description => gettext('Default maximum bookable time for all rooms'),
                 type        => 'number',
-                placeholder => 'A duration in minutes, e.g. 60 for an hour',
+                placeholder => gettext('A duration in minutes, e.g. 60 for an hour'),
             },
             {   setting     => 'absolute_reservation_limit',
                 value       => $self->retrieve_data('absolute_reservation_limit'),
-                description => 'Absolute reservation limit per patron',
+                description => gettext('Absolute reservation limit per patron'),
                 type        => 'number',
-                placeholder => 'A number, e.g. 5 for five reservations',
+                placeholder => gettext('A number, e.g. 5 for five reservations'),
             },
             {   setting     => 'daily_reservation_limit',
                 value       => $self->retrieve_data('daily_reservation_limit'),
-                description => 'Daily reservation limit per patron',
+                description => gettext('Daily reservation limit per patron'),
                 type        => 'number',
-                placeholder => 'A number, e.g. 3 for three reservations',
+                placeholder => gettext('A number, e.g. 3 for three reservations'),
             },
             {   setting     => 'restricted_patron_categories',
                 value       => $restricted_patron_categories,
-                description => 'Restricted patron categories which are not allowed to book rooms',
+                description => gettext('Restricted patron categories which are not allowed to book rooms'),
                 type        => 'array',
             },
             {   setting => 'patron_categories',
@@ -57,26 +70,26 @@ sub list {
                     return [ grep { not exists $cmp_table{ $_->{'categorycode'} } } @{ $params->{'cmp_on'} } ];
                 }
                     ->( { cmp_with => $restricted_patron_categories, cmp_on => $patron_categories } ),
-                description => 'Existing patron categories',
+                description => gettext('Existing patron categories'),
                 type        => 'array',
             },
             {   setting     => 'restrict_message',
                 value       => $self->retrieve_data('restrict_message'),
-                description => 'Message that is shown to restricted patron categories trying to book rooms',
+                description => gettext('Message that is shown to restricted patron categories trying to book rooms'),
                 type        => 'string',
-                placeholder => q{A message, e.g. 'You are not allowed to book rooms'},
+                placeholder => gettext(q{A message, e.g. 'You are not allowed to book rooms'}),
             },
             {   setting     => 'reply_to_address',
                 value       => $self->retrieve_data('reply_to_address'),
-                description => 'Email address to which confirmation emails for patrons are mirrored',
+                description => gettext('Email address to which confirmation emails for patrons are mirrored'),
                 type        => 'string',
-                placeholder => 'An email address, e.g. contact@institution.com',
+                placeholder => gettext('An email address, e.g. contact@institution.com'),
             },
             {   setting     => 'remove_past_reservations_after',
                 value       => $self->retrieve_data('reply_to_address'),
-                description => 'Days after which past reservations are removed from the system',
+                description => gettext('Days after which past reservations are removed from the system'),
                 type        => 'number',
-                placeholder => '14',
+                placeholder => gettext('A number of days, e.g. 14'),
             }
         ];
 

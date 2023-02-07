@@ -17,6 +17,8 @@ const pmFilePath = "Koha/Plugin/Com/LMSCloud/";
 const pmFilePathDist = `dist/${pmFilePath}`;
 const pmFilePathFullDist = pmFilePathDist + pmFile;
 
+const localeNamespace = "com.lmscloud.roomreservations";
+
 console.log(releaseFilename);
 console.log(pmFilePathFullDist);
 
@@ -27,6 +29,19 @@ gulp.task("translations", (done) => {
       if (err) {
         throw Error(err);
       }
+      /** We move the mo files to the bundle's locales dir for perl */
+      files
+        .filter((file) => file.endsWith(".mo"))
+        .forEach((file) => {
+          const [locale] = file.split(".");
+          fs.copyFileSync(
+            `locales/${file}`,
+            `${pmFilePath}/${pmFile.replace(".pm", "")}/locales/${locale}/LC_MESSAGES/${localeNamespace}.mo`
+          );
+        });
+
+      /** Then we need to parse the po files and convert them to json
+       *  before we can use them with gettext.js*/
       files
         .filter((file) => file.endsWith(".po"))
         .forEach((file) => {

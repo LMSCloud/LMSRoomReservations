@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-07 14:36+0100\n"
+"POT-Creation-Date: 2023-02-07 16:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,81 +17,81 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/extensions/LMSBookingsModal.js:17
+#: src/extensions/LMSBookingsModal.js:16
 msgid "Add Booking"
 msgstr ""
 
-#: src/extensions/LMSBookingsModal.js:22
+#: src/extensions/LMSBookingsModal.js:21
 msgid "Borrowernumber"
 msgstr ""
 
-#: src/extensions/LMSBookingsModal.js:28 src/components/LMSEquipmentItem.js:195
+#: src/extensions/LMSBookingsModal.js:27 src/components/LMSEquipmentItem.js:195
 msgid "Roomid"
 msgstr ""
 
-#: src/extensions/LMSBookingsModal.js:45
+#: src/extensions/LMSBookingsModal.js:44
 msgid "Starts at"
 msgstr ""
 
-#: src/extensions/LMSBookingsModal.js:51
+#: src/extensions/LMSBookingsModal.js:50
 msgid "Ends at"
 msgstr ""
 
-#: src/extensions/LMSBookingsModal.js:57
+#: src/extensions/LMSBookingsModal.js:56
 msgid "Is blackout"
 msgstr ""
 
-#: src/extensions/LMSBookingsModal.js:62
+#: src/extensions/LMSBookingsModal.js:61
 msgid "Send confirmation to patron"
 msgstr ""
 
-#: src/extensions/LMSEquipmentModal.js:12
+#: src/extensions/LMSEquipmentModal.js:16
+msgid "Add Equipment"
+msgstr ""
+
+#: src/extensions/LMSEquipmentModal.js:22
 #: src/components/LMSEquipmentItem.js:133
 msgid "Equipmentname"
 msgstr ""
 
-#: src/extensions/LMSEquipmentModal.js:13 src/extensions/LMSRoomModal.js:32
+#: src/extensions/LMSEquipmentModal.js:28 src/extensions/LMSRoomModal.js:39
 #: src/components/LMSEquipmentItem.js:147 src/components/LMSRoom.js:152
 msgid "Description"
 msgstr ""
 
-#: src/extensions/LMSEquipmentModal.js:14 src/extensions/LMSRoomModal.js:26
+#: src/extensions/LMSEquipmentModal.js:34 src/extensions/LMSRoomModal.js:33
 #: src/components/LMSEquipmentItem.js:163 src/components/LMSRoom.js:179
 msgid "Image"
 msgstr ""
 
-#: src/extensions/LMSEquipmentModal.js:15 src/extensions/LMSRoomModal.js:38
+#: src/extensions/LMSEquipmentModal.js:40 src/extensions/LMSRoomModal.js:45
 #: src/components/LMSBookie.js:422 src/components/LMSEquipmentItem.js:179
 msgid "Max bookable time"
 msgstr ""
 
-#: src/extensions/LMSEquipmentModal.js:19
+#: src/extensions/LMSEquipmentModal.js:46
 msgid "You can assign this item to a room once its created."
 msgstr ""
 
-#: src/extensions/LMSEquipmentModal.js:26
-msgid "Add Equipment"
+#: src/extensions/LMSRoomModal.js:16
+msgid "Add a Room"
 msgstr ""
 
-#: src/extensions/LMSRoomModal.js:14
+#: src/extensions/LMSRoomModal.js:21
 msgid "Max capacity"
 msgstr ""
 
-#: src/extensions/LMSRoomModal.js:20 src/components/LMSRoom.js:166
+#: src/extensions/LMSRoomModal.js:27 src/components/LMSRoom.js:166
 msgid "Color"
 msgstr ""
 
-#: src/extensions/LMSRoomModal.js:44 src/components/LMSBookie.js:417
+#: src/extensions/LMSRoomModal.js:51 src/components/LMSBookie.js:417
 #: src/components/LMSRoom.js:192
 msgid "Branch"
 msgstr ""
 
-#: src/extensions/LMSRoomModal.js:55
+#: src/extensions/LMSRoomModal.js:65
 msgid "Roomnumber"
-msgstr ""
-
-#: src/extensions/LMSRoomModal.js:61
-msgid "Add a Room"
 msgstr ""
 
 #: src/views/RoomReservationsView.js:75
@@ -234,11 +234,11 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: src/components/LMSModal.js:241
+#: src/components/LMSModal.js:240
 msgid "Close"
 msgstr ""
 
-#: src/components/LMSModal.js:244
+#: src/components/LMSModal.js:243
 msgid "Create"
 msgstr ""
 
@@ -248,4 +248,57 @@ msgstr ""
 
 #: src/components/LMSRoom.js:206
 msgid "Max Bookable Time"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:38
+msgid "Default maximum bookable time for all rooms"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:40
+msgid "A duration in minutes, e.g. 60 for an hour"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:44
+msgid "Absolute reservation limit per patron"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:46
+msgid "A number, e.g. 5 for five reservations"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:50
+msgid "Daily reservation limit per patron"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:52
+msgid "A number, e.g. 3 for three reservations"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:56
+msgid "Restricted patron categories which are not allowed to book rooms"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:66
+msgid "Existing patron categories"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:71
+msgid ""
+"Message that is shown to restricted patron categories trying to book rooms"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:77
+msgid "Email address to which confirmation emails for patrons are mirrored"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:79
+msgid "An email address, e.g. contact@institution.com"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:83
+msgid "Days after which past reservations are removed from the system"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:85
+msgid "A number of days, e.g. 14"
 msgstr ""
