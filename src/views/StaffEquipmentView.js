@@ -14,7 +14,7 @@ export default class StaffEquipmentView extends LMSContainer {
   }
 
   async _getElements() {
-    const response = await fetch(this._endpoint, { headers: { Accept: "" } });
+    const response = await fetch(this._endpoint);
     const result = await response.json();
 
     if (response.status === 200) {

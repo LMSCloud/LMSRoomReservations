@@ -51,9 +51,6 @@ export default class LMSOpenHoursTable extends LMSTable {
               end: "00:00",
             }))
           ),
-          headers: {
-            Accept: "",
-          },
         }
       );
 
@@ -139,9 +136,6 @@ export default class LMSOpenHoursTable extends LMSTable {
           start: start.value,
           end: end.value,
         }),
-        headers: {
-          Accept: "",
-        },
       }
     );
 
@@ -158,12 +152,7 @@ export default class LMSOpenHoursTable extends LMSTable {
 
   async _getOpenHours() {
     const endpoint = "/api/v1/contrib/roomreservations/open_hours";
-    const options = {
-      headers: {
-        Accept: "",
-      },
-    };
-    const response = await fetch(endpoint, options);
+    const response = await fetch(endpoint);
     const result = await response.json();
 
     if (result.length) {

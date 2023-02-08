@@ -14,7 +14,7 @@ export default class StaffOpenHoursView extends LMSContainer {
   }
 
   async _getElements() {
-    const openHours = await fetch(this._endpoint, { headers: { Accept: "" } });
+    const openHours = await fetch(this._endpoint);
 
     if (openHours.status === 200) {
       const _openHours = await openHours.json();

@@ -54,9 +54,6 @@ export default class LMSRoom extends LitElement {
       `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
       {
         method: "PUT",
-        headers: {
-          Accept: "",
-        },
         body: JSON.stringify({
           maxcapacity: this.maxcapacity,
           color: this.color,
@@ -87,12 +84,7 @@ export default class LMSRoom extends LitElement {
   async handleDelete() {
     const response = await fetch(
       `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
-      {
-        method: "DELETE",
-        headers: {
-          Accept: "",
-        },
-      }
+      { method: "DELETE" }
     );
 
     if (response.status === 204) {

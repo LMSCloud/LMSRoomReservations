@@ -10,11 +10,7 @@ export default class LMSSettingsTable extends LMSTable {
   }
 
   async _getData() {
-    const response = await fetch("/api/v1/contrib/roomreservations/settings", {
-      headers: {
-        Accept: "",
-      },
-    });
+    const response = await fetch("/api/v1/contrib/roomreservations/settings");
 
     const result = await response.json();
 
@@ -70,12 +66,7 @@ export default class LMSSettingsTable extends LMSTable {
           responses.push(
             fetch(
               `/api/v1/contrib/roomreservations/settings/${datum.setting}`,
-              {
-                method: "DELETE",
-                headers: {
-                  Accept: "",
-                },
-              }
+              { method: "DELETE" }
             )
           );
         });
@@ -96,13 +87,7 @@ export default class LMSSettingsTable extends LMSTable {
 
         const response = await fetch(
           "/api/v1/contrib/roomreservations/settings",
-          {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-              Accept: "",
-            },
-          }
+          { method: "POST", body: JSON.stringify(data) }
         );
         return response;
       },
@@ -116,9 +101,6 @@ export default class LMSSettingsTable extends LMSTable {
       : await fetch(`/api/v1/contrib/roomreservations/settings/${input.name}`, {
           method: "PUT",
           body: JSON.stringify({ value: input.value }),
-          headers: {
-            Accept: "",
-          },
         });
 
     if ([201, 204].includes(response.status)) {

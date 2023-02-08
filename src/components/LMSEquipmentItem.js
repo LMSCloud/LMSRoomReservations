@@ -42,11 +42,7 @@ export default class LMSEquipmentItem extends LitElement {
     await translationHandler.loadTranslations();
     this._i18n = translationHandler.i18n;
 
-    const response = await fetch("/api/v1/contrib/roomreservations/rooms", {
-      headers: {
-        Accept: "",
-      },
-    });
+    const response = await fetch("/api/v1/contrib/roomreservations/rooms");
     const result = await response.json();
     this._rooms = result.map((room) => ({
       value: room.roomid,
@@ -63,9 +59,6 @@ export default class LMSEquipmentItem extends LitElement {
       `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
       {
         method: "PUT",
-        headers: {
-          Accept: "",
-        },
         /** We need to filter properties from the payload the are null
          *  because the backend set NULL by default on non-supplied args */
         body: JSON.stringify(
@@ -99,12 +92,7 @@ export default class LMSEquipmentItem extends LitElement {
   async handleDelete() {
     const response = await fetch(
       `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
-      {
-        method: "DELETE",
-        headers: {
-          Accept: "",
-        },
-      }
+      { method: "DELETE" }
     );
 
     if (response.status === 204) {

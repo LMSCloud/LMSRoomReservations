@@ -303,6 +303,11 @@
     }
 
     async loadTranslations() {
+      if (this._locale.startsWith('en')) {
+        this._i18n.setLocale("en");
+        return;
+      }
+
       /** Loading translations via API */
       const response = await fetch(
         `/api/v1/contrib/roomreservations/static/locales/${this._locale}.json`
@@ -400,15 +405,13 @@
       await translationHandler.loadTranslations();
       this._i18n = translationHandler.i18n;
 
-      const options = { headers: { accept: "" } };
       const [openHours, rooms, equipment, defaultMaxBookingTime] =
         await Promise.all([
-          fetch("/api/v1/contrib/roomreservations/public/open_hours", options),
-          fetch("/api/v1/contrib/roomreservations/public/rooms", options),
-          fetch("/api/v1/contrib/roomreservations/public/equipment", options),
+          fetch("/api/v1/contrib/roomreservations/public/open_hours"),
+          fetch("/api/v1/contrib/roomreservations/public/rooms"),
+          fetch("/api/v1/contrib/roomreservations/public/equipment"),
           fetch(
-            "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time",
-            options
+            "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time"
           ),
         ]);
 
@@ -479,9 +482,6 @@
         "/api/v1/contrib/roomreservations/public/bookings",
         {
           method: "POST",
-          headers: {
-            accept: "",
-          },
           body: JSON.stringify({
             borrowernumber: this.borrowernumber,
             roomid,
@@ -913,10 +913,6 @@
       const { endpoint, method } = this.createOpts;
       const response = await fetch(`${endpoint}`, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "",
-        },
         body: JSON.stringify(
           Object.assign(
             ...this.fields.map(({ name, value }) => ({ [name]: value }))
@@ -1415,9 +1411,6 @@
         {
           method: "PUT",
           body: JSON.stringify({ borrowernumber, roomid, start, end }),
-          headers: {
-            Accept: "",
-          },
         }
       );
 
@@ -1451,12 +1444,7 @@
 
       const response = await fetch(
         `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
-        {
-          method: "DELETE",
-          headers: {
-            Accept: "",
-          },
-        }
+        { method: "DELETE" }
       );
 
       if (response.status === 204) {
@@ -1467,9 +1455,6 @@
     async _getData() {
       const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
         method: "GET",
-        headers: {
-          Accept: "",
-        },
       });
 
       const result = await response.json();
@@ -1577,8 +1562,7 @@
               desc: i18n.gettext("Roomid"),
               logic: async () => {
                 const response = await fetch(
-                  "/api/v1/contrib/roomreservations/rooms",
-                  { headers: { accept: "" } }
+                  "/api/v1/contrib/roomreservations/rooms"
                 );
                 const result = await response.json();
                 return result.map((room) => ({
@@ -1661,11 +1645,7 @@
       await translationHandler.loadTranslations();
       this._i18n = translationHandler.i18n;
 
-      const response = await fetch("/api/v1/contrib/roomreservations/rooms", {
-        headers: {
-          Accept: "",
-        },
-      });
+      const response = await fetch("/api/v1/contrib/roomreservations/rooms");
       const result = await response.json();
       this._rooms = result.map((room) => ({
         value: room.roomid,
@@ -1682,9 +1662,6 @@
         `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
         {
           method: "PUT",
-          headers: {
-            Accept: "",
-          },
           /** We need to filter properties from the payload the are null
            *  because the backend set NULL by default on non-supplied args */
           body: JSON.stringify(
@@ -1718,12 +1695,7 @@
     async handleDelete() {
       const response = await fetch(
         `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
-        {
-          method: "DELETE",
-          headers: {
-            Accept: "",
-          },
-        }
+        { method: "DELETE" }
       );
 
       if (response.status === 204) {
@@ -1962,9 +1934,6 @@
                 end: "00:00",
               }))
             ),
-            headers: {
-              Accept: "",
-            },
           }
         );
 
@@ -2050,9 +2019,6 @@
             start: start.value,
             end: end.value,
           }),
-          headers: {
-            Accept: "",
-          },
         }
       );
 
@@ -2069,12 +2035,7 @@
 
     async _getOpenHours() {
       const endpoint = "/api/v1/contrib/roomreservations/open_hours";
-      const options = {
-        headers: {
-          Accept: "",
-        },
-      };
-      const response = await fetch(endpoint, options);
+      const response = await fetch(endpoint);
       const result = await response.json();
 
       if (result.length) {
@@ -2170,9 +2131,6 @@
         `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
         {
           method: "PUT",
-          headers: {
-            Accept: "",
-          },
           body: JSON.stringify({
             maxcapacity: this.maxcapacity,
             color: this.color,
@@ -2203,12 +2161,7 @@
     async handleDelete() {
       const response = await fetch(
         `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
-        {
-          method: "DELETE",
-          headers: {
-            Accept: "",
-          },
-        }
+        { method: "DELETE" }
       );
 
       if (response.status === 204) {
@@ -2435,11 +2388,7 @@
     }
 
     async _getData() {
-      const response = await fetch("/api/v1/contrib/roomreservations/settings", {
-        headers: {
-          Accept: "",
-        },
-      });
+      const response = await fetch("/api/v1/contrib/roomreservations/settings");
 
       const result = await response.json();
 
@@ -2495,12 +2444,7 @@
             responses.push(
               fetch(
                 `/api/v1/contrib/roomreservations/settings/${datum.setting}`,
-                {
-                  method: "DELETE",
-                  headers: {
-                    Accept: "",
-                  },
-                }
+                { method: "DELETE" }
               )
             );
           });
@@ -2521,13 +2465,7 @@
 
           const response = await fetch(
             "/api/v1/contrib/roomreservations/settings",
-            {
-              method: "POST",
-              body: JSON.stringify(data),
-              headers: {
-                Accept: "",
-              },
-            }
+            { method: "POST", body: JSON.stringify(data) }
           );
           return response;
         },
@@ -2541,9 +2479,6 @@
         : await fetch(`/api/v1/contrib/roomreservations/settings/${input.name}`, {
             method: "PUT",
             body: JSON.stringify({ value: input.value }),
-            headers: {
-              Accept: "",
-            },
           });
 
       if ([201, 204].includes(response.status)) {
@@ -4217,7 +4152,7 @@
     }
 
     async _getElements() {
-      const response = await fetch(this._endpoint, { headers: { Accept: "" } });
+      const response = await fetch(this._endpoint);
       const result = await response.json();
 
       if (response.status === 200) {
@@ -4293,7 +4228,7 @@
     }
 
     async _getElements() {
-      const response = await fetch(this._endpoint, { headers: { Accept: "" } });
+      const response = await fetch(this._endpoint);
       const result = await response.json();
 
       if (response.status === 200) {
@@ -4375,7 +4310,7 @@
     }
 
     async _getElements() {
-      const openHours = await fetch(this._endpoint, { headers: { Accept: "" } });
+      const openHours = await fetch(this._endpoint);
 
       if (openHours.status === 200) {
         const _openHours = await openHours.json();
@@ -4455,7 +4390,7 @@
     }
 
     async _getElements() {
-      const response = await fetch(this._endpoint, { headers: { Accept: "" } });
+      const response = await fetch(this._endpoint);
       const result = await response.json();
 
       if (response.status === 200) {
@@ -4601,8 +4536,8 @@
       };
 
       const [bookings, rooms] = await Promise.all([
-        fetch(this._endpoints.bookings, { headers: { accept: "" } }),
-        fetch(this._endpoints.rooms, { headers: { accept: "" } }),
+        fetch(this._endpoints.bookings),
+        fetch(this._endpoints.rooms),
       ]);
 
       this._bookings = await bookings.json();
@@ -4612,9 +4547,7 @@
     }
 
     async _getBookings() {
-      const response = await fetch(this._endpoints.bookings, {
-        headers: { accept: "" },
-      });
+      const response = await fetch(this._endpoints.bookings);
       this._bookings = await response.json();
     }
 

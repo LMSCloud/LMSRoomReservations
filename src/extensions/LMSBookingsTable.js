@@ -44,9 +44,6 @@ export default class LMSBookingsTable extends LMSTable {
       {
         method: "PUT",
         body: JSON.stringify({ borrowernumber, roomid, start, end }),
-        headers: {
-          Accept: "",
-        },
       }
     );
 
@@ -80,12 +77,7 @@ export default class LMSBookingsTable extends LMSTable {
 
     const response = await fetch(
       `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
-      {
-        method: "DELETE",
-        headers: {
-          Accept: "",
-        },
-      }
+      { method: "DELETE" }
     );
 
     if (response.status === 204) {
@@ -96,9 +88,6 @@ export default class LMSBookingsTable extends LMSTable {
   async _getData() {
     const response = await fetch("/api/v1/contrib/roomreservations/bookings", {
       method: "GET",
-      headers: {
-        Accept: "",
-      },
     });
 
     const result = await response.json();

@@ -65,15 +65,13 @@ export default class LMSBookie extends LitElement {
     await translationHandler.loadTranslations();
     this._i18n = translationHandler.i18n;
 
-    const options = { headers: { accept: "" } };
     const [openHours, rooms, equipment, defaultMaxBookingTime] =
       await Promise.all([
-        fetch("/api/v1/contrib/roomreservations/public/open_hours", options),
-        fetch("/api/v1/contrib/roomreservations/public/rooms", options),
-        fetch("/api/v1/contrib/roomreservations/public/equipment", options),
+        fetch("/api/v1/contrib/roomreservations/public/open_hours"),
+        fetch("/api/v1/contrib/roomreservations/public/rooms"),
+        fetch("/api/v1/contrib/roomreservations/public/equipment"),
         fetch(
-          "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time",
-          options
+          "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time"
         ),
       ]);
 
@@ -144,9 +142,6 @@ export default class LMSBookie extends LitElement {
       "/api/v1/contrib/roomreservations/public/bookings",
       {
         method: "POST",
-        headers: {
-          accept: "",
-        },
         body: JSON.stringify({
           borrowernumber: this.borrowernumber,
           roomid,

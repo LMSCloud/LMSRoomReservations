@@ -80,8 +80,8 @@ export default class RoomReservationsView extends LitElement {
     };
 
     const [bookings, rooms] = await Promise.all([
-      fetch(this._endpoints.bookings, { headers: { accept: "" } }),
-      fetch(this._endpoints.rooms, { headers: { accept: "" } }),
+      fetch(this._endpoints.bookings),
+      fetch(this._endpoints.rooms),
     ]);
 
     this._bookings = await bookings.json();
@@ -91,9 +91,7 @@ export default class RoomReservationsView extends LitElement {
   }
 
   async _getBookings() {
-    const response = await fetch(this._endpoints.bookings, {
-      headers: { accept: "" },
-    });
+    const response = await fetch(this._endpoints.bookings);
     this._bookings = await response.json();
   }
 

@@ -130,10 +130,6 @@ export default class LMSModal extends LitElement {
     const { endpoint, method } = this.createOpts;
     const response = await fetch(`${endpoint}`, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "",
-      },
       body: JSON.stringify(
         Object.assign(
           ...this.fields.map(({ name, value }) => ({ [name]: value }))

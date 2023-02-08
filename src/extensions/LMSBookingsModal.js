@@ -27,8 +27,7 @@ export default class LMSBookingsModal extends LMSModal {
             desc: i18n.gettext("Roomid"),
             logic: async () => {
               const response = await fetch(
-                "/api/v1/contrib/roomreservations/rooms",
-                { headers: { accept: "" } }
+                "/api/v1/contrib/roomreservations/rooms"
               );
               const result = await response.json();
               return result.map((room) => ({
