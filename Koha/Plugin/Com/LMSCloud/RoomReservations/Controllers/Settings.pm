@@ -21,9 +21,9 @@ my $self = undef;
 if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
     my $locale = C4::Context->preference('language');
-
-    $ENV{LANGUAGE}       = 'de';
+    $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
     $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
     setlocale Locale::Messages::LC_MESSAGES(), q{};
     textdomain 'com.lmscloud.roomreservations';
     bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;

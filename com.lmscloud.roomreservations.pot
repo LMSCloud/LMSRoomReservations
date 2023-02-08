@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-08 12:03+0100\n"
+"POT-Creation-Date: 2023-02-08 12:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -257,6 +257,42 @@ msgstr ""
 msgid "actions"
 msgstr ""
 
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:169
+msgid "The patron is not allowed to book rooms."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:174
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:101
+msgid "The booking exceeds the maximum allowed time for the room."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:179
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:106
+msgid "The institution is closed during the selected time frame."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:184
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:111
+msgid "There is a conflicting booking."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:191
+msgid "The borrower has reached the"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:191
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:117
+msgid "limit of reservations."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:96
+msgid "You are not allowed to book rooms"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:117
+msgid "You have reached the"
+msgstr ""
+
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:45
 msgid "Default maximum bookable time for all rooms"
 msgstr ""
@@ -308,6 +344,14 @@ msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:92
 msgid "A number of days, e.g. 14"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Checks.pm:146
+msgid "absolute"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Checks.pm:167
+msgid "daily"
 msgstr ""
 
 #: dynamically_added_strings.md:5

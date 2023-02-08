@@ -11,6 +11,10 @@ use Try::Tiny;
 use JSON;
 use SQL::Abstract;
 use Time::Piece;
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
+use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
+use POSIX qw(setlocale);
+use Encode;
 
 use C4::Letters;
 use Koha::Patrons;
@@ -28,6 +32,14 @@ our $VERSION = '1.0.0';
 my $self = undef;
 if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+    my $locale = C4::Context->preference('language');
+    $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
+    $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
+    setlocale Locale::Messages::LC_MESSAGES(), q{};
+    textdomain 'com.lmscloud.roomreservations';
+    bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+    bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 }
 
 my $BOOKINGS_TABLE           = $self ? $self->get_qualified_table_name('bookings')           : undef;
@@ -81,28 +93,28 @@ sub _check_and_save_booking {
 
     if ( !is_allowed_to_book( $body->{'borrowernumber'} ) ) {
         $dbh->rollback;    # rollback transaction
-        return $c->render( status => 400, openapi => { error => $self->retrieve_data('restrict_message') || 'You are not allowed to book rooms' } );
+        return $c->render( status => 400, openapi => { error => $self->retrieve_data('restrict_message') || __('You are not allowed to book rooms') } );
     }
 
     if ( !is_bookable_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
         $dbh->rollback;    # rollback transaction
-        return $c->render( status => 400, openapi => { error => 'The booking exceeds the maximum allowed time for the room.' } );
+        return $c->render( status => 400, openapi => { error => __('The booking exceeds the maximum allowed time for the room.') } );
     }
 
     if ( !is_open_during_booking_time( $body->{'start'}, $body->{'end'} ) ) {
         $dbh->rollback;    # rollback transaction
-        return $c->render( status => 400, openapi => { error => 'The institution is closed during the selected time frame.' } );
+        return $c->render( status => 400, openapi => { error => __('The institution is closed during the selected time frame.') } );
     }
 
     if ( has_conflicting_booking( $body->{'roomid'}, $body->{'start'}, $body->{'end'}, $booking_id ) ) {
         $dbh->rollback;    # rollback transaction
-        return $c->render( status => 400, openapi => { error => 'There is a conflicting booking.' } );
+        return $c->render( status => 400, openapi => { error => __('There is a conflicting booking.') } );
     }
 
     my ( $has_reached_reservation_limit, $message ) = has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
     if ($has_reached_reservation_limit) {
         $dbh->rollback;    # rollback transaction
-        return $c->render( status => 400, openapi => { error => "You have reached the $message limit of reservations." } );
+        return $c->render( status => 400, openapi => { error => __('You have reached the') . $message . __('limit of reservations.') } );
     }
 
     try {

@@ -7,6 +7,10 @@ use 5.010;
 use SQL::Abstract;
 use Try::Tiny;
 use Time::Piece;
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
+use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
+use POSIX qw(setlocale);
+use Encode;
 
 use C4::Context;
 use Koha::Patrons;
@@ -29,6 +33,14 @@ BEGIN {
 my $self = undef;
 if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+    my $locale = C4::Context->preference('language');
+    $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
+    $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
+    setlocale Locale::Messages::LC_MESSAGES(), q{};
+    textdomain 'com.lmscloud.roomreservations';
+    bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+    bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 }
 
 my $BOOKINGS_TABLE   = $self ? $self->get_qualified_table_name('bookings')   : undef;
@@ -131,7 +143,7 @@ sub has_reached_reservation_limit {
         my $bookings_quantity = $sth->fetchrow_array;
 
         if ( scalar $bookings_quantity >= $absolute_reservation_limit ) {
-            return ( 1, 'absolute' );
+            return ( 1, __('absolute') );
         }
     }
 
@@ -152,7 +164,7 @@ sub has_reached_reservation_limit {
         my $bookings_quantity = $sth->fetchrow_array;
 
         if ( scalar $bookings_quantity >= $daily_reservation_limit ) {
-            return ( 1, 'daily' );
+            return ( 1, __('daily') );
         }
     }
 
