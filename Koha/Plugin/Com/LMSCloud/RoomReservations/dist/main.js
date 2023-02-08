@@ -1373,7 +1373,8 @@
       data: { type: Array },
       _isEditable: { type: Boolean, attribute: false },
       _bookings: { type: Array, attribute: false },
-      _rooms: { type: Array, attribute: false },
+      _borrowers: { type: Array, attribute: false },
+      _rooms: { type: Object, attribute: false },
     };
 
     _handleEdit(e) {
@@ -1474,72 +1475,100 @@
         "updated_at",
       ];
 
-      this.data = this._bookings.length
-        ? this._bookings
-            .map((datum) => {
-              const sortedDatum = Object.keys(datum).sort(
-                (a, b) => order.indexOf(a) - order.indexOf(b)
-              );
-              return sortedDatum.reduce(
-                (acc, key) => ({ ...acc, [key]: datum[key] }),
-                {}
-              );
-            })
-            .map((datum) => {
-              return Object.keys(datum).reduce((acc, key) => {
-                return {
-                  ...acc,
-                  [key]: this._inputFromValue({
-                    key,
-                    value:
-                      typeof datum[key] !== "string"
-                        ? datum[key].toString()
-                        : datum[key],
-                  }),
-                };
-              }, {});
-            })
-        : this._bookings;
+      if (this._bookings.length) {
+        this._borrowers = this._bookings.reduce((acc, booking) => {
+          return !acc.has(booking.borrowernumber)
+            ? acc.add(booking.borrowernumber)
+            : acc;
+        }, new Set());
+
+        if (this._borrowers.size) {
+          const borrowersReponse = await fetch(
+            `/api/v1/patrons?${[...this._borrowers].reduce(
+            (acc, borrowernumber, idx) =>
+              `${acc}${
+                idx > 0 ? "&" : ""
+              }q={"borrowernumber":"${borrowernumber}"}`,
+            ""
+          )}`
+          );
+          this._borrowers = await borrowersReponse.json();
+        }
+
+        this.data = this._bookings
+          .map((datum) => {
+            const sortedDatum = Object.keys(datum).sort(
+              (a, b) => order.indexOf(a) - order.indexOf(b)
+            );
+            return sortedDatum.reduce(
+              (acc, key) => ({ ...acc, [key]: datum[key] }),
+              {}
+            );
+          })
+          .map((datum) => {
+            return Object.keys(datum).reduce((acc, key) => {
+              return {
+                ...acc,
+                [key]: this._inputFromValue({
+                  key,
+                  value:
+                    typeof datum[key] !== "string"
+                      ? datum[key].toString()
+                      : datum[key],
+                }),
+              };
+            }, {});
+          });
+      }
     }
 
     _inputFromValue({ key, value }) {
       const inputs = {
-        start: y$1`<input
+        start: () => y$1`<input
         class="form-control"
         type="datetime-local"
         name="start"
         value="${value}"
         disabled
       />`,
-        end: y$1`<input
+        end: () => y$1`<input
         class="form-control"
         type="datetime-local"
         name="end"
         value="${value}"
         disabled
       />`,
-        roomid: () => {
-          return y$1`<select
-          class="form-control"
-          type="number"
-          name="roomid"
-          disabled
-        >
-          ${this._rooms.map(
-            (room) =>
-              y$1`<option
-                value=${room.roomid}
-                ?selected=${room.roomid === parseInt(value, 10)}
-              >
-                ${room.roomnumber}
-              </option>`
-          )}
-        </select>`;
+        roomid: () => y$1`<select
+        class="form-control"
+        type="number"
+        name="roomid"
+        disabled
+      >
+        ${this._rooms.map(
+          (room) =>
+            y$1`<option
+              value=${room.roomid}
+              ?selected=${room.roomid === parseInt(value, 10)}
+            >
+              ${room.roomnumber}
+            </option>`
+        )}
+      </select>`,
+        borrowernumber: () => {
+          const borrower = this._borrowers.find(
+            ({ patron_id }) => patron_id === parseInt(value, 10)
+          );
+          return y$1`
+          <span class="badge badge-pill badge-secondary">${value}</span>&nbsp;
+          <a href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${value}"
+            ><span
+              >${borrower.firstname}&nbsp;${borrower.surname}&nbsp;(${borrower.cardnumber})</span
+            ></a
+          >
+        `;
         },
       };
-      return inputs[key] instanceof Function
-        ? inputs[key]()
-        : inputs[key] || value;
+      return (inputs[key] instanceof Function && inputs[key]()) || value;
     }
 
     constructor() {
@@ -1547,6 +1576,9 @@
       this._isEditable = true;
       this._isDeletable = true;
       this.data = [];
+      this._bookings = [];
+      this._rooms = [];
+      this._borrowers = new Set();
       this._getData();
     }
   }
