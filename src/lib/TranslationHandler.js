@@ -7,6 +7,11 @@ export default class TranslationHandler {
   }
 
   async loadTranslations() {
+    if (this._locale.startsWith('en')) {
+      this._i18n.setLocale("en");
+      return;
+    }
+
     /** Loading translations via API */
     const response = await fetch(
       `/api/v1/contrib/roomreservations/static/locales/${this._locale}.json`
