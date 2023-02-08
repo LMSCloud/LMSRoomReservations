@@ -1,5 +1,6 @@
 import { html, css, LitElement, nothing } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
+import TranslationHandler from "../lib/TranslationHandler";
 
 export default class LMSTable extends LitElement {
   static get properties() {
@@ -8,6 +9,7 @@ export default class LMSTable extends LitElement {
       _isEditable: { type: Boolean, attribute: false },
       _isDeletable: { type: Boolean, attribute: false },
       _toast: { state: true },
+      _i18n: { state: true },
     };
   }
 
@@ -31,6 +33,14 @@ export default class LMSTable extends LitElement {
       heading: "",
       message: "",
     };
+    this._i18n = undefined;
+    this._init();
+  }
+
+  async _init() {
+    const translationHandler = new TranslationHandler();
+    await translationHandler.loadTranslations();
+    this._i18n = translationHandler.i18n;
   }
 
   _handleEdit() {
@@ -73,66 +83,71 @@ export default class LMSTable extends LitElement {
     const { data } = this;
 
     const hasData = data?.length > 0 ?? false;
-    const [headers] = hasData ? data : [] ?? [];
+    const [headers] = hasData ? data : [];
 
     if (hasData) {
-      return html`
-        <div class="container-fluid mx-0 px-0">
-          <table class="table table-striped table-bordered table-hover">
-            <thead>
-              <tr>
-                ${Object.keys(headers).map(
-                  (key) => html`<th scope="col">${key}</th>`
-                )}
-                ${this._isEditable
-                  ? html`<th scope="col">actions</th>`
-                  : html``}
-              </tr>
-            </thead>
-            <tbody>
-              ${data.map(
-                (item) => html`
+      return !this._i18n?.gettext
+        ? nothing
+        : html`
+            <div class="container-fluid mx-0 px-0">
+              <table class="table table-striped table-bordered table-hover">
+                <thead>
                   <tr>
-                    ${Object.keys(item).map(
-                      (key) => html`<td>${item[key]}</td>`
+                    ${Object.keys(headers).map(
+                      (key) =>
+                        html`<th scope="col">${this._i18n.gettext(key)}</th>`
                     )}
                     ${this._isEditable
-                      ? html`
-                          <td>
-                            <div class="d-flex">
-                              <button
-                                @click=${this._handleEdit}
-                                type="button"
-                                class="btn btn-dark mx-2"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                @click=${this._handleSave}
-                                type="button"
-                                class="btn btn-dark mx-2"
-                              >
-                                Save
-                              </button>
-                              <button
-                                @click=${this._handleDelete}
-                                ?hidden=${!this._isDeletable}
-                                type="button"
-                                class="btn btn-danger mx-2"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </td>
-                        `
+                      ? html`<th scope="col">
+                          ${this._i18n.gettext("actions")}
+                        </th>`
                       : html``}
                   </tr>
-                `
-              )}
-            </tbody>
-          </table>
-        </div>
-      `;
+                </thead>
+                <tbody>
+                  ${data.map(
+                    (item) => html`
+                      <tr>
+                        ${Object.keys(item).map(
+                          (key) => html`<td>${item[key]}</td>`
+                        )}
+                        ${this._isEditable
+                          ? html`
+                              <td>
+                                <div class="d-flex">
+                                  <button
+                                    @click=${this._handleEdit}
+                                    type="button"
+                                    class="btn btn-dark mx-2"
+                                  >
+                                    ${this._i18n.gettext("Edit")}
+                                  </button>
+                                  <button
+                                    @click=${this._handleSave}
+                                    type="button"
+                                    class="btn btn-dark mx-2"
+                                  >
+                                    ${this._i18n.gettext("Save")}
+                                  </button>
+                                  <button
+                                    @click=${this._handleDelete}
+                                    ?hidden=${!this._isDeletable}
+                                    type="button"
+                                    class="btn btn-danger mx-2"
+                                  >
+                                    ${this._i18n.gettext("Delete")}
+                                  </button>
+                                </div>
+                              </td>
+                            `
+                          : html``}
+                      </tr>
+                    `
+                  )}
+                </tbody>
+              </table>
+            </div>
+          `;
     }
 
     return nothing;

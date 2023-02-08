@@ -32,27 +32,44 @@ Here we grant access to the plugins directory to get around circumvent problems.
 
 ### Translating
 
-To generate the pot file we use ```xgettext``` and include all dirs, perl or JavaScript where translated strings show up.
-It's important to include shorthands like ```__```. Otherwise those strings will be skipped.
+To generate the pot file we use `xgettext` and include all dirs, perl or JavaScript where translated strings show up.
+It's important to include shorthands like `__`. Otherwise those strings will be skipped.
+
 ```bash
 xgettext --output=com.lmscloud.roomreservations.pot --from-code=utf-8 --language=JavaScript --force-po --keyword=__ src/extensions/*.js src/views/*.js src/components/*.js
 ```
 
-If the pot file is created we use ```msginit``` to create a po file for our locale.
+If the pot file is created we use `msginit` to create a po file for our locale.
 Then we translate our strings within that po file.
+
 ```bash
-msginit --input=com.lmscloud.roomreservations.pot --locale=de -o locales/de.po 
+msginit --input=com.lmscloud.roomreservations.pot --locale=de -o locales/de.po
 ```
+
+### Dynamically added Strings
+
+Sometimes we don't have strings in our Markup that can be parsed by xgettext.
+
+#### Example
+
+The render method within the LMSTable component translates dynamically added strings.
+
+```JavaScript
+${Object.keys(headers).map(
+    (key) => html`<th scope="col">${this._i18n.gettext(key)}</th>`
+)}
+```
+
+We could add an object as a map of the occurring strings or we could just use [dynamically_added_strings.md](https://github.com/LMSCloud/LMSRoomReservations/blob/tabula-rasa/dynamically_added_strings.md).
 
 #### JS
 
-To include the translations in our client-side code, we use ```npx gulp translations``` to run the parsing and conversion
-to json. This uses ```po2json@next```. The output format ```mf``` works but we have to append metadata in an empty key as the library doesn't add it for this format.
-
+To include the translations in our client-side code, we use `npx gulp translations` to run the parsing and conversion
+to json. This uses `po2json@next`. The output format `mf` works but we have to append metadata in an empty key as the library doesn't add it for this format.
 
 #### Updating translations
 
-If want to add translations for new modules or fix the spelling in the source locale you just have to update the pot file with xgettext and then use Poedit to update the translations from the pot file __Translation -> Update from POT file__.
+If want to add translations for new modules or fix the spelling in the source locale you just have to update the pot file with xgettext and then use Poedit to update the translations from the pot file **Translation -> Update from POT file**.
 
 ### Infuriating errors
 

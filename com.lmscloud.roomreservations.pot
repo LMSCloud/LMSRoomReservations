@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-07 16:23+0100\n"
+"POT-Creation-Date: 2023-02-08 12:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -223,14 +223,17 @@ msgid "No room associated"
 msgstr ""
 
 #: src/components/LMSEquipmentItem.js:223 src/components/LMSRoom.js:221
+#: src/components/LMSTable.js:123
 msgid "Edit"
 msgstr ""
 
 #: src/components/LMSEquipmentItem.js:226 src/components/LMSRoom.js:224
+#: src/components/LMSTable.js:130
 msgid "Save"
 msgstr ""
 
 #: src/components/LMSEquipmentItem.js:229 src/components/LMSRoom.js:227
+#: src/components/LMSTable.js:138
 msgid "Delete"
 msgstr ""
 
@@ -250,55 +253,135 @@ msgstr ""
 msgid "Max Bookable Time"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:38
+#: src/components/LMSTable.js:102
+msgid "actions"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:45
 msgid "Default maximum bookable time for all rooms"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:40
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:47
 msgid "A duration in minutes, e.g. 60 for an hour"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:44
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:51
 msgid "Absolute reservation limit per patron"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:46
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:53
 msgid "A number, e.g. 5 for five reservations"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:50
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:57
 msgid "Daily reservation limit per patron"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:52
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:59
 msgid "A number, e.g. 3 for three reservations"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:56
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:63
 msgid "Restricted patron categories which are not allowed to book rooms"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:66
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:73
 msgid "Existing patron categories"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:71
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:78
 msgid ""
 "Message that is shown to restricted patron categories trying to book rooms"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:77
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:84
 msgid "Email address to which confirmation emails for patrons are mirrored"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:79
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:86
 msgid "An email address, e.g. contact@institution.com"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:83
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:90
 msgid "Days after which past reservations are removed from the system"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:85
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:92
 msgid "A number of days, e.g. 14"
+msgstr ""
+
+#: dynamically_added_strings.md:5
+msgid "setting"
+msgstr ""
+
+#: dynamically_added_strings.md:6
+msgid "value"
+msgstr ""
+
+#: dynamically_added_strings.md:7
+msgid "description"
+msgstr ""
+
+#: dynamically_added_strings.md:8
+msgid "bookingid"
+msgstr ""
+
+#: dynamically_added_strings.md:9
+msgid "borrowernumber"
+msgstr ""
+
+#: dynamically_added_strings.md:10
+msgid "roomid"
+msgstr ""
+
+#: dynamically_added_strings.md:11
+msgid "start"
+msgstr ""
+
+#: dynamically_added_strings.md:12
+msgid "end"
+msgstr ""
+
+#: dynamically_added_strings.md:13
+msgid "blackedout"
+msgstr ""
+
+#: dynamically_added_strings.md:14
+msgid "created"
+msgstr ""
+
+#: dynamically_added_strings.md:15
+msgid "updated_at"
+msgstr ""
+
+#: dynamically_added_strings.md:16
+msgid "day"
+msgstr ""
+
+#: dynamically_added_strings.md:17
+msgid "Monday"
+msgstr ""
+
+#: dynamically_added_strings.md:18
+msgid "Tuesday"
+msgstr ""
+
+#: dynamically_added_strings.md:19
+msgid "Wednesday"
+msgstr ""
+
+#: dynamically_added_strings.md:20
+msgid "Thursday"
+msgstr ""
+
+#: dynamically_added_strings.md:21
+msgid "Friday"
+msgstr ""
+
+#: dynamically_added_strings.md:22
+msgid "Saturday"
+msgstr ""
+
+#: dynamically_added_strings.md:23
+msgid "Sunday"
 msgstr ""

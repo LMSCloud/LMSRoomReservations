@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-07 16:23+0100\n"
-"PO-Revision-Date: 2023-02-07 16:39+0100\n"
+"POT-Creation-Date: 2023-02-08 12:03+0100\n"
+"PO-Revision-Date: 2023-02-08 12:03+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -227,14 +227,17 @@ msgid "No room associated"
 msgstr "Kein Raum assoziiert"
 
 #: src/components/LMSEquipmentItem.js:223 src/components/LMSRoom.js:221
+#: src/components/LMSTable.js:123
 msgid "Edit"
 msgstr "Bearbeiten"
 
 #: src/components/LMSEquipmentItem.js:226 src/components/LMSRoom.js:224
+#: src/components/LMSTable.js:130
 msgid "Save"
 msgstr "Speichern"
 
 #: src/components/LMSEquipmentItem.js:229 src/components/LMSRoom.js:227
+#: src/components/LMSTable.js:138
 msgid "Delete"
 msgstr "Löschen"
 
@@ -248,67 +251,147 @@ msgstr "Hinzufügen"
 
 #: src/components/LMSRoom.js:122
 msgid "Room Number"
-msgstr "Name"
+msgstr "Bezeichnung"
 
 #: src/components/LMSRoom.js:206
 msgid "Max Bookable Time"
 msgstr "Maximale Buchungszeit"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:38
+#: src/components/LMSTable.js:102
+msgid "actions"
+msgstr "Aktionen"
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:45
 msgid "Default maximum bookable time for all rooms"
 msgstr "Voreinstellung der maximalen Buchungsdauer für alle Räume"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:40
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:47
 msgid "A duration in minutes, e.g. 60 for an hour"
 msgstr "Eine Dauer in Minuten, bspw. 60 für eine Stunde"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:44
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:51
 msgid "Absolute reservation limit per patron"
 msgstr "Absolutes Reservierungslimit pro Benutzer*in"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:46
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:53
 msgid "A number, e.g. 5 for five reservations"
 msgstr "Eine Ganzzahl, bspw. 5 für fünf Reservierungen"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:50
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:57
 msgid "Daily reservation limit per patron"
 msgstr "Tägliches Reservierungslimit pro Benutzer*in zu einem beliebigen Datum"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:52
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:59
 msgid "A number, e.g. 3 for three reservations"
 msgstr "Eine Ganzzahl, bspw. 3 für drei Reservierungen"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:56
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:63
 msgid "Restricted patron categories which are not allowed to book rooms"
 msgstr ""
 "Beschränkte Benuzter*innenkategorien, denen es nicht erlaubt ist, Räume zu "
 "buchen"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:66
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:73
 msgid "Existing patron categories"
 msgstr "Existierende Benutzer*innenkategorien"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:71
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:78
 msgid ""
 "Message that is shown to restricted patron categories trying to book rooms"
 msgstr ""
 "Nachricht, die beschränkten Benutzer*innenkategorien, beim Versuch Räume zu "
 "buchen, angezeigt wird"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:77
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:84
 msgid "Email address to which confirmation emails for patrons are mirrored"
 msgstr "Mailadresse, an die Bestätigungsmails gespiegelt werden"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:79
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:86
 msgid "An email address, e.g. contact@institution.com"
 msgstr "Eine Mailadresse, bspw. kontakt@institution.de"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:83
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:90
 msgid "Days after which past reservations are removed from the system"
 msgstr ""
 "Anzahl der Tage, nachdem vergangene Reservierungen aus dem System entfernt "
 "werden"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:85
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:92
 msgid "A number of days, e.g. 14"
 msgstr "Eine Anzahl Tage, bspw. 14"
+
+#: dynamically_added_strings.md:5
+msgid "setting"
+msgstr "Einstellung"
+
+#: dynamically_added_strings.md:6
+msgid "value"
+msgstr "Wert"
+
+#: dynamically_added_strings.md:7
+msgid "description"
+msgstr "Beschreibung"
+
+#: dynamically_added_strings.md:8
+msgid "bookingid"
+msgstr "Buchungsid"
+
+#: dynamically_added_strings.md:9
+msgid "borrowernumber"
+msgstr "Benutzer*innennummer"
+
+#: dynamically_added_strings.md:10
+msgid "roomid"
+msgstr "Raumid"
+
+#: dynamically_added_strings.md:11
+msgid "start"
+msgstr "Start"
+
+#: dynamically_added_strings.md:12
+msgid "end"
+msgstr "Ende"
+
+#: dynamically_added_strings.md:13
+msgid "blackedout"
+msgstr "Ist Sperrzeit"
+
+#: dynamically_added_strings.md:14
+msgid "created"
+msgstr "Hinzugefügt"
+
+#: dynamically_added_strings.md:15
+msgid "updated_at"
+msgstr "Bearbeitet"
+
+#: dynamically_added_strings.md:16
+msgid "day"
+msgstr "Tag"
+
+#: dynamically_added_strings.md:17
+msgid "Monday"
+msgstr "Montag"
+
+#: dynamically_added_strings.md:18
+msgid "Tuesday"
+msgstr "Dienstag"
+
+#: dynamically_added_strings.md:19
+msgid "Wednesday"
+msgstr "Mittwoch"
+
+#: dynamically_added_strings.md:20
+msgid "Thursday"
+msgstr "Donnerstag"
+
+#: dynamically_added_strings.md:21
+msgid "Friday"
+msgstr "Freitag"
+
+#: dynamically_added_strings.md:22
+msgid "Saturday"
+msgstr "Samstag"
+
+#: dynamically_added_strings.md:23
+msgid "Sunday"
+msgstr "Sonntag"
