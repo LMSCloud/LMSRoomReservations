@@ -3,7 +3,12 @@ import Gettext from "gettext.js";
 export default class TranslationHandler {
   constructor() {
     this._i18n = Gettext();
-    this._locale = window.navigator.language;
+    /** As this has to be in sync with the locale
+     *  set in the backend we use the lang attribute
+     *  of the documentElement instead of the locale
+     *  set in the browser (window.navigator.language).
+     */
+    this._locale = document.documentElement.lang;
   }
 
   async loadTranslations() {
