@@ -1,7 +1,7 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 
-export class LMSContainer extends LitElement {
+export default class LMSContainer extends LitElement {
   static get properties() {
     return {
       classes: { type: Array },
@@ -9,7 +9,7 @@ export class LMSContainer extends LitElement {
     };
   }
 
-  static styles = [bootstrapStyles, css``];
+  static styles = [bootstrapStyles];
 
   constructor() {
     super();

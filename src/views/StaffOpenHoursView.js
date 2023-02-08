@@ -1,5 +1,5 @@
 import { html } from "lit";
-import { LMSContainer } from "../components/LMSContainer";
+import LMSContainer from "../components/LMSContainer";
 
 export default class StaffOpenHoursView extends LMSContainer {
   constructor() {

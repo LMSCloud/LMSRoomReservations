@@ -14,11 +14,13 @@ import LMSRoomModal from "./extensions/LMSRoomModal";
 import LMSSettingsTable from "./extensions/LMSSettingsTable";
 
 import LMSCalendar from "./components/LMSCalendar/lib/lms-calendar";
+import LMSRoomReservationsMenu from "./extensions/LMSRoomReservationsMenu";
 
 import StaffBookingsView from "./views/StaffBookingsView";
 import StaffEquipmentView from "./views/StaffEquipmentView";
 import StaffOpenHoursView from "./views/StaffOpenHoursView";
 import StaffRoomsView from "./views/StaffRoomsView";
+import StaffSettingsView from "./views/StaffSettingsView";
 import RoomReservationsView from "./views/RoomReservationsView";
 
 import "./main.css";
@@ -38,9 +40,11 @@ export {
   LMSOpenHoursTable,
   LMSSettingsTable,
   LMSCalendar,
+  LMSRoomReservationsMenu,
   StaffBookingsView,
   StaffEquipmentView,
   StaffOpenHoursView,
   StaffRoomsView,
+  StaffSettingsView,
   RoomReservationsView,
 };

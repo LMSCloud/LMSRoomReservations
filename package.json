@@ -50,7 +50,9 @@
   },
   "homepage": "https://github.com/LMSCloud/LMSRoomReservations#readme",
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@granite-elements/granite-lit-bootstrap": "^4.6.0-0",
+    "@weavedev/lit-fontawesome": "^0.3.2",
     "datetime": "0.0.3",
     "dayjs": "^1.11.7",
     "gettext.js": "^1.2.0",
