@@ -4,6 +4,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Rooms#list",
       "operationId": "getRoomsPublic",
       "tags": ["rooms"],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "A list of rooms",
@@ -86,6 +87,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#list",
       "operationId": "getRooms",
       "tags": ["rooms"],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "A list of rooms",
@@ -265,7 +267,6 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#get",
       "operationId": "getRoom",
       "tags": ["rooms"],
-      "produces": ["application/json"],
       "parameters": [
         {
           "name": "roomid",
@@ -275,6 +276,7 @@
           "type": "string"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "The room with the given ID",
@@ -465,6 +467,7 @@
           "type": "string"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "204": {
           "description": "The room was deleted"
@@ -495,6 +498,7 @@
       "tags": ["equipment"],
       "summary": "Get a list of equipment items",
       "operationId": "listEquipmentPublic",
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -542,6 +546,7 @@
       "tags": ["equipment"],
       "summary": "Get a list of equipment items",
       "operationId": "listEquipment",
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -618,6 +623,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -675,6 +681,7 @@
           "type": "integer"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -757,6 +764,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -812,6 +820,7 @@
           "type": "integer"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "204": {
           "description": "Successful response"
@@ -841,6 +850,7 @@
       "tags": ["settings"],
       "summary": "Get all settings and their values",
       "operationId": "getSettings",
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -922,6 +932,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "201": {
           "description": "Successful response",
@@ -973,6 +984,7 @@
           "type": "string"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1016,6 +1028,7 @@
           "type": "string"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1077,6 +1090,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1120,6 +1134,7 @@
           "type": "string"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "204": {
           "description": "Setting deleted",
@@ -1157,6 +1172,7 @@
       "tags": ["open_hours"],
       "summary": "Get opening and closing times for the whole week",
       "operationId": "getOpenHoursPublic",
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1201,6 +1217,7 @@
       "tags": ["open_hours"],
       "summary": "Get opening and closing times for the whole week",
       "operationId": "getOpenHours",
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1280,6 +1297,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "201": {
           "description": "Successful response",
@@ -1346,6 +1364,7 @@
           "type": "integer"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1425,6 +1444,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1462,6 +1482,7 @@
       "tags": ["bookings"],
       "summary": "Get room bookings",
       "operationId": "getBookingsPublic",
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1533,6 +1554,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "201": {
           "description": "Successful response",
@@ -1596,6 +1618,7 @@
       "tags": ["bookings"],
       "summary": "Get room bookings",
       "operationId": "getBookings",
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1695,6 +1718,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "201": {
           "description": "Successful response",
@@ -1760,6 +1784,7 @@
           "type": "integer"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1848,6 +1873,7 @@
           }
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Successful response",
@@ -1902,6 +1928,7 @@
           "type": "integer"
         }
       ],
+      "produces": ["application/json"],
       "responses": {
         "204": {
           "description": "The booking was deleted"
