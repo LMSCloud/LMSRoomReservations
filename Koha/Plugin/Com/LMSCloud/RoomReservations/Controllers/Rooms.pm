@@ -127,7 +127,11 @@ sub update {
             );
         }
 
-        my $new_room  = $c->validation->param('body');
+        my $new_room = $c->validation->param('body');
+
+        # We have to convert all nullish values to NULL in our new_room to undef before passing them to SQL::Abstract.
+        # To do this we assign a new hashref back to $new_room and check for each key if the value is nullish, e.g. undef or empty string.
+        $new_room = { map { $_ => $new_room->{$_} || undef } keys %{$new_room} };
         my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
             {   schema => [
                     { key => 'maxcapacity',     value => $new_room->{'maxcapacity'},     type => 'number' },

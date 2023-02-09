@@ -74,17 +74,13 @@ export default class LMSEquipmentItem extends LitElement {
         method: "PUT",
         /** We need to filter properties from the payload the are null
          *  because the backend set NULL by default on non-supplied args */
-        body: JSON.stringify(
-          Object.fromEntries(
-            Object.entries({
-              equipmentname: this.equipmentname,
-              description: this.description,
-              image: this.image,
-              maxbookabletime: this.maxbookabletime,
-              roomid: this.roomid,
-            }).filter(([, value]) => !["", null, "null"].includes(value))
-          )
-        ),
+        body: JSON.stringify({
+          equipmentname: this.equipmentname,
+          description: this.description,
+          image: this.image,
+          maxbookabletime: this.maxbookabletime,
+          roomid: this.roomid,
+        }),
       }
     );
 

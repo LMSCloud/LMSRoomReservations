@@ -132,7 +132,11 @@ sub update {
 
         if ($equipment) {
             my $new_equipment = $c->validation->param('body');
-            my $validator     = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+
+            # We have to convert all nullish values to NULL in our new_equipment to undef before passing them to SQL::Abstract.
+            # To do this we assign a new hashref back to $new_equipment and check for each key if the value is nullish, e.g. undef or empty string.
+            $new_equipment = { map { $_ => $new_equipment->{$_} || undef } keys %{$new_equipment} };
+            my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
                 {   schema => [
                         { key => 'equipmentname',   value => $new_equipment->{'equipmentname'},   type => 'string', options => { length   => 20 } },
                         { key => 'maxbookabletime', value => $new_equipment->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
