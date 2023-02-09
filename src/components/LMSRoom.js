@@ -15,6 +15,7 @@ export default class LMSRoom extends LitElement {
       roomid: { type: String },
       branch: { type: String },
       roomnumber: { type: String },
+      libraries: { type: Array },
       editable: { type: Boolean },
       _i18n: { state: true },
     };
@@ -88,8 +89,11 @@ export default class LMSRoom extends LitElement {
     }
 
     if (response.status >= 400) {
-      const error = await response.json();
-      const event = new CustomEvent("error", { bubbles: true, detail: error });
+      const result = await response.json();
+      const event = new CustomEvent("error", {
+        bubbles: true,
+        detail: { errors: result.error, status: response.status },
+      });
       this.dispatchEvent(event);
     }
   }
@@ -195,16 +199,24 @@ export default class LMSRoom extends LitElement {
               </div>
               <div class="form-group">
                 <label for="branch">${this._i18n.gettext("Branch")}</label>
-                <input
+                <select
                   ?disabled=${!this.editable}
-                  type="text"
-                  .value=${this.branch}
-                  @input=${(e) => {
+                  @change=${(e) => {
                     this.branch = e.target.value;
                   }}
                   class="form-control"
                   id="branch"
-                />
+                >
+                  ${this.libraries?.map(
+                    (library) =>
+                      html`<option
+                        value=${library.value}
+                        ?selected=${this.branch === library.value}
+                      >
+                        ${library.name}
+                      </option>`
+                  )}
+              </select>
               </div>
               <div class="form-group">
                 <label for="maxbookabletime">${this._i18n.gettext(
