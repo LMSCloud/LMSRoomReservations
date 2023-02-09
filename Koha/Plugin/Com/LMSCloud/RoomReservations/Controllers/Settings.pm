@@ -86,7 +86,7 @@ sub list {
                 placeholder => __('An email address, e.g. contact@institution.com'),
             },
             {   setting     => 'remove_past_reservations_after',
-                value       => $self->retrieve_data('reply_to_address'),
+                value       => $self->retrieve_data('remove_past_reservations_after'),
                 description => __('Days after which past reservations are removed from the system'),
                 type        => 'number',
                 placeholder => __('A number of days, e.g. 14'),

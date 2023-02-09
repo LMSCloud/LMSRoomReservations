@@ -11,6 +11,7 @@ use Try::Tiny;
 use JSON;
 use SQL::Abstract;
 use Time::Piece;
+use Time::Seconds;
 use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
 use POSIX qw(setlocale);
@@ -52,11 +53,27 @@ sub list {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, q{*} );
+        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, q{*}, );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
         my $bookings = $sth->fetchall_arrayref( {} );
+
+        # We filter out bookings whose date is in the past by subtracting 
+        # the date of the booking in seconds from the current date and check
+        # whether the delta is smaller than the number of days specified in the
+        # remove_past_reservations_after setting multiplied by seconds in ond day.
+        # If the test passes the booking doesn't lie behind the cutoff date.
+        my $cutoff_days = $self->retrieve_data('remove_past_reservations_after') || 0;
+        if ( $cutoff_days > 0 ) {
+            $bookings = [
+                grep {
+                    my $booking_date = Time::Piece->strptime( $_->{'start'},         '%Y-%m-%d' );
+                    my $cutoff_date  = Time::Piece->strptime( Time::Piece->new->ymd, '%Y-%m-%d' );
+                    $cutoff_date->epoch - $booking_date->epoch < $cutoff_days * ONE_DAY;
+                } @{$bookings}
+            ];
+        }
 
         return $c->render( status => 200, openapi => $bookings );
     }
