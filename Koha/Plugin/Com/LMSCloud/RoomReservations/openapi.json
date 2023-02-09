@@ -1389,8 +1389,19 @@
             }
           }
         },
-        "default": {
-          "description": "Error response",
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
           "schema": {
             "type": "object",
             "properties": {
@@ -1446,7 +1457,7 @@
       ],
       "produces": ["application/json"],
       "responses": {
-        "200": {
+        "201": {
           "description": "Successful response",
           "schema": {
             "type": "object",
@@ -1457,8 +1468,19 @@
             }
           }
         },
-        "default": {
-          "description": "Error response",
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
           "schema": {
             "type": "object",
             "properties": {

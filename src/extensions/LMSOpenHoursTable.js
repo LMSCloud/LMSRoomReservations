@@ -11,6 +11,7 @@ export default class LMSOpenHoursTable extends LMSTable {
       branch: { type: String },
       _branches: { type: Array, attribute: false },
       _isEditable: { type: Boolean, attribute: false },
+      _errorLabel: { type: Object, attribute: false },
       _i18n: { state: true },
     };
   }
@@ -32,6 +33,7 @@ export default class LMSOpenHoursTable extends LMSTable {
     );
     this._isSetup = false;
     this._branches = [];
+    this._errorLabel = undefined;
     this._i18n = undefined;
     this._setup();
   }
@@ -119,6 +121,7 @@ export default class LMSOpenHoursTable extends LMSTable {
   }
 
   async _handleSave(e) {
+    this._errorLabel = undefined;
     let parent = e.target.parentElement;
     while (parent.tagName !== "TR") {
       parent = parent.parentElement;
@@ -146,7 +149,22 @@ export default class LMSOpenHoursTable extends LMSTable {
 
     if (response.status >= 400) {
       const result = await response.json();
-      this._renderToast(response.status, result);
+      if (result.error) {
+        this._errorLabel = {
+          status: response.status,
+          message: result.error,
+        };
+        return;
+      }
+
+      if (result.errors) {
+        this._errorLabel = {
+          status: response.status,
+          message: Object.values(result.errors)
+            .map(({ message, path }) => `Sorry! ${message} at ${path}`)
+            .join(" & "),
+        };
+      }
     }
   }
 
@@ -181,6 +199,9 @@ export default class LMSOpenHoursTable extends LMSTable {
             <span class="badge badge-secondary"
               >${this._branches[this.branch] ?? this.branch}</span
             >
+            <span class="badge badge-danger" ?hidden=${!this._errorLabel}>
+              ${this._errorLabel?.status}: ${this._errorLabel?.message}
+            </span>
           </h4>
           ${super.render()}
         `;

@@ -76,7 +76,4 @@ export default class StaffOpenHoursView extends LMSContainer {
     `;
   }
 }
-customElements.define(
-  "lms-staff-open-hours-view",
-  StaffOpenHoursView
-);
+customElements.define("lms-staff-open-hours-view", StaffOpenHoursView);

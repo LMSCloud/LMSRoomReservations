@@ -10,6 +10,7 @@ use C4::Context;
 use Try::Tiny;
 use JSON;
 use SQL::Abstract;
+use Time::Piece;
 
 our $VERSION = '1.0.0';
 
@@ -126,6 +127,13 @@ sub update {
             return $c->render(
                 status  => 400,
                 openapi => { error => join q{ & }, @{$errors} }
+            );
+        }
+
+        if ( Time::Piece->strptime( $new_open_hours->{'end'}, '%H:%M:%S' )->epoch < Time::Piece->strptime( $new_open_hours->{'start'}, '%H:%M:%S' )->epoch ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => 'End time must be after start time' }
             );
         }
 
