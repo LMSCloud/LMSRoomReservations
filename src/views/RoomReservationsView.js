@@ -54,8 +54,8 @@ export default class RoomReservationsView extends LitElement {
     super();
     this.borrowernumber = undefined;
     this._endpoints = {
-      bookings: "/api/v1/contrib/roomreservations/bookings",
-      rooms: "/api/v1/contrib/roomreservations/rooms",
+      bookings: "/api/v1/contrib/roomreservations/public/bookings",
+      rooms: "/api/v1/contrib/roomreservations/public/rooms",
     };
     this._currentDate = new Date();
     this._lmsCalendar = undefined;
