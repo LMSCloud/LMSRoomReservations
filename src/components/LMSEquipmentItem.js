@@ -1,5 +1,7 @@
 import { LitElement, html, css, nothing } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler.js";
 export default class LMSEquipmentItem extends LitElement {
   static get properties() {
@@ -26,6 +28,17 @@ export default class LMSEquipmentItem extends LitElement {
       .lms-equipment-item-img {
         aspect-ratio: 4 / 3;
         object-fit: cover;
+      }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
       }
     `,
   ];
@@ -208,13 +221,16 @@ export default class LMSEquipmentItem extends LitElement {
               </div>
               <div class="d-flex justify-content-between">
                 <button class="btn btn-dark" @click=${this.handleEdit}>
-                  ${this._i18n.gettext("Edit")}
+                  ${litFontawesome(faEdit)}
+                  <span>${this._i18n.gettext("Edit")}</span>
                 </button>
                 <button class="btn btn-dark" @click=${this.handleSave}>
-                  ${this._i18n.gettext("Save")}
+                  ${litFontawesome(faSave)}
+                  <span>${this._i18n.gettext("Save")}</span>
                 </button>
                 <button class="btn btn-danger" @click=${this.handleDelete}>
-                  ${this._i18n.gettext("Delete")}
+                  ${litFontawesome(faTrash)}
+                  <span>${this._i18n.gettext("Delete")}</span>
                 </button>
               </div>
             </div>

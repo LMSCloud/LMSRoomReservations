@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import { LitElement, html, css, nothing } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler";
 
 export default class LMSModal extends LitElement {
@@ -55,13 +57,28 @@ export default class LMSModal extends LitElement {
         button.btn-modal:not(.tilted) {
           transition: 0.2s;
           transition-timing-function: ease-in-out;
-          transform: translateX(0%) translateY(0%) rotate(0deg);
+          transform: translateX(1px) rotate(0deg);
         }
 
         .tilted {
           transition: 0.2s;
           transition-timing-function: ease-in-out;
-          transform: translateX(2px) translateY(-1px) rotate(45deg);
+          transform: translateX(2px) translateY(1px) rotate(45deg);
+        }
+
+        svg {
+          display: inline-block;
+          width: 1em;
+          height: 1em;
+          color: #ffffff;
+        }
+
+        button {
+          white-space: nowrap;
+        }
+
+        button.btn-modal > svg {
+          color: var(--text-color);
         }
       `,
     ];
@@ -177,7 +194,7 @@ export default class LMSModal extends LitElement {
               class="btn-modal ${this.isOpen && "tilted"}"
               type="button"
             >
-              +
+              ${litFontawesome(faPlus)}
             </button>
           </div>
           <div class="backdrop" ?hidden=${!this.isOpen}></div>
@@ -233,10 +250,12 @@ export default class LMSModal extends LitElement {
                       data-dismiss="modal"
                       @click=${this._toggleModal}
                     >
-                      ${this._i18n.gettext("Close")}
+                      ${litFontawesome(faClose)}
+                      <span>${this._i18n.gettext("Close")}</span>
                     </button>
                     <button type="submit" class="btn btn-primary">
-                      ${this._i18n.gettext("Create")}
+                      ${litFontawesome(faPlus)}
+                      <span>${this._i18n.gettext("Create")}</span>
                     </button>
                   </div>
                 </form>

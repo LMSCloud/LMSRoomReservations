@@ -24,9 +24,14 @@ export default class LMSTable extends LitElement {
       }
 
       svg {
+        display: inline-block;
         width: 1em;
         height: 1em;
         color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
       }
     `,
   ];
@@ -129,7 +134,7 @@ export default class LMSTable extends LitElement {
                                     class="btn btn-dark mx-2"
                                   >
                                     ${litFontawesome(faEdit)}
-                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Edit")}</span>
+                                    <span>&nbsp;${this._i18n.gettext("Edit")}</span>
                                   </button>
                                   <button
                                     @click=${this._handleSave}
@@ -137,7 +142,7 @@ export default class LMSTable extends LitElement {
                                     class="btn btn-dark mx-2"
                                   >
                                     ${litFontawesome(faSave)}
-                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Save")}</span>
+                                    <span>&nbsp;${this._i18n.gettext("Save")}</span>
                                   </button>
                                   <button
                                     @click=${this._handleDelete}
@@ -146,7 +151,7 @@ export default class LMSTable extends LitElement {
                                     class="btn btn-danger mx-2"
                                   >
                                     ${litFontawesome(faTrash)}
-                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Delete")}</span>
+                                    <span>&nbsp;${this._i18n.gettext("Delete")}</span>
                                   </button>
                                 </div>
                               </td>
