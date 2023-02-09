@@ -580,7 +580,7 @@
                     aria-describedby="booking-help"
                     @change=${(e) => {
                       this._selectedRoom = this._rooms.find(
-                        (room) => room.roomid === e.target.value
+                        (room) => room.roomid === parseInt(e.target.value, 10)
                       );
                     }}
                   >
@@ -628,19 +628,19 @@
                       ? Array.from(
                           {
                             length: Math.floor(
-                              (this._selectedRoom.maxbookabletime ||
+                              (this._selectedRoom?.maxbookabletime ||
                                 this._defaultMaxBookingTime) / 30
                             ),
                           },
                           (_, i) => (i + 1) * 30
                         )
                           .concat(
-                            (this._selectedRoom.maxbookabletime ||
+                            (this._selectedRoom?.maxbookabletime ||
                               this._defaultMaxBookingTime) %
                               30 ===
                               0
                               ? []
-                              : this._selectedRoom.maxbookabletime ||
+                              : this._selectedRoom?.maxbookabletime ||
                                   this._defaultMaxBookingTime
                           )
                           .map((timespan) => y$1`<option>${timespan}</option>`)
@@ -650,7 +650,7 @@
                 <div
                   ?hidden=${!this._equipment.length ||
                   !this._equipment.filter(
-                    (item) => item.roomid == this._selectedRoom.roomid
+                    (item) => item.roomid == this._selectedRoom?.roomid
                   ).length}
                   class="form-group"
                 >
@@ -658,7 +658,7 @@
                     >${this._i18n.gettext("Equipment")}</label
                   >
                   ${this._equipment
-                    .filter((item) => item.roomid == this._selectedRoom.roomid)
+                    .filter((item) => item.roomid == this._selectedRoom?.roomid)
                     .map(
                       (item) => y$1`
                         <div class="form-check">
@@ -1639,6 +1639,7 @@
         "start",
         "end",
         "blackedout",
+        "equipment",
         "created",
         "updated_at",
       ];
@@ -1673,20 +1674,26 @@
               {}
             );
           })
-          .map((datum) => {
-            return Object.keys(datum).reduce((acc, key) => {
-              return {
+          .map((datum) =>
+            Object.keys(datum).reduce(
+              (acc, key) => ({
                 ...acc,
                 [key]: this._inputFromValue({
                   key,
-                  value:
-                    typeof datum[key] !== "string"
-                      ? datum[key].toString()
-                      : datum[key],
+                  value: (() => {
+                    if (datum[key] instanceof Array) {
+                      return datum[key];
+                    }
+                    if (typeof datum[key] !== "string") {
+                      return datum[key].toString();
+                    }
+                    return datum[key];
+                  })(),
                 }),
-              };
-            }, {});
-          });
+              }),
+              {}
+            )
+          );
       }
     }
 
@@ -1727,13 +1734,34 @@
             ({ patron_id }) => patron_id === parseInt(value, 10)
           );
           return y$1`
-          <span class="badge badge-pill badge-secondary">${value}</span>&nbsp;
+          <span class="badge badge-secondary">${value}</span>&nbsp;
           <a href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${value}"
             ><span
               >${borrower.firstname}&nbsp;${borrower.surname}&nbsp;(${borrower.cardnumber})</span
             ></a
           >
         `;
+        },
+        equipment: () => {
+          console.log(value);
+          return value.length
+            ? value.map((item) => {
+                return y$1`
+                  <div class="form-check form-check-inline">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id=${item.equipmentid}
+                      checked disabled
+                    />
+                    &nbsp;
+                    <label class="form-check-label" for=${item.equipmentid}
+                      >${item.equipmentname}
+                    </label>
+                  </div>
+              `;
+              })
+            : b$1;
         },
       };
       return (inputs[key] instanceof Function && inputs[key]()) || value;
@@ -1893,17 +1921,13 @@
           method: "PUT",
           /** We need to filter properties from the payload the are null
            *  because the backend set NULL by default on non-supplied args */
-          body: JSON.stringify(
-            Object.fromEntries(
-              Object.entries({
-                equipmentname: this.equipmentname,
-                description: this.description,
-                image: this.image,
-                maxbookabletime: this.maxbookabletime,
-                roomid: this.roomid,
-              }).filter(([, value]) => !["", null, "null"].includes(value))
-            )
-          ),
+          body: JSON.stringify({
+            equipmentname: this.equipmentname,
+            description: this.description,
+            image: this.image,
+            maxbookabletime: this.maxbookabletime,
+            roomid: this.roomid,
+          }),
         }
       );
 
@@ -2343,6 +2367,7 @@
         roomid: { type: String },
         branch: { type: String },
         roomnumber: { type: String },
+        libraries: { type: Array },
         editable: { type: Boolean },
         _i18n: { state: true },
       };
@@ -2416,8 +2441,11 @@
       }
 
       if (response.status >= 400) {
-        const error = await response.json();
-        const event = new CustomEvent("error", { bubbles: true, detail: error });
+        const result = await response.json();
+        const event = new CustomEvent("error", {
+          bubbles: true,
+          detail: { errors: result.error, status: response.status },
+        });
         this.dispatchEvent(event);
       }
     }
@@ -2523,16 +2551,24 @@
               </div>
               <div class="form-group">
                 <label for="branch">${this._i18n.gettext("Branch")}</label>
-                <input
+                <select
                   ?disabled=${!this.editable}
-                  type="text"
-                  .value=${this.branch}
-                  @input=${(e) => {
+                  @change=${(e) => {
                     this.branch = e.target.value;
                   }}
                   class="form-control"
                   id="branch"
-                />
+                >
+                  ${this.libraries?.map(
+                    (library) =>
+                      y$1`<option
+                        value=${library.value}
+                        ?selected=${this.branch === library.value}
+                      >
+                        ${library.name}
+                      </option>`
+                  )}
+              </select>
               </div>
               <div class="form-group">
                 <label for="maxbookabletime">${this._i18n.gettext(
@@ -2786,7 +2822,7 @@
         return field.value.length
           ? field.value.reduce(
               (accumulator, category) => y$1`${accumulator}
-              <div class="form-check d-inline">
+              <div class="form-check form-check-inline">
                 <input
                   type="checkbox"
                   name="${category.categorycode}"
@@ -4789,14 +4825,30 @@
     }
 
     async _getElements() {
-      const response = await fetch(this._endpoint);
-      const result = await response.json();
+      const [roomsResponse, librariesResponse] = await Promise.all([
+        fetch(this._endpoint),
+        fetch("/api/v1/libraries"),
+      ]);
+      const rooms = await roomsResponse.json();
+      let libraries = await librariesResponse.json();
+      libraries = libraries.map((library) => ({
+        value: library.library_id,
+        name: library.name,
+      }));
 
-      if (response.status === 200) {
-        this._elements = result.map((room) => {
+      if (
+        [roomsResponse, librariesResponse].every(({ status }) => status === 200)
+      ) {
+        this._elements = rooms.map((room) => {
+          const _room = { ...room, libraries };
           const lmsRoom = document.createElement("lms-room", { is: "lms-room" });
-          Object.keys(room).forEach((key) => {
-            lmsRoom.setAttribute(key, room[key]);
+          Object.keys(_room).forEach((key) => {
+            lmsRoom.setAttribute(
+              key,
+              _room[key] instanceof Array
+                ? JSON.stringify(_room[key])
+                : _room[key]
+            );
           });
           return lmsRoom;
         });
@@ -4821,11 +4873,13 @@
       element.setAttribute("heading", status);
       element.setAttribute(
         "message",
-        errors.reduce(
-          (acc, { message, path }, idx) =>
-            `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
-          ""
-        )
+        errors instanceof Array
+          ? errors.reduce(
+              (acc, { message, path }, idx) =>
+                `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
+              ""
+            )
+          : errors
       );
       this.renderRoot.appendChild(element);
     }

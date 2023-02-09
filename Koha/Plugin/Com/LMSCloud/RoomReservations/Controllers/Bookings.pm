@@ -45,6 +45,7 @@ if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
 
 my $BOOKINGS_TABLE           = $self ? $self->get_qualified_table_name('bookings')           : undef;
 my $BOOKINGS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('bookings_equipment') : undef;
+my $EQUIPMENT_TABLE          = $self ? $self->get_qualified_table_name('equipment')          : undef;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -59,7 +60,7 @@ sub list {
 
         my $bookings = $sth->fetchall_arrayref( {} );
 
-        # We filter out bookings whose date is in the past by subtracting 
+        # We filter out bookings whose date is in the past by subtracting
         # the date of the booking in seconds from the current date and check
         # whether the delta is smaller than the number of days specified in the
         # remove_past_reservations_after setting multiplied by seconds in ond day.
@@ -72,6 +73,32 @@ sub list {
                     my $cutoff_date  = Time::Piece->strptime( Time::Piece->new->ymd, '%Y-%m-%d' );
                     $cutoff_date->epoch - $booking_date->epoch < $cutoff_days * ONE_DAY;
                 } @{$bookings}
+            ];
+        }
+
+        # We have to extract the equipmentids from the $BOOKINGS_EQUIPMENT_TABLE
+        ( $stmt, @bind ) = $sql->select( $BOOKINGS_EQUIPMENT_TABLE, q{*}, );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $bookings_equipment = $sth->fetchall_arrayref( {} );
+
+        # Then we have to get the equipment that's referenced in the bookings
+        # and the bookings_equipment table and add it to the bookings
+        ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => { -in => [ map { $_->{'equipmentid'} } @{$bookings_equipment} ] } } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $equipment = $sth->fetchall_arrayref( {} );
+
+        # Finally we add the equipment that's referenced in the bookings_equipment
+        # by its bookingid to the booking itself
+        foreach my $booking ( @{$bookings} ) {
+            $booking->{'equipment'} = [
+                map {
+                    my $equipmentid = $_->{'equipmentid'};
+                    ( grep { $_->{'equipmentid'} == $equipmentid } @{$equipment} )[0];
+                } grep { $_->{'bookingid'} == $booking->{'bookingid'} } @{$bookings_equipment}
             ];
         }
 

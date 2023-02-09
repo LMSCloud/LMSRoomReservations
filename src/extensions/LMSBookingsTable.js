@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import LMSTable from "../components/LMSTable";
 
 export default class LMSBookingsTable extends LMSTable {
@@ -104,6 +104,7 @@ export default class LMSBookingsTable extends LMSTable {
       "start",
       "end",
       "blackedout",
+      "equipment",
       "created",
       "updated_at",
     ];
@@ -138,20 +139,26 @@ export default class LMSBookingsTable extends LMSTable {
             {}
           );
         })
-        .map((datum) => {
-          return Object.keys(datum).reduce((acc, key) => {
-            return {
+        .map((datum) =>
+          Object.keys(datum).reduce(
+            (acc, key) => ({
               ...acc,
               [key]: this._inputFromValue({
                 key,
-                value:
-                  typeof datum[key] !== "string"
-                    ? datum[key].toString()
-                    : datum[key],
+                value: (() => {
+                  if (datum[key] instanceof Array) {
+                    return datum[key];
+                  }
+                  if (typeof datum[key] !== "string") {
+                    return datum[key].toString();
+                  }
+                  return datum[key];
+                })(),
               }),
-            };
-          }, {});
-        });
+            }),
+            {}
+          )
+        );
     }
   }
 
@@ -192,13 +199,34 @@ export default class LMSBookingsTable extends LMSTable {
           ({ patron_id }) => patron_id === parseInt(value, 10)
         );
         return html`
-          <span class="badge badge-pill badge-secondary">${value}</span>&nbsp;
+          <span class="badge badge-secondary">${value}</span>&nbsp;
           <a href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${value}"
             ><span
               >${borrower.firstname}&nbsp;${borrower.surname}&nbsp;(${borrower.cardnumber})</span
             ></a
           >
         `;
+      },
+      equipment: () => {
+        console.log(value);
+        return value.length
+          ? value.map((item) => {
+              return html`
+                  <div class="form-check form-check-inline">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id=${item.equipmentid}
+                      checked disabled
+                    />
+                    &nbsp;
+                    <label class="form-check-label" for=${item.equipmentid}
+                      >${item.equipmentname}
+                    </label>
+                  </div>
+              `;
+            })
+          : nothing;
       },
     };
     return (inputs[key] instanceof Function && inputs[key]()) || value;
