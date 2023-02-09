@@ -19,7 +19,6 @@ if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
 
 my $ROOMS_TABLE = $self ? $self->get_qualified_table_name('rooms') : undef;
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validators qw( is_valid_string is_valid_number is_valid_color );
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
 
 sub list {
@@ -77,7 +76,7 @@ sub add {
             {   schema => [
                     { key => 'maxcapacity',     value => $room->{'maxcapacity'},     type => 'number' },
                     { key => 'color',           value => $room->{'color'},           type => 'color' },
-                    { key => 'maxbookabletime', value => $room->{'maxbookabletime'}, type => 'number' },
+                    { key => 'maxbookabletime', value => $room->{'maxbookabletime'}, type => 'number', nullable => 1 },
                     {   key     => 'roomnumber',
                         value   => $room->{'roomnumber'},
                         type    => 'string',
@@ -133,7 +132,7 @@ sub update {
             {   schema => [
                     { key => 'maxcapacity',     value => $new_room->{'maxcapacity'},     type => 'number' },
                     { key => 'color',           value => $new_room->{'color'},           type => 'color' },
-                    { key => 'maxbookabletime', value => $new_room->{'maxbookabletime'}, type => 'number' },
+                    { key => 'maxbookabletime', value => $new_room->{'maxbookabletime'}, type => 'number', nullable => 1 },
                     {   key     => 'roomnumber',
                         value   => $new_room->{'roomnumber'},
                         type    => 'string',
