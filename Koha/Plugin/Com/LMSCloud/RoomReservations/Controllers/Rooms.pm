@@ -76,7 +76,7 @@ sub add {
             {   schema => [
                     { key => 'maxcapacity',     value => $room->{'maxcapacity'},     type => 'number' },
                     { key => 'color',           value => $room->{'color'},           type => 'color' },
-                    { key => 'maxbookabletime', value => $room->{'maxbookabletime'}, type => 'number', nullable => 1 },
+                    { key => 'maxbookabletime', value => $room->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
                     {   key     => 'roomnumber',
                         value   => $room->{'roomnumber'},
                         type    => 'string',
@@ -132,7 +132,7 @@ sub update {
             {   schema => [
                     { key => 'maxcapacity',     value => $new_room->{'maxcapacity'},     type => 'number' },
                     { key => 'color',           value => $new_room->{'color'},           type => 'color' },
-                    { key => 'maxbookabletime', value => $new_room->{'maxbookabletime'}, type => 'number', nullable => 1 },
+                    { key => 'maxbookabletime', value => $new_room->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
                     {   key     => 'roomnumber',
                         value   => $new_room->{'roomnumber'},
                         type    => 'string',

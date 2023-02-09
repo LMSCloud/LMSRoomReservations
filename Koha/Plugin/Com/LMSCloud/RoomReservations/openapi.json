@@ -113,7 +113,7 @@
                   "description": "A description of the room"
                 },
                 "maxbookabletime": {
-                  "type": ["number", "string", "null"],
+                  "type": ["number", "null"],
                   "description": "The maximum amount of time that the room can be booked for"
                 },
                 "roomid": {
@@ -181,7 +181,7 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": ["number", "string", "null"],
+                "type": ["number", "null"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {

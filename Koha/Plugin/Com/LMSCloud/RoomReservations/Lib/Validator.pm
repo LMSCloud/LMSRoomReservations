@@ -74,6 +74,8 @@ sub is_valid_string {
 sub is_valid_number {
     my ( $self, $args ) = @_;
 
+    warn $args->{'nullable'};
+
     # Return immediately if the given value is nullish and the nullable option is true.
     return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
 

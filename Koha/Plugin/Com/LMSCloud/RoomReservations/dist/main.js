@@ -803,6 +803,124 @@
   }
   customElements.define("lms-bookie", LMSBookie);
 
+  var litFontawesome_1 = createCommonjsModule(function (module, exports) {
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.urlFontawesome = exports.litFontawesome = void 0;
+
+  function litFontawesome(definition, { className, color } = {}) {
+      return litHtml.svg `
+        <svg
+            aria-hidden="true"
+            focusable="false"
+            data-prefix="${definition.prefix}"
+            data-icon="${definition.iconName}"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 ${definition.icon[0]} ${definition.icon[1]}"
+            class="${className || ''} ${definition.prefix}_${definition.iconName} fa-${definition.iconName}"
+            fill="${color || 'currentColor'}"
+        >
+            ${(Array.isArray(definition.icon[4]) ? definition.icon[4] : [definition.icon[4]]).map((icon) => litHtml.svg `<path d="${icon}"></path>`)}
+        </svg>
+    `;
+  }
+  exports.litFontawesome = litFontawesome;
+  function uncachedUrlFontawesome(definition, options) {
+      const mount = window.document.createElement('div');
+      litHtml.render(litFontawesome(definition, options), mount);
+      return `data:image/svg+xml;base64,${btoa(mount.innerHTML.replace(/ {4}|<!---->|\n/g, ''))}`;
+  }
+  const cachedURL = new Map();
+  function urlFontawesome(definition, options = {}) {
+      let dataUrl;
+      const foundDefinition = cachedURL.get(definition);
+      let foundClassName;
+      if (foundDefinition !== undefined) {
+          foundClassName = foundDefinition.get(options.className);
+          if (foundClassName !== undefined) {
+              const foundColor = foundClassName.get(options.color);
+              if (foundColor !== undefined) {
+                  dataUrl = foundColor;
+              }
+          }
+      }
+      if (dataUrl === undefined) {
+          dataUrl = uncachedUrlFontawesome(definition, options);
+          if (foundDefinition === undefined) {
+              cachedURL.set(definition, new Map([[options.className, new Map([[options.color, dataUrl]])]]));
+          }
+          else if (foundClassName === undefined) {
+              foundDefinition.set(options.className, new Map([[options.color, dataUrl]]));
+          }
+          else {
+              foundClassName.set(options.color, dataUrl);
+          }
+      }
+      return dataUrl;
+  }
+  exports.urlFontawesome = urlFontawesome;
+
+  });
+
+  unwrapExports(litFontawesome_1);
+  litFontawesome_1.urlFontawesome;
+  var litFontawesome_3 = litFontawesome_1.litFontawesome;
+
+  var faList = {
+    prefix: 'fas',
+    iconName: 'list',
+    icon: [512, 512, ["list-squares"], "f03a", "M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"]
+  };
+  var faPenToSquare = {
+    prefix: 'fas',
+    iconName: 'pen-to-square',
+    icon: [512, 512, ["edit"], "f044", "M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.8 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"]
+  };
+  var faEdit = faPenToSquare;
+  var faCube = {
+    prefix: 'fas',
+    iconName: 'cube',
+    icon: [512, 512, [], "f1b2", "M234.5 5.7c13.9-5 29.1-5 43.1 0l192 68.6C495 83.4 512 107.5 512 134.6V377.4c0 27-17 51.2-42.5 60.3l-192 68.6c-13.9 5-29.1 5-43.1 0l-192-68.6C17 428.6 0 404.5 0 377.4V134.6c0-27 17-51.2 42.5-60.3l192-68.6zM256 66L82.3 128 256 190l173.7-62L256 66zm32 368.6l160-57.1v-188L288 246.6v188z"]
+  };
+  var faFloppyDisk = {
+    prefix: 'fas',
+    iconName: 'floppy-disk',
+    icon: [448, 512, [128190, 128426, "save"], "f0c7", "M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
+  };
+  var faSave = faFloppyDisk;
+  var faTrash = {
+    prefix: 'fas',
+    iconName: 'trash',
+    icon: [448, 512, [], "f1f8", "M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"]
+  };
+  var faTag = {
+    prefix: 'fas',
+    iconName: 'tag',
+    icon: [448, 512, [127991], "f02b", "M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
+  };
+  var faGear = {
+    prefix: 'fas',
+    iconName: 'gear',
+    icon: [512, 512, [9881, "cog"], "f013", "M481.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-30.9 28.1c-7.7 7.1-11.4 17.5-10.9 27.9c.1 2.9 .2 5.8 .2 8.8s-.1 5.9-.2 8.8c-.5 10.5 3.1 20.9 10.9 27.9l30.9 28.1c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-39.7-12.6c-10-3.2-20.8-1.1-29.7 4.6c-4.9 3.1-9.9 6.1-15.1 8.7c-9.3 4.8-16.5 13.2-18.8 23.4l-8.9 40.7c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-8.9-40.7c-2.2-10.2-9.5-18.6-18.8-23.4c-5.2-2.7-10.2-5.6-15.1-8.7c-8.8-5.7-19.7-7.8-29.7-4.6L69.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l30.9-28.1c7.7-7.1 11.4-17.5 10.9-27.9c-.1-2.9-.2-5.8-.2-8.8s.1-5.9 .2-8.8c.5-10.5-3.1-20.9-10.9-27.9L8.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l39.7 12.6c10 3.2 20.8 1.1 29.7-4.6c4.9-3.1 9.9-6.1 15.1-8.7c9.3-4.8 16.5-13.2 18.8-23.4l8.9-40.7c2-9.1 9-16.3 18.2-17.8C213.3 1.2 227.5 0 242 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l8.9 40.7c2.2 10.2 9.4 18.6 18.8 23.4c5.2 2.7 10.2 5.6 15.1 8.7c8.8 5.7 19.7 7.7 29.7 4.6l39.7-12.6c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM242 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"]
+  };
+  var faCog = faGear;
+  var faClock = {
+    prefix: 'fas',
+    iconName: 'clock',
+    icon: [512, 512, [128339, "clock-four"], "f017", "M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"]
+  };
+  var faPlus = {
+    prefix: 'fas',
+    iconName: 'plus',
+    icon: [448, 512, [10133, 61543, "add"], "2b", "M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z"]
+  };
+  var faXmark = {
+    prefix: 'fas',
+    iconName: 'xmark',
+    icon: [320, 512, [128473, 10005, 10006, 10060, 215, "close", "multiply", "remove", "times"], "f00d", "M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"]
+  };
+  var faClose = faXmark;
+
   /* eslint-disable no-underscore-dangle */
 
   class LMSModal extends s$4 {
@@ -857,13 +975,28 @@
         button.btn-modal:not(.tilted) {
           transition: 0.2s;
           transition-timing-function: ease-in-out;
-          transform: translateX(0%) translateY(0%) rotate(0deg);
+          transform: translateX(1px) rotate(0deg);
         }
 
         .tilted {
           transition: 0.2s;
           transition-timing-function: ease-in-out;
-          transform: translateX(2px) translateY(-1px) rotate(45deg);
+          transform: translateX(2px) translateY(1px) rotate(45deg);
+        }
+
+        svg {
+          display: inline-block;
+          width: 1em;
+          height: 1em;
+          color: #ffffff;
+        }
+
+        button {
+          white-space: nowrap;
+        }
+
+        button.btn-modal > svg {
+          color: var(--text-color);
         }
       `,
       ];
@@ -979,7 +1112,7 @@
               class="btn-modal ${this.isOpen && "tilted"}"
               type="button"
             >
-              +
+              ${litFontawesome_3(faPlus)}
             </button>
           </div>
           <div class="backdrop" ?hidden=${!this.isOpen}></div>
@@ -1035,10 +1168,12 @@
                       data-dismiss="modal"
                       @click=${this._toggleModal}
                     >
-                      ${this._i18n.gettext("Close")}
+                      ${litFontawesome_3(faClose)}
+                      <span>${this._i18n.gettext("Close")}</span>
                     </button>
                     <button type="submit" class="btn btn-primary">
-                      ${this._i18n.gettext("Create")}
+                      ${litFontawesome_3(faPlus)}
+                      <span>${this._i18n.gettext("Create")}</span>
                     </button>
                   </div>
                 </form>
@@ -1151,113 +1286,6 @@
 
   customElements.define('lms-search', LMSSearch);
 
-  var litFontawesome_1 = createCommonjsModule(function (module, exports) {
-  Object.defineProperty(exports, "__esModule", { value: true });
-  exports.urlFontawesome = exports.litFontawesome = void 0;
-
-  function litFontawesome(definition, { className, color } = {}) {
-      return litHtml.svg `
-        <svg
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="${definition.prefix}"
-            data-icon="${definition.iconName}"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 ${definition.icon[0]} ${definition.icon[1]}"
-            class="${className || ''} ${definition.prefix}_${definition.iconName} fa-${definition.iconName}"
-            fill="${color || 'currentColor'}"
-        >
-            ${(Array.isArray(definition.icon[4]) ? definition.icon[4] : [definition.icon[4]]).map((icon) => litHtml.svg `<path d="${icon}"></path>`)}
-        </svg>
-    `;
-  }
-  exports.litFontawesome = litFontawesome;
-  function uncachedUrlFontawesome(definition, options) {
-      const mount = window.document.createElement('div');
-      litHtml.render(litFontawesome(definition, options), mount);
-      return `data:image/svg+xml;base64,${btoa(mount.innerHTML.replace(/ {4}|<!---->|\n/g, ''))}`;
-  }
-  const cachedURL = new Map();
-  function urlFontawesome(definition, options = {}) {
-      let dataUrl;
-      const foundDefinition = cachedURL.get(definition);
-      let foundClassName;
-      if (foundDefinition !== undefined) {
-          foundClassName = foundDefinition.get(options.className);
-          if (foundClassName !== undefined) {
-              const foundColor = foundClassName.get(options.color);
-              if (foundColor !== undefined) {
-                  dataUrl = foundColor;
-              }
-          }
-      }
-      if (dataUrl === undefined) {
-          dataUrl = uncachedUrlFontawesome(definition, options);
-          if (foundDefinition === undefined) {
-              cachedURL.set(definition, new Map([[options.className, new Map([[options.color, dataUrl]])]]));
-          }
-          else if (foundClassName === undefined) {
-              foundDefinition.set(options.className, new Map([[options.color, dataUrl]]));
-          }
-          else {
-              foundClassName.set(options.color, dataUrl);
-          }
-      }
-      return dataUrl;
-  }
-  exports.urlFontawesome = urlFontawesome;
-
-  });
-
-  unwrapExports(litFontawesome_1);
-  litFontawesome_1.urlFontawesome;
-  var litFontawesome_3 = litFontawesome_1.litFontawesome;
-
-  var faList = {
-    prefix: 'fas',
-    iconName: 'list',
-    icon: [512, 512, ["list-squares"], "f03a", "M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"]
-  };
-  var faPenToSquare = {
-    prefix: 'fas',
-    iconName: 'pen-to-square',
-    icon: [512, 512, ["edit"], "f044", "M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.8 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"]
-  };
-  var faEdit = faPenToSquare;
-  var faCube = {
-    prefix: 'fas',
-    iconName: 'cube',
-    icon: [512, 512, [], "f1b2", "M234.5 5.7c13.9-5 29.1-5 43.1 0l192 68.6C495 83.4 512 107.5 512 134.6V377.4c0 27-17 51.2-42.5 60.3l-192 68.6c-13.9 5-29.1 5-43.1 0l-192-68.6C17 428.6 0 404.5 0 377.4V134.6c0-27 17-51.2 42.5-60.3l192-68.6zM256 66L82.3 128 256 190l173.7-62L256 66zm32 368.6l160-57.1v-188L288 246.6v188z"]
-  };
-  var faFloppyDisk = {
-    prefix: 'fas',
-    iconName: 'floppy-disk',
-    icon: [448, 512, [128190, 128426, "save"], "f0c7", "M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
-  };
-  var faSave = faFloppyDisk;
-  var faTrash = {
-    prefix: 'fas',
-    iconName: 'trash',
-    icon: [448, 512, [], "f1f8", "M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"]
-  };
-  var faTag = {
-    prefix: 'fas',
-    iconName: 'tag',
-    icon: [448, 512, [127991], "f02b", "M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
-  };
-  var faGear = {
-    prefix: 'fas',
-    iconName: 'gear',
-    icon: [512, 512, [9881, "cog"], "f013", "M481.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-30.9 28.1c-7.7 7.1-11.4 17.5-10.9 27.9c.1 2.9 .2 5.8 .2 8.8s-.1 5.9-.2 8.8c-.5 10.5 3.1 20.9 10.9 27.9l30.9 28.1c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-39.7-12.6c-10-3.2-20.8-1.1-29.7 4.6c-4.9 3.1-9.9 6.1-15.1 8.7c-9.3 4.8-16.5 13.2-18.8 23.4l-8.9 40.7c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-8.9-40.7c-2.2-10.2-9.5-18.6-18.8-23.4c-5.2-2.7-10.2-5.6-15.1-8.7c-8.8-5.7-19.7-7.8-29.7-4.6L69.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l30.9-28.1c7.7-7.1 11.4-17.5 10.9-27.9c-.1-2.9-.2-5.8-.2-8.8s.1-5.9 .2-8.8c.5-10.5-3.1-20.9-10.9-27.9L8.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l39.7 12.6c10 3.2 20.8 1.1 29.7-4.6c4.9-3.1 9.9-6.1 15.1-8.7c9.3-4.8 16.5-13.2 18.8-23.4l8.9-40.7c2-9.1 9-16.3 18.2-17.8C213.3 1.2 227.5 0 242 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l8.9 40.7c2.2 10.2 9.4 18.6 18.8 23.4c5.2 2.7 10.2 5.6 15.1 8.7c8.8 5.7 19.7 7.7 29.7 4.6l39.7-12.6c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM242 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"]
-  };
-  var faCog = faGear;
-  var faClock = {
-    prefix: 'fas',
-    iconName: 'clock',
-    icon: [512, 512, [128339, "clock-four"], "f017", "M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"]
-  };
-
   class LMSTable extends s$4 {
     static get properties() {
       return {
@@ -1278,9 +1306,14 @@
       }
 
       svg {
+        display: inline-block;
         width: 1em;
         height: 1em;
         color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
       }
     `,
     ];
@@ -1383,7 +1416,7 @@
                                     class="btn btn-dark mx-2"
                                   >
                                     ${litFontawesome_3(faEdit)}
-                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Edit")}</span>
+                                    <span>&nbsp;${this._i18n.gettext("Edit")}</span>
                                   </button>
                                   <button
                                     @click=${this._handleSave}
@@ -1391,7 +1424,7 @@
                                     class="btn btn-dark mx-2"
                                   >
                                     ${litFontawesome_3(faSave)}
-                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Save")}</span>
+                                    <span>&nbsp;${this._i18n.gettext("Save")}</span>
                                   </button>
                                   <button
                                     @click=${this._handleDelete}
@@ -1400,7 +1433,7 @@
                                     class="btn btn-danger mx-2"
                                   >
                                     ${litFontawesome_3(faTrash)}
-                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Delete")}</span>
+                                    <span>&nbsp;${this._i18n.gettext("Delete")}</span>
                                   </button>
                                 </div>
                               </td>
@@ -1815,6 +1848,17 @@
         aspect-ratio: 4 / 3;
         object-fit: cover;
       }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
+      }
     `,
     ];
 
@@ -1996,13 +2040,16 @@
               </div>
               <div class="d-flex justify-content-between">
                 <button class="btn btn-dark" @click=${this.handleEdit}>
-                  ${this._i18n.gettext("Edit")}
+                  ${litFontawesome_3(faEdit)}
+                  <span>${this._i18n.gettext("Edit")}</span>
                 </button>
                 <button class="btn btn-dark" @click=${this.handleSave}>
-                  ${this._i18n.gettext("Save")}
+                  ${litFontawesome_3(faSave)}
+                  <span>${this._i18n.gettext("Save")}</span>
                 </button>
                 <button class="btn btn-danger" @click=${this.handleDelete}>
-                  ${this._i18n.gettext("Delete")}
+                  ${litFontawesome_3(faTrash)}
+                  <span>${this._i18n.gettext("Delete")}</span>
                 </button>
               </div>
             </div>
@@ -2291,6 +2338,17 @@
         aspect-ratio: 4 / 3;
         object-fit: cover;
       }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
+      }
     `,
     ];
 
@@ -2472,13 +2530,16 @@
               </div>
               <div class="d-flex justify-content-between">
                 <button @click=${this.handleEdit} class="btn btn-dark">
-                  ${this._i18n.gettext("Edit")}
+                  ${litFontawesome_3(faEdit)}  
+                  <span>${this._i18n.gettext("Edit")}</span>
                 </button>
                 <button @click=${this.handleSave} class="btn btn-dark">
-                  ${this._i18n.gettext("Save")}
+                  ${litFontawesome_3(faSave)}  
+                  <span>${this._i18n.gettext("Save")}</span>
                 </button>
                 <button @click=${this.handleDelete} class="btn btn-danger">
-                  ${this._i18n.gettext("Delete")}
+                  ${litFontawesome_3(faTrash)}  
+                  <span>${this._i18n.gettext("Delete")}</span>
                 </button>
               </div>
             </div>
@@ -4866,8 +4927,8 @@
       super();
       this.borrowernumber = undefined;
       this._endpoints = {
-        bookings: "/api/v1/contrib/roomreservations/bookings",
-        rooms: "/api/v1/contrib/roomreservations/rooms",
+        bookings: "/api/v1/contrib/roomreservations/public/bookings",
+        rooms: "/api/v1/contrib/roomreservations/public/rooms",
       };
       this._currentDate = new Date();
       this._lmsCalendar = undefined;
