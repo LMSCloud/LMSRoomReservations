@@ -221,7 +221,7 @@ export default class LMSBookie extends LitElement {
                     aria-describedby="booking-help"
                     @change=${(e) => {
                       this._selectedRoom = this._rooms.find(
-                        (room) => room.roomid === e.target.value
+                        (room) => room.roomid === parseInt(e.target.value, 10)
                       );
                     }}
                   >
@@ -269,19 +269,19 @@ export default class LMSBookie extends LitElement {
                       ? Array.from(
                           {
                             length: Math.floor(
-                              (this._selectedRoom.maxbookabletime ||
+                              (this._selectedRoom?.maxbookabletime ||
                                 this._defaultMaxBookingTime) / 30
                             ),
                           },
                           (_, i) => (i + 1) * 30
                         )
                           .concat(
-                            (this._selectedRoom.maxbookabletime ||
+                            (this._selectedRoom?.maxbookabletime ||
                               this._defaultMaxBookingTime) %
                               30 ===
                               0
                               ? []
-                              : this._selectedRoom.maxbookabletime ||
+                              : this._selectedRoom?.maxbookabletime ||
                                   this._defaultMaxBookingTime
                           )
                           .map((timespan) => html`<option>${timespan}</option>`)
@@ -291,7 +291,7 @@ export default class LMSBookie extends LitElement {
                 <div
                   ?hidden=${!this._equipment.length ||
                   !this._equipment.filter(
-                    (item) => item.roomid == this._selectedRoom.roomid
+                    (item) => item.roomid == this._selectedRoom?.roomid
                   ).length}
                   class="form-group"
                 >
@@ -299,7 +299,7 @@ export default class LMSBookie extends LitElement {
                     >${this._i18n.gettext("Equipment")}</label
                   >
                   ${this._equipment
-                    .filter((item) => item.roomid == this._selectedRoom.roomid)
+                    .filter((item) => item.roomid == this._selectedRoom?.roomid)
                     .map(
                       (item) => html`
                         <div class="form-check">
