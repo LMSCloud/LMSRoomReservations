@@ -25,7 +25,7 @@ export default class LMSRoomReservationsMenu extends LMSFloatingMenu {
       {
         name: "Settings",
         icon: faCog,
-        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=`,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
         method: "configure",
       },
       {
@@ -43,7 +43,7 @@ export default class LMSRoomReservationsMenu extends LMSFloatingMenu {
       {
         name: "Bookings",
         icon: faList,
-        url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=`,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
         method: "tool",
       },
       {

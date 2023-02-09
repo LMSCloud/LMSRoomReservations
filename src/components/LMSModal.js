@@ -24,7 +24,7 @@ export default class LMSModal extends LitElement {
           bottom: 1em;
           right: 1em;
           border-radius: 50%;
-          background-color: rgb(35, 39, 43);
+          background-color: var(--background-color);
           display: flex;
           justify-content: center;
           align-items: center;
@@ -36,7 +36,7 @@ export default class LMSModal extends LitElement {
         .btn-modal-wrapper > .btn-modal {
           background: none;
           border: none;
-          color: #fff;
+          color: var(--text-color);
           font-size: 2em;
           width: 2em;
           height: 2em;

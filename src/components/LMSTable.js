@@ -1,5 +1,7 @@
 import { html, css, LitElement, nothing } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler";
 
 export default class LMSTable extends LitElement {
@@ -19,6 +21,12 @@ export default class LMSTable extends LitElement {
       table {
         background: white;
         padding: 1em;
+      }
+
+      svg {
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
       }
     `,
   ];
@@ -90,7 +98,7 @@ export default class LMSTable extends LitElement {
         ? nothing
         : html`
             <div class="container-fluid mx-0 px-0">
-              <table class="table table-striped table-bordered table-hover">
+              <table class="table table-striped table-bordered table-hove table-responsive-xl">
                 <thead>
                   <tr>
                     ${Object.keys(headers).map(
@@ -120,14 +128,16 @@ export default class LMSTable extends LitElement {
                                     type="button"
                                     class="btn btn-dark mx-2"
                                   >
-                                    ${this._i18n.gettext("Edit")}
+                                    ${litFontawesome(faEdit)}
+                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Edit")}</span>
                                   </button>
                                   <button
                                     @click=${this._handleSave}
                                     type="button"
                                     class="btn btn-dark mx-2"
                                   >
-                                    ${this._i18n.gettext("Save")}
+                                    ${litFontawesome(faSave)}
+                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Save")}</span>
                                   </button>
                                   <button
                                     @click=${this._handleDelete}
@@ -135,7 +145,8 @@ export default class LMSTable extends LitElement {
                                     type="button"
                                     class="btn btn-danger mx-2"
                                   >
-                                    ${this._i18n.gettext("Delete")}
+                                    ${litFontawesome(faTrash)}
+                                    <span class="d-none d-md-inline">&nbsp;${this._i18n.gettext("Delete")}</span>
                                   </button>
                                 </div>
                               </td>
