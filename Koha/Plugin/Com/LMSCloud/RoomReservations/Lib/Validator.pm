@@ -43,7 +43,7 @@ sub is_valid_string {
     my ( $self, $args ) = @_;
 
     # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
+    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -74,10 +74,8 @@ sub is_valid_string {
 sub is_valid_number {
     my ( $self, $args ) = @_;
 
-    warn $args->{'nullable'};
-
     # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
+    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -125,7 +123,7 @@ sub is_valid_datetime {
     my ( $self, $args ) = @_;
 
     # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
+    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -159,7 +157,7 @@ sub is_valid_color {
     my ( $self, $args ) = @_;
 
     # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
+    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
@@ -186,7 +184,7 @@ sub is_valid_time {
     my ( $self, $args ) = @_;
 
     # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !defined $args->{'value'} && $args->{'nullable'};
+    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
 
     # Return immediately if the given value is not defined.
     return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
