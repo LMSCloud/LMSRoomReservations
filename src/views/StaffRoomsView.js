@@ -14,14 +14,30 @@ export default class StaffRoomsView extends LMSContainer {
   }
 
   async _getElements() {
-    const response = await fetch(this._endpoint);
-    const result = await response.json();
+    const [roomsResponse, librariesResponse] = await Promise.all([
+      fetch(this._endpoint),
+      fetch("/api/v1/libraries"),
+    ]);
+    const rooms = await roomsResponse.json();
+    let libraries = await librariesResponse.json();
+    libraries = libraries.map((library) => ({
+      value: library.library_id,
+      name: library.name,
+    }));
 
-    if (response.status === 200) {
-      this._elements = result.map((room) => {
+    if (
+      [roomsResponse, librariesResponse].every(({ status }) => status === 200)
+    ) {
+      this._elements = rooms.map((room) => {
+        const _room = { ...room, libraries };
         const lmsRoom = document.createElement("lms-room", { is: "lms-room" });
-        Object.keys(room).forEach((key) => {
-          lmsRoom.setAttribute(key, room[key]);
+        Object.keys(_room).forEach((key) => {
+          lmsRoom.setAttribute(
+            key,
+            _room[key] instanceof Array
+              ? JSON.stringify(_room[key])
+              : _room[key]
+          );
         });
         return lmsRoom;
       });
@@ -46,11 +62,13 @@ export default class StaffRoomsView extends LMSContainer {
     element.setAttribute("heading", status);
     element.setAttribute(
       "message",
-      errors.reduce(
-        (acc, { message, path }, idx) =>
-          `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
-        ""
-      )
+      errors instanceof Array
+        ? errors.reduce(
+            (acc, { message, path }, idx) =>
+              `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
+            ""
+          )
+        : errors
     );
     this.renderRoot.appendChild(element);
   }
