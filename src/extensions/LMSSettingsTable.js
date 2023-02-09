@@ -141,7 +141,7 @@ export default class LMSSettingsTable extends LMSTable {
       return field.value.length
         ? field.value.reduce(
             (accumulator, category) => html`${accumulator}
-              <div class="form-check d-inline">
+              <div class="form-check form-check-inline">
                 <input
                   type="checkbox"
                   name="${category.categorycode}"
