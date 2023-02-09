@@ -14,7 +14,7 @@
               "type": "object",
               "properties": {
                 "maxcapacity": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "The maximum number of people that can be in the room"
                 },
                 "color": {
@@ -30,11 +30,11 @@
                   "description": "A description of the room"
                 },
                 "maxbookabletime": {
-                  "type": ["number", "null"],
+                  "type": ["integer", "null", "string"],
                   "description": "The maximum amount of time that the room can be booked for"
                 },
                 "roomid": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "The internal ID of the room"
                 },
                 "branch": {
@@ -97,7 +97,7 @@
               "type": "object",
               "properties": {
                 "maxcapacity": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "The maximum number of people that can be in the room"
                 },
                 "color": {
@@ -113,11 +113,11 @@
                   "description": "A description of the room"
                 },
                 "maxbookabletime": {
-                  "type": ["number", "null"],
+                  "type": ["integer", "null", "string"],
                   "description": "The maximum amount of time that the room can be booked for"
                 },
                 "roomid": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "The internal ID of the room"
                 },
                 "branch": {
@@ -165,7 +165,7 @@
             "type": "object",
             "properties": {
               "maxcapacity": {
-                "type": "number",
+                "type": "integer",
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
@@ -181,11 +181,11 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": ["number", "null"],
+                "type": ["integer", "null", "string"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
-                "type": "number",
+                "type": "integer",
                 "description": "The internal ID of the room"
               },
               "branch": {
@@ -208,7 +208,7 @@
             "type": "object",
             "properties": {
               "maxcapacity": {
-                "type": "number",
+                "type": "integer",
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
@@ -224,11 +224,11 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": ["number", "null"],
+                "type": ["integer", "null", "string"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
-                "type": "number",
+                "type": "integer",
                 "description": "The internal ID of the room"
               },
               "branch": {
@@ -284,7 +284,7 @@
             "type": "object",
             "properties": {
               "maxcapacity": {
-                "type": "number",
+                "type": "integer",
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
@@ -300,11 +300,11 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": ["number", "null"],
+                "type": ["integer", "null", "string"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
-                "type": "number",
+                "type": "integer",
                 "description": "The internal ID of the room"
               },
               "branch": {
@@ -318,8 +318,32 @@
             }
           }
         },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
         "404": {
           "description": "The room was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
           "schema": {
             "type": "object",
             "properties": {
@@ -358,7 +382,7 @@
             "type": "object",
             "properties": {
               "maxcapacity": {
-                "type": "number",
+                "type": "integer",
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
@@ -374,11 +398,11 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": ["number", "null"],
+                "type": ["integer", "null", "string"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
-                "type": "number",
+                "type": "integer",
                 "description": "The internal ID of the room"
               },
               "branch": {
@@ -401,7 +425,7 @@
             "type": "object",
             "properties": {
               "maxcapacity": {
-                "type": "number",
+                "type": "integer",
                 "description": "The maximum number of people that can be in the room"
               },
               "color": {
@@ -417,11 +441,11 @@
                 "description": "A description of the room"
               },
               "maxbookabletime": {
-                "type": ["number", "null"],
+                "type": ["integer", "null", "string"],
                 "description": "The maximum amount of time that the room can be booked for"
               },
               "roomid": {
-                "type": "number",
+                "type": "integer",
                 "description": "The internal ID of the room"
               },
               "branch": {
@@ -435,8 +459,32 @@
             }
           }
         },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
         "404": {
           "description": "The room was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
           "schema": {
             "type": "object",
             "properties": {
@@ -520,7 +568,7 @@
                   "type": ["string", "null"]
                 },
                 "maxbookabletime": {
-                  "type": ["integer", "null"]
+                  "type": ["integer", "null", "string"]
                 }
               }
             }
@@ -568,7 +616,7 @@
                   "type": ["string", "null"]
                 },
                 "maxbookabletime": {
-                  "type": ["integer", "null"]
+                  "type": ["integer", "null", "string"]
                 }
               }
             }
@@ -616,7 +664,7 @@
                 "type": ["string", "null"]
               },
               "maxbookabletime": {
-                "type": ["integer", "null"]
+                "type": ["integer", "null", "string"]
               }
             },
             "required": ["equipmentname"]
@@ -643,7 +691,7 @@
                 "type": ["string", "null"]
               },
               "maxbookabletime": {
-                "type": ["integer", "null"]
+                "type": ["integer", "null", "string"]
               }
             }
           }
@@ -701,7 +749,7 @@
                 "type": ["string", "null"]
               },
               "maxbookabletime": {
-                "type": ["integer", "null"]
+                "type": ["integer", "null", "string"]
               }
             }
           }
@@ -754,10 +802,10 @@
                 "type": ["string", "null"]
               },
               "maxbookabletime": {
-                "type": ["integer", "null"]
+                "type": ["integer", "null", "string"]
               },
               "roomid": {
-                "type": ["integer", "null"]
+                "type": ["integer", "null", "string"]
               }
             },
             "required": ["equipmentname"]
@@ -784,7 +832,7 @@
                 "type": ["string", "null"]
               },
               "maxbookabletime": {
-                "type": ["integer", "null"]
+                "type": ["integer", "null", "string"]
               }
             }
           }
@@ -1672,6 +1720,29 @@
                 },
                 "updated_at": {
                   "type": "string"
+                },
+                "equipment": {
+                  "type": ["array", "null"],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "equipmentid": {
+                        "type": "integer"
+                      },
+                      "equipmentname": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "image": {
+                        "type": "string"
+                      },
+                      "maxbookabletime": {
+                        "type": ["integer", "null", "string"]
+                      }
+                    }
+                  }
                 }
               }
             }
