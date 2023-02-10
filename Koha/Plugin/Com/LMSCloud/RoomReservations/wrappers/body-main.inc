@@ -12,7 +12,7 @@
         const params = new Proxy(new URLSearchParams(window.location.search), {
             get: (target, name) => target.get(name) || '',
         });
-        const lang = document.documentElement.lang;
+        const lang = document.documentElement.lang.slice(0, 2);
         const translations = {
             tool: {
                 en: 'Tool',
