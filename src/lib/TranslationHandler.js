@@ -8,7 +8,7 @@ export default class TranslationHandler {
      *  of the documentElement instead of the locale
      *  set in the browser (window.navigator.language).
      */
-    this._locale = document.documentElement.lang;
+    this._locale = document.documentElement.lang.slice(0, 2);
   }
 
   async loadTranslations() {
