@@ -88,6 +88,115 @@ sub tool {
     return $self->output_html( $template->output() );
 }
 
+sub opac_js {
+    my ($self) = @_;
+
+    return <<~'JS';
+        <script>
+            /** Here we add an entry to the user menu that leads to a list
+            * of the patron's current reservations.  */
+            const userMenuUl = document.querySelector("#usermenu > #menu > ul");
+            if (userMenuUl) {
+                const strings = {
+                    de: {
+                        heading: "Raumbuchungen",
+                        info: "Hier können Sie Ihre aktuellen Raumbuchungen einsehen.",
+                        loading: "Lade...",
+                        noBookings: "Sie haben keine Buchungen.",
+                        room: "Raum",
+                        start: "Start",
+                        end: "Ende",
+                    },
+                    en: {
+                        heading: "Room reservations",
+                        info: "Here you can see your current room reservations.",
+                        loading: "Loading...",
+                        noBookings: "You have no bookings.",
+                        room: "Room",
+                        start: "Start",
+                        end: "End",
+                    },
+                };
+                const dateFormats = {
+                    de: "DD.MM.YYYY HH:mm",
+                    en: "YYYY-MM-DD HH:mm",
+                };
+                const convertToDateFormat = (date, format) => {
+                    const dateObject = new Date(date);
+                    const year = dateObject.getFullYear();
+                    const month = dateObject.getMonth() + 1;
+                    const day = dateObject.getDate();
+                    const hour = dateObject.getHours();
+                    const minute = dateObject.getMinutes();
+                    return format
+                        .replace("YYYY", year)
+                        .replace("MM", month < 10 ? "0" + month : month)
+                        .replace("DD", day < 10 ? "0" + day : day)
+                        .replace("HH", hour < 10 ? "0" + hour : hour)
+                        .replace("mm", minute < 10 ? "0" + minute : minute);
+                };
+                const roomReservationsMenuEntry = document.createElement("li");
+                roomReservationsMenuEntry.innerHTML = `
+                            <a href="#"> ${strings[document.documentElement.lang.slice(0, 2)].heading} </a>
+                            `;
+                userMenuUl.appendChild(roomReservationsMenuEntry);
+                roomReservationsMenuEntry.addEventListener("click", () => {
+                    Array.from(userMenuUl.children).forEach((element) => {
+                        element.classList.remove("active");
+                    });
+                    roomReservationsMenuEntry.classList.add("active");
+                    const mainContent = document.querySelector(".maincontent");
+                    const lang = document.documentElement.lang.slice(0, 2);
+                    mainContent.innerHTML = `
+                                        <h1>${strings[lang].heading}</h1>
+                                        <p>${strings[lang].info}</p>
+                                        <p>${strings[lang].loading}</p>
+                                    `;
+                    const responses = Promise.all([
+                        fetch("/api/v1/contrib/roomreservations/public/patrons_bookings"),
+                        fetch("/api/v1/contrib/roomreservations/public/rooms"),
+                    ]);
+                    responses
+                        .then(([patronsBookings, rooms]) =>
+                            Promise.all([patronsBookings.json(), rooms.json()])
+                        )
+                        .then(([patronsBookings, rooms]) => {
+                            mainContent.innerHTML = `
+                                <h1>${strings[lang].heading}</h1>
+                                <p>${strings[lang].info}</p>
+                                <table class="table table-striped table-bordered table-responsive-sm">
+                                    <thead>
+                                    <tr>
+                                        <th>${strings[lang].room}</th>
+                                        <th>${strings[lang].start}</th>
+                                        <th>${strings[lang].end}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    ${patronsBookings
+                                        .map(
+                                        (booking) => `
+                                        <tr>
+                                            <td>${
+                                            rooms.find((room) => room.roomid === booking.roomid)
+                                                .roomnumber
+                                            }</td>
+                                            <td>${convertToDateFormat(booking.start, dateFormats[lang])}</td>
+                                            <td>${convertToDateFormat(booking.end, dateFormats[lang])}</td>
+                                        </tr>
+                                        `
+                                        )
+                                        .join("")}
+                                    </tbody>
+                                </table>
+                                `;
+                        });
+                });
+            }
+        </script>
+    JS
+}
+
 ## If your plugin needs to add some javascript in the staff intranet, you'll want
 ## to return that javascript here. Don't forget to wrap your javascript in
 ## <script> tags. By not adding them automatically for you, you'll have a
@@ -242,12 +351,13 @@ sub install() {
         }
 
         $self->store_data(
-            {   plugin_version             => $VERSION,
-                default_max_booking_time   => q{},
-                absolute_reservation_limit => q{},
-                daily_reservation_limit    => q{},
-                restrict_message           => q{},
-                reply_to_address           => q{},
+            {   plugin_version                 => $VERSION,
+                default_max_booking_time       => q{},
+                absolute_reservation_limit     => q{},
+                daily_reservation_limit        => q{},
+                restrict_message               => q{},
+                reply_to_address               => q{},
+                remove_past_reservations_after => q{},
             }
         );
 
