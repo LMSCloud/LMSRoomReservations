@@ -1112,6 +1112,29 @@
             }
           }
         },
+        "201": {
+          "description": "Successful response",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "equipmentid": {
+                "type": "integer"
+              },
+              "equipmentname": {
+                "type": "string"
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "maxbookabletime": {
+                "type": ["integer", "null", "string"]
+              }
+            }
+          }
+        },
         "400": {
           "description": "Bad request",
           "schema": {
@@ -3041,6 +3064,109 @@
       }
     }
   },
+  "/public/patrons_bookings": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::PatronsBookings#list",
+      "tags": ["bookings"],
+      "summary": "Get room bookings for an authenticated patron",
+      "operationId": "getPatronsBookingsPublic",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "roomid": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/bookings": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#list",
@@ -3092,10 +3218,10 @@
                         "type": "string"
                       },
                       "description": {
-                        "type": "string"
+                        "type": ["string", "null"]
                       },
                       "image": {
-                        "type": "string"
+                        "type": ["string", "null"]
                       },
                       "maxbookabletime": {
                         "type": ["integer", "null", "string"]
