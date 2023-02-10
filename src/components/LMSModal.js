@@ -124,6 +124,7 @@ export default class LMSModal extends LitElement {
             .then((entries) => (asyncFetcher.entries = entries))
         );
     });
+    this._moveOnOverlap();
   }
 
   updated() {
@@ -321,5 +322,28 @@ export default class LMSModal extends LitElement {
         ?required=${field.required}
       />
     </div>`;
+  }
+
+  _moveOnOverlap() {
+    const fixedElement = this.renderRoot.querySelector(".btn-modal-wrapper");
+    if (!fixedElement) return;
+
+    const fixedRect = fixedElement.getBoundingClientRect();
+    if (
+      [...document.querySelectorAll("body *")].some((element) => {
+        if (element === fixedElement) return false;
+        const otherRect = element.getBoundingClientRect();
+        // Check if the fixedRect and otherRect overlap by comparing their positions
+        return (
+          fixedRect.right < otherRect.left &&
+          fixedRect.left > otherRect.right &&
+          fixedRect.bottom < otherRect.top &&
+          fixedRect.top > otherRect.bottom
+        );
+      })
+    ) {
+      fixedElement.style.top =
+        parseFloat(getComputedStyle(fixedElement).top) - 1 + "em";
+    }
   }
 }
