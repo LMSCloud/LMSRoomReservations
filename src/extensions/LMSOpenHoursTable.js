@@ -107,6 +107,12 @@ export default class LMSOpenHoursTable extends LMSTable {
   }
 
   _handleEdit(e) {
+    /** Before we enable all inputs in a row
+     *  we disable all other rows */
+    this.renderRoot.querySelectorAll("input").forEach((input) => {
+      input.disabled = true;
+    });
+
     if (this._isSetup) {
       let parent = e.target.parentElement;
       while (parent.tagName !== "TR") {

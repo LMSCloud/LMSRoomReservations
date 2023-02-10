@@ -11,6 +11,12 @@ export default class LMSBookingsTable extends LMSTable {
   };
 
   _handleEdit(e) {
+    /** Before we enable all inputs in a row
+     *  we disable all other rows */
+    this.renderRoot.querySelectorAll("input, select").forEach((input) => {
+      input.disabled = true;
+    });
+
     let parent = e.target.parentElement;
     while (parent.tagName !== "TR") {
       parent = parent.parentElement;
@@ -36,7 +42,6 @@ export default class LMSBookingsTable extends LMSTable {
     ];
     const inputs = parent.querySelectorAll("input, select");
     /** Same here, roomid needs to be an integer */
-    console.log(inputs);
     const [roomid, start, end] = [
       ...Array.from(inputs).map((input, index) =>
         index === 0 ? parseInt(input.value, 10) : input.value
@@ -208,22 +213,22 @@ export default class LMSBookingsTable extends LMSTable {
         `;
       },
       equipment: () => {
-        console.log(value);
         return value.length
           ? value.map((item) => {
               return html`
-                  <div class="form-check form-check-inline">
-                    <input
-                      type="checkbox"
-                      class="form-check-input"
-                      id=${item.equipmentid}
-                      checked disabled
-                    />
-                    &nbsp;
-                    <label class="form-check-label" for=${item.equipmentid}
-                      >${item.equipmentname}
-                    </label>
-                  </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id=${item.equipmentid}
+                    checked
+                    disabled
+                  />
+                  &nbsp;
+                  <label class="form-check-label" for=${item.equipmentid}
+                    >${item.equipmentname}
+                  </label>
+                </div>
               `;
             })
           : nothing;
