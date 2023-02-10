@@ -120,7 +120,13 @@ sub update {
         }
 
         my $new_open_hours = $c->validation->param('body');
-        my $validator      = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+
+        # We have to strip of the seconds of start and end time
+        # that's needlessly supplied by firefox's time picker.
+        # To do that we map the $new_open_hours hash and strip
+        # of the seconds.
+        $new_open_hours = { map { $_ => substr $new_open_hours->{$_}, 0, 5 } keys %{$new_open_hours} };
+        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
             { schema => [ { type => 'time', key => 'start', value => $new_open_hours->{'start'} }, { type => 'time', key => 'end', value => $new_open_hours->{'end'} }, ] } );
         my ( $is_valid, $errors ) = $validator->validate();
         if ( !$is_valid ) {
