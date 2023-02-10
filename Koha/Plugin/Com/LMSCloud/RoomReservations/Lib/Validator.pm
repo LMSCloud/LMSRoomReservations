@@ -13,6 +13,11 @@ has 'schema' => (
     required => 1,
 );
 
+has 'locale_dir' => (
+    is  => 'ro',
+    isa => 'Str',
+);
+
 use constant {
     MAX_LENGTH_VARCHAR => 255,
     MAX_LENGTH_INT     => 2_147_483_647,
