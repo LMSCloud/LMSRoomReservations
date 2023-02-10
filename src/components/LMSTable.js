@@ -74,7 +74,6 @@ export default class LMSTable extends LitElement {
         heading: status,
         message: result.error,
       };
-      return;
     }
 
     if (result.errors) {
