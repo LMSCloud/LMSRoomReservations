@@ -36,7 +36,7 @@ To generate the pot file we use `xgettext` and include all dirs, perl or JavaScr
 It's important to include shorthands like `__`. Otherwise those strings will be skipped.
 
 ```bash
-xgettext --output=com.lmscloud.roomreservations.pot --from-code=utf-8 --language=JavaScript --force-po --keyword=__ src/extensions/*.js src/views/*.js src/components/*.js
+xgettext --output=com.lmscloud.roomreservations.pot --from-code=utf-8  --force-po --keyword=__ --keyword=this._i18n.gettext src/extensions/*.js src/views/*.js src/components/*.js Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/**/*.pm Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/*.pm dynamically_added_strings.js
 ```
 
 If the pot file is created we use `msginit` to create a po file for our locale.
