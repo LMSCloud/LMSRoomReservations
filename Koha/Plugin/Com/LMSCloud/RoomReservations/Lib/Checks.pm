@@ -109,7 +109,7 @@ sub has_conflicting_booking {
     my $sql = SQL::Abstract->new;
     my $dbh = C4::Context->dbh;
 
-    # We have to check if the booking we are trying to create overlaps with 
+    # We have to check if the booking we are trying to create overlaps with
     # any other booking but if it starts on the same minute another booking ends
     # we have to allow it.
     my ( $where, @bind ) = $sql->where(
