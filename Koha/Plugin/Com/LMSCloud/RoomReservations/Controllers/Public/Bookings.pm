@@ -6,7 +6,6 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
 use Try::Tiny;
 use JSON;
 use SQL::Abstract;
@@ -16,6 +15,7 @@ use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
 use POSIX qw(setlocale);
 use Encode;
 
+use C4::Context;
 use C4::Letters;
 use Koha::Patrons;
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Checks qw(

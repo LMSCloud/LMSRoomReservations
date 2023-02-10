@@ -63,7 +63,7 @@ sub list {
         # We filter out bookings whose date is in the past by subtracting
         # the date of the booking in seconds from the current date and check
         # whether the delta is smaller than the number of days specified in the
-        # remove_past_reservations_after setting multiplied by seconds in ond day.
+        # remove_past_reservations_after setting multiplied by seconds in one day.
         # If the test passes the booking doesn't lie behind the cutoff date.
         my $cutoff_days = $self->retrieve_data('remove_past_reservations_after') || 0;
         if ( $cutoff_days > 0 ) {
@@ -84,7 +84,7 @@ sub list {
         my $bookings_equipment = $sth->fetchall_arrayref( {} );
 
         # Then we have to get the equipment that's referenced in the bookings
-        # and the bookings_equipment table and add it to the bookings
+        # and the bookings_equipment table and add it to the bookings.
         ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => { -in => [ map { $_->{'equipmentid'} } @{$bookings_equipment} ] } } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
@@ -92,7 +92,7 @@ sub list {
         my $equipment = $sth->fetchall_arrayref( {} );
 
         # Finally we add the equipment that's referenced in the bookings_equipment
-        # by its bookingid to the booking itself
+        # by its bookingid to the booking itself.
         foreach my $booking ( @{$bookings} ) {
             $booking->{'equipment'} = [
                 map {
