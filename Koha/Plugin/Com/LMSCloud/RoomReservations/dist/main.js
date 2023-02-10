@@ -1042,6 +1042,7 @@
               .then((entries) => (asyncFetcher.entries = entries))
           );
       });
+      this._moveOnOverlap();
     }
 
     updated() {
@@ -1240,6 +1241,29 @@
       />
     </div>`;
     }
+
+    _moveOnOverlap() {
+      const fixedElement = this.renderRoot.querySelector(".btn-modal-wrapper");
+      if (!fixedElement) return;
+
+      const fixedRect = fixedElement.getBoundingClientRect();
+      if (
+        [...document.querySelectorAll("body *")].some((element) => {
+          if (element === fixedElement) return false;
+          const otherRect = element.getBoundingClientRect();
+          // Check if the fixedRect and otherRect overlap by comparing their positions
+          return (
+            fixedRect.right < otherRect.left &&
+            fixedRect.left > otherRect.right &&
+            fixedRect.bottom < otherRect.top &&
+            fixedRect.top > otherRect.bottom
+          );
+        })
+      ) {
+        fixedElement.style.top =
+          parseFloat(getComputedStyle(fixedElement).top) - 1 + "em";
+      }
+    }
   }
 
   class LMSSearch extends s$4 {
@@ -1356,7 +1380,6 @@
           heading: status,
           message: result.error,
         };
-        return;
       }
 
       if (result.errors) {
@@ -1546,6 +1569,12 @@
     };
 
     _handleEdit(e) {
+      /** Before we enable all inputs in a row
+       *  we disable all other rows */
+      this.renderRoot.querySelectorAll("input, select").forEach((input) => {
+        input.disabled = true;
+      });
+
       let parent = e.target.parentElement;
       while (parent.tagName !== "TR") {
         parent = parent.parentElement;
@@ -1571,7 +1600,6 @@
       ];
       const inputs = parent.querySelectorAll("input, select");
       /** Same here, roomid needs to be an integer */
-      console.log(inputs);
       const [roomid, start, end] = [
         ...Array.from(inputs).map((input, index) =>
           index === 0 ? parseInt(input.value, 10) : input.value
@@ -1743,22 +1771,22 @@
         `;
         },
         equipment: () => {
-          console.log(value);
           return value.length
             ? value.map((item) => {
                 return y$1`
-                  <div class="form-check form-check-inline">
-                    <input
-                      type="checkbox"
-                      class="form-check-input"
-                      id=${item.equipmentid}
-                      checked disabled
-                    />
-                    &nbsp;
-                    <label class="form-check-label" for=${item.equipmentid}
-                      >${item.equipmentname}
-                    </label>
-                  </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id=${item.equipmentid}
+                    checked
+                    disabled
+                  />
+                  &nbsp;
+                  <label class="form-check-label" for=${item.equipmentid}
+                    >${item.equipmentname}
+                  </label>
+                </div>
               `;
               })
             : b$1;
@@ -2246,6 +2274,12 @@
     }
 
     _handleEdit(e) {
+      /** Before we enable all inputs in a row
+       *  we disable all other rows */
+      this.renderRoot.querySelectorAll("input").forEach((input) => {
+        input.disabled = true;
+      });
+
       if (this._isSetup) {
         let parent = e.target.parentElement;
         while (parent.tagName !== "TR") {
@@ -2716,6 +2750,12 @@
     }
 
     _handleEdit(e) {
+      /** Before we enable all inputs in a row
+       *  we disable all other rows */
+      this.renderRoot.querySelectorAll("input").forEach((input) => {
+        input.disabled = true;
+      });
+
       let parent = e.target.parentElement;
       while (parent.tagName !== "TR") {
         parent = parent.parentElement;
