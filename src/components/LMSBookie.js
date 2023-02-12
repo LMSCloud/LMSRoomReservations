@@ -190,7 +190,7 @@ export default class LMSBookie extends LitElement {
       : html`
           <div ?hidden=${!this._rooms.length}>
             <section>
-              <h5>${this._i18n.gettext("Book a room")}</h5>
+              <h5 id="book-it-here">${this._i18n.gettext("Book a room")}</h5>
               <div
                 class="alert alert-${this._alertMessage.includes(
                   `${this._i18n.gettext("Success")}!`
@@ -424,7 +424,7 @@ export default class LMSBookie extends LitElement {
                       </ul>
                       <div class="card-body">
                         <a
-                          href="#"
+                          href="#book-it-here"
                           class="card-link"
                           id=${room.roomid}
                           @click=${(e) => {
