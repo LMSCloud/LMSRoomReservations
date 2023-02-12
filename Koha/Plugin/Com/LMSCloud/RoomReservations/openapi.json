@@ -2067,7 +2067,7 @@
       ],
       "produces": ["application/json"],
       "responses": {
-        "200": {
+        "201": {
           "description": "Successful response",
           "schema": {
             "type": "object",
