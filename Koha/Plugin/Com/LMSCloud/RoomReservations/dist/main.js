@@ -2981,518 +2981,66 @@
    * SPDX-License-Identifier: BSD-3-Clause
    */var n;null!=(null===(n=window.HTMLSlotElement)||void 0===n?void 0:n.prototype.assignedElements)?(o,n)=>o.assignedElements(n):(o,n)=>o.assignedNodes(n).filter((o=>o.nodeType===Node.ELEMENT_NODE));
 
-  /**
-   * @license
-   * Copyright 2021 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  const isStrTagged = (val) => typeof val !== 'string' && 'strTag' in val;
-  /**
-   * Render the result of a `str` tagged template to a string. Note we don't need
-   * to do this for Lit templates, since Lit itself handles rendering.
-   */
-  const joinStringsAndValues = (strings, values, valueOrder) => {
-      let concat = strings[0];
-      for (let i = 1; i < strings.length; i++) {
-          concat += values[valueOrder ? valueOrder[i - 1] : i - 1];
-          concat += strings[i];
-      }
-      return concat;
-  };
-
-  /**
-   * @license
-   * Copyright 2021 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  /**
-   * Default identity msg implementation. Simply returns the input template with
-   * no awareness of translations. If the template is str-tagged, returns it in
-   * string form.
-   */
-  const defaultMsg = ((template) => isStrTagged(template)
-      ? joinStringsAndValues(template.strings, template.values)
-      : template);
-
-  /**
-   * @license
-   * Copyright 2021 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  /**
-   * Name of the event dispatched to `window` whenever a locale change starts,
-   * finishes successfully, or fails. Only relevant to runtime mode.
-   *
-   * The `detail` of this event is an object with a `status` string that can be:
-   * "loading", "ready", or "error", along with the relevant locale code, and
-   * error message if applicable.
-   *
-   * You can listen for this event to know when your application should be
-   * re-rendered following a locale change. See also the Localized mixin, which
-   * automatically re-renders LitElement classes using this event.
-   */
-  const LOCALE_STATUS_EVENT = 'lit-localize-status';
-
-  /**
-   * @license
-   * Copyright 2021 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  class LocalizeController {
-      constructor(host) {
-          this.__litLocalizeEventHandler = (event) => {
-              if (event.detail.status === 'ready') {
-                  this.host.requestUpdate();
-              }
-          };
-          this.host = host;
-      }
-      hostConnected() {
-          window.addEventListener(LOCALE_STATUS_EVENT, this.__litLocalizeEventHandler);
-      }
-      hostDisconnected() {
-          window.removeEventListener(LOCALE_STATUS_EVENT, this.__litLocalizeEventHandler);
-      }
-  }
-  /**
-   * Re-render the given LitElement whenever a new active locale has loaded.
-   *
-   * See also {@link localized} for the same functionality as a decorator.
-   *
-   * When using lit-localize in transform mode, calls to this function are
-   * replaced with undefined.
-   *
-   * Usage:
-   *
-   *   import {LitElement, html} from 'lit';
-   *   import {msg, updateWhenLocaleChanges} from '@lit/localize';
-   *
-   *   class MyElement extends LitElement {
-   *     constructor() {
-   *       super();
-   *       updateWhenLocaleChanges(this);
-   *     }
-   *
-   *     render() {
-   *       return html`<b>${msg('Hello World')}</b>`;
-   *     }
-   *   }
-   */
-  const _updateWhenLocaleChanges = (host) => host.addController(new LocalizeController(host));
-  const updateWhenLocaleChanges = _updateWhenLocaleChanges;
-
-  /**
-   * @license
-   * Copyright 2021 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  /**
-   * Class decorator to enable re-rendering the given LitElement whenever a new
-   * active locale has loaded.
-   *
-   * See also {@link updateWhenLocaleChanges} for the same functionality without
-   * the use of decorators.
-   *
-   * When using lit-localize in transform mode, applications of this decorator are
-   * removed.
-   *
-   * Usage:
-   *
-   *   import {LitElement, html} from 'lit';
-   *   import {customElement} from 'lit/decorators.js';
-   *   import {msg, localized} from '@lit/localize';
-   *
-   *   @localized()
-   *   @customElement('my-element')
-   *   class MyElement extends LitElement {
-   *     render() {
-   *       return html`<b>${msg('Hello World')}</b>`;
-   *     }
-   *   }
-   */
-  const _localized = () => (classOrDescriptor) => typeof classOrDescriptor === 'function'
-      ? legacyLocalized(classOrDescriptor)
-      : standardLocalized(classOrDescriptor);
-  const localized = _localized;
-  const standardLocalized = ({ kind, elements }) => {
-      return {
-          kind,
-          elements,
-          finisher(clazz) {
-              clazz.addInitializer(updateWhenLocaleChanges);
-          },
-      };
-  };
-  const legacyLocalized = (clazz) => {
-      clazz.addInitializer(updateWhenLocaleChanges);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return clazz;
-  };
-
-  /**
-   * @license
-   * Copyright 2020 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  class Deferred {
-      constructor() {
-          this.settled = false;
-          this.promise = new Promise((resolve, reject) => {
-              this._resolve = resolve;
-              this._reject = reject;
-          });
-      }
-      resolve(value) {
-          this.settled = true;
-          this._resolve(value);
-      }
-      reject(error) {
-          this.settled = true;
-          this._reject(error);
-      }
-  }
-
-  /**
-   * @license
-   * Copyright 2014 Travis Webb
-   * SPDX-License-Identifier: MIT
-   */
-  // This module is derived from the file:
-  // https://github.com/tjwebb/fnv-plus/blob/1e2ce68a07cb7dd4c3c85364f3d8d96c95919474/index.js#L309
-  //
-  // Changes:
-  // - Only the _hash64_1a_fast function is included.
-  // - Removed loop unrolling.
-  // - Converted to TypeScript ES module.
-  // - var -> let/const
-  //
-  // TODO(aomarks) Upstream improvements to https://github.com/tjwebb/fnv-plus/.
-  const hl = [];
-  for (let i = 0; i < 256; i++) {
-      hl[i] = ((i >> 4) & 15).toString(16) + (i & 15).toString(16);
-  }
-  /**
-   * Perform a FNV-1A 64-bit hash of the given string (as UTF-16 code units), and
-   * return a hexadecimal digest (left zero padded to 16 characters).
-   *
-   * @see {@link http://tools.ietf.org/html/draft-eastlake-fnv-06}
-   */
-  function fnv1a64(str) {
-      let t0 = 0, v0 = 0x2325, t1 = 0, v1 = 0x8422, t2 = 0, v2 = 0x9ce4, t3 = 0, v3 = 0xcbf2;
-      for (let i = 0; i < str.length; i++) {
-          v0 ^= str.charCodeAt(i);
-          t0 = v0 * 435;
-          t1 = v1 * 435;
-          t2 = v2 * 435;
-          t3 = v3 * 435;
-          t2 += v0 << 8;
-          t3 += v1 << 8;
-          t1 += t0 >>> 16;
-          v0 = t0 & 65535;
-          t2 += t1 >>> 16;
-          v1 = t1 & 65535;
-          v3 = (t3 + (t2 >>> 16)) & 65535;
-          v2 = t2 & 65535;
-      }
-      return (hl[v3 >> 8] +
-          hl[v3 & 255] +
-          hl[v2 >> 8] +
-          hl[v2 & 255] +
-          hl[v1 >> 8] +
-          hl[v1 & 255] +
-          hl[v0 >> 8] +
-          hl[v0 & 255]);
-  }
-
-  /**
-   * @license
-   * Copyright 2020 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  /**
-   * Delimiter used between each template string component before hashing. Used to
-   * prevent e.g. "foobar" and "foo${baz}bar" from sharing a hash.
-   *
-   * This is the "record separator" ASCII character.
-   */
-  const HASH_DELIMITER = '\x1e';
-  /**
-   * Id prefix on html-tagged templates to distinguish e.g. `<b>x</b>` from
-   * html`<b>x</b>`.
-   */
-  const HTML_PREFIX = 'h';
-  /**
-   * Id prefix on plain string templates to distinguish e.g. `<b>x</b>` from
-   * html`<b>x</b>`.
-   */
-  const STRING_PREFIX = 's';
-  /**
-   * Generate a unique ID for a lit-localize message.
-   *
-   * Example:
-   *   Template: html`Hello <b>${who}</b>!`
-   *     Params: ["Hello <b>", "</b>!"], true
-   *     Output: h82ccc38d4d46eaa9
-   *
-   * The ID is constructed as:
-   *
-   *   [0]    Kind of template: [h]tml or [s]tring.
-   *   [1,16] 64-bit FNV-1a hash hex digest of the template strings, as UTF-16
-   *          code points, delineated by an ASCII "record separator" character.
-   *
-   * We choose FNV-1a because:
-   *
-   *   1. It's pretty fast (e.g. much faster than SHA-1).
-   *   2. It's pretty small (0.25 KiB minified + brotli).
-   *   3. We don't require cryptographic security, and 64 bits should give
-   *      sufficient collision resistance for any one application. Worst
-   *      case, we will always detect collisions during analysis.
-   *   4. We can't use Web Crypto API (e.g. SHA-1), because it's asynchronous.
-   *   5. It's a well known non-cryptographic hash with implementations in many
-   *      languages.
-   *   6. There was an existing JavaScript implementation that doesn't require
-   *      BigInt, for IE11 compatibility.
-   */
-  function generateMsgId(strings, isHtmlTagged) {
-      return ((isHtmlTagged ? HTML_PREFIX : STRING_PREFIX) +
-          fnv1a64(typeof strings === 'string' ? strings : strings.join(HASH_DELIMITER)));
-  }
-
-  /**
-   * @license
-   * Copyright 2021 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  const expressionOrders = new WeakMap();
-  const hashCache = new Map();
-  function runtimeMsg(templates, template, options) {
-      var _a;
-      if (templates) {
-          const id = (_a = options === null || options === void 0 ? void 0 : options.id) !== null && _a !== void 0 ? _a : generateId(template);
-          const localized = templates[id];
-          if (localized) {
-              if (typeof localized === 'string') {
-                  // E.g. "Hello World!"
-                  return localized;
-              }
-              else if ('strTag' in localized) {
-                  // E.g. str`Hello ${name}!`
-                  //
-                  // Localized templates have ${number} in place of real template
-                  // expressions. They can't have real template values, because the
-                  // variable scope would be wrong. The number tells us the index of the
-                  // source value to substitute in its place, because expressions can be
-                  // moved to a different position during translation.
-                  return joinStringsAndValues(localized.strings, 
-                  // Cast `template` because its type wasn't automatically narrowed (but
-                  // we know it must be the same type as `localized`).
-                  template.values, localized.values);
-              }
-              else {
-                  // E.g. html`Hello <b>${name}</b>!`
-                  //
-                  // We have to keep our own mapping of expression ordering because we do
-                  // an in-place update of `values`, and otherwise we'd lose ordering for
-                  // subsequent renders.
-                  let order = expressionOrders.get(localized);
-                  if (order === undefined) {
-                      order = localized.values;
-                      expressionOrders.set(localized, order);
-                  }
-                  return {
-                      ...localized,
-                      values: order.map((i) => template.values[i]),
-                  };
-              }
-          }
-      }
-      return defaultMsg(template);
-  }
-  function generateId(template) {
-      const strings = typeof template === 'string' ? template : template.strings;
-      let id = hashCache.get(strings);
-      if (id === undefined) {
-          id = generateMsgId(strings, typeof template !== 'string' && !('strTag' in template));
-          hashCache.set(strings, id);
-      }
-      return id;
-  }
-
-  /**
-   * @license
-   * Copyright 2021 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  /**
-   * Dispatch a "lit-localize-status" event to `window` with the given detail.
-   */
-  function dispatchStatusEvent(detail) {
-      window.dispatchEvent(new CustomEvent(LOCALE_STATUS_EVENT, { detail }));
-  }
-  let activeLocale = '';
-  let loadingLocale;
-  let sourceLocale$1;
-  let validLocales;
-  let loadLocale;
-  let templates;
-  let loading = new Deferred();
-  // The loading promise must be initially resolved, because that's what we should
-  // return if the user immediately calls setLocale(sourceLocale).
-  loading.resolve();
-  let requestId = 0;
-  /**
-   * Set configuration parameters for lit-localize when in runtime mode. Returns
-   * an object with functions:
-   *
-   * - `getLocale`: Return the active locale code.
-   * - `setLocale`: Set the active locale code.
-   *
-   * Throws if called more than once.
-   */
-  const configureLocalization = (config) => {
-      _installMsgImplementation(((template, options) => runtimeMsg(templates, template, options)));
-      activeLocale = sourceLocale$1 = config.sourceLocale;
-      validLocales = new Set(config.targetLocales);
-      validLocales.add(config.sourceLocale);
-      loadLocale = config.loadLocale;
-      return { getLocale: getLocale$1, setLocale: setLocale$1 };
-  };
-  /**
-   * Return the active locale code.
-   */
-  const getLocale$1 = () => {
-      return activeLocale;
-  };
-  /**
-   * Set the active locale code, and begin loading templates for that locale using
-   * the `loadLocale` function that was passed to `configureLocalization`. Returns
-   * a promise that resolves when the next locale is ready to be rendered.
-   *
-   * Note that if a second call to `setLocale` is made while the first requested
-   * locale is still loading, then the second call takes precedence, and the
-   * promise returned from the first call will resolve when second locale is
-   * ready. If you need to know whether a particular locale was loaded, check
-   * `getLocale` after the promise resolves.
-   *
-   * Throws if the given locale is not contained by the configured `sourceLocale`
-   * or `targetLocales`.
-   */
-  const setLocale$1 = (newLocale) => {
-      if (newLocale === (loadingLocale !== null && loadingLocale !== void 0 ? loadingLocale : activeLocale)) {
-          return loading.promise;
-      }
-      if (!validLocales || !loadLocale) {
-          throw new Error('Internal error');
-      }
-      if (!validLocales.has(newLocale)) {
-          throw new Error('Invalid locale code');
-      }
-      requestId++;
-      const thisRequestId = requestId;
-      loadingLocale = newLocale;
-      if (loading.settled) {
-          loading = new Deferred();
-      }
-      dispatchStatusEvent({ status: 'loading', loadingLocale: newLocale });
-      const localePromise = newLocale === sourceLocale$1
-          ? // We could switch to the source locale synchronously, but we prefer to
-              // queue it on a microtask so that switching locales is consistently
-              // asynchronous.
-              Promise.resolve({ templates: undefined })
-          : loadLocale(newLocale);
-      localePromise.then((mod) => {
-          if (requestId === thisRequestId) {
-              activeLocale = newLocale;
-              loadingLocale = undefined;
-              templates = mod.templates;
-              dispatchStatusEvent({ status: 'ready', readyLocale: newLocale });
-              loading.resolve();
-          }
-          // Else another locale was requested in the meantime. Don't resolve or
-          // reject, because the newer load call is going to use the same promise.
-          // Note the user can call getLocale() after the promise resolves if they
-          // need to check if the locale is still the one they expected to load.
-      }, (err) => {
-          if (requestId === thisRequestId) {
-              dispatchStatusEvent({
-                  status: 'error',
-                  errorLocale: newLocale,
-                  errorMessage: err.toString(),
-              });
-              loading.reject(err);
-          }
-      });
-      return loading.promise;
-  };
-
-  /**
-   * @license
-   * Copyright 2020 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  /**
-   * Make a string or lit-html template localizable.
-   *
-   * @param template A string, a lit-html template, or a function that returns
-   * either a string or lit-html template.
-   * @param options Optional configuration object with the following properties:
-   *   - id: Optional project-wide unique identifier for this template. If
-   *     omitted, an id will be automatically generated from the template strings.
-   *   - desc: Optional description
-   */
-  let msg = defaultMsg;
-  let installed = false;
-  /**
-   * Internal only. Do not use this function.
-   *
-   * Installs an implementation of the msg function to replace the default
-   * identity function. Throws if called more than once.
-   *
-   * @internal
-   */
-  function _installMsgImplementation(impl) {
-      if (installed) {
-          throw new Error('lit-localize can only be configured once');
-      }
-      msg = impl;
-      installed = true;
-  }
-
-  // Do not modify this file by hand!
-  // Re-generate this file by running lit-localize.
-  /**
-   * The locale code that templates in this source code are written in.
-   */
-  const sourceLocale = `en`;
-  /**
-   * The other locale codes that this application is localized into. Sorted
-   * lexicographically.
-   */
-  const targetLocales = [
-      `de`,
-      `de-DE`,
-  ];
-
-  /**
-   * @license
-   * Copyright 2020 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   */
-  const { getLocale, setLocale } = configureLocalization({
-      sourceLocale,
-      targetLocales,
-      loadLocale: (locale) => import(`/lib/generated/locales/${locale}.js`),
-  });
-  const setLocaleFromLangAttribute = async () => {
-      const locale = window.navigator.language || sourceLocale;
-      await setLocale(locale);
-  };
-
   function isEmptyObjectOrUndefined(object) {
       if (!object) {
           return true;
       }
       return Object.keys(object).length === 0;
+  }
+
+  /** It doesn't make any sense to use lit's translation solution for currently 10 strings
+   *  which also creates the necessity of async loading an external translation file.
+   *  We just import the strings directly as a JS object.
+   */
+  class Translations {
+      constructor() {
+          this._lang = document.documentElement.lang.slice(0, 2);
+          this._locales = {
+              de: {
+                  /** Weekdays */
+                  Mon: 'Mo',
+                  Tues: 'Di',
+                  Wed: 'Mi',
+                  Thurs: 'Do',
+                  Fri: 'Fr',
+                  Sat: 'Sa',
+                  Sun: 'So',
+                  /** Months */
+                  1: 'Jan',
+                  2: 'Feb',
+                  3: 'Mär',
+                  4: 'Apr',
+                  5: 'Mai',
+                  6: 'Jun',
+                  7: 'Jul',
+                  8: 'Aug',
+                  9: 'Sep',
+                  10: 'Okt',
+                  11: 'Nov',
+                  12: 'Dez',
+                  /** Misc */
+                  Day: 'Tag',
+                  Month: 'Monat',
+                  'Current Month': 'Aktueller Monat',
+              },
+          };
+      }
+      get lang() {
+          return this._lang;
+      }
+      set lang(lang) {
+          this._lang = lang;
+      }
+      getTranslation(key) {
+          if (!key) {
+              return key;
+          }
+          const locale = this._locales[this.lang];
+          if (locale) {
+              return locale[key] || key;
+          }
+          return key;
+      }
   }
 
   var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
@@ -3502,30 +3050,44 @@
       return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   let Header = class Header extends s {
+      constructor() {
+          super(...arguments);
+          this.translations = new Translations();
+      }
       render() {
-          var _a, _b, _c;
+          var _a, _b, _c, _d, _e;
           return y `<div class="controls">
       <div class="info">
         <span>
-          <strong>${this.heading || msg('Current Month')}</strong>
+          <strong
+            >${this.heading ||
+            this.translations.getTranslation('Current Month')}</strong
+          >
         </span>
-        <br />
-        <span class="day" ?hidden=${isEmptyObjectOrUndefined(this.expandedDate)}
-          >${(_a = this.expandedDate) === null || _a === void 0 ? void 0 : _a.day}</span
-        >
-        <span class="month">${(_b = this.activeDate) === null || _b === void 0 ? void 0 : _b.month}</span>
-        <span class="year">${(_c = this.activeDate) === null || _c === void 0 ? void 0 : _c.year}</span>
+        <div ?hidden=${isEmptyObjectOrUndefined(this.expandedDate)}>
+          <span class="day">${(_a = this.expandedDate) === null || _a === void 0 ? void 0 : _a.day}</span>
+          <span class="month"
+            >${this.translations.getTranslation((_b = this.expandedDate) === null || _b === void 0 ? void 0 : _b.month)}</span
+          >
+          <span class="year">${(_c = this.expandedDate) === null || _c === void 0 ? void 0 : _c.year}</span>
+        </div>
+        <div ?hidden=${!isEmptyObjectOrUndefined(this.expandedDate)}>
+          <span class="month"
+            >${this.translations.getTranslation((_d = this.activeDate) === null || _d === void 0 ? void 0 : _d.month)}</span
+          >
+          <span class="year">${(_e = this.activeDate) === null || _e === void 0 ? void 0 : _e.year}</span>
+        </div>
       </div>
       <div class="context" @click=${this._dispatchSwitchView}>
         <span
           ?data-active=${!isEmptyObjectOrUndefined(this.expandedDate)}
           data-context="day"
-          >${msg('Day')}</span
+          >${this.translations.getTranslation('Day')}</span
         >
         <span
           ?data-active=${isEmptyObjectOrUndefined(this.expandedDate)}
           data-context="month"
-          >${msg('Month')}</span
+          >${this.translations.getTranslation('Month')}</span
         >
       </div>
       <div class="buttons" @click=${this._dispatchSwitchDate}>
@@ -3542,7 +3104,6 @@
               bubbles: true,
               composed: true,
           });
-          console.log(event);
           this.dispatchEvent(event);
       }
       _dispatchSwitchView(e) {
@@ -3570,7 +3131,7 @@
       border-bottom: 1px solid var(--separator-light);
     }
 
-    @media (max-width: 360px) {
+    @media (max-width: 375px) {
       .controls {
         font-size: small;
         height: 4.5em;
@@ -3625,7 +3186,6 @@
       e({ type: Object })
   ], Header.prototype, "expandedDate", void 0);
   Header = __decorate$5([
-      localized(),
       e$1('lms-calendar-header')
   ], Header);
 
@@ -3693,6 +3253,10 @@
       return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   let Month = class Month extends s {
+      constructor() {
+          super(...arguments);
+          this.translations = new Translations();
+      }
       render() {
           var _a;
           return Object.keys(this.activeDate || { day: 1, month: 1, year: 2022 })
@@ -3705,7 +3269,9 @@
                   @click=${this._handleExpand}
                 >
                   <div class="indicator">
-                    ${day === 1 ? `${day}. ${month}` : day}
+                    ${day === 1
+                ? `${day}. ${this.translations.getTranslation(month)}`
+                : day}
                   </div>
                   <slot name="${year}-${month}-${day}"></slot>
                 </div>`)}
@@ -3931,15 +3497,19 @@
       return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   let Context = class Context extends s {
+      constructor() {
+          super(...arguments);
+          this.translations = new Translations();
+      }
       render() {
           return y ` <div>
-      <span>${msg('Mon')}</span>
-      <span>${msg('Tues')}</span>
-      <span>${msg('Wed')}</span>
-      <span>${msg('Thurs')}</span>
-      <span>${msg('Fri')}</span>
-      <span>${msg('Sat')}</span>
-      <span>${msg('Sun')}</span>
+      <span>${this.translations.getTranslation('Mon')}</span>
+      <span>${this.translations.getTranslation('Tues')}</span>
+      <span>${this.translations.getTranslation('Wed')}</span>
+      <span>${this.translations.getTranslation('Thurs')}</span>
+      <span>${this.translations.getTranslation('Fri')}</span>
+      <span>${this.translations.getTranslation('Sat')}</span>
+      <span>${this.translations.getTranslation('Sun')}</span>
     </div>`;
       }
   };
@@ -3955,7 +3525,6 @@
     }
   `;
   Context = __decorate$2([
-      localized(),
       e$1('lms-calendar-context')
   ], Context);
 
@@ -3985,8 +3554,8 @@
           >
         </span>
         ${this.isContinuation
-            ? y `<span>${this._displayStartTime(this.time)}</span>`
-            : y ``}
+            ? "..."
+            : y `<span>${this._displayStartTime(this.time)}</span> `}
       </div>
     `;
       }
@@ -3999,7 +3568,7 @@
           if (minutes < 10) {
               minutes = `0${minutes}`;
           }
-          return `${hours}:${minutes}` === '0:00' ? '•' : `${hours}:${minutes}`;
+          return `${hours}:${minutes}`;
       }
       _handleClick() {
           this._highlighted = !this._highlighted;
@@ -4100,21 +3669,21 @@
       let active = 0;
       const groups = [];
       let cur = [];
-      // eslint-disable-next-line no-constant-condition
-      while (1) {
-          if (i < intervals.length && intervals[i].start < rightEndValues[j]) {
+      while (i < intervals.length && j < rightEndValues.length) {
+          if (intervals[i].start < rightEndValues[j]) {
               cur.push(intervals[i++]);
               ++active;
           }
-          else if (j < intervals.length) {
+          else {
               ++j;
               if (--active === 0) {
                   groups.push(cur);
                   cur = [];
               }
           }
-          else
-              break;
+      }
+      if (cur.length > 0) {
+          groups.push(cur);
       }
       return groups;
   }
@@ -4191,10 +3760,11 @@
   function rearrangeDepths(gradings) {
       const groups = new Map();
       gradings.forEach(item => {
+          var _a;
           if (!groups.has(item.group)) {
               groups.set(item.group, []);
           }
-          groups.get(item.group).push({ index: item.index, depth: item.depth, group: item.group });
+          (_a = groups.get(item.group)) === null || _a === void 0 ? void 0 : _a.push({ index: item.index, depth: item.depth, group: item.group });
       });
       const result = [];
       groups.forEach(groupGradings => {
@@ -4255,10 +3825,6 @@
           this.color = '#000000';
           this._viewportWidth = window.innerWidth;
       }
-      connectedCallback() {
-          super.connectedCallback();
-          this._setLocale();
-      }
       render() {
           return y `
       <div>
@@ -4292,20 +3858,7 @@
       </div>
     `;
       }
-      async _setLocale() {
-          try {
-              // Defer first render until our initial locale is ready, to avoid a flash of
-              // the wrong locale.
-              await setLocaleFromLangAttribute();
-          }
-          catch (e) {
-              // Either the URL locale code was invalid, or there was a problem loading
-              // the locale module.
-              console.error(`Error loading locale: ${e.message}`);
-          }
-      }
       _handleSwitchDate(e) {
-          console.log('Fired');
           const dateTransformer = new DateTransformer({});
           dateTransformer._direction = e.detail.direction;
           if (this._expandedDate) {
@@ -4381,6 +3934,8 @@
           const entriesByDate = this.entries.filter((entry) => {
               return haveSameValues(entry.date.start, this._expandedDate || {});
           });
+          console.log(this.entries);
+          console.log(entriesByDate);
           const grading = rearrangeDepths(!isEmptyObjectOrUndefined(entriesByDate)
               ? getOverlappingEntitiesIndices(this._getPartitionedSlottedItems(entriesByDate))
               : []);
@@ -4493,7 +4048,6 @@
       t()
   ], LMSCalendar.prototype, "_viewportWidth", void 0);
   LMSCalendar = __decorate([
-      localized(),
       e$1('lms-calendar')
   ], LMSCalendar);
   var LMSCalendar$1 = LMSCalendar;
