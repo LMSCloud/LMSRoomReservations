@@ -2,9 +2,9 @@
 
   <div id="lmsr">
     <h3 id="lmsr-heading-main">Koha: LMSRoomReservations: Loading...</h3>
-    [% INCLUDE "$PLUGIN_DIR/includes/menu.inc" %]
-  
     <div class="lmsr-content-main">
+      [% INCLUDE "$PLUGIN_DIR/includes/menu.inc" %]
+    
       [% content %]
     </div>
 

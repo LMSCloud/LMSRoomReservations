@@ -59,25 +59,14 @@
 }
 
 #lmsr {
-  padding: 0 var(--spacing-md);
   margin-bottom: var(--spacing-md);
 }
 
-.lmsr-menu {
-  display: flex;
-  gap: var(--spacing-md);
+#lmsr-heading-main {
+  padding: 0 var(--spacing-md);
 }
 
-.lmsr-menu-item {
-  padding: var(--spacing-sm);
-}
-
-@media (max-width: 576px) {
-  .lmsr-menu {
-    gap: var(--spacing-sm);
-  }
-
-  .lmsr-menu-item span {
-    display: none;
-  }
+.lmsr-content-main {
+  padding: var(--spacing-md);
+  padding-top: 0;
 }
