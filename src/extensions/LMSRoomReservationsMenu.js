@@ -21,38 +21,40 @@ export default class LMSRoomReservationsMenu extends LMSFloatingMenu {
 
   connectedCallback() {
     super.connectedCallback();
-    this.items = [
-      {
-        name: "Settings",
-        icon: faCog,
-        url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
-        method: "configure",
-      },
-      {
-        name: "Rooms",
-        icon: faCube,
-        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=rooms`,
-        method: "configure",
-      },
-      {
-        name: "Equipment",
-        icon: faTag,
-        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=equipment`,
-        method: "configure",
-      },
-      {
-        name: "Bookings",
-        icon: faList,
-        url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
-        method: "tool",
-      },
-      {
-        name: "Open Hours",
-        icon: faClock,
-        url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=open-hours`,
-        method: "tool",
-      },
-    ];
+    this._i18n.then((i18n) => {
+      this.items = [
+        {
+          name: i18n.gettext("Settings"),
+          icon: faCog,
+          url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
+          method: "configure",
+        },
+        {
+          name: i18n.gettext("Rooms"),
+          icon: faCube,
+          url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=rooms`,
+          method: "configure",
+        },
+        {
+          name: i18n.gettext("Equipment"),
+          icon: faTag,
+          url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=equipment`,
+          method: "configure",
+        },
+        {
+          name: i18n.gettext("Bookings"),
+          icon: faList,
+          url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
+          method: "tool",
+        },
+        {
+          name: i18n.gettext("Open Hours"),
+          icon: faClock,
+          url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=open-hours`,
+          method: "tool",
+        },
+      ];
+    });
   }
 }
 customElements.define("lms-room-reservations-menu", LMSRoomReservationsMenu);
