@@ -3760,11 +3760,10 @@
   function rearrangeDepths(gradings) {
       const groups = new Map();
       gradings.forEach(item => {
-          var _a;
           if (!groups.has(item.group)) {
               groups.set(item.group, []);
           }
-          (_a = groups.get(item.group)) === null || _a === void 0 ? void 0 : _a.push({ index: item.index, depth: item.depth, group: item.group });
+          groups.get(item.group).push({ index: item.index, depth: item.depth, group: item.group });
       });
       const result = [];
       groups.forEach(groupGradings => {
@@ -3932,10 +3931,13 @@
               return;
           }
           const entriesByDate = this.entries.filter((entry) => {
-              return haveSameValues(entry.date.start, this._expandedDate || {});
+              const start = entry.time.start;
+              const end = entry.time.end;
+              const sameDay = haveSameValues(entry.date.start, this._expandedDate || {});
+              return (sameDay &&
+                  (start.hours < end.hours ||
+                      (start.hours === end.hours && start.minutes < end.minutes)));
           });
-          console.log(this.entries);
-          console.log(entriesByDate);
           const grading = rearrangeDepths(!isEmptyObjectOrUndefined(entriesByDate)
               ? getOverlappingEntitiesIndices(this._getPartitionedSlottedItems(entriesByDate))
               : []);
