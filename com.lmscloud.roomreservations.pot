@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-10 18:22+0100\n"
+"POT-Creation-Date: 2023-02-12 17:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -94,6 +94,26 @@ msgstr ""
 msgid "Roomnumber"
 msgstr ""
 
+#: src/extensions/LMSRoomReservationsMenu.js:27
+msgid "Settings"
+msgstr ""
+
+#: src/extensions/LMSRoomReservationsMenu.js:33 src/components/LMSBookie.js:396
+msgid "Rooms"
+msgstr ""
+
+#: src/extensions/LMSRoomReservationsMenu.js:39 src/components/LMSBookie.js:299
+msgid "Equipment"
+msgstr ""
+
+#: src/extensions/LMSRoomReservationsMenu.js:45
+msgid "Bookings"
+msgstr ""
+
+#: src/extensions/LMSRoomReservationsMenu.js:51
+msgid "Open Hours"
+msgstr ""
+
 #: src/views/RoomReservationsView.js:75
 msgid "Current Bookings"
 msgstr ""
@@ -132,10 +152,6 @@ msgstr ""
 
 #: src/components/LMSBookie.js:260
 msgid "In minutes, e.g. 60"
-msgstr ""
-
-#: src/components/LMSBookie.js:299
-msgid "Equipment"
 msgstr ""
 
 #: src/components/LMSBookie.js:322
@@ -206,10 +222,6 @@ msgstr ""
 msgid "Sun"
 msgstr ""
 
-#: src/components/LMSBookie.js:396
-msgid "Rooms"
-msgstr ""
-
 #: src/components/LMSBookie.js:421 src/components/LMSRoom.js:146
 msgid "Max Capacity"
 msgstr ""
@@ -235,6 +247,10 @@ msgstr ""
 #: src/components/LMSEquipmentItem.js:229 src/components/LMSRoom.js:247
 #: src/components/LMSTable.js:153
 msgid "Delete"
+msgstr ""
+
+#: src/components/LMSFloatingMenu.js:107
+msgid "current"
 msgstr ""
 
 #: src/components/LMSModal.js:255
@@ -432,78 +448,82 @@ msgstr ""
 msgid " is not a time in the format HH:mm."
 msgstr ""
 
-#: dynamically_added_strings.js:7
+#: dynamically_added_strings.js:8
 msgid "setting"
 msgstr ""
 
-#: dynamically_added_strings.js:8
+#: dynamically_added_strings.js:9
 msgid "value"
 msgstr ""
 
-#: dynamically_added_strings.js:9
+#: dynamically_added_strings.js:10
 msgid "description"
 msgstr ""
 
-#: dynamically_added_strings.js:10
+#: dynamically_added_strings.js:11
 msgid "bookingid"
 msgstr ""
 
-#: dynamically_added_strings.js:11
+#: dynamically_added_strings.js:12
 msgid "borrowernumber"
 msgstr ""
 
-#: dynamically_added_strings.js:12
+#: dynamically_added_strings.js:13
 msgid "roomid"
 msgstr ""
 
-#: dynamically_added_strings.js:13
+#: dynamically_added_strings.js:14
 msgid "start"
 msgstr ""
 
-#: dynamically_added_strings.js:14
+#: dynamically_added_strings.js:15
 msgid "end"
 msgstr ""
 
-#: dynamically_added_strings.js:15
+#: dynamically_added_strings.js:16
 msgid "blackedout"
 msgstr ""
 
-#: dynamically_added_strings.js:16
-msgid "created"
-msgstr ""
-
 #: dynamically_added_strings.js:17
-msgid "updated_at"
+msgid "equipment"
 msgstr ""
 
 #: dynamically_added_strings.js:18
-msgid "day"
+msgid "created"
 msgstr ""
 
 #: dynamically_added_strings.js:19
-msgid "Monday"
+msgid "updated_at"
 msgstr ""
 
 #: dynamically_added_strings.js:20
-msgid "Tuesday"
+msgid "day"
 msgstr ""
 
 #: dynamically_added_strings.js:21
-msgid "Wednesday"
+msgid "Monday"
 msgstr ""
 
 #: dynamically_added_strings.js:22
-msgid "Thursday"
+msgid "Tuesday"
 msgstr ""
 
 #: dynamically_added_strings.js:23
-msgid "Friday"
+msgid "Wednesday"
 msgstr ""
 
 #: dynamically_added_strings.js:24
-msgid "Saturday"
+msgid "Thursday"
 msgstr ""
 
 #: dynamically_added_strings.js:25
+msgid "Friday"
+msgstr ""
+
+#: dynamically_added_strings.js:26
+msgid "Saturday"
+msgstr ""
+
+#: dynamically_added_strings.js:27
 msgid "Sunday"
 msgstr ""

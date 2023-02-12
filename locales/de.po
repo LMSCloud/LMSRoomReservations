@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-10 18:22+0100\n"
-"PO-Revision-Date: 2023-02-10 18:23+0100\n"
+"POT-Creation-Date: 2023-02-12 17:01+0100\n"
+"PO-Revision-Date: 2023-02-12 17:01+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -98,6 +98,26 @@ msgstr "Zweigstelle"
 msgid "Roomnumber"
 msgstr "Bezeichnung"
 
+#: src/extensions/LMSRoomReservationsMenu.js:27
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/extensions/LMSRoomReservationsMenu.js:33 src/components/LMSBookie.js:396
+msgid "Rooms"
+msgstr "Räume"
+
+#: src/extensions/LMSRoomReservationsMenu.js:39 src/components/LMSBookie.js:299
+msgid "Equipment"
+msgstr "Gegenstände"
+
+#: src/extensions/LMSRoomReservationsMenu.js:45
+msgid "Bookings"
+msgstr "Buchungen"
+
+#: src/extensions/LMSRoomReservationsMenu.js:51
+msgid "Open Hours"
+msgstr "Öffnungszeiten"
+
 #: src/views/RoomReservationsView.js:75
 msgid "Current Bookings"
 msgstr "Aktuelle Buchungen"
@@ -137,10 +157,6 @@ msgstr "Dauer"
 #: src/components/LMSBookie.js:260
 msgid "In minutes, e.g. 60"
 msgstr "In Minuten, bspw. 60"
-
-#: src/components/LMSBookie.js:299
-msgid "Equipment"
-msgstr "Gegenstände"
 
 #: src/components/LMSBookie.js:322
 msgid "Confirmation Email"
@@ -210,10 +226,6 @@ msgstr "Sa"
 msgid "Sun"
 msgstr "So"
 
-#: src/components/LMSBookie.js:396
-msgid "Rooms"
-msgstr "Räume"
-
 #: src/components/LMSBookie.js:421 src/components/LMSRoom.js:146
 msgid "Max Capacity"
 msgstr "Maximalkapazität"
@@ -240,6 +252,10 @@ msgstr "Speichern"
 #: src/components/LMSTable.js:153
 msgid "Delete"
 msgstr "Löschen"
+
+#: src/components/LMSFloatingMenu.js:107
+msgid "current"
+msgstr ""
 
 #: src/components/LMSModal.js:255
 msgid "Close"
@@ -444,78 +460,82 @@ msgstr ""
 msgid " is not a time in the format HH:mm."
 msgstr " ist keine Uhrzeit im Format HH:mm."
 
-#: dynamically_added_strings.js:7
+#: dynamically_added_strings.js:8
 msgid "setting"
 msgstr "Einstellung"
 
-#: dynamically_added_strings.js:8
+#: dynamically_added_strings.js:9
 msgid "value"
 msgstr "Wert"
 
-#: dynamically_added_strings.js:9
+#: dynamically_added_strings.js:10
 msgid "description"
 msgstr "Beschreibung"
 
-#: dynamically_added_strings.js:10
+#: dynamically_added_strings.js:11
 msgid "bookingid"
 msgstr "Buchungsid"
 
-#: dynamically_added_strings.js:11
+#: dynamically_added_strings.js:12
 msgid "borrowernumber"
 msgstr "Benutzer*innennummer"
 
-#: dynamically_added_strings.js:12
+#: dynamically_added_strings.js:13
 msgid "roomid"
 msgstr "Raumid"
 
-#: dynamically_added_strings.js:13
+#: dynamically_added_strings.js:14
 msgid "start"
 msgstr "Start"
 
-#: dynamically_added_strings.js:14
+#: dynamically_added_strings.js:15
 msgid "end"
 msgstr "Ende"
 
-#: dynamically_added_strings.js:15
+#: dynamically_added_strings.js:16
 msgid "blackedout"
 msgstr "Ist Sperrzeit"
 
-#: dynamically_added_strings.js:16
+#: dynamically_added_strings.js:17
+msgid "equipment"
+msgstr "Gegenstände"
+
+#: dynamically_added_strings.js:18
 msgid "created"
 msgstr "Hinzugefügt"
 
-#: dynamically_added_strings.js:17
+#: dynamically_added_strings.js:19
 msgid "updated_at"
 msgstr "Bearbeitet"
 
-#: dynamically_added_strings.js:18
+#: dynamically_added_strings.js:20
 msgid "day"
 msgstr "Tag"
 
-#: dynamically_added_strings.js:19
+#: dynamically_added_strings.js:21
 msgid "Monday"
 msgstr "Montag"
 
-#: dynamically_added_strings.js:20
+#: dynamically_added_strings.js:22
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: dynamically_added_strings.js:21
+#: dynamically_added_strings.js:23
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: dynamically_added_strings.js:22
+#: dynamically_added_strings.js:24
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: dynamically_added_strings.js:23
+#: dynamically_added_strings.js:25
 msgid "Friday"
 msgstr "Freitag"
 
-#: dynamically_added_strings.js:24
+#: dynamically_added_strings.js:26
 msgid "Saturday"
 msgstr "Samstag"
 
-#: dynamically_added_strings.js:25
+#: dynamically_added_strings.js:27
 msgid "Sunday"
 msgstr "Sonntag"
