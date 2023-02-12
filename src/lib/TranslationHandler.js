@@ -9,10 +9,30 @@ export default class TranslationHandler {
      *  set in the browser (window.navigator.language).
      */
     this._locale = document.documentElement.lang.slice(0, 2);
+    this._templateTranslations = {
+      de: {
+        heading: "Raumbuchungen",
+        info: "Hier können Sie Ihre aktuellen Raumbuchungen einsehen.",
+        loading: "Lade...",
+        noBookings: "Sie haben keine Buchungen.",
+        room: "Raum",
+        start: "Start",
+        end: "Ende",
+      },
+      en: {
+        heading: "Room reservations",
+        info: "Here you can see your current room reservations.",
+        loading: "Loading...",
+        noBookings: "You have no bookings.",
+        room: "Room",
+        start: "Start",
+        end: "End",
+      },
+    };
   }
 
   async loadTranslations() {
-    if (this._locale.startsWith('en')) {
+    if (this._locale.startsWith("en")) {
       this._i18n.setLocale("en");
       return;
     }
@@ -50,5 +70,28 @@ export default class TranslationHandler {
 
   get i18n() {
     return this._i18n;
+  }
+
+  get templateTranslations() {
+    return Object.assign({}, this._templateTranslations[this._locale]);
+  }
+
+  convertToFormat(string, format) {
+    /** This should be a polymorphic function that takes in a string
+     *  and depending on the specified format it tries to convert it
+     *  as best it can to the locale set in the TranslationHandler.'
+     *  To do that it makes use of the public templateTranslations
+     *  of this class. */
+
+    if (format === "datetime") {
+      const date = new Date(string);
+      return date.toLocaleString(this._locale, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
   }
 }
