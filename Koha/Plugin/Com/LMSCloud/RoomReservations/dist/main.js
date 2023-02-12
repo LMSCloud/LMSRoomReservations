@@ -319,10 +319,30 @@
        *  set in the browser (window.navigator.language).
        */
       this._locale = document.documentElement.lang.slice(0, 2);
+      this._templateTranslations = {
+        de: {
+          heading: "Raumbuchungen",
+          info: "Hier können Sie Ihre aktuellen Raumbuchungen einsehen.",
+          loading: "Lade...",
+          noBookings: "Sie haben keine Buchungen.",
+          room: "Raum",
+          start: "Start",
+          end: "Ende",
+        },
+        en: {
+          heading: "Room reservations",
+          info: "Here you can see your current room reservations.",
+          loading: "Loading...",
+          noBookings: "You have no bookings.",
+          room: "Room",
+          start: "Start",
+          end: "End",
+        },
+      };
     }
 
     async loadTranslations() {
-      if (this._locale.startsWith('en')) {
+      if (this._locale.startsWith("en")) {
         this._i18n.setLocale("en");
         return;
       }
@@ -360,6 +380,29 @@
 
     get i18n() {
       return this._i18n;
+    }
+
+    get templateTranslations() {
+      return Object.assign({}, this._templateTranslations[this._locale]);
+    }
+
+    convertToFormat(string, format) {
+      /** This should be a polymorphic function that takes in a string
+       *  and depending on the specified format it tries to convert it
+       *  as best it can to the locale set in the TranslationHandler.'
+       *  To do that it makes use of the public templateTranslations
+       *  of this class. */
+
+      if (format === "datetime") {
+        const date = new Date(string);
+        return date.toLocaleString(this._locale, {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
     }
   }
 
@@ -549,7 +592,7 @@
         : y$1`
           <div ?hidden=${!this._rooms.length}>
             <section>
-              <h5>${this._i18n.gettext("Book a room")}</h5>
+              <h5 id="book-it-here">${this._i18n.gettext("Book a room")}</h5>
               <div
                 class="alert alert-${this._alertMessage.includes(
                   `${this._i18n.gettext("Success")}!`
@@ -783,7 +826,7 @@
                       </ul>
                       <div class="card-body">
                         <a
-                          href="#"
+                          href="#book-it-here"
                           class="card-link"
                           id=${room.roomid}
                           @click=${(e) => {
@@ -1990,7 +2033,7 @@
       return !this._i18n?.gettext
         ? b$1
         : y$1`
-          <div class="card lms-equipment-item">
+          <div class="card lms-equipment-item my-1">
             <img
               class="card-img-top lms-equipment-item-img"
               ?hidden=${!this.image}
@@ -2090,16 +2133,16 @@
                   </option>
                 </select>
               </div>
-              <div class="d-flex justify-content-between">
-                <button class="btn btn-dark" @click=${this.handleEdit}>
+              <div class="d-flex flex-column">
+                <button class="btn btn-dark my-1" @click=${this.handleEdit}>
                   ${litFontawesome_3(faEdit)}
                   <span>${this._i18n.gettext("Edit")}</span>
                 </button>
-                <button class="btn btn-dark" @click=${this.handleSave}>
+                <button class="btn btn-dark my-1" @click=${this.handleSave}>
                   ${litFontawesome_3(faSave)}
                   <span>${this._i18n.gettext("Save")}</span>
                 </button>
-                <button class="btn btn-danger" @click=${this.handleDelete}>
+                <button class="btn btn-danger my-1" @click=${this.handleDelete}>
                   ${litFontawesome_3(faTrash)}
                   <span>${this._i18n.gettext("Delete")}</span>
                 </button>
@@ -2501,7 +2544,7 @@
       return !this._i18n?.gettext
         ? b$1
         : y$1`
-          <div class="card lms-room">
+          <div class="card lms-room my-1">
             <img
               class="card-img-top lms-room-img"
               ?hidden=${!this.image}
@@ -2619,17 +2662,17 @@
                   id="maxbookabletime"
                 />
               </div>
-              <div class="d-flex justify-content-between">
-                <button @click=${this.handleEdit} class="btn btn-dark">
+              <div class="d-flex flex-column">
+                <button @click=${this.handleEdit} class="btn btn-dark my-1">
                   ${litFontawesome_3(faEdit)}  
                   <span>${this._i18n.gettext("Edit")}</span>
                 </button>
-                <button @click=${this.handleSave} class="btn btn-dark">
+                <button @click=${this.handleSave} class="btn btn-dark my-1">
                   ${litFontawesome_3(faSave)}  
                   <span>${this._i18n.gettext("Save")}</span>
                 </button>
-                <button @click=${this.handleDelete} class="btn btn-danger">
-                  ${litFontawesome_3(faTrash)}  
+                <button @click=${this.handleDelete} class="btn btn-danger my-1">
+                  ${litFontawesome_3(faTrash)}
                   <span>${this._i18n.gettext("Delete")}</span>
                 </button>
               </div>
@@ -4489,53 +4532,82 @@
       this.brand = "Navigation";
       this._currentUrl = window.location.href;
       this._currentSearchParams = new URLSearchParams(window.location.search);
+      this._init();
+    }
+
+    async _init() {
+      const translationHandler = new TranslationHandler();
+      this._i18n = new Promise((resolve, reject) => {
+        translationHandler
+          .loadTranslations()
+          .then(() => {
+            resolve(translationHandler.i18n);
+          })
+          .catch((err) => reject(err));
+      });
+    }
+
+    updated() {
+      /** We have to set the _i18n attribute to the actual
+       *  class after the promise has been resolved.
+       *  We also want to cover the case were this._i18n
+       *  is defined but not yet a Promise. */
+      if (this._i18n instanceof Promise) {
+        this._i18n.then((i18n) => {
+          this._i18n = i18n;
+        });
+      }
     }
 
     render() {
-      return y$1` <nav
-      class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded"
-    >
-      <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
-      <button
-        @click=${() =>
-          this.renderRoot
-            .getElementById("navbarNav")
-            .classList.toggle("collapse")}
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          ${this.items.map((item) => {
-            /** We split the searchParams from the URL and
-             *  compare them to the currentSearchParams of
-             *  the window.location. If they match, we add
-             *  the "active" class to the item. */
-            let [, itemSearchParams] = item.url.split("?");
-            itemSearchParams = new URLSearchParams(itemSearchParams ?? "");
-            const matches =
-              itemSearchParams.toString() ===
-              this._currentSearchParams.toString();
+      return !this._i18n?.gettext
+        ? b$1
+        : y$1` <nav
+          class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded"
+        >
+          <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
+          <button
+            @click=${() =>
+              this.renderRoot
+                .getElementById("navbarNav")
+                .classList.toggle("collapse")}
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              ${this.items.map((item) => {
+                /** We split the searchParams from the URL and
+                 *  compare them to the currentSearchParams of
+                 *  the window.location. If they match, we add
+                 *  the "active" class to the item. */
+                let [, itemSearchParams] = item.url.split("?");
+                itemSearchParams = new URLSearchParams(itemSearchParams ?? "");
+                const matches =
+                  itemSearchParams.toString() ===
+                  this._currentSearchParams.toString();
 
-            return y$1` <li class="nav-item ${matches ? "active" : ""}">
-              <a class="nav-link" href="${item.url}"
-                >${litFontawesome_3(item.icon)}
-                ${item.name}${matches
-                  ? y$1` <span class="sr-only">(current)</span>`
-                  : ""}</a
-              >
-            </li>`;
-          })}
-        </ul>
-      </div>
-    </nav>`;
+                return y$1` <li class="nav-item ${matches ? "active" : ""}">
+                  <a class="nav-link" href="${item.url}"
+                    >${litFontawesome_3(item.icon)}
+                    ${item.name}${matches
+                      ? y$1` <span class="sr-only"
+                          >(${this._i18n.gettext("current")})</span
+                        >`
+                      : ""}</a
+                  >
+                </li>`;
+              })}
+            </ul>
+          </div>
+        </nav>`;
     }
   }
   customElements.define("lms-floating-menu", LMSFloatingMenu);
@@ -4554,38 +4626,40 @@
 
     connectedCallback() {
       super.connectedCallback();
-      this.items = [
-        {
-          name: "Settings",
-          icon: faCog,
-          url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
-          method: "configure",
-        },
-        {
-          name: "Rooms",
-          icon: faCube,
-          url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=rooms`,
-          method: "configure",
-        },
-        {
-          name: "Equipment",
-          icon: faTag,
-          url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=equipment`,
-          method: "configure",
-        },
-        {
-          name: "Bookings",
-          icon: faList,
-          url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
-          method: "tool",
-        },
-        {
-          name: "Open Hours",
-          icon: faClock,
-          url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=open-hours`,
-          method: "tool",
-        },
-      ];
+      this._i18n.then((i18n) => {
+        this.items = [
+          {
+            name: i18n.gettext("Settings"),
+            icon: faCog,
+            url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
+            method: "configure",
+          },
+          {
+            name: i18n.gettext("Rooms"),
+            icon: faCube,
+            url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=rooms`,
+            method: "configure",
+          },
+          {
+            name: i18n.gettext("Equipment"),
+            icon: faTag,
+            url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=equipment`,
+            method: "configure",
+          },
+          {
+            name: i18n.gettext("Bookings"),
+            icon: faList,
+            url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
+            method: "tool",
+          },
+          {
+            name: i18n.gettext("Open Hours"),
+            icon: faClock,
+            url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=open-hours`,
+            method: "tool",
+          },
+        ];
+      });
     }
   }
   customElements.define("lms-room-reservations-menu", LMSRoomReservationsMenu);
@@ -5150,6 +5224,7 @@
   exports.StaffOpenHoursView = StaffOpenHoursView;
   exports.StaffRoomsView = StaffRoomsView;
   exports.StaffSettingsView = StaffSettingsView;
+  exports.TranslationHandler = TranslationHandler;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

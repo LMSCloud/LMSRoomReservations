@@ -23,6 +23,8 @@ import StaffRoomsView from "./views/StaffRoomsView";
 import StaffSettingsView from "./views/StaffSettingsView";
 import RoomReservationsView from "./views/RoomReservationsView";
 
+import TranslationHandler from "./lib/TranslationHandler";
+
 import "./main.css";
 
 export {
@@ -47,4 +49,5 @@ export {
   StaffRoomsView,
   StaffSettingsView,
   RoomReservationsView,
+  TranslationHandler,
 };
