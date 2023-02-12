@@ -115,7 +115,7 @@ export default class LMSRoom extends LitElement {
     return !this._i18n?.gettext
       ? nothing
       : html`
-          <div class="card lms-room">
+          <div class="card lms-room my-1">
             <img
               class="card-img-top lms-room-img"
               ?hidden=${!this.image}
@@ -233,17 +233,17 @@ export default class LMSRoom extends LitElement {
                   id="maxbookabletime"
                 />
               </div>
-              <div class="d-flex justify-content-between">
-                <button @click=${this.handleEdit} class="btn btn-dark">
+              <div class="d-flex flex-column">
+                <button @click=${this.handleEdit} class="btn btn-dark my-1">
                   ${litFontawesome(faEdit)}  
                   <span>${this._i18n.gettext("Edit")}</span>
                 </button>
-                <button @click=${this.handleSave} class="btn btn-dark">
+                <button @click=${this.handleSave} class="btn btn-dark my-1">
                   ${litFontawesome(faSave)}  
                   <span>${this._i18n.gettext("Save")}</span>
                 </button>
-                <button @click=${this.handleDelete} class="btn btn-danger">
-                  ${litFontawesome(faTrash)}  
+                <button @click=${this.handleDelete} class="btn btn-danger my-1">
+                  ${litFontawesome(faTrash)}
                   <span>${this._i18n.gettext("Delete")}</span>
                 </button>
               </div>

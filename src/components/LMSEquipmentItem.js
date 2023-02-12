@@ -115,7 +115,7 @@ export default class LMSEquipmentItem extends LitElement {
     return !this._i18n?.gettext
       ? nothing
       : html`
-          <div class="card lms-equipment-item">
+          <div class="card lms-equipment-item my-1">
             <img
               class="card-img-top lms-equipment-item-img"
               ?hidden=${!this.image}
@@ -215,16 +215,16 @@ export default class LMSEquipmentItem extends LitElement {
                   </option>
                 </select>
               </div>
-              <div class="d-flex justify-content-between">
-                <button class="btn btn-dark" @click=${this.handleEdit}>
+              <div class="d-flex flex-column">
+                <button class="btn btn-dark my-1" @click=${this.handleEdit}>
                   ${litFontawesome(faEdit)}
                   <span>${this._i18n.gettext("Edit")}</span>
                 </button>
-                <button class="btn btn-dark" @click=${this.handleSave}>
+                <button class="btn btn-dark my-1" @click=${this.handleSave}>
                   ${litFontawesome(faSave)}
                   <span>${this._i18n.gettext("Save")}</span>
                 </button>
-                <button class="btn btn-danger" @click=${this.handleDelete}>
+                <button class="btn btn-danger my-1" @click=${this.handleDelete}>
                   ${litFontawesome(faTrash)}
                   <span>${this._i18n.gettext("Delete")}</span>
                 </button>
