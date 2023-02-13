@@ -280,8 +280,8 @@ sub install() {
               `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date
               `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a booking has been updated
               PRIMARY KEY (bookingid),
-              CONSTRAINT calendar_icfk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid),
-              CONSTRAINT calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
+              CONSTRAINT lmsr_v4_calendar_icfk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid),
+              CONSTRAINT lmsr_v4_calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
             qq{CREATE INDEX $BOOKINGS_IDX ON $BOOKINGS(borrowernumber, roomid);},
@@ -314,8 +314,8 @@ sub install() {
               `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date of the relation
               `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a relation has been updated
               PRIMARY KEY (roomid, equipmentid),
-              CONSTRAINT roomequipment_iafk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid) ON DELETE CASCADE,
-              CONSTRAINT roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
+              CONSTRAINT lmsr_v4_roomequipment_iafk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid) ON DELETE CASCADE,
+              CONSTRAINT lmsr_v4_roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
             qq{CREATE INDEX $ROOMS_EQUIPMENT_IDX ON $ROOMS_EQUIPMENT(roomid, equipmentid);},
@@ -326,8 +326,8 @@ sub install() {
                 `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date of the relation
                 `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a relation has been updated
                 PRIMARY KEY (bookingid, equipmentid),
-                CONSTRAINT bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES $BOOKINGS(bookingid) ON DELETE CASCADE,
-                CONSTRAINT bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
+                CONSTRAINT lmsr_v4_bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES $BOOKINGS(bookingid) ON DELETE CASCADE,
+                CONSTRAINT lmsr_v4_bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
             qq{CREATE INDEX $BOOKINGS_EQUIPMENT_IDX ON $BOOKINGS_EQUIPMENT(bookingid, equipmentid);},
