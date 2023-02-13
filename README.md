@@ -114,3 +114,148 @@ If want to add translations for new modules or fix the spelling in the source lo
   ```
   you **likely** didn't request the endpoint, you think you did.
 - Check your AJAX or whatever you use for the requests to hit the endpoint/method you intended.
+
+
+## Message Templates
+
+__ROOM_RESERVATION__
+
+```sql
+INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
+    'members', 'ROOM_RESERVATION', q{}, 'Raumreservierungsbenachrichtigung', 1, 'Reservierung eines Raumes', 'email', 'default',
+'<html>
+  <head>
+    <style>
+      h2 {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      h3 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      span {
+        font-size: 16px;
+        margin-bottom: 5px;
+        display: block;
+      }
+      .container {
+        width: max-content;
+        text-align: center;
+        margin: 0 auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+      .card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .footer {
+        text-align: center;
+        font-size: 14px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Ihre Raumreservierung wurde bestätigt</h2>
+      <div class="card">
+        <h3>Ihre Angaben</h3>
+        <span>Name: [% user %]</span><br>
+        <span>Raum: [% room %]</span><br>
+        <span>Von: [% from %]</span><br>
+        <span>Bis: [% to %]</span>
+      </div>
+      <div class="card">
+        <h3>Ihre gebuchte Ausstattung</h3>
+        <span>[% booked_equipment %]</span>
+      </div>
+      <div class="card">
+        <h3>Zeitpunkt der Bestätigung</h3>
+        <span>[% confirmed_timestamp %]</span>
+      </div>
+      <div class="footer">
+        Mit freundlichen Grüßen,<br>
+        Ihre Bibliothek
+      </div>
+    </div>
+  </body>
+</html>'
+);
+```
+
+__ROOM_CANCELLATION__
+
+```sql
+INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
+    'members', 'ROOM_CANCELLATION', q{}, 'Raumreservierungsstornierungsbenachrichtigung', 1, 'Stornierung der Reservierung eines Raumes', 'email', 'default',
+'<html>
+  <head>
+    <style>
+      h2 {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      h3 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      p {
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+      span {
+        font-size: 16px;
+        margin-bottom: 5px;
+        display: block;
+      }
+      .container {
+        width: max-content;
+        text-align: center;
+        margin: 0 auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+      .card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .footer {
+        text-align: center;
+        font-size: 14px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Ihre Raumreservierung wurde storniert</h2>
+      <p>Es tut uns Leid, Sie darüber informieren zu müssen, dass Ihre Reservierung storniert werden musste.</p>
+      <div class="card">
+        <h3>Ihre Angaben</h3>
+        <span>Raum: [% room %]</span><br>
+        <span>Von: [% from %]</span><br>
+        <span>Bis: [% to %]</span>
+      </div>
+      <div class="footer">
+        Mit freundlichen Grüßen,<br>
+        Ihre Bibliothek
+      </div>
+    </div>
+  </body>
+</html>'
+);
+```
