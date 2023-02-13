@@ -133,11 +133,11 @@ export default class RoomReservationsView extends LitElement {
   render() {
     return html`
       <div>
-        <lms-calendar></lms-calendar>
         <lms-bookie
           .borrowernumber=${this.borrowernumber}
           @submitted=${this._handleSubmit}
         ></lms-bookie>
+        <lms-calendar></lms-calendar>
       </div>
     `;
   }
