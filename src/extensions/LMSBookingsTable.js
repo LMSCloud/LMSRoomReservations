@@ -123,13 +123,7 @@ export default class LMSBookingsTable extends LMSTable {
 
       if (this._borrowers.size) {
         const borrowersReponse = await fetch(
-          `/api/v1/patrons?${[...this._borrowers].reduce(
-            (acc, borrowernumber, idx) =>
-              `${acc}${
-                idx > 0 ? "&" : ""
-              }q={"borrowernumber":"${borrowernumber}"}`,
-            ""
-          )}`
+          `/api/v1/patrons?q={"borrowernumber":[${Array.from(this._borrowers)}]}`
         );
         this._borrowers = await borrowersReponse.json();
       }
@@ -200,14 +194,17 @@ export default class LMSBookingsTable extends LMSTable {
         )}
       </select>`,
       borrowernumber: () => {
+        console.log(this._borrowers);
         const borrower = this._borrowers.find(
           ({ patron_id }) => patron_id === parseInt(value, 10)
         );
+        console.log(borrower);
         return html`
           <span class="badge badge-secondary">${value}</span>&nbsp;
           <a href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${value}"
             ><span
-              >${borrower.firstname}&nbsp;${borrower.surname}&nbsp;(${borrower.cardnumber})</span
+              >${borrower?.firstname ?? nothing}&nbsp;${borrower?.surname ??
+              nothing}&nbsp;(${borrower?.cardnumber ?? nothing})</span
             ></a
           >
         `;
