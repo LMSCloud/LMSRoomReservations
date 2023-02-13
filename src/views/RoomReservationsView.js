@@ -11,13 +11,14 @@ export default class RoomReservationsView extends LitElement {
       _lmsCalendar: { state: true },
       _bookings: { state: true },
       _rooms: { state: true },
+      _isLoading: { state: true },
     };
   }
 
   static get styles() {
     return [
       css`
-        div {
+        .container {
           display: flex;
           flex-direction: row;
           gap: var(--spacing-md);
@@ -32,18 +33,54 @@ export default class RoomReservationsView extends LitElement {
           width: 20%;
         }
 
+        .skeleton {
+          background-color: lightgray;
+          border-radius: 5px;
+          animation: skeleton-loading 1s linear infinite alternate;
+        }
+
+        .skeleton-container {
+          display: flex;
+          height: 100vh;
+          gap: 1em;
+        }
+
+        .skeleton-bookie {
+          height: 80vh;
+          width: 20%;
+        }
+
+        .skeleton-calendar {
+          height: 80vh;
+          width: 80%;
+        }
+
+        @keyframes skeleton-loading {
+          0% {
+            background-color: hsl(200, 20%, 70%);
+          }
+
+          100% {
+            background-color: hsl(200, 20%, 95%);
+          }
+        }
+
         @media (max-width: 1200px) {
-          div {
+          .container, .skeleton-container {
             flex-direction: column;
           }
 
-          lms-calendar {
+          lms-calendar, .skeleton-calendar {
             width: 100%;
             height: 75vh;
           }
 
-          lms-bookie {
+          lms-bookie, .skeleton-bookie {
             width: 100%;
+          }
+
+          .skeleton-bookie {
+            height: 75vh;
           }
         }
       `,
@@ -59,6 +96,7 @@ export default class RoomReservationsView extends LitElement {
     };
     this._currentDate = new Date();
     this._lmsCalendar = undefined;
+    this._isLoading = true;
   }
 
   connectedCallback() {
@@ -100,7 +138,7 @@ export default class RoomReservationsView extends LitElement {
       const [s, e] = [new Date(start), new Date(end)];
       const bookedRoomid = roomid;
       const room = this._rooms.find(({ roomid }) => roomid == bookedRoomid);
-
+      this._isLoading = false;
       return {
         date: {
           start: {
@@ -131,15 +169,21 @@ export default class RoomReservationsView extends LitElement {
   }
 
   render() {
-    return html`
-      <div>
+    return html`<div
+        class="skeleton-container"
+        style="display: ${this._isLoading ? "flex" : "none"}"
+      >
+        <div class="skeleton skeleton-bookie"></div>
+        <div class="skeleton skeleton-calendar"></div>
+      </div>
+      <div class="container">
         <lms-bookie
           .borrowernumber=${this.borrowernumber}
           @submitted=${this._handleSubmit}
+          ?hidden=${this._isLoading}
         ></lms-bookie>
-        <lms-calendar></lms-calendar>
-      </div>
-    `;
+        <lms-calendar ?hidden=${this._isLoading}></lms-calendar>
+      </div>`;
   }
 }
 customElements.define("lms-room-reservations-view", RoomReservationsView);
