@@ -138,7 +138,6 @@ export default class RoomReservationsView extends LitElement {
       const [s, e] = [new Date(start), new Date(end)];
       const bookedRoomid = roomid;
       const room = this._rooms.find(({ roomid }) => roomid == bookedRoomid);
-      this._isLoading = false;
       return {
         date: {
           start: {
@@ -161,6 +160,8 @@ export default class RoomReservationsView extends LitElement {
         color: room.color,
       };
     });
+
+    this._isLoading = false;
   }
 
   async _handleSubmit() {

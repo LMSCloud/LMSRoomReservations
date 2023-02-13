@@ -2247,7 +2247,7 @@
 
     async _setup() {
       const branchResult = await this._getOpenHours();
-      if (!branchResult.length) {
+      if (!branchResult?.length) {
         const response = await fetch(
           "/api/v1/contrib/roomreservations/open_hours",
           {
@@ -5298,7 +5298,6 @@
         const [s, e] = [new Date(start), new Date(end)];
         const bookedRoomid = roomid;
         const room = this._rooms.find(({ roomid }) => roomid == bookedRoomid);
-        this._isLoading = false;
         return {
           date: {
             start: {
@@ -5321,6 +5320,8 @@
           color: room.color,
         };
       });
+
+      this._isLoading = false;
     }
 
     async _handleSubmit() {
