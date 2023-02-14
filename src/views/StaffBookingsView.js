@@ -1,41 +1,44 @@
 import { html } from "lit";
 import LMSContainer from "../components/LMSContainer";
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler";
 
-export default class StaffBookingsView extends LMSContainer {
+export default class StaffBookingsView extends observeState(LMSContainer) {
   constructor() {
     super();
-    this._endpoint = "/api/v1/contrib/roomreservations/bookings";
     this.classes = ["container-fluid"];
     this._init();
   }
 
   async _init() {
-    await this._getElements();
+    await this._getElements({ force: false });
   }
 
-  async _getElements() {
-    const response = await fetch(this._endpoint);
-    const result = await response.json();
+  async _getElements({ force }) {
+    const { response, data } = await RequestHandler.fetchData({
+      endpoint: "bookings",
+      force,
+    });
 
     if (response.status === 200) {
       const lmsBookingsTable = document.createElement("lms-bookings-table", {
         is: "lms-bookings-table",
       });
-      lmsBookingsTable.setAttribute("data", JSON.stringify(result));
+      lmsBookingsTable.setAttribute("data", JSON.stringify(data));
       this._elements = [lmsBookingsTable];
     }
   }
 
   _handleCreated() {
-    this._getElements();
+    this._getElements({ force: true });
   }
 
   _handleModified() {
-    this._getElements();
+    this._getElements({ force: true });
   }
 
   _handleDeleted() {
-    this._getElements();
+    this._getElements({ force: true });
   }
 
   _handleError(e) {
@@ -72,7 +75,4 @@ export default class StaffBookingsView extends LMSContainer {
     `;
   }
 }
-customElements.define(
-  "lms-staff-bookings-view",
-  StaffBookingsView
-);
+customElements.define("lms-staff-bookings-view", StaffBookingsView);

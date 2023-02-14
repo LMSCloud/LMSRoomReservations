@@ -3,8 +3,10 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler.js";
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler.js";
 
-export default class LMSRoom extends LitElement {
+export default class LMSRoom extends observeState(LitElement) {
   static get properties() {
     return {
       maxcapacity: { type: String },
@@ -64,21 +66,19 @@ export default class LMSRoom extends LitElement {
   }
 
   async handleSave() {
-    const response = await fetch(
-      `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          maxcapacity: this.maxcapacity,
-          color: this.color,
-          image: this.image,
-          description: this.description,
-          maxbookabletime: this.maxbookabletime,
-          branch: this.branch,
-          roomnumber: this.roomnumber,
-        }),
-      }
-    );
+    const { response } = await RequestHandler.updateData({
+      id: this.roomid,
+      endpoint: "rooms",
+      data: {
+        maxcapacity: this.maxcapacity,
+        color: this.color,
+        image: this.image,
+        description: this.description,
+        maxbookabletime: this.maxbookabletime,
+        branch: this.branch,
+        roomnumber: this.roomnumber,
+      },
+    });
 
     if (response.status === 200) {
       // Emit an event with the current property values
@@ -99,10 +99,10 @@ export default class LMSRoom extends LitElement {
   }
 
   async handleDelete() {
-    const response = await fetch(
-      `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
-      { method: "DELETE" }
-    );
+    const { response } = await RequestHandler.deleteData({
+      id: this.roomid,
+      endpoint: "rooms",
+    });
 
     if (response.status === 204) {
       // Emit an event with the current property values

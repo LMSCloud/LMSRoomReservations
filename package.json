@@ -5,6 +5,9 @@
   "minimum_koha_version": "21.05.14.000",
   "description": "Koha Room Reservations Plugin",
   "devDependencies": {
+    "@esm-bundle/chai": "^4.3.4-fix.0",
+    "@web/dev-server-legacy": "^1.0.1",
+    "@web/test-runner": "^0.15.0",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.20.0",
     "eslint-plugin-lit": "^1.8.2",
@@ -14,6 +17,8 @@
     "gulp-cli": "^1.2.2",
     "gulp-github-release": "^1.1.5",
     "gulp-run": "^1.7.1",
+    "jsdom": "^21.1.0",
+    "mocha": "^10.2.0",
     "po2json": "^1.0.0-beta-3",
     "postcss": "^8.4.21",
     "postcss-lit": "^1.0.1",
@@ -23,13 +28,14 @@
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
+    "sinon": "^15.0.1",
     "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0"
   },
   "scripts": {
     "clean": "rm *.kpz",
-    "build": "./node_modules/rollup/dist/bin/rollup -c && gulp build",
-    "build:next": "./node_modules/rollup/dist/bin/rollup -c && node increment_version.js && gulp build",
+    "build": "npx rollup -c && npx gulp build",
+    "build:next": "npx rollup -c && node increment_version.js && npx gulp build",
     "docker:dev": "npm run clean && npm run build && npm run docker:move && npm run docker:unzip && npm run docker:install",
     "docker:clean": "docker exec -it koha-koha-1 rm /var/lib/koha/kohadev/plugins/*.kpz",
     "docker:move": "docker cp *.kpz koha-koha-1:/var/lib/koha/kohadev/plugins/",
@@ -37,7 +43,8 @@
     "docker:install": "docker exec -it koha-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl",
     "lint:css": "stylelint './src/components/*.js'",
     "LMSCalendar:init": "git submodule update --init --recursive",
-    "LMSCalendar:pull": "git submodule update --recursive --remote"
+    "LMSCalendar:pull": "git submodule update --recursive --remote",
+    "test": "npx web-test-runner \"test/**/*.test.js\" --node-resolve --coverage"
   },
   "repository": {
     "type": "git",

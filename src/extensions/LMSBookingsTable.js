@@ -1,7 +1,9 @@
 import { html, nothing } from "lit";
 import LMSTable from "../components/LMSTable";
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler";
 
-export default class LMSBookingsTable extends LMSTable {
+export default class LMSBookingsTable extends observeState(LMSTable) {
   static properties = {
     data: { type: Array },
     _isEditable: { type: Boolean, attribute: false },
@@ -48,13 +50,11 @@ export default class LMSBookingsTable extends LMSTable {
       ),
     ];
 
-    const response = await fetch(
-      `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({ borrowernumber, roomid, start, end }),
-      }
-    );
+    const { response } = await RequestHandler.updateData({
+      id: bookingid,
+      endpoint: "bookings",
+      data: { borrowernumber, roomid, start, end },
+    });
 
     if ([200, 201].includes(response.status)) {
       // Implement success message
@@ -96,11 +96,11 @@ export default class LMSBookingsTable extends LMSTable {
 
   async _getData() {
     const [bookingsReponse, roomsResponse] = await Promise.all([
-      fetch("/api/v1/contrib/roomreservations/bookings"),
-      fetch("/api/v1/contrib/roomreservations/rooms"),
+      RequestHandler.fetchData({ endpoint: "bookings" }),
+      RequestHandler.fetchData({ endpoint: "rooms" }),
     ]);
-    this._bookings = await bookingsReponse.json();
-    this._rooms = await roomsResponse.json();
+    this._bookings = bookingsReponse.data;
+    this._rooms = roomsResponse.data;
 
     const order = [
       "bookingid",
@@ -123,7 +123,9 @@ export default class LMSBookingsTable extends LMSTable {
 
       if (this._borrowers.size) {
         const borrowersReponse = await fetch(
-          `/api/v1/patrons?q={"borrowernumber":[${Array.from(this._borrowers)}]}`
+          `/api/v1/patrons?q={"borrowernumber":[${Array.from(
+            this._borrowers
+          )}]}`
         );
         this._borrowers = await borrowersReponse.json();
       }

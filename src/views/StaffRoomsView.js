@@ -1,32 +1,40 @@
 import { html } from "lit";
 import LMSContainer from "../components/LMSContainer";
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler";
 
-export default class StaffRoomsView extends LMSContainer {
+export default class StaffRoomsView extends observeState(LMSContainer) {
   constructor() {
     super();
-    this._endpoint = "/api/v1/contrib/roomreservations/rooms";
     this.classes = ["container-fluid"];
     this._init();
   }
 
   async _init() {
-    await this._getElements();
+    await this._getElements({ force: false });
   }
 
-  async _getElements() {
+  async _getElements({ force }) {
     const [roomsResponse, librariesResponse] = await Promise.all([
-      fetch(this._endpoint),
-      fetch("/api/v1/libraries"),
+      RequestHandler.fetchData({
+        endpoint: "rooms",
+        force,
+      }),
+      RequestHandler.fetchData({
+        endpoint: "libraries",
+      }),
     ]);
-    const rooms = await roomsResponse.json();
-    let libraries = await librariesResponse.json();
+    const rooms = roomsResponse.data;
+    let libraries = librariesResponse.data;
     libraries = libraries.map((library) => ({
       value: library.library_id,
       name: library.name,
     }));
 
     if (
-      [roomsResponse, librariesResponse].every(({ status }) => status === 200)
+      [roomsResponse.response, librariesResponse.response].every(
+        ({ status }) => status === 200
+      )
     ) {
       this._elements = rooms.map((room) => {
         const _room = { ...room, libraries };
@@ -45,15 +53,15 @@ export default class StaffRoomsView extends LMSContainer {
   }
 
   _handleCreated() {
-    this._getElements();
+    this._getElements({ force: true });
   }
 
   _handleModified() {
-    this._getElements();
+    this._getElements({ force: true });
   }
 
   _handleDeleted() {
-    this._getElements();
+    this._getElements({ force: true });
   }
 
   _handleError(e) {

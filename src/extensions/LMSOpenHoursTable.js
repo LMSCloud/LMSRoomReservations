@@ -1,7 +1,9 @@
 import { html, nothing } from "lit";
 import LMSTable from "../components/LMSTable";
 import TranslationHandler from "../lib/TranslationHandler";
-export default class LMSOpenHoursTable extends LMSTable {
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler";
+export default class LMSOpenHoursTable extends observeState(LMSTable) {
   static get properties() {
     return {
       data: {
@@ -41,20 +43,15 @@ export default class LMSOpenHoursTable extends LMSTable {
   async _setup() {
     const branchResult = await this._getOpenHours();
     if (!branchResult?.length) {
-      const response = await fetch(
-        "/api/v1/contrib/roomreservations/open_hours",
-        {
-          method: "POST",
-          body: JSON.stringify(
-            Array.from({ length: 7 }, (_, i) => ({
-              branch: this.branch,
-              day: i,
-              start: "00:00",
-              end: "00:00",
-            }))
-          ),
-        }
-      );
+      const { response } = await RequestHandler.createData({
+        endpoint: "openHours",
+        data: Array.from({ length: 7 }, (_, i) => ({
+          branch: this.branch,
+          day: i,
+          start: "00:00",
+          end: "00:00",
+        })),
+      });
 
       this._isSetup = response.status === 201;
 
@@ -83,14 +80,14 @@ export default class LMSOpenHoursTable extends LMSTable {
         start: html`<input
           class="form-control"
           type="time"
-          name="${weekday}"
+          name="${day}"
           value="${start}"
           disabled
         />`,
         end: html`<input
           class="form-control"
           type="time"
-          name="${weekday}"
+          name="${day}"
           value="${end}"
           disabled
         />`,
@@ -135,18 +132,17 @@ export default class LMSOpenHoursTable extends LMSTable {
 
     const inputs = Array.from(parent.querySelectorAll("input"));
     const [start, end] = inputs;
-    const response = await fetch(
-      `/api/v1/contrib/roomreservations/open_hours/${this.branch}/${
-        this._dayConversionMap[start.name]
-      }`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          start: start.value,
-          end: end.value,
-        }),
-      }
-    );
+
+    const { response } = await RequestHandler.updateData({
+      id: start.name,
+      uriComponents: [this.branch],
+      endpoint: "openHours",
+      compareOn: ["branch", "day"],
+      data: {
+        start: start.value,
+        end: end.value,
+      },
+    });
 
     if (response.status === 201) {
       // Implement success message
@@ -175,20 +171,22 @@ export default class LMSOpenHoursTable extends LMSTable {
   }
 
   async _getOpenHours() {
-    const endpoint = "/api/v1/contrib/roomreservations/open_hours";
-    const response = await fetch(endpoint);
-    const result = await response.json();
+    const { data } = await RequestHandler.fetchData({
+      endpoint: "openHours",
+    });
 
-    if (result.length) {
-      const groupedResult = this._groupBy(result, (item) => item.branch);
+    if (data.length) {
+      const groupedResult = this._groupBy(data, (item) => item.branch);
       return groupedResult[this.branch];
     }
   }
 
   async _getBranches() {
-    const response = await fetch("/api/v1/libraries");
-    const result = await response.json();
-    this._branches = result.reduce(
+    const { data } = await RequestHandler.fetchData({
+      endpoint: "libraries",
+    });
+
+    this._branches = data.reduce(
       (acc, library) => ({
         ...acc,
         [library.library_id]: library.name,

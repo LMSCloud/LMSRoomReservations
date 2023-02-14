@@ -1,23 +1,27 @@
 import { html } from "lit";
 import LMSContainer from "../components/LMSContainer";
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler";
 
-export default class StaffOpenHoursView extends LMSContainer {
+export default class StaffOpenHoursView extends observeState(LMSContainer) {
   constructor() {
     super();
-    this._endpoint = "/api/v1/contrib/roomreservations/public/open_hours";
     this.classes = ["container-fluid"];
     this._init();
   }
 
   async _init() {
-    await this._getElements();
+    await this._getElements({ force: false });
   }
 
-  async _getElements() {
-    const openHours = await fetch(this._endpoint);
+  async _getElements({ force }) {
+    const openHours = await RequestHandler.fetchData({
+      endpoint: "openHours",
+      force,
+    });
 
-    if (openHours.status === 200) {
-      const _openHours = await openHours.json();
+    if (openHours.response.status === 200) {
+      const _openHours = openHours.data;
       if (_openHours.length) {
         const groupedResult = this._groupBy(_openHours, (item) => item.branch);
         let elements = [];
@@ -36,10 +40,11 @@ export default class StaffOpenHoursView extends LMSContainer {
         return;
       }
 
-      const libraries = await fetch("/api/v1/libraries");
-      const _libraries = await libraries.json();
+      const libraries = await RequestHandler.fetchData({
+        endpoint: "libraries",
+      });
       let elements = [];
-      _libraries
+      libraries.data
         .map((library) => ({
           branch: library.library_id,
         }))

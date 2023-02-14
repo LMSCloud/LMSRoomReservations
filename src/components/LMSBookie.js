@@ -3,8 +3,10 @@ import { nothing } from "lit-html";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 import dayjs from "dayjs";
 import TranslationHandler from "../lib/TranslationHandler";
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler";
 
-export default class LMSBookie extends LitElement {
+export default class LMSBookie extends observeState(LitElement) {
   static properties = {
     borrowernumber: { type: String },
     _openHours: { state: true },
@@ -67,35 +69,36 @@ export default class LMSBookie extends LitElement {
 
     const [openHours, rooms, equipment, defaultMaxBookingTime] =
       await Promise.all([
-        fetch("/api/v1/contrib/roomreservations/public/open_hours"),
-        fetch("/api/v1/contrib/roomreservations/public/rooms"),
-        fetch("/api/v1/contrib/roomreservations/public/equipment"),
-        fetch(
-          "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time"
-        ),
+        RequestHandler.fetchData({ endpoint: "openHours" }),
+        RequestHandler.fetchData({ endpoint: "rooms" }),
+        RequestHandler.fetchData({ endpoint: "equipment" }),
+        RequestHandler.fetchData({
+          endpoint: "settings",
+          id: "default_max_booking_time",
+        }),
       ]);
 
-    if (openHours.ok) {
-      this._openHours = await openHours.json();
+    if (openHours.response.ok) {
+      this._openHours = openHours.data;
     } else {
       console.error("Error fetching open hours");
     }
 
-    if (rooms.ok) {
-      this._rooms = await rooms.json();
+    if (rooms.response.ok) {
+      this._rooms = rooms.data;
       [this._selectedRoom] = this._rooms;
     } else {
       console.error("Error fetching rooms");
     }
 
-    if (equipment.ok) {
-      this._equipment = await equipment.json();
+    if (equipment.response.ok) {
+      this._equipment = equipment.data;
     } else {
       console.error("Error fetching equipment");
     }
 
-    if (defaultMaxBookingTime.ok) {
-      this._defaultMaxBookingTime = await defaultMaxBookingTime.json();
+    if (defaultMaxBookingTime.response.ok) {
+      this._defaultMaxBookingTime = defaultMaxBookingTime.data;
     } else {
       console.error("Error fetching default max booking time");
     }
@@ -138,20 +141,17 @@ export default class LMSBookie extends LitElement {
       .add(duration, "minute")
       .format("YYYY-MM-DDTHH:mm");
 
-    const response = await fetch(
-      "/api/v1/contrib/roomreservations/public/bookings",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          borrowernumber: this.borrowernumber,
-          roomid,
-          start,
-          end,
-          blackedout: 0,
-          equipment,
-        }),
-      }
-    );
+    const { response } = await RequestHandler.createData({
+      endpoint: "bookings",
+      data: {
+        borrowernumber: this.borrowernumber,
+        roomid,
+        start,
+        end,
+        blackedout: 0,
+        equipment,
+      },
+    });
 
     if ([201].includes(response.status)) {
       inputs.forEach((input) => {

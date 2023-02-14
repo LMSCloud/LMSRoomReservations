@@ -3,7 +3,9 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler.js";
-export default class LMSEquipmentItem extends LitElement {
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler.js";
+export default class LMSEquipmentItem extends observeState(LitElement) {
   static get properties() {
     return {
       equipmentid: { type: String },
@@ -55,9 +57,8 @@ export default class LMSEquipmentItem extends LitElement {
     await translationHandler.loadTranslations();
     this._i18n = translationHandler.i18n;
 
-    const response = await fetch("/api/v1/contrib/roomreservations/rooms");
-    const result = await response.json();
-    this._rooms = result.map((room) => ({
+    const { data } = await RequestHandler.fetchData({ endpoint: "rooms"});
+    this._rooms = data.map((room) => ({
       value: room.roomid,
       name: room.roomnumber,
     }));
@@ -68,21 +69,17 @@ export default class LMSEquipmentItem extends LitElement {
   }
 
   async handleSave() {
-    const response = await fetch(
-      `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
-      {
-        method: "PUT",
-        /** We need to filter properties from the payload the are null
-         *  because the backend set NULL by default on non-supplied args */
-        body: JSON.stringify({
-          equipmentname: this.equipmentname,
-          description: this.description,
-          image: this.image,
-          maxbookabletime: this.maxbookabletime,
-          roomid: this.roomid,
-        }),
-      }
-    );
+    const { response } = await RequestHandler.updateData({
+      id: this.equipmentid,
+      endpoint: "equipment",
+      data: {
+        equipmentname: this.equipmentname,
+        description: this.description,
+        image: this.image,
+        maxbookabletime: this.maxbookabletime,
+        roomid: this.roomid,
+      },
+    });
 
     if ([200, 201].includes(response.status)) {
       // Emit an event with the current property values
@@ -99,10 +96,10 @@ export default class LMSEquipmentItem extends LitElement {
   }
 
   async handleDelete() {
-    const response = await fetch(
-      `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
-      { method: "DELETE" }
-    );
+    const { response } = await RequestHandler.deleteData({
+      id: this.equipmentid,
+      endpoint: "equipment",
+    });
 
     if (response.status === 204) {
       // Emit an event with the current property values

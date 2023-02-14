@@ -1,7 +1,8 @@
 import { html, css, LitElement } from "lit";
 import TranslationHandler from "../lib/TranslationHandler";
-
-export default class RoomReservationsView extends LitElement {
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler";
+export default class RoomReservationsView extends observeState(LitElement) {
   static get properties() {
     return {
       borrowernumber: { type: String },
@@ -66,16 +67,19 @@ export default class RoomReservationsView extends LitElement {
         }
 
         @media (max-width: 1200px) {
-          .container, .skeleton-container {
+          .container,
+          .skeleton-container {
             flex-direction: column;
           }
 
-          lms-calendar, .skeleton-calendar {
+          lms-calendar,
+          .skeleton-calendar {
             width: 100%;
             height: 75vh;
           }
 
-          lms-bookie, .skeleton-bookie {
+          lms-bookie,
+          .skeleton-bookie {
             width: 100%;
           }
 
@@ -90,10 +94,6 @@ export default class RoomReservationsView extends LitElement {
   constructor() {
     super();
     this.borrowernumber = undefined;
-    this._endpoints = {
-      bookings: "/api/v1/contrib/roomreservations/public/bookings",
-      rooms: "/api/v1/contrib/roomreservations/public/rooms",
-    };
     this._currentDate = new Date();
     this._lmsCalendar = undefined;
     this._isLoading = true;
@@ -118,19 +118,21 @@ export default class RoomReservationsView extends LitElement {
     };
 
     const [bookings, rooms] = await Promise.all([
-      fetch(this._endpoints.bookings),
-      fetch(this._endpoints.rooms),
+      RequestHandler.fetchData({ endpoint: "bookings" }),
+      RequestHandler.fetchData({ endpoint: "rooms" }),
     ]);
 
-    this._bookings = await bookings.json();
-    this._rooms = await rooms.json();
+    this._bookings = bookings.data;
+    this._rooms = rooms.data;
 
     this._getEntries();
   }
 
   async _getBookings() {
-    const response = await fetch(this._endpoints.bookings);
-    this._bookings = await response.json();
+    const { data } = await RequestHandler.fetchData({
+      endpoint: "bookings",
+    });
+    this._bookings = data;
   }
 
   async _getEntries() {

@@ -1,7 +1,9 @@
 import { html } from "lit";
 import LMSTable from "../components/LMSTable";
+import { observeState } from "lit-element-state";
+import RequestHandler from "../state/RequestHandler";
 
-export default class LMSSettingsTable extends LMSTable {
+export default class LMSSettingsTable extends observeState(LMSTable) {
   static get properties() {
     return {
       data: { type: Array },
@@ -10,12 +12,13 @@ export default class LMSSettingsTable extends LMSTable {
   }
 
   async _getData() {
-    const response = await fetch("/api/v1/contrib/roomreservations/settings");
-
-    const result = await response.json();
+    const { data } = await RequestHandler.fetchData({
+      endpoint: "settings",
+      force: true,
+    });
 
     let order = ["setting", "value", "description"];
-    this.data = result
+    this.data = data
       .map((setting) => ({
         ...setting,
         value: this._getFieldMarkup(setting),

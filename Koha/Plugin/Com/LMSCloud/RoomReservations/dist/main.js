@@ -406,7 +406,475 @@
     }
   }
 
-  class LMSBookie extends s$4 {
+  const observeState = superclass => class extends superclass {
+
+      constructor() {
+          super();
+          this._observers = [];
+      }
+
+      update(changedProperties) {
+          stateRecorder.start();
+          super.update(changedProperties);
+          this._initStateObservers();
+      }
+
+      connectedCallback() {
+          super.connectedCallback();
+          if (this._wasConnected) {
+              this.requestUpdate();
+              delete this._wasConnected;
+          }
+      }
+
+      disconnectedCallback() {
+          super.disconnectedCallback();
+          this._wasConnected = true;
+          this._clearStateObservers();
+      }
+
+      _initStateObservers() {
+          this._clearStateObservers();
+          if (!this.isConnected) return;
+          this._addStateObservers(stateRecorder.finish());
+      }
+
+      _addStateObservers(stateVars) {
+          for (let [state, keys] of stateVars) {
+              const observer = () => this.requestUpdate();
+              this._observers.push([state, observer]);
+              state.addObserver(observer, keys);
+          }
+      }
+
+      _clearStateObservers() {
+          for (let [state, observer] of this._observers) {
+              state.removeObserver(observer);
+          }
+          this._observers = [];
+      }
+
+  };
+
+
+  class LitState {
+
+      constructor() {
+          this._observers = [];
+          this._initStateVars();
+      }
+
+      addObserver(observer, keys) {
+          this._observers.push({observer, keys});
+      }
+
+      removeObserver(observer) {
+          this._observers = this._observers.filter(observerObj => observerObj.observer !== observer);
+      }
+
+      _initStateVars() {
+
+          if (this.constructor.stateVarOptions) {
+              for (let [key, options] of Object.entries(this.constructor.stateVarOptions)) {
+                  this._initStateVar(key, options);
+              }
+          }
+
+          if (this.constructor.stateVars) {
+              for (let [key, value] of Object.entries(this.constructor.stateVars)) {
+                  this._initStateVar(key, {});
+                  this[key] = value;
+              }
+          }
+
+      }
+
+      _initStateVar(key, options) {
+
+          if (this.hasOwnProperty(key)) {
+              // Property already defined, so don't re-define.
+              return;
+          }
+
+          options = this._parseOptions(options);
+
+          const stateVar = new options.handler({
+              options: options,
+              recordRead: () => this._recordRead(key),
+              notifyChange: () => this._notifyChange(key)
+          });
+
+          Object.defineProperty(
+              this,
+              key,
+              {
+                  get() {
+                      return stateVar.get();
+                  },
+                  set(value) {
+                      if (stateVar.shouldSetValue(value)) {
+                          stateVar.set(value);
+                      }
+                  },
+                  configurable: true,
+                  enumerable: true
+              }
+          );
+
+      }
+
+      _parseOptions(options) {
+
+          if (!options.handler) {
+              options.handler = StateVar;
+          } else {
+
+              // In case of a custom `StateVar` handler is provided, we offer a
+              // second way of providing options to your custom handler class.
+              //
+              // You can decorate a *method* with `@stateVar()` instead of a
+              // variable. The method must return an object, and that object will
+              // be assigned to the `options` object.
+              //
+              // Within the method you have access to the `this` context. So you
+              // can access other properties and methods from your state class.
+              // And you can add arrow function callbacks where you can access
+              // `this`. This provides a lot of possibilities for a custom
+              // handler class.
+              if (options.propertyMethod && options.propertyMethod.kind === 'method') {
+                  Object.assign(options, options.propertyMethod.descriptor.value.call(this));
+              }
+
+          }
+
+          return options;
+
+      }
+
+      _recordRead(key) {
+          stateRecorder.recordRead(this, key);
+      }
+
+      _notifyChange(key) {
+          for (const observerObj of this._observers) {
+              if (!observerObj.keys || observerObj.keys.includes(key)) {
+                  observerObj.observer(key);
+              }
+          }    }
+
+  }
+
+
+  class StateVar {
+
+      constructor(args) {
+          this.options = args.options; // The options given in the `stateVar` declaration
+          this.recordRead = args.recordRead; // Callback to indicate the `stateVar` is read
+          this.notifyChange = args.notifyChange; // Callback to indicate the `stateVar` value has changed
+          this.value = undefined; // The initial value
+      }
+
+      // Called when the `stateVar` on the `LitState` class is read (for example:
+      // `myState.myStateVar`). Should return the value of the `stateVar`.
+      get() {
+          this.recordRead();
+          return this.value;
+      }
+
+      // Called before the `set()` method is called. If this method returns
+      // `false`, the `set()` method won't be called. This can be used for
+      // validation and/or optimization.
+      shouldSetValue(value) {
+          return this.value !== value;
+      }
+
+      // Called when the `stateVar` on the `LitState` class is set (for example:
+      // `myState.myStateVar = 'value'`.
+      set(value) {
+          this.value = value;
+          this.notifyChange();
+      }
+
+  }
+
+
+  class StateRecorder {
+
+      constructor() {
+          this._log = null;
+      }
+
+      start() {
+          this._log = new Map();
+      }
+
+      recordRead(stateObj, key) {
+          if (this._log === null) return;
+          const keys = this._log.get(stateObj) || [];
+          if (!keys.includes(key)) keys.push(key);
+          this._log.set(stateObj, keys);
+      }
+
+      finish() {
+          const stateVars = this._log;
+          this._log = null;
+          return stateVars;
+      }
+
+  }
+
+  const stateRecorder = new StateRecorder();
+
+  class RequestHandler extends LitState {
+    static get stateVars() {
+      return {
+        bookings: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/bookings",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        publicBookings: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/public/bookings",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        equipment: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/equipment",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        publicEquipment: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/public/equipment",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        libraries: {
+          data: [],
+          url: "/api/v1/libraries",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        openHours: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/open_hours",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        publicOpenHours: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/public/open_hours",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        rooms: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/rooms",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        publicRooms: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/public/rooms",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        settings: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/settings",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+        publicSettings: {
+          data: [],
+          url: "/api/v1/contrib/roomreservations/public/settings",
+          lastResponse: {},
+          lastFetched: new Date(0),
+        },
+      };
+    }
+
+    constructor() {
+      super();
+    }
+
+    static getInstance() {
+      if (!RequestHandler.instance) {
+        RequestHandler.instance = new RequestHandler();
+      }
+      return RequestHandler.instance;
+    }
+
+    async fetchData({ endpoint, uriComponents, id, force }) {
+      const currentTime = new Date();
+      if (!force) {
+        const timeSinceLastFetch = currentTime - this[endpoint].lastFetched;
+        if (timeSinceLastFetch < 60 * 1000) {
+          // block requests if data was fetched less than a minute ago
+          return Promise.resolve({
+            response: this[endpoint].lastResponse,
+            data: this[endpoint].data,
+          });
+        }
+      }
+
+      try {
+        const response = await fetch(
+          `${this[endpoint].url}${
+          uriComponents?.reduce(
+            (acc, uriComponent) => `${acc}/${uriComponent}`,
+            ""
+          ) ?? ""
+        }${id ? `/${id}` : ""}`
+        );
+        const data = await response.json();
+        this[endpoint].data = data;
+        this[endpoint].lastResponse = response;
+        this[endpoint].lastFetched = currentTime;
+        return Promise.resolve({
+          response,
+          data: this[endpoint].data,
+        });
+      } catch (error) {
+        console.error(error);
+        return Promise.reject({
+          response: this[endpoint].lastResponse,
+          error,
+        });
+      }
+    }
+
+    async createData({ endpoint, data, uriComponents, id }) {
+      try {
+        const response = await fetch(
+          `${this[endpoint].url}${
+          uriComponents?.reduce(
+            (acc, uriComponent) => `${acc}/${uriComponent}`,
+            ""
+          ) ?? ""
+        }${id ? `/${id}` : ""}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          }
+        );
+        this[endpoint].lastResponse = response;
+        const newData = await response.json();
+
+        /** If the data has zero length we need to fetch
+         *  the data again */
+        if (!this[endpoint].data.length) {
+          await this.fetchData(endpoint);
+          return Promise.resolve({
+            response,
+            data: this[endpoint].data,
+          });
+        }
+
+        this[endpoint].data.push(newData);
+        return Promise.resolve({ response, data: this[endpoint].data });
+      } catch (error) {
+        console.error(error);
+        return Promise.reject({
+          response: this[endpoint].lastResponse,
+          error,
+        });
+      }
+    }
+
+    async updateData({ endpoint, data, uriComponents, id, compareOn }) {
+      try {
+        const response = await fetch(
+          `${this[endpoint].url}${
+          uriComponents?.reduce(
+            (acc, uriComponent) => `${acc}/${uriComponent}`,
+            ""
+          ) ?? ""
+        }${id ? `/${id}` : ""}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          }
+        );
+        this[endpoint].lastResponse = response;
+        const updatedData = await response.json();
+
+        /** If the data has zero length we need to fetch
+         *  the data again */
+        if (!this[endpoint].data.length) {
+          await this.fetchData({ endpoint });
+          return Promise.resolve({
+            response,
+            data: this[endpoint].data,
+          });
+        }
+
+        let _compareOn = compareOn;
+        if (!compareOn) {
+          _compareOn = Object.keys(updatedData).find((key) =>
+            key.match(/(\w+)id/g)
+          );
+        }
+        const index = this[endpoint].data.findIndex(
+          /** If _compareOn is a string we just strict equality check the updatedData
+           *  at the key specified as the _compareOn variable. However, if _compareOn
+           *  is an array we need to find the item in the array that matches all keys specified
+           *  in the _compareOn array. If the item is found we return the index of the item
+           *  in the array. If the item is not found we return -1. */
+          Array.isArray(_compareOn)
+            ? (item) =>
+                _compareOn.every(
+                  (key) => item[key].toString() === updatedData[key].toString()
+                )
+            : (item) =>
+                item[_compareOn].toString() === updatedData[_compareOn].toString()
+        );
+        this[endpoint].data.splice(index, 1, updatedData);
+        return Promise.resolve({ response, data: updatedData });
+      } catch (error) {
+        console.error(error);
+        return Promise.reject({
+          response: this[endpoint].lastResponse,
+          error,
+        });
+      }
+    }
+
+    async deleteData({ endpoint, uriComponents, id }) {
+      try {
+        const response = await fetch(
+          `${this[endpoint].url}${
+          uriComponents?.reduce(
+            (acc, uriComponent) => `${acc}/${uriComponent}`,
+            ""
+          ) ?? ""
+        }${id ? `/${id}` : ""}`,
+          { method: "DELETE" }
+        );
+        this[endpoint].lastResponse = response;
+        const index = this[endpoint].data.findIndex(
+          (item) => item[/\w+id/] === id
+        );
+        this[endpoint].data.splice(index, 1);
+        return Promise.resolve({ response });
+      } catch (error) {
+        console.error(error);
+        return Promise.reject({
+          response: this[endpoint].lastResponse,
+          error,
+        });
+      }
+    }
+  }
+
+  const requestHandler = RequestHandler.getInstance();
+
+  class LMSBookie extends observeState(s$4) {
     static properties = {
       borrowernumber: { type: String },
       _openHours: { state: true },
@@ -469,35 +937,36 @@
 
       const [openHours, rooms, equipment, defaultMaxBookingTime] =
         await Promise.all([
-          fetch("/api/v1/contrib/roomreservations/public/open_hours"),
-          fetch("/api/v1/contrib/roomreservations/public/rooms"),
-          fetch("/api/v1/contrib/roomreservations/public/equipment"),
-          fetch(
-            "/api/v1/contrib/roomreservations/public/settings/default_max_booking_time"
-          ),
+          requestHandler.fetchData({ endpoint: "openHours" }),
+          requestHandler.fetchData({ endpoint: "rooms" }),
+          requestHandler.fetchData({ endpoint: "equipment" }),
+          requestHandler.fetchData({
+            endpoint: "settings",
+            id: "default_max_booking_time",
+          }),
         ]);
 
-      if (openHours.ok) {
-        this._openHours = await openHours.json();
+      if (openHours.response.ok) {
+        this._openHours = openHours.data;
       } else {
         console.error("Error fetching open hours");
       }
 
-      if (rooms.ok) {
-        this._rooms = await rooms.json();
+      if (rooms.response.ok) {
+        this._rooms = rooms.data;
         [this._selectedRoom] = this._rooms;
       } else {
         console.error("Error fetching rooms");
       }
 
-      if (equipment.ok) {
-        this._equipment = await equipment.json();
+      if (equipment.response.ok) {
+        this._equipment = equipment.data;
       } else {
         console.error("Error fetching equipment");
       }
 
-      if (defaultMaxBookingTime.ok) {
-        this._defaultMaxBookingTime = await defaultMaxBookingTime.json();
+      if (defaultMaxBookingTime.response.ok) {
+        this._defaultMaxBookingTime = defaultMaxBookingTime.data;
       } else {
         console.error("Error fetching default max booking time");
       }
@@ -540,20 +1009,17 @@
         .add(duration, "minute")
         .format("YYYY-MM-DDTHH:mm");
 
-      const response = await fetch(
-        "/api/v1/contrib/roomreservations/public/bookings",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            borrowernumber: this.borrowernumber,
-            roomid,
-            start,
-            end,
-            blackedout: 0,
-            equipment,
-          }),
-        }
-      );
+      const { response } = await requestHandler.createData({
+        endpoint: "bookings",
+        data: {
+          borrowernumber: this.borrowernumber,
+          roomid,
+          start,
+          end,
+          blackedout: 0,
+          equipment,
+        },
+      });
 
       if ([201].includes(response.status)) {
         inputs.forEach((input) => {
@@ -1602,7 +2068,7 @@
 
   customElements.define("lms-toast", LMSToast);
 
-  class LMSBookingsTable extends LMSTable {
+  class LMSBookingsTable extends observeState(LMSTable) {
     static properties = {
       data: { type: Array },
       _isEditable: { type: Boolean, attribute: false },
@@ -1649,13 +2115,11 @@
         ),
       ];
 
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
-        {
-          method: "PUT",
-          body: JSON.stringify({ borrowernumber, roomid, start, end }),
-        }
-      );
+      const { response } = await requestHandler.updateData({
+        id: bookingid,
+        endpoint: "bookings",
+        data: { borrowernumber, roomid, start, end },
+      });
 
       if ([200, 201].includes(response.status)) {
         // Implement success message
@@ -1697,11 +2161,11 @@
 
     async _getData() {
       const [bookingsReponse, roomsResponse] = await Promise.all([
-        fetch("/api/v1/contrib/roomreservations/bookings"),
-        fetch("/api/v1/contrib/roomreservations/rooms"),
+        requestHandler.fetchData({ endpoint: "bookings" }),
+        requestHandler.fetchData({ endpoint: "rooms" }),
       ]);
-      this._bookings = await bookingsReponse.json();
-      this._rooms = await roomsResponse.json();
+      this._bookings = bookingsReponse.data;
+      this._rooms = roomsResponse.data;
 
       const order = [
         "bookingid",
@@ -1724,7 +2188,9 @@
 
         if (this._borrowers.size) {
           const borrowersReponse = await fetch(
-            `/api/v1/patrons?q={"borrowernumber":[${Array.from(this._borrowers)}]}`
+            `/api/v1/patrons?q={"borrowernumber":[${Array.from(
+            this._borrowers
+          )}]}`
           );
           this._borrowers = await borrowersReponse.json();
         }
@@ -1918,7 +2384,7 @@
 
   customElements.define("lms-bookings-modal", LMSBookingsModal);
 
-  class LMSEquipmentItem extends s$4 {
+  class LMSEquipmentItem extends observeState(s$4) {
     static get properties() {
       return {
         equipmentid: { type: String },
@@ -1970,9 +2436,8 @@
       await translationHandler.loadTranslations();
       this._i18n = translationHandler.i18n;
 
-      const response = await fetch("/api/v1/contrib/roomreservations/rooms");
-      const result = await response.json();
-      this._rooms = result.map((room) => ({
+      const { data } = await requestHandler.fetchData({ endpoint: "rooms"});
+      this._rooms = data.map((room) => ({
         value: room.roomid,
         name: room.roomnumber,
       }));
@@ -1983,21 +2448,17 @@
     }
 
     async handleSave() {
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
-        {
-          method: "PUT",
-          /** We need to filter properties from the payload the are null
-           *  because the backend set NULL by default on non-supplied args */
-          body: JSON.stringify({
-            equipmentname: this.equipmentname,
-            description: this.description,
-            image: this.image,
-            maxbookabletime: this.maxbookabletime,
-            roomid: this.roomid,
-          }),
-        }
-      );
+      const { response } = await requestHandler.updateData({
+        id: this.equipmentid,
+        endpoint: "equipment",
+        data: {
+          equipmentname: this.equipmentname,
+          description: this.description,
+          image: this.image,
+          maxbookabletime: this.maxbookabletime,
+          roomid: this.roomid,
+        },
+      });
 
       if ([200, 201].includes(response.status)) {
         // Emit an event with the current property values
@@ -2014,10 +2475,10 @@
     }
 
     async handleDelete() {
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/equipment/${this.equipmentid}`,
-        { method: "DELETE" }
-      );
+      const { response } = await requestHandler.deleteData({
+        id: this.equipmentid,
+        endpoint: "equipment",
+      });
 
       if (response.status === 204) {
         // Emit an event with the current property values
@@ -2208,7 +2669,7 @@
 
   customElements.define("lms-equipment-modal", LMSEquipmentModal);
 
-  class LMSOpenHoursTable extends LMSTable {
+  class LMSOpenHoursTable extends observeState(LMSTable) {
     static get properties() {
       return {
         data: {
@@ -2248,20 +2709,15 @@
     async _setup() {
       const branchResult = await this._getOpenHours();
       if (!branchResult?.length) {
-        const response = await fetch(
-          "/api/v1/contrib/roomreservations/open_hours",
-          {
-            method: "POST",
-            body: JSON.stringify(
-              Array.from({ length: 7 }, (_, i) => ({
-                branch: this.branch,
-                day: i,
-                start: "00:00",
-                end: "00:00",
-              }))
-            ),
-          }
-        );
+        const { response } = await requestHandler.createData({
+          endpoint: "openHours",
+          data: Array.from({ length: 7 }, (_, i) => ({
+            branch: this.branch,
+            day: i,
+            start: "00:00",
+            end: "00:00",
+          })),
+        });
 
         this._isSetup = response.status === 201;
 
@@ -2290,14 +2746,14 @@
           start: y$1`<input
           class="form-control"
           type="time"
-          name="${weekday}"
+          name="${day}"
           value="${start}"
           disabled
         />`,
           end: y$1`<input
           class="form-control"
           type="time"
-          name="${weekday}"
+          name="${day}"
           value="${end}"
           disabled
         />`,
@@ -2342,18 +2798,17 @@
 
       const inputs = Array.from(parent.querySelectorAll("input"));
       const [start, end] = inputs;
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/open_hours/${this.branch}/${
-        this._dayConversionMap[start.name]
-      }`,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            start: start.value,
-            end: end.value,
-          }),
-        }
-      );
+
+      const { response } = await requestHandler.updateData({
+        id: start.name,
+        uriComponents: [this.branch],
+        endpoint: "openHours",
+        compareOn: ["branch", "day"],
+        data: {
+          start: start.value,
+          end: end.value,
+        },
+      });
 
       if (response.status === 201) {
         // Implement success message
@@ -2382,20 +2837,22 @@
     }
 
     async _getOpenHours() {
-      const endpoint = "/api/v1/contrib/roomreservations/open_hours";
-      const response = await fetch(endpoint);
-      const result = await response.json();
+      const { data } = await requestHandler.fetchData({
+        endpoint: "openHours",
+      });
 
-      if (result.length) {
-        const groupedResult = this._groupBy(result, (item) => item.branch);
+      if (data.length) {
+        const groupedResult = this._groupBy(data, (item) => item.branch);
         return groupedResult[this.branch];
       }
     }
 
     async _getBranches() {
-      const response = await fetch("/api/v1/libraries");
-      const result = await response.json();
-      this._branches = result.reduce(
+      const { data } = await requestHandler.fetchData({
+        endpoint: "libraries",
+      });
+
+      this._branches = data.reduce(
         (acc, library) => ({
           ...acc,
           [library.library_id]: library.name,
@@ -2430,7 +2887,7 @@
 
   customElements.define("lms-open-hours-table", LMSOpenHoursTable);
 
-  class LMSRoom extends s$4 {
+  class LMSRoom extends observeState(s$4) {
     static get properties() {
       return {
         maxcapacity: { type: String },
@@ -2490,21 +2947,19 @@
     }
 
     async handleSave() {
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            maxcapacity: this.maxcapacity,
-            color: this.color,
-            image: this.image,
-            description: this.description,
-            maxbookabletime: this.maxbookabletime,
-            branch: this.branch,
-            roomnumber: this.roomnumber,
-          }),
-        }
-      );
+      const { response } = await requestHandler.updateData({
+        id: this.roomid,
+        endpoint: "rooms",
+        data: {
+          maxcapacity: this.maxcapacity,
+          color: this.color,
+          image: this.image,
+          description: this.description,
+          maxbookabletime: this.maxbookabletime,
+          branch: this.branch,
+          roomnumber: this.roomnumber,
+        },
+      });
 
       if (response.status === 200) {
         // Emit an event with the current property values
@@ -2525,10 +2980,10 @@
     }
 
     async handleDelete() {
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/rooms/${this.roomid}`,
-        { method: "DELETE" }
-      );
+      const { response } = await requestHandler.deleteData({
+        id: this.roomid,
+        endpoint: "rooms",
+      });
 
       if (response.status === 204) {
         // Emit an event with the current property values
@@ -2756,7 +3211,7 @@
 
   customElements.define("lms-room-modal", LMSRoomModal);
 
-  class LMSSettingsTable extends LMSTable {
+  class LMSSettingsTable extends observeState(LMSTable) {
     static get properties() {
       return {
         data: { type: Array },
@@ -2765,12 +3220,13 @@
     }
 
     async _getData() {
-      const response = await fetch("/api/v1/contrib/roomreservations/settings");
-
-      const result = await response.json();
+      const { data } = await requestHandler.fetchData({
+        endpoint: "settings",
+        force: true,
+      });
 
       let order = ["setting", "value", "description"];
-      this.data = result
+      this.data = data
         .map((setting) => ({
           ...setting,
           value: this._getFieldMarkup(setting),
@@ -4792,41 +5248,42 @@
   }
   customElements.define("lms-container", LMSContainer);
 
-  class StaffBookingsView extends LMSContainer {
+  class StaffBookingsView extends observeState(LMSContainer) {
     constructor() {
       super();
-      this._endpoint = "/api/v1/contrib/roomreservations/bookings";
       this.classes = ["container-fluid"];
       this._init();
     }
 
     async _init() {
-      await this._getElements();
+      await this._getElements({ force: false });
     }
 
-    async _getElements() {
-      const response = await fetch(this._endpoint);
-      const result = await response.json();
+    async _getElements({ force }) {
+      const { response, data } = await requestHandler.fetchData({
+        endpoint: "bookings",
+        force,
+      });
 
       if (response.status === 200) {
         const lmsBookingsTable = document.createElement("lms-bookings-table", {
           is: "lms-bookings-table",
         });
-        lmsBookingsTable.setAttribute("data", JSON.stringify(result));
+        lmsBookingsTable.setAttribute("data", JSON.stringify(data));
         this._elements = [lmsBookingsTable];
       }
     }
 
     _handleCreated() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleModified() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleDeleted() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleError(e) {
@@ -4863,29 +5320,27 @@
     `;
     }
   }
-  customElements.define(
-    "lms-staff-bookings-view",
-    StaffBookingsView
-  );
+  customElements.define("lms-staff-bookings-view", StaffBookingsView);
 
-  class StaffEquipmentView extends LMSContainer {
+  class StaffEquipmentView extends observeState(LMSContainer) {
     constructor() {
       super();
-      this._endpoint = "/api/v1/contrib/roomreservations/equipment";
       this.classes = ["container-fluid"];
       this._init();
     }
 
     async _init() {
-      await this._getElements();
+      await this._getElements({ force: false });
     }
 
-    async _getElements() {
-      const response = await fetch(this._endpoint);
-      const result = await response.json();
+    async _getElements({ force }) {
+      const { response, data } = await requestHandler.fetchData({
+        endpoint: "equipment",
+        force,
+      });
 
       if (response.status === 200) {
-        this._elements = result.map((equipmentItem) => {
+        this._elements = data.map((equipmentItem) => {
           const lmsEquipmentItem = document.createElement("lms-equipment-item", {
             is: "lms-equipment-item",
           });
@@ -4898,15 +5353,15 @@
     }
 
     _handleCreated() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleModified() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleDeleted() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleError(e) {
@@ -4950,23 +5405,25 @@
   }
   customElements.define("lms-staff-equipment-view", StaffEquipmentView);
 
-  class StaffOpenHoursView extends LMSContainer {
+  class StaffOpenHoursView extends observeState(LMSContainer) {
     constructor() {
       super();
-      this._endpoint = "/api/v1/contrib/roomreservations/public/open_hours";
       this.classes = ["container-fluid"];
       this._init();
     }
 
     async _init() {
-      await this._getElements();
+      await this._getElements({ force: false });
     }
 
-    async _getElements() {
-      const openHours = await fetch(this._endpoint);
+    async _getElements({ force }) {
+      const openHours = await requestHandler.fetchData({
+        endpoint: "openHours",
+        force,
+      });
 
-      if (openHours.status === 200) {
-        const _openHours = await openHours.json();
+      if (openHours.response.status === 200) {
+        const _openHours = openHours.data;
         if (_openHours.length) {
           const groupedResult = this._groupBy(_openHours, (item) => item.branch);
           let elements = [];
@@ -4985,10 +5442,11 @@
           return;
         }
 
-        const libraries = await fetch("/api/v1/libraries");
-        const _libraries = await libraries.json();
+        const libraries = await requestHandler.fetchData({
+          endpoint: "libraries",
+        });
         let elements = [];
-        _libraries
+        libraries.data
           .map((library) => ({
             branch: library.library_id,
           }))
@@ -5027,32 +5485,38 @@
   }
   customElements.define("lms-staff-open-hours-view", StaffOpenHoursView);
 
-  class StaffRoomsView extends LMSContainer {
+  class StaffRoomsView extends observeState(LMSContainer) {
     constructor() {
       super();
-      this._endpoint = "/api/v1/contrib/roomreservations/rooms";
       this.classes = ["container-fluid"];
       this._init();
     }
 
     async _init() {
-      await this._getElements();
+      await this._getElements({ force: false });
     }
 
-    async _getElements() {
+    async _getElements({ force }) {
       const [roomsResponse, librariesResponse] = await Promise.all([
-        fetch(this._endpoint),
-        fetch("/api/v1/libraries"),
+        requestHandler.fetchData({
+          endpoint: "rooms",
+          force,
+        }),
+        requestHandler.fetchData({
+          endpoint: "libraries",
+        }),
       ]);
-      const rooms = await roomsResponse.json();
-      let libraries = await librariesResponse.json();
+      const rooms = roomsResponse.data;
+      let libraries = librariesResponse.data;
       libraries = libraries.map((library) => ({
         value: library.library_id,
         name: library.name,
       }));
 
       if (
-        [roomsResponse, librariesResponse].every(({ status }) => status === 200)
+        [roomsResponse.response, librariesResponse.response].every(
+          ({ status }) => status === 200
+        )
       ) {
         this._elements = rooms.map((room) => {
           const _room = { ...room, libraries };
@@ -5071,15 +5535,15 @@
     }
 
     _handleCreated() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleModified() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleDeleted() {
-      this._getElements();
+      this._getElements({ force: true });
     }
 
     _handleError(e) {
@@ -5161,7 +5625,7 @@
 
   customElements.define("lms-staff-settings-view", StaffSettingsView);
 
-  class RoomReservationsView extends s$4 {
+  class RoomReservationsView extends observeState(s$4) {
     static get properties() {
       return {
         borrowernumber: { type: String },
@@ -5226,16 +5690,19 @@
         }
 
         @media (max-width: 1200px) {
-          .container, .skeleton-container {
+          .container,
+          .skeleton-container {
             flex-direction: column;
           }
 
-          lms-calendar, .skeleton-calendar {
+          lms-calendar,
+          .skeleton-calendar {
             width: 100%;
             height: 75vh;
           }
 
-          lms-bookie, .skeleton-bookie {
+          lms-bookie,
+          .skeleton-bookie {
             width: 100%;
           }
 
@@ -5250,10 +5717,6 @@
     constructor() {
       super();
       this.borrowernumber = undefined;
-      this._endpoints = {
-        bookings: "/api/v1/contrib/roomreservations/public/bookings",
-        rooms: "/api/v1/contrib/roomreservations/public/rooms",
-      };
       this._currentDate = new Date();
       this._lmsCalendar = undefined;
       this._isLoading = true;
@@ -5278,19 +5741,21 @@
       };
 
       const [bookings, rooms] = await Promise.all([
-        fetch(this._endpoints.bookings),
-        fetch(this._endpoints.rooms),
+        requestHandler.fetchData({ endpoint: "bookings" }),
+        requestHandler.fetchData({ endpoint: "rooms" }),
       ]);
 
-      this._bookings = await bookings.json();
-      this._rooms = await rooms.json();
+      this._bookings = bookings.data;
+      this._rooms = rooms.data;
 
       this._getEntries();
     }
 
     async _getBookings() {
-      const response = await fetch(this._endpoints.bookings);
-      this._bookings = await response.json();
+      const { data } = await requestHandler.fetchData({
+        endpoint: "bookings",
+      });
+      this._bookings = data;
     }
 
     async _getEntries() {
