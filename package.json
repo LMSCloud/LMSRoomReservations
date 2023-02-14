@@ -1,7 +1,7 @@
 {
   "name": "koha-plugin-lms-room-reservations",
-  "version": "4.0.0",
-  "previous_version": "3.4.20",
+  "version": "4.0.1",
+  "previous_version": "4.0.0",
   "minimum_koha_version": "21.05.14.000",
   "description": "Koha Room Reservations Plugin",
   "devDependencies": {

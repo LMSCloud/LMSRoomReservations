@@ -2127,7 +2127,7 @@
           input.disabled = true;
         });
 
-        this._getData();
+        this._getData({ force: true });
       }
 
       if (response.status >= 400) {
@@ -2155,13 +2155,13 @@
       );
 
       if (response.status === 204) {
-        this._getData();
+        this._getData({ force: true });
       }
     }
 
-    async _getData() {
+    async _getData({ force }) {
       const [bookingsReponse, roomsResponse] = await Promise.all([
-        requestHandler.fetchData({ endpoint: "bookings" }),
+        requestHandler.fetchData({ endpoint: "bookings", force }),
         requestHandler.fetchData({ endpoint: "rooms" }),
       ]);
       this._bookings = bookingsReponse.data;
@@ -2309,7 +2309,7 @@
       this._bookings = [];
       this._rooms = [];
       this._borrowers = new Set();
-      this._getData();
+      this._getData({ force: false });
     }
   }
 
@@ -5274,18 +5274,6 @@
       }
     }
 
-    _handleCreated() {
-      this._getElements({ force: true });
-    }
-
-    _handleModified() {
-      this._getElements({ force: true });
-    }
-
-    _handleDeleted() {
-      this._getElements({ force: true });
-    }
-
     _handleError(e) {
       const { errors, status } = e.detail;
       const element = document.createElement("lms-toast", { is: "lms-toast" });
@@ -5305,9 +5293,6 @@
       return y$1`
       <div
         class=${this.classes.join(" ")}
-        @created=${this._handleCreated}
-        @modified=${this._handleModified}
-        @deleted=${this._handleDeleted}
         @error=${this._handleError}
       >
         <div class="row justify-content-start">

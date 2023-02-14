@@ -62,7 +62,7 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
         input.disabled = true;
       });
 
-      this._getData();
+      this._getData({ force: true });
     }
 
     if (response.status >= 400) {
@@ -90,13 +90,13 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
     );
 
     if (response.status === 204) {
-      this._getData();
+      this._getData({ force: true });
     }
   }
 
-  async _getData() {
+  async _getData({ force }) {
     const [bookingsReponse, roomsResponse] = await Promise.all([
-      RequestHandler.fetchData({ endpoint: "bookings" }),
+      RequestHandler.fetchData({ endpoint: "bookings", force }),
       RequestHandler.fetchData({ endpoint: "rooms" }),
     ]);
     this._bookings = bookingsReponse.data;
@@ -244,7 +244,7 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
     this._bookings = [];
     this._rooms = [];
     this._borrowers = new Set();
-    this._getData();
+    this._getData({ force: false });
   }
 }
 
