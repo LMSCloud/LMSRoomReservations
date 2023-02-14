@@ -118,8 +118,8 @@ export default class RoomReservationsView extends observeState(LitElement) {
     };
 
     const [bookings, rooms] = await Promise.all([
-      RequestHandler.fetchData({ endpoint: "bookings" }),
-      RequestHandler.fetchData({ endpoint: "rooms" }),
+      RequestHandler.fetchData({ endpoint: "publicBookings" }),
+      RequestHandler.fetchData({ endpoint: "publicRooms" }),
     ]);
 
     this._bookings = bookings.data;

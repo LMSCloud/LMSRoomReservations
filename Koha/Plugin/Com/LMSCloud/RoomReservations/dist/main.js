@@ -937,11 +937,11 @@
 
       const [openHours, rooms, equipment, defaultMaxBookingTime] =
         await Promise.all([
-          requestHandler.fetchData({ endpoint: "openHours" }),
-          requestHandler.fetchData({ endpoint: "rooms" }),
-          requestHandler.fetchData({ endpoint: "equipment" }),
+          requestHandler.fetchData({ endpoint: "publicOpenHours" }),
+          requestHandler.fetchData({ endpoint: "publicRooms" }),
+          requestHandler.fetchData({ endpoint: "publicEquipment" }),
           requestHandler.fetchData({
-            endpoint: "settings",
+            endpoint: "publicSettings",
             id: "default_max_booking_time",
           }),
         ]);
@@ -1010,7 +1010,7 @@
         .format("YYYY-MM-DDTHH:mm");
 
       const { response } = await requestHandler.createData({
-        endpoint: "bookings",
+        endpoint: "publicBookings",
         data: {
           borrowernumber: this.borrowernumber,
           roomid,
@@ -5741,8 +5741,8 @@
       };
 
       const [bookings, rooms] = await Promise.all([
-        requestHandler.fetchData({ endpoint: "bookings" }),
-        requestHandler.fetchData({ endpoint: "rooms" }),
+        requestHandler.fetchData({ endpoint: "publicBookings" }),
+        requestHandler.fetchData({ endpoint: "publicRooms" }),
       ]);
 
       this._bookings = bookings.data;

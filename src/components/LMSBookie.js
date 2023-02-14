@@ -69,11 +69,11 @@ export default class LMSBookie extends observeState(LitElement) {
 
     const [openHours, rooms, equipment, defaultMaxBookingTime] =
       await Promise.all([
-        RequestHandler.fetchData({ endpoint: "openHours" }),
-        RequestHandler.fetchData({ endpoint: "rooms" }),
-        RequestHandler.fetchData({ endpoint: "equipment" }),
+        RequestHandler.fetchData({ endpoint: "publicOpenHours" }),
+        RequestHandler.fetchData({ endpoint: "publicRooms" }),
+        RequestHandler.fetchData({ endpoint: "publicEquipment" }),
         RequestHandler.fetchData({
-          endpoint: "settings",
+          endpoint: "publicSettings",
           id: "default_max_booking_time",
         }),
       ]);
@@ -142,7 +142,7 @@ export default class LMSBookie extends observeState(LitElement) {
       .format("YYYY-MM-DDTHH:mm");
 
     const { response } = await RequestHandler.createData({
-      endpoint: "bookings",
+      endpoint: "publicBookings",
       data: {
         borrowernumber: this.borrowernumber,
         roomid,
