@@ -50,10 +50,10 @@ sub send_email_confirmation {
         lang                   => $patron->lang,
         message_transport_type => 'email',
         substitute             => {
-            user                => "$patron->firstname $patron->surname",
+            user                => $patron->firstname . $patron->surname,
             room                => $room->{'roomnumber'},
-            from                => $body->{'start'},
-            to                  => $body->{'end'},
+            from                => Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
+            to                  => Time::Piece->strptime( $body->{'end'},   '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
             confirmed_timestamp => Time::Piece->new->strftime('%Y-%m-%d %H:%M:%S'),
         },
     );

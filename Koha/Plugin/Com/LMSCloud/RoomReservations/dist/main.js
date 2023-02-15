@@ -988,12 +988,15 @@
         this.renderRoot.getElementById("room"),
         this.renderRoot.getElementById("start-datetime"),
         this.renderRoot.getElementById("duration"),
+        this.renderRoot.getElementById("confirmation-email"),
         this.renderRoot.querySelectorAll(".equipment-item"),
       ];
-      const [roomid, start, duration] = inputs.map((input) => input.value);
+      const [roomid, start, duration, confirmation] = inputs.map(
+        (input) => input.value
+      );
 
       /** We filter for checked checkbox inputs here. */
-      const [, , , equipmentInputs] = inputs;
+      const [, , , , equipmentInputs] = inputs;
       const equipment = [...equipmentInputs].reduce(
         (accumulator, equipmentInput) => {
           if (equipmentInput.checked) {
@@ -1018,6 +1021,7 @@
           end,
           blackedout: 0,
           equipment,
+          send_confirmation: confirmation || 0,
         },
       });
 
@@ -1192,6 +1196,7 @@
                   <div class="form-check">
                     <input
                       type="checkbox"
+                      value="1"
                       id="confirmation-email"
                       name="confirmation-email"
                       class="form-check-input"
@@ -2261,11 +2266,9 @@
         )}
       </select>`,
         borrowernumber: () => {
-          console.log(this._borrowers);
           const borrower = this._borrowers.find(
             ({ patron_id }) => patron_id === parseInt(value, 10)
           );
-          console.log(borrower);
           return y$1`
           <span class="badge badge-secondary">${value}</span>&nbsp;
           <a href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${value}"

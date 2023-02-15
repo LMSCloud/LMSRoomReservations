@@ -123,7 +123,7 @@ sub _check_and_save_booking {
             roomid         => $body->{'roomid'},
             start          => $body->{'start'},
             end            => $body->{'end'},
-            blackedout     => $body->{'blackedout'} || 0
+            blackedout     => 0
         };
 
         my ( $stmt, @bind ) =

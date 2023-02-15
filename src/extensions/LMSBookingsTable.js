@@ -196,11 +196,9 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
         )}
       </select>`,
       borrowernumber: () => {
-        console.log(this._borrowers);
         const borrower = this._borrowers.find(
           ({ patron_id }) => patron_id === parseInt(value, 10)
         );
-        console.log(borrower);
         return html`
           <span class="badge badge-secondary">${value}</span>&nbsp;
           <a href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${value}"

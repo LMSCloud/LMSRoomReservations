@@ -120,12 +120,15 @@ export default class LMSBookie extends observeState(LitElement) {
       this.renderRoot.getElementById("room"),
       this.renderRoot.getElementById("start-datetime"),
       this.renderRoot.getElementById("duration"),
+      this.renderRoot.getElementById("confirmation-email"),
       this.renderRoot.querySelectorAll(".equipment-item"),
     ];
-    const [roomid, start, duration] = inputs.map((input) => input.value);
+    const [roomid, start, duration, confirmation] = inputs.map(
+      (input) => input.value
+    );
 
     /** We filter for checked checkbox inputs here. */
-    const [, , , equipmentInputs] = inputs;
+    const [, , , , equipmentInputs] = inputs;
     const equipment = [...equipmentInputs].reduce(
       (accumulator, equipmentInput) => {
         if (equipmentInput.checked) {
@@ -150,6 +153,7 @@ export default class LMSBookie extends observeState(LitElement) {
         end,
         blackedout: 0,
         equipment,
+        send_confirmation: confirmation || 0,
       },
     });
 
@@ -324,6 +328,7 @@ export default class LMSBookie extends observeState(LitElement) {
                   <div class="form-check">
                     <input
                       type="checkbox"
+                      value="1"
                       id="confirmation-email"
                       name="confirmation-email"
                       class="form-check-input"
