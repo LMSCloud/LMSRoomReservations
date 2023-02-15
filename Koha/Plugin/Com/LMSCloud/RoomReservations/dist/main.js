@@ -1022,6 +1022,7 @@
           blackedout: 0,
           equipment,
           send_confirmation: confirmation || 0,
+          letter_code: "ROOM_RESERVATION",
         },
       });
 
@@ -2377,6 +2378,11 @@
               type: "checkbox",
               desc: i18n.gettext("Send confirmation to patron"),
             },
+            {
+              name: "letter_code",
+              type: "text",
+              value: "ROOM_RESERVATION",
+            }
           ];
         })
         .catch((err) => {

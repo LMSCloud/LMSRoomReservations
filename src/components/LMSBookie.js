@@ -154,6 +154,7 @@ export default class LMSBookie extends observeState(LitElement) {
         blackedout: 0,
         equipment,
         send_confirmation: confirmation || 0,
+        letter_code: "ROOM_RESERVATION",
       },
     });
 

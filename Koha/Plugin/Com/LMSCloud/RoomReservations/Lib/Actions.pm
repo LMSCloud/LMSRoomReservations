@@ -32,6 +32,13 @@ sub send_email_confirmation {
     my $sql = SQL::Abstract->new;
     my $dbh = C4::Context->dbh;
 
+    # If we are not going to send any emails we can return early
+    my $send_confirmation = $body->{'send_confirmation'};
+    my $reply_to_address  = $self->retrieve_data('reply_to_address');
+    if ( !$send_confirmation && !$reply_to_address ) {
+        return 0;
+    }
+
     # We have to fetch the roomnumber for the given roomid
     my ( $stmt, @bind ) = $sql->select( $ROOMS_TABLE, q{*}, { roomid => $body->{'roomid'} } );
     my $sth = $dbh->prepare($stmt);
@@ -44,25 +51,36 @@ sub send_email_confirmation {
         return 0;
     }
 
-    my $letter = C4::Letters::GetPreparedLetter(
-        module                 => 'members',
-        letter_code            => 'ROOM_RESERVATION',
-        lang                   => $patron->lang,
-        message_transport_type => 'email',
-        substitute             => {
-            user                => $patron->firstname . $patron->surname,
-            room                => $room->{'roomnumber'},
-            from                => Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
-            to                  => Time::Piece->strptime( $body->{'end'},   '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
-            confirmed_timestamp => Time::Piece->new->strftime('%Y-%m-%d %H:%M:%S'),
+    # We need to get the letter template from the body and create the $letter
+    # variable accordingly because they need different substitutions
+    my $letters = {
+        q{ROOM_RESERVATION} => {
+            module                 => 'members',
+            letter_code            => 'ROOM_RESERVATION',
+            message_transport_type => 'email',
+            substitute             => {
+                user                => $patron->firstname . q{ } . $patron->surname,
+                room                => $room->{'roomnumber'},
+                from                => Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
+                to                  => Time::Piece->strptime( $body->{'end'},   '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
+                confirmed_timestamp => Time::Piece->new->strftime('%Y-%m-%d %H:%M:%S'),
+            },
         },
-    );
+        q{ROOM_CANCELLATION} => {
+            module                 => 'members',
+            letter_code            => 'ROOM_CANCELLATION',
+            message_transport_type => 'email',
+            substitute             => {
+                user                => $patron->firstname . q{ } . $patron->surname,
+                room                => $room->{'roomnumber'},
+                from                => Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
+                to                  => Time::Piece->strptime( $body->{'end'},   '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
+                confirmed_timestamp => Time::Piece->new->strftime('%Y-%m-%d %H:%M:%S'),
+            }
+        }
+    };
 
-    my $send_confirmation = $body->{'send_confirmation'};
-    my $reply_to_address  = $self->retrieve_data('reply_to_address');
-    if ( !$send_confirmation && !$reply_to_address ) {
-        return 0;
-    }
+    my $letter = C4::Letters::GetPreparedLetter( %{ $letters->{ $body->{'letter_code'} } } );
 
     my @message_ids;
     if ( $send_confirmation && $patron->email ) {

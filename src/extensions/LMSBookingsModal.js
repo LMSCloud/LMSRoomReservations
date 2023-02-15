@@ -59,6 +59,11 @@ export default class LMSBookingsModal extends LMSModal {
             type: "checkbox",
             desc: i18n.gettext("Send confirmation to patron"),
           },
+          {
+            name: "letter_code",
+            type: "text",
+            value: "ROOM_RESERVATION",
+          }
         ];
       })
       .catch((err) => {

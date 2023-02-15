@@ -2961,9 +2961,15 @@
               },
               "blackedout": {
                 "type": "integer"
+              },
+              "send_confirmation": {
+                "type": "integer"
+              },
+              "letter_code": {
+                "type": "string"
               }
             },
-            "required": ["borrowernumber", "roomid", "start", "end"]
+            "required": ["borrowernumber", "roomid", "start", "end", "letter_code"]
           }
         }
       ],
