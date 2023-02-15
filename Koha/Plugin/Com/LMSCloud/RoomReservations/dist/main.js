@@ -5283,6 +5283,10 @@
       }
     }
 
+    _handleCreated() {
+      this._getElements({ force: true });
+    }
+
     _handleError(e) {
       const { errors, status } = e.detail;
       const element = document.createElement("lms-toast", { is: "lms-toast" });
@@ -5302,6 +5306,7 @@
       return y$1`
       <div
         class=${this.classes.join(" ")}
+        @created=${this._handleCreated}
         @error=${this._handleError}
       >
         <div class="row justify-content-start">

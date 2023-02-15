@@ -29,6 +29,10 @@ export default class StaffBookingsView extends observeState(LMSContainer) {
     }
   }
 
+  _handleCreated() {
+    this._getElements({ force: true });
+  }
+
   _handleError(e) {
     const { errors, status } = e.detail;
     const element = document.createElement("lms-toast", { is: "lms-toast" });
@@ -48,6 +52,7 @@ export default class StaffBookingsView extends observeState(LMSContainer) {
     return html`
       <div
         class=${this.classes.join(" ")}
+        @created=${this._handleCreated}
         @error=${this._handleError}
       >
         <div class="row justify-content-start">
