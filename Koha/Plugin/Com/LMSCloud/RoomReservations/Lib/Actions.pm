@@ -39,6 +39,10 @@ sub send_email_confirmation {
         return 0;
     }
 
+    if ( !$body->{'letter_code'} ) {
+        return 0;
+    }
+
     # We have to fetch the roomnumber for the given roomid
     my ( $stmt, @bind ) = $sql->select( $ROOMS_TABLE, q{*}, { roomid => $body->{'roomid'} } );
     my $sth = $dbh->prepare($stmt);
