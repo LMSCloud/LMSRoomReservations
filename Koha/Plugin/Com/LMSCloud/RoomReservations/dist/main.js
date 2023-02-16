@@ -730,6 +730,15 @@
           ) ?? ""
         }${id ? `/${id}` : ""}`
         );
+
+        if (response.status >= 400) {
+          const message = await response.json();
+          const error = new Error(response.status);
+          error.response = response;
+          error.message = message.error;
+          throw error;
+        }
+
         const data = await response.json();
         this[endpoint].data = data;
         this[endpoint].lastResponse = response;
@@ -738,11 +747,11 @@
           response,
           data: this[endpoint].data,
         });
-      } catch (error) {
-        console.error(error);
+      } catch ({ response, message }) {
+        console.error(response, message);
         return Promise.reject({
-          response: this[endpoint].lastResponse,
-          error,
+          response,
+          message,
         });
       }
     }
@@ -762,6 +771,15 @@
             body: JSON.stringify(data),
           }
         );
+
+        if (response.status >= 400) {
+          const message = await response.json();
+          const error = new Error(response.status);
+          error.response = response;
+          error.message = message.error;
+          throw error;
+        }
+
         this[endpoint].lastResponse = response;
         const newData = await response.json();
 
@@ -777,11 +795,11 @@
 
         this[endpoint].data.push(newData);
         return Promise.resolve({ response, data: this[endpoint].data });
-      } catch (error) {
-        console.error(error);
+      } catch ({ response, message }) {
+        console.error(response, message);
         return Promise.reject({
-          response: this[endpoint].lastResponse,
-          error,
+          response,
+          message,
         });
       }
     }
@@ -801,6 +819,15 @@
             body: JSON.stringify(data),
           }
         );
+
+        if (response.status >= 400) {
+          const message = await response.json();
+          const error = new Error(response.status);
+          error.response = response;
+          error.message = message.error;
+          throw error;
+        }
+
         this[endpoint].lastResponse = response;
         const updatedData = await response.json();
 
@@ -815,7 +842,7 @@
         }
 
         let _compareOn = compareOn;
-        if (!compareOn) {
+        if (!_compareOn) {
           _compareOn = Object.keys(updatedData).find((key) =>
             key.match(/(\w+)id/g)
           );
@@ -836,11 +863,11 @@
         );
         this[endpoint].data.splice(index, 1, updatedData);
         return Promise.resolve({ response, data: updatedData });
-      } catch (error) {
-        console.error(error);
+      } catch ({ response, message }) {
+        console.error(response, message);
         return Promise.reject({
-          response: this[endpoint].lastResponse,
-          error,
+          response,
+          message,
         });
       }
     }
@@ -856,17 +883,26 @@
         }${id ? `/${id}` : ""}`,
           { method: "DELETE" }
         );
+
+        if (response.status >= 400) {
+          const message = await response.json();
+          const error = new Error(response.status);
+          error.response = response;
+          error.message = message.error;
+          throw error;
+        }
+
         this[endpoint].lastResponse = response;
         const index = this[endpoint].data.findIndex(
           (item) => item[/\w+id/] === id
         );
         this[endpoint].data.splice(index, 1);
         return Promise.resolve({ response });
-      } catch (error) {
-        console.error(error);
+      } catch ({ response, message }) {
+        console.error(response, message);
         return Promise.reject({
-          response: this[endpoint].lastResponse,
-          error,
+          response,
+          message,
         });
       }
     }
@@ -1012,38 +1048,38 @@
         .add(duration, "minute")
         .format("YYYY-MM-DDTHH:mm");
 
-      const { response, data } = await requestHandler.createData({
-        endpoint: "publicBookings",
-        data: {
-          borrowernumber: this.borrowernumber,
-          roomid,
-          start,
-          end,
-          blackedout: 0,
-          equipment,
-          send_confirmation: confirmation || 0,
-          letter_code: "ROOM_RESERVATION",
-        },
-      });
-
-      if (response.status >= 200 && response.status <= 299) {
-        inputs.forEach((input) => {
-          input.value = "";
+      try {
+        const { response } = await requestHandler.createData({
+          endpoint: "publicBookings",
+          data: {
+            borrowernumber: this.borrowernumber,
+            roomid,
+            start,
+            end,
+            blackedout: 0,
+            equipment,
+            send_confirmation: confirmation || 0,
+            letter_code: "ROOM_RESERVATION",
+          },
         });
+
+        if (response.status >= 200 && response.status <= 299) {
+          inputs.forEach((input) => {
+            input.value = "";
+          });
+          this._alertMessage = `${this._i18n.gettext(
+          "Success"
+        )}! ${this._i18n.gettext("Your booking is set")}.`;
+
+          const event = new CustomEvent("submitted", { bubbles: true });
+          this.dispatchEvent(event);
+          return;
+        }
+      } catch ({ message }) {
         this._alertMessage = `${this._i18n.gettext(
-        "Success"
-      )}! ${this._i18n.gettext("Your booking is set")}.`;
-
-        const event = new CustomEvent("submitted", { bubbles: true });
-        this.dispatchEvent(event);
-        return;
+        "Sorry"
+      )}! ${this._i18n.gettext(message ?? "Something went wrong.")}`;
       }
-
-      const errorResponse = data.at(-1);
-
-      this._alertMessage = `${this._i18n.gettext("Sorry")}! ${this._i18n.gettext(
-      errorResponse?.error ?? this._i18n.gettext("Something went wrong.")
-    )}`;
     }
 
     _dismissAlert() {
@@ -2183,7 +2219,8 @@
       bootstrapStyles,
       i$4`
       div:first {
-        position: relative;
+        bottom: 1em;
+        position: absolute;
         min-height: 200px;
       }
 
@@ -2301,24 +2338,25 @@
         ),
       ];
 
-      const { response } = await requestHandler.updateData({
-        id: bookingid,
-        endpoint: "bookings",
-        data: { borrowernumber, roomid, start, end },
-      });
-
-      if (response.status >= 200 && response.status <= 299) {
-        // Implement success message
-        inputs.forEach((input) => {
-          input.disabled = true;
+      try {
+        const { response } = await requestHandler.updateData({
+          id: bookingid,
+          endpoint: "bookings",
+          data: { borrowernumber, roomid, start, end },
         });
 
-        this._getData({ force: true });
-      }
+        if (response.status >= 200 && response.status <= 299) {
+          // Implement success message
+          inputs.forEach((input) => {
+            input.disabled = true;
+          });
 
-      if (response.status >= 400) {
-        const result = await response.json();
-        this._renderToast(response.status, result);
+          this._getData({ force: true });
+        }
+      } catch ({ message, response }) {
+        if (response.status >= 400) {
+          this._renderToast(response.status, message);
+        }
       }
     }
 
@@ -2647,7 +2685,7 @@
       await translationHandler.loadTranslations();
       this._i18n = translationHandler.i18n;
 
-      const { data } = await requestHandler.fetchData({ endpoint: "rooms"});
+      const { data } = await requestHandler.fetchData({ endpoint: "rooms" });
       this._rooms = data.map((room) => ({
         value: room.roomid,
         name: room.roomnumber,
@@ -2659,29 +2697,33 @@
     }
 
     async handleSave() {
-      const { response } = await requestHandler.updateData({
-        id: this.equipmentid,
-        endpoint: "equipment",
-        data: {
-          equipmentname: this.equipmentname,
-          description: this.description,
-          image: this.image,
-          maxbookabletime: this.maxbookabletime,
-          roomid: this.roomid,
-        },
-      });
+      try {
+        const { response } = await requestHandler.updateData({
+          id: this.equipmentid,
+          endpoint: "equipment",
+          data: {
+            equipmentname: this.equipmentname,
+            description: this.description,
+            image: this.image,
+            maxbookabletime: this.maxbookabletime,
+            roomid: this.roomid,
+          },
+        });
 
-      if (response.status >= 200 && response.status <= 299) {
-        // Emit an event with the current property values
-        const event = new CustomEvent("modified", { bubbles: true });
-        this.dispatchEvent(event);
-        this.editable = false;
-      }
-
-      if (response.status >= 400) {
-        const error = await response.json();
-        const event = new CustomEvent("error", { bubbles: true, detail: error });
-        this.dispatchEvent(event);
+        if (response.status >= 200 && response.status <= 299) {
+          // Emit an event with the current property values
+          const event = new CustomEvent("modified", { bubbles: true });
+          this.dispatchEvent(event);
+          this.editable = false;
+        }
+      } catch ({ response, message }) {
+        if (response.status >= 400) {
+          const event = new CustomEvent("error", {
+            bubbles: true,
+            detail: { errors: message, status: response.status },
+          });
+          this.dispatchEvent(event);
+        }
       }
     }
 
@@ -3010,38 +3052,27 @@
       const inputs = Array.from(parent.querySelectorAll("input"));
       const [start, end] = inputs;
 
-      const { response } = await requestHandler.updateData({
-        id: start.name,
-        uriComponents: [this.branch],
-        endpoint: "openHours",
-        compareOn: ["branch", "day"],
-        data: {
-          start: start.value,
-          end: end.value,
-        },
-      });
+      try {
+        const { response } = await requestHandler.updateData({
+          id: start.name,
+          uriComponents: [this.branch],
+          endpoint: "openHours",
+          compareOn: ["branch", "day"],
+          data: {
+            start: start.value,
+            end: end.value,
+          },
+        });
 
-      if (response.status >= 200 && response.status <= 299) {
-        // Implement success message
-        [start, end].forEach((input) => (input.disabled = true));
-      }
-
-      if (response.status >= 400) {
-        const result = await response.json();
-        if (result.error) {
-          this._errorLabel = {
-            status: response.status,
-            message: result.error,
-          };
-          return;
+        if (response.status >= 200 && response.status <= 299) {
+          // Implement success message
+          [start, end].forEach((input) => (input.disabled = true));
         }
-
-        if (result.errors) {
+      } catch ({ message, response }) {
+        if (response.status >= 400) {
           this._errorLabel = {
             status: response.status,
-            message: Object.values(result.errors)
-              .map(({ message, path }) => `Sorry! ${message} at ${path}`)
-              .join(" & "),
+            message,
           };
         }
       }
@@ -3081,7 +3112,10 @@
               >${this._branches[this.branch] ?? this.branch}</span
             >
             <span class="badge badge-danger" ?hidden=${!this._errorLabel}>
-              ${this._errorLabel?.status}: ${this._errorLabel?.message}
+              ${this._errorLabel?.status}:
+              ${this._i18n.gettext(
+                this._errorLabel?.message ?? "Something went wrong."
+              )}
             </span>
           </h4>
           ${super.render()}
@@ -3158,35 +3192,36 @@
     }
 
     async handleSave() {
-      const { response } = await requestHandler.updateData({
-        id: this.roomid,
-        endpoint: "rooms",
-        data: {
-          maxcapacity: this.maxcapacity,
-          color: this.color,
-          image: this.image,
-          description: this.description,
-          maxbookabletime: this.maxbookabletime,
-          branch: this.branch,
-          roomnumber: this.roomnumber,
-        },
-      });
-
-      if (response.status >= 200 && response.status <= 299) {
-        // Emit an event with the current property values
-        const event = new CustomEvent("modified", { bubbles: true });
-        this.dispatchEvent(event);
-        this.editable = false;
-        return;
-      }
-
-      if (response.status >= 400) {
-        const result = await response.json();
-        const event = new CustomEvent("error", {
-          bubbles: true,
-          detail: { errors: result.error, status: response.status },
+      try {
+        const { response } = await requestHandler.updateData({
+          id: this.roomid,
+          endpoint: "rooms",
+          data: {
+            maxcapacity: this.maxcapacity,
+            color: this.color,
+            image: this.image,
+            description: this.description,
+            maxbookabletime: this.maxbookabletime,
+            branch: this.branch,
+            roomnumber: this.roomnumber,
+          },
         });
-        this.dispatchEvent(event);
+
+        if (response.status >= 200 && response.status <= 299) {
+          // Emit an event with the current property values
+          const event = new CustomEvent("modified", { bubbles: true });
+          this.dispatchEvent(event);
+          this.editable = false;
+          return;
+        }
+      } catch ({ response, message }) {
+        if (response.status >= 400) {
+          const event = new CustomEvent("error", {
+            bubbles: true,
+            detail: { errors: message, status: response.status },
+          });
+          this.dispatchEvent(event);
+        }
       }
     }
 
@@ -5540,14 +5575,7 @@
       const { errors, status } = e.detail;
       const element = document.createElement("lms-toast", { is: "lms-toast" });
       element.setAttribute("heading", status);
-      element.setAttribute(
-        "message",
-        errors.reduce(
-          (acc, { message, path }, idx) =>
-            `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
-          ""
-        )
-      );
+      element.setAttribute("message", errors);
       this.renderRoot.appendChild(element);
     }
 
@@ -5623,14 +5651,7 @@
       const { errors, status } = e.detail;
       const element = document.createElement("lms-toast", { is: "lms-toast" });
       element.setAttribute("heading", status);
-      element.setAttribute(
-        "message",
-        errors.reduce(
-          (acc, { message, path }, idx) =>
-            `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
-          ""
-        )
-      );
+      element.setAttribute("message", errors);
       this.renderRoot.appendChild(element);
     }
 
@@ -5805,16 +5826,7 @@
       const { errors, status } = e.detail;
       const element = document.createElement("lms-toast", { is: "lms-toast" });
       element.setAttribute("heading", status);
-      element.setAttribute(
-        "message",
-        errors instanceof Array
-          ? errors.reduce(
-              (acc, { message, path }, idx) =>
-                `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
-              ""
-            )
-          : errors
-      );
+      element.setAttribute("message", errors);
       this.renderRoot.appendChild(element);
     }
 
