@@ -69,38 +69,44 @@ sub is_bookable_time {
 }
 
 sub is_open_during_booking_time {
-    my ( $start_time, $end_time ) = @_;
+    my ( $roomid, $start_time, $end_time ) = @_;
+
+    # Set the locale of Time::Piece to en_US for the duration of this function call
+    my $global_locale = setlocale(LC_TIME);
+    setlocale( LC_TIME, 'en_US' );
 
     my $sql = SQL::Abstract->new;
     my $dbh = C4::Context->dbh;
 
-    # Time::Piece starts weeks on Sundays. To get around that, we use the wday method and
-    # subtract one from the return value (1 = Sunday, 1..7) and pick the respective entry
-    # from the conversion array to stay in the german/european notation.
-    use constant {
-        MONDAY    => 0,
-        TUESDAY   => 1,
-        WEDNESDAY => 2,
-        THURSDAY  => 3,
-        FRIDAY    => 4,
-        SATURDAY  => 5,
-        SUNDAY    => 6,
-    };
-    my @wday_conversion_arr = ( SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY );
-    my ( $where, @bind ) = $sql->where(
-        {   -and => [
-                day   => $wday_conversion_arr[ Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->wday - 1 ],
-                start => { '<=' => Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' )->hms },
-                end   => { '>=' => Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms },
-            ]
-        }
-    );
-    my $open_hours_query = "SELECT COUNT(*) FROM $OPEN_HOURS_TABLE $where";
-    my $open_hours_sth   = $dbh->prepare($open_hours_query);
-    $open_hours_sth->execute(@bind);
-    my ($open_hours_count) = $open_hours_sth->fetchrow_array;
+    # First we need to get the branchcode of the branch the room is located in
+    my ( $stmt, @bind ) = $sql->select( $ROOMS_TABLE, 'branch', { roomid => $roomid } );
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    my ($branch) = $sth->fetchrow_array;
 
-    return $open_hours_count > 0;
+    # Then we have to find the open hours for the branch on the day of the booking.
+    # The wday with index 0 is Monday in the $OPEN_HOURS_TABLE and the _wday method
+    # returns index 0 as Sunday so we have to subtract 1 from the _wday result and set
+    # the value to 6 if it is -1.
+    my $start_wday = ( Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->_wday - 1 );
+    $start_wday = $start_wday == -1 ? 6 : $start_wday;
+    ( $stmt, @bind ) = $sql->select( $OPEN_HOURS_TABLE, [ 'start', 'end' ], { branch => $branch, day => $start_wday } );
+    $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    my ( $start_hour, $end_hour ) = $sth->fetchrow_array;
+
+    # If both the start and end hours are "00:00:00" then the branch is closed on that day
+    # meaning that we return false.
+    return 0 if $start_hour eq '00:00:00' and $end_hour eq '00:00:00';
+
+    # Reset the locale of Time::Piece to the original value
+    setlocale( LC_TIME, $global_locale );
+
+    # Now we have to use Time::Piece to check if the $start_time's time portion is equal or
+    # greater than the $start_hour and if the $end_time's time portion is equal or less than
+    # the $end_hour.
+    return Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms >= Time::Piece->strptime( $start_hour, '%H:%M:%S' )->hms
+        && Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' )->hms <= Time::Piece->strptime( $end_hour,   '%H:%M:%S' )->hms;
 }
 
 sub has_conflicting_booking {
