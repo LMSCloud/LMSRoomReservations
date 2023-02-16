@@ -11,12 +11,24 @@ use Try::Tiny;
 use JSON;
 use SQL::Abstract;
 use Time::Piece;
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
+use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
+use POSIX qw(setlocale);
+use Encode;
 
 our $VERSION = '1.0.0';
 
 my $self = undef;
 if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+    my $locale = C4::Context->preference('language');
+    $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
+    $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
+    setlocale Locale::Messages::LC_MESSAGES(), q{};
+    textdomain 'com.lmscloud.roomreservations';
+    bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+    bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 }
 
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
@@ -139,7 +151,7 @@ sub update {
         if ( Time::Piece->strptime( $new_open_hours->{'end'}, '%H:%M:%S' )->epoch < Time::Piece->strptime( $new_open_hours->{'start'}, '%H:%M:%S' )->epoch ) {
             return $c->render(
                 status  => 400,
-                openapi => { error => 'End time must be after start time' }
+                openapi => { error => __('End time must be after start time') }
             );
         }
 
