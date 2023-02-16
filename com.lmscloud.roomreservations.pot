@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-16 10:24+0100\n"
+"POT-Creation-Date: 2023-02-16 12:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +65,7 @@ msgid "Image"
 msgstr ""
 
 #: src/extensions/LMSEquipmentModal.js:40 src/extensions/LMSRoomModal.js:45
-#: src/components/LMSBookie.js:423 src/components/LMSEquipmentItem.js:173
+#: src/components/LMSBookie.js:426 src/components/LMSEquipmentItem.js:173
 msgid "Max bookable time"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: src/extensions/LMSRoomModal.js:51 src/components/LMSBookie.js:418
+#: src/extensions/LMSRoomModal.js:51 src/components/LMSBookie.js:421
 #: src/components/LMSRoom.js:201
 msgid "Branch"
 msgstr ""
@@ -98,11 +98,11 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/extensions/LMSRoomReservationsMenu.js:33 src/components/LMSBookie.js:402
+#: src/extensions/LMSRoomReservationsMenu.js:33 src/components/LMSBookie.js:405
 msgid "Rooms"
 msgstr ""
 
-#: src/extensions/LMSRoomReservationsMenu.js:39 src/components/LMSBookie.js:304
+#: src/extensions/LMSRoomReservationsMenu.js:39 src/components/LMSBookie.js:307
 msgid "Equipment"
 msgstr ""
 
@@ -122,7 +122,7 @@ msgstr ""
 msgid "booked"
 msgstr ""
 
-#: src/components/LMSBookie.js:166 src/components/LMSBookie.js:201
+#: src/components/LMSBookie.js:166 src/components/LMSBookie.js:204
 msgid "Success"
 msgstr ""
 
@@ -130,103 +130,107 @@ msgstr ""
 msgid "Your booking is set"
 msgstr ""
 
-#: src/components/LMSBookie.js:175
+#: src/components/LMSBookie.js:176
 msgid "Sorry"
 msgstr ""
 
-#: src/components/LMSBookie.js:198
+#: src/components/LMSBookie.js:177
+msgid "Something went wrong."
+msgstr ""
+
+#: src/components/LMSBookie.js:201
 msgid "Book a room"
 msgstr ""
 
-#: src/components/LMSBookie.js:221
+#: src/components/LMSBookie.js:224
 msgid "Room"
 msgstr ""
 
-#: src/components/LMSBookie.js:244
+#: src/components/LMSBookie.js:247
 msgid "Date & Time"
 msgstr ""
 
-#: src/components/LMSBookie.js:256
+#: src/components/LMSBookie.js:259
 msgid "Duration"
 msgstr ""
 
-#: src/components/LMSBookie.js:265
+#: src/components/LMSBookie.js:268
 msgid "In minutes, e.g. 60"
 msgstr ""
 
-#: src/components/LMSBookie.js:327
+#: src/components/LMSBookie.js:330
 msgid "Confirmation Email"
 msgstr ""
 
-#: src/components/LMSBookie.js:339
+#: src/components/LMSBookie.js:342
 msgid "Should we send you a confirmation email"
 msgstr ""
 
-#: src/components/LMSBookie.js:345
+#: src/components/LMSBookie.js:348
 msgid "Pick a room, a date, a time"
 msgstr ""
 
-#: src/components/LMSBookie.js:347
+#: src/components/LMSBookie.js:350
 msgid "items you'd like to use"
 msgstr ""
 
-#: src/components/LMSBookie.js:350
+#: src/components/LMSBookie.js:353
 msgid "and the duration of your reservation"
 msgstr ""
 
-#: src/components/LMSBookie.js:358
+#: src/components/LMSBookie.js:361
 msgid "Submit"
 msgstr ""
 
-#: src/components/LMSBookie.js:363
+#: src/components/LMSBookie.js:366
 msgid "Open hours"
 msgstr ""
 
-#: src/components/LMSBookie.js:368
+#: src/components/LMSBookie.js:371
 msgid "Day"
 msgstr ""
 
-#: src/components/LMSBookie.js:369
+#: src/components/LMSBookie.js:372
 msgid "Open from"
 msgstr ""
 
-#: src/components/LMSBookie.js:370
+#: src/components/LMSBookie.js:373
 msgid "Closed after"
 msgstr ""
 
-#: src/components/LMSBookie.js:383
+#: src/components/LMSBookie.js:386
 msgid "Mon"
 msgstr ""
 
-#: src/components/LMSBookie.js:384
+#: src/components/LMSBookie.js:387
 msgid "Tues"
 msgstr ""
 
-#: src/components/LMSBookie.js:385
+#: src/components/LMSBookie.js:388
 msgid "Wed"
 msgstr ""
 
-#: src/components/LMSBookie.js:386
+#: src/components/LMSBookie.js:389
 msgid "Thurs"
 msgstr ""
 
-#: src/components/LMSBookie.js:387
+#: src/components/LMSBookie.js:390
 msgid "Fri"
 msgstr ""
 
-#: src/components/LMSBookie.js:388
+#: src/components/LMSBookie.js:391
 msgid "Sat"
 msgstr ""
 
-#: src/components/LMSBookie.js:389
+#: src/components/LMSBookie.js:392
 msgid "Sun"
 msgstr ""
 
-#: src/components/LMSBookie.js:427 src/components/LMSRoom.js:146
+#: src/components/LMSBookie.js:430 src/components/LMSRoom.js:146
 msgid "Max Capacity"
 msgstr ""
 
-#: src/components/LMSBookie.js:439
+#: src/components/LMSBookie.js:442
 msgid "Book this room"
 msgstr ""
 
@@ -301,12 +305,16 @@ msgid "There is a conflicting booking."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:235
-msgid "The borrower has reached the"
+msgid "The borrower has reached the "
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:235
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:117
-msgid "limit of reservations."
+msgid " limit of reservations."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:76
+msgid "You need to login first to book rooms."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:96
@@ -314,7 +322,7 @@ msgid "You are not allowed to book rooms"
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:117
-msgid "You have reached the"
+msgid "You have reached the "
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:45
@@ -382,77 +390,77 @@ msgstr ""
 msgid "daily"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:70
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:102
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:184
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:211
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:74
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:106
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:188
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:215
 msgid "The given value is not defined."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:86
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:132
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:168
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:198
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:222
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:90
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:136
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:172
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:202
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:226
 msgid "The given value for "
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:86
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:132
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:168
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:198
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:222
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:90
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:136
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:172
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:202
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:226
 msgid "The given value: "
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:87
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:91
 msgid " is not alphanumeric."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:88
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:134
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:92
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:138
 msgid " has not the given length."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:89
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:93
 msgid " exceeds the maximum length."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:133
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:137
 msgid " is not a number."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:135
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:139
 msgid " is not positive."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:136
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:140
 msgid " exceeds the maximum value."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:137
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:141
 msgid " is not in the given range."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:169
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:173
 msgid " is not a datetime in the format YYYY-MM-DDTHH:mm."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:170
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:174
 msgid " is not after the current localtime."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:171
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:175
 msgid " is not before the given datetime."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:199
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:203
 msgid ""
 " is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or "
 "rgba(0-255, 0-255, 0-255, 0.0-1.0)."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:223
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Lib/Validator.pm:227
 msgid " is not a time in the format HH:mm."
 msgstr ""
 

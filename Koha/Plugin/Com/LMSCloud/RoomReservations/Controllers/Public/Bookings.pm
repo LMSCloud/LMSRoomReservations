@@ -73,7 +73,7 @@ sub add {
         my $body = from_json($json);
 
         if ( $body->{'borrowernumber'} eq q{} ) {
-            return $c->render( status => 400, openapi => { error => 'You need to login first to book rooms.' } );
+            return $c->render( status => 400, openapi => { error => __('You need to login first to book rooms.') } );
         }
 
         return _check_and_save_booking( $body, $c );
@@ -114,7 +114,7 @@ sub _check_and_save_booking {
     my ( $has_reached_reservation_limit, $message ) = has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
     if ($has_reached_reservation_limit) {
         $dbh->rollback;    # rollback transaction
-        return $c->render( status => 400, openapi => { error => __('You have reached the') . $message . __('limit of reservations.') } );
+        return $c->render( status => 400, openapi => { error => __('You have reached the ') . $message . __(' limit of reservations.') } );
     }
 
     try {

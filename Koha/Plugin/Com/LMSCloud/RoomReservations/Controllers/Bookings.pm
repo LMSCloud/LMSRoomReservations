@@ -232,7 +232,7 @@ sub _check_and_save_booking {
         my ( $has_reached_reservation_limit, $message ) = has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
         if ($has_reached_reservation_limit) {
             $dbh->rollback;    # rollback transaction
-            return $c->render( status => 400, openapi => { error => __('The borrower has reached the') . $message . __('limit of reservations.') } );
+            return $c->render( status => 400, openapi => { error => __('The borrower has reached the ') . $message . __(' limit of reservations.') } );
         }
     }
 
