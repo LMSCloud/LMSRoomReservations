@@ -144,7 +144,7 @@ export default class LMSBookie extends observeState(LitElement) {
       .add(duration, "minute")
       .format("YYYY-MM-DDTHH:mm");
 
-    const { response } = await RequestHandler.createData({
+    const { response, data } = await RequestHandler.createData({
       endpoint: "publicBookings",
       data: {
         borrowernumber: this.borrowernumber,
@@ -171,8 +171,11 @@ export default class LMSBookie extends observeState(LitElement) {
       return;
     }
 
-    const result = await response.json();
-    this._alertMessage = `${this._i18n.gettext("Sorry")}! ${result.error}`;
+    const errorResponse = data.at(-1);
+
+    this._alertMessage = `${this._i18n.gettext("Sorry")}! ${this._i18n.gettext(
+      errorResponse?.error ?? this._i18n.gettext("Something went wrong.")
+    )}`;
   }
 
   _dismissAlert() {
