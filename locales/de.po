@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-16 20:18+0100\n"
-"PO-Revision-Date: 2023-02-16 20:18+0100\n"
+"PO-Revision-Date: 2023-02-16 20:26+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -292,7 +292,7 @@ msgstr "Aktionen"
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:214
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/OpenHours.pm:154
 msgid "End time must be after start time"
-msgstr "Endzeit muss vor Startzeit liegen"
+msgstr "Endzeit muss nach Startzeit liegen"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:219
 msgid "The patron is not allowed to book rooms."
