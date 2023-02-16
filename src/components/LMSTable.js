@@ -57,15 +57,15 @@ export default class LMSTable extends LitElement {
   }
 
   _handleEdit() {
-    console.log(this._notImplementedInBaseMessage);
+    console.info(this._notImplementedInBaseMessage);
   }
 
   _handleSave() {
-    console.log(this._notImplementedInBaseMessage);
+    console.info(this._notImplementedInBaseMessage);
   }
 
   _handleDelete() {
-    console.log(this._notImplementedInBaseMessage);
+    console.info(this._notImplementedInBaseMessage);
   }
 
   _renderToast(status, result) {
