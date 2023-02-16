@@ -20,7 +20,7 @@ export default class StaffOpenHoursView extends observeState(LMSContainer) {
       force,
     });
 
-    if (openHours.response.status === 200) {
+    if (openHours.response.status >= 200 && openHours.response.status <= 299) {
       const _openHours = openHours.data;
       if (_openHours.length) {
         const groupedResult = this._groupBy(_openHours, (item) => item.branch);

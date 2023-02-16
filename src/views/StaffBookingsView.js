@@ -37,7 +37,7 @@ export default class StaffBookingsView extends observeState(LMSContainer) {
       force,
     });
 
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status <= 299) {
       const lmsBookingsTable = document.createElement("lms-bookings-table", {
         is: "lms-bookings-table",
       });

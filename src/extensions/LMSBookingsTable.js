@@ -56,7 +56,7 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
       data: { borrowernumber, roomid, start, end },
     });
 
-    if ([200, 201].includes(response.status)) {
+    if (response.status >= 200 && response.status <= 299) {
       // Implement success message
       inputs.forEach((input) => {
         input.disabled = true;
@@ -131,8 +131,8 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
     ];
 
     if (!this._bookings.length) {
-        this.data = [];
-        return;
+      this.data = [];
+      return;
     }
 
     if (this._bookings.length) {

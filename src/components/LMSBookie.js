@@ -158,7 +158,7 @@ export default class LMSBookie extends observeState(LitElement) {
       },
     });
 
-    if ([201].includes(response.status)) {
+    if (response.status >= 200 && response.status <= 299) {
       inputs.forEach((input) => {
         input.value = "";
       });

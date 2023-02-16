@@ -42,7 +42,7 @@ export default class TranslationHandler {
       `/api/v1/contrib/roomreservations/static/locales/${this._locale}.json`
     );
 
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status <= 299) {
       const translations = await response.json();
       this._i18n.loadJSON(translations, "messages");
       this._i18n.setLocale(this._locale);

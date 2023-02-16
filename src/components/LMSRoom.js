@@ -80,7 +80,7 @@ export default class LMSRoom extends observeState(LitElement) {
       },
     });
 
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status <= 299) {
       // Emit an event with the current property values
       const event = new CustomEvent("modified", { bubbles: true });
       this.dispatchEvent(event);
@@ -104,7 +104,7 @@ export default class LMSRoom extends observeState(LitElement) {
       endpoint: "rooms",
     });
 
-    if (response.status === 204) {
+    if (response.status >= 200 && response.status <= 299) {
       // Emit an event with the current property values
       const event = new CustomEvent("deleted", { bubbles: true });
       this.dispatchEvent(event);

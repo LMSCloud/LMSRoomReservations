@@ -155,7 +155,7 @@ export default class LMSModal extends LitElement {
       ),
     });
 
-    if (response.status === 201) {
+    if (response.status >= 200 && response.status <= 299) {
       this._toggleModal();
 
       const event = new CustomEvent("created", { bubbles: true });

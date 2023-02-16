@@ -20,7 +20,7 @@ export default class StaffEquipmentView extends observeState(LMSContainer) {
       force,
     });
 
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status <= 299) {
       this._elements = data.map((equipmentItem) => {
         const lmsEquipmentItem = document.createElement("lms-equipment-item", {
           is: "lms-equipment-item",

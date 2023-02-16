@@ -112,7 +112,7 @@ export default class LMSSettingsTable extends observeState(LMSTable) {
           body: JSON.stringify({ value: input.value }),
         });
 
-    if ([201, 204].includes(response.status)) {
+    if (response.status >= 200 && response.status <= 299) {
       // Implement success message
       inputs.forEach((input) => {
         input.disabled = true;
