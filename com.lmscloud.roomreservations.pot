@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-16 12:30+0100\n"
+"POT-Creation-Date: 2023-02-16 13:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Borrowernumber"
 msgstr ""
 
-#: src/extensions/LMSBookingsModal.js:27 src/components/LMSEquipmentItem.js:189
+#: src/extensions/LMSBookingsModal.js:27 src/components/LMSEquipmentItem.js:193
 msgid "Roomid"
 msgstr ""
 
@@ -50,27 +50,31 @@ msgid "Add Equipment"
 msgstr ""
 
 #: src/extensions/LMSEquipmentModal.js:22
-#: src/components/LMSEquipmentItem.js:127
+#: src/components/LMSEquipmentItem.js:131
 msgid "Equipmentname"
 msgstr ""
 
 #: src/extensions/LMSEquipmentModal.js:28 src/extensions/LMSRoomModal.js:39
-#: src/components/LMSEquipmentItem.js:141 src/components/LMSRoom.js:161
+#: src/components/LMSEquipmentItem.js:145 src/components/LMSRoom.js:162
 msgid "Description"
 msgstr ""
 
 #: src/extensions/LMSEquipmentModal.js:34 src/extensions/LMSRoomModal.js:33
-#: src/components/LMSEquipmentItem.js:157 src/components/LMSRoom.js:188
+#: src/components/LMSEquipmentItem.js:161 src/components/LMSRoom.js:189
 msgid "Image"
 msgstr ""
 
 #: src/extensions/LMSEquipmentModal.js:40 src/extensions/LMSRoomModal.js:45
-#: src/components/LMSBookie.js:426 src/components/LMSEquipmentItem.js:173
+#: src/components/LMSBookie.js:428 src/components/LMSEquipmentItem.js:177
 msgid "Max bookable time"
 msgstr ""
 
 #: src/extensions/LMSEquipmentModal.js:46
 msgid "You can assign this item to a room once its created."
+msgstr ""
+
+#: src/extensions/LMSOpenHoursTable.js:198 src/components/LMSBookie.js:178
+msgid "Something went wrong."
 msgstr ""
 
 #: src/extensions/LMSRoomModal.js:16
@@ -81,12 +85,12 @@ msgstr ""
 msgid "Max capacity"
 msgstr ""
 
-#: src/extensions/LMSRoomModal.js:27 src/components/LMSRoom.js:175
+#: src/extensions/LMSRoomModal.js:27 src/components/LMSRoom.js:176
 msgid "Color"
 msgstr ""
 
-#: src/extensions/LMSRoomModal.js:51 src/components/LMSBookie.js:421
-#: src/components/LMSRoom.js:201
+#: src/extensions/LMSRoomModal.js:51 src/components/LMSBookie.js:423
+#: src/components/LMSRoom.js:202
 msgid "Branch"
 msgstr ""
 
@@ -98,11 +102,11 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/extensions/LMSRoomReservationsMenu.js:33 src/components/LMSBookie.js:405
+#: src/extensions/LMSRoomReservationsMenu.js:33 src/components/LMSBookie.js:407
 msgid "Rooms"
 msgstr ""
 
-#: src/extensions/LMSRoomReservationsMenu.js:39 src/components/LMSBookie.js:307
+#: src/extensions/LMSRoomReservationsMenu.js:39 src/components/LMSBookie.js:309
 msgid "Equipment"
 msgstr ""
 
@@ -122,11 +126,11 @@ msgstr ""
 msgid "booked"
 msgstr ""
 
-#: src/components/LMSBookie.js:166 src/components/LMSBookie.js:204
+#: src/components/LMSBookie.js:167 src/components/LMSBookie.js:206
 msgid "Success"
 msgstr ""
 
-#: src/components/LMSBookie.js:167
+#: src/components/LMSBookie.js:168
 msgid "Your booking is set"
 msgstr ""
 
@@ -134,103 +138,99 @@ msgstr ""
 msgid "Sorry"
 msgstr ""
 
-#: src/components/LMSBookie.js:177
-msgid "Something went wrong."
-msgstr ""
-
-#: src/components/LMSBookie.js:201
+#: src/components/LMSBookie.js:203
 msgid "Book a room"
 msgstr ""
 
-#: src/components/LMSBookie.js:224
+#: src/components/LMSBookie.js:226
 msgid "Room"
 msgstr ""
 
-#: src/components/LMSBookie.js:247
+#: src/components/LMSBookie.js:249
 msgid "Date & Time"
 msgstr ""
 
-#: src/components/LMSBookie.js:259
+#: src/components/LMSBookie.js:261
 msgid "Duration"
 msgstr ""
 
-#: src/components/LMSBookie.js:268
+#: src/components/LMSBookie.js:270
 msgid "In minutes, e.g. 60"
 msgstr ""
 
-#: src/components/LMSBookie.js:330
+#: src/components/LMSBookie.js:332
 msgid "Confirmation Email"
 msgstr ""
 
-#: src/components/LMSBookie.js:342
+#: src/components/LMSBookie.js:344
 msgid "Should we send you a confirmation email"
 msgstr ""
 
-#: src/components/LMSBookie.js:348
+#: src/components/LMSBookie.js:350
 msgid "Pick a room, a date, a time"
 msgstr ""
 
-#: src/components/LMSBookie.js:350
+#: src/components/LMSBookie.js:352
 msgid "items you'd like to use"
 msgstr ""
 
-#: src/components/LMSBookie.js:353
+#: src/components/LMSBookie.js:355
 msgid "and the duration of your reservation"
 msgstr ""
 
-#: src/components/LMSBookie.js:361
+#: src/components/LMSBookie.js:363
 msgid "Submit"
 msgstr ""
 
-#: src/components/LMSBookie.js:366
+#: src/components/LMSBookie.js:368
 msgid "Open hours"
 msgstr ""
 
-#: src/components/LMSBookie.js:371
+#: src/components/LMSBookie.js:373
 msgid "Day"
 msgstr ""
 
-#: src/components/LMSBookie.js:372
+#: src/components/LMSBookie.js:374
 msgid "Open from"
 msgstr ""
 
-#: src/components/LMSBookie.js:373
+#: src/components/LMSBookie.js:375
 msgid "Closed after"
 msgstr ""
 
-#: src/components/LMSBookie.js:386
+#: src/components/LMSBookie.js:388
 msgid "Mon"
 msgstr ""
 
-#: src/components/LMSBookie.js:387
+#: src/components/LMSBookie.js:389
 msgid "Tues"
 msgstr ""
 
-#: src/components/LMSBookie.js:388
+#: src/components/LMSBookie.js:390
 msgid "Wed"
 msgstr ""
 
-#: src/components/LMSBookie.js:389
+#: src/components/LMSBookie.js:391
 msgid "Thurs"
 msgstr ""
 
-#: src/components/LMSBookie.js:390
+#: src/components/LMSBookie.js:392
 msgid "Fri"
 msgstr ""
 
-#: src/components/LMSBookie.js:391
+#: src/components/LMSBookie.js:393
 msgid "Sat"
 msgstr ""
 
-#: src/components/LMSBookie.js:392
+#: src/components/LMSBookie.js:394
 msgid "Sun"
 msgstr ""
 
-#: src/components/LMSBookie.js:430 src/components/LMSRoom.js:146
+#: src/components/LMSBookie.js:432 src/components/LMSRoom.js:147
 msgid "Max Capacity"
 msgstr ""
 
-#: src/components/LMSBookie.js:442
+#: src/components/LMSBookie.js:444
 msgid "Book this room"
 msgstr ""
 
@@ -242,21 +242,21 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
-#: src/components/LMSEquipmentItem.js:211
+#: src/components/LMSEquipmentItem.js:215
 msgid "No room associated"
 msgstr ""
 
-#: src/components/LMSEquipmentItem.js:218 src/components/LMSRoom.js:239
+#: src/components/LMSEquipmentItem.js:222 src/components/LMSRoom.js:240
 #: src/components/LMSTable.js:136
 msgid "Edit"
 msgstr ""
 
-#: src/components/LMSEquipmentItem.js:222 src/components/LMSRoom.js:243
+#: src/components/LMSEquipmentItem.js:226 src/components/LMSRoom.js:244
 #: src/components/LMSTable.js:144
 msgid "Save"
 msgstr ""
 
-#: src/components/LMSEquipmentItem.js:226 src/components/LMSRoom.js:247
+#: src/components/LMSEquipmentItem.js:230 src/components/LMSRoom.js:248
 #: src/components/LMSTable.js:153
 msgid "Delete"
 msgstr ""
@@ -273,11 +273,11 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: src/components/LMSRoom.js:131
+#: src/components/LMSRoom.js:132
 msgid "Room Number"
 msgstr ""
 
-#: src/components/LMSRoom.js:223
+#: src/components/LMSRoom.js:224
 msgid "Max Bookable Time"
 msgstr ""
 
@@ -311,6 +311,10 @@ msgstr ""
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:235
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:117
 msgid " limit of reservations."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/OpenHours.pm:154
+msgid "End time must be after start time"
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:76
