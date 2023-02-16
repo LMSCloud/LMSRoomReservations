@@ -194,7 +194,7 @@ export default class LMSOpenHoursTable extends observeState(LMSTable) {
             >
             <span class="badge badge-danger" ?hidden=${!this._errorLabel}>
               ${this._errorLabel?.status}:
-              ${this._i18n.gettext(
+              ${this._i18n?.gettext(
                 this._errorLabel?.message ?? "Something went wrong."
               )}
             </span>
