@@ -87,33 +87,34 @@ sub _check_and_save_booking {
     my ( $body, $c, $booking_id ) = @_;
 
     my $dbh = C4::Context->dbh;
-    $dbh->begin_work;    # start transaction
+    $dbh->begin_work;          # start transaction
+    $dbh->{AutoCommit} = 0;    # disable autocommit
 
     my $sql = SQL::Abstract->new;
 
     if ( !is_allowed_to_book( $body->{'borrowernumber'} ) ) {
-        $dbh->rollback;    # rollback transaction
+        $dbh->rollback;        # rollback transaction
         return $c->render( status => 400, openapi => { error => $self->retrieve_data('restrict_message') || __('You are not allowed to book rooms') } );
     }
 
     if ( !is_bookable_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
-        $dbh->rollback;    # rollback transaction
+        $dbh->rollback;        # rollback transaction
         return $c->render( status => 400, openapi => { error => __('The booking exceeds the maximum allowed time for the room.') } );
     }
 
     if ( !is_open_during_booking_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
-        $dbh->rollback;    # rollback transaction
+        $dbh->rollback;        # rollback transaction
         return $c->render( status => 400, openapi => { error => __('The institution is closed during the selected time frame.') } );
     }
 
     if ( has_conflicting_booking( $body->{'roomid'}, $body->{'start'}, $body->{'end'}, $booking_id ) ) {
-        $dbh->rollback;    # rollback transaction
+        $dbh->rollback;        # rollback transaction
         return $c->render( status => 400, openapi => { error => __('There is a conflicting booking.') } );
     }
 
     my ( $has_reached_reservation_limit, $message ) = has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
     if ($has_reached_reservation_limit) {
-        $dbh->rollback;    # rollback transaction
+        $dbh->rollback;        # rollback transaction
         return $c->render( status => 400, openapi => { error => __('You have reached the ') . $message . __(' limit of reservations.') } );
     }
 
@@ -156,6 +157,7 @@ sub _check_and_save_booking {
     }
     catch {
         $dbh->rollback;
+        $dbh->{AutoCommit} = 1;
         $c->unhandled_exception($_);
     };
 
