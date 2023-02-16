@@ -142,10 +142,17 @@ sub has_reached_reservation_limit {
     my $dbh = C4::Context->dbh;
 
     # We have to check the bookings table for bookings with the given borrowernumber.
-    # and return 400 if the number of bookings is greater than the default_max_booking_time.
+    # and return 400 if the number of bookings is greater than the absolute_reservation_limit.
+    # The bookings we check against have to be on the current day of our locale or in the future.
     my $absolute_reservation_limit = $self->retrieve_data('absolute_reservation_limit');
     if ($absolute_reservation_limit) {
-        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, ['COUNT(*)'], { borrowernumber => $borrowernumber } );
+        my ( $stmt, @bind ) = $sql->select(
+            $BOOKINGS_TABLE,
+            ['COUNT(*)'],
+            {   borrowernumber => $borrowernumber,
+                start          => { '>=', Time::Piece->new->strftime('%Y-%m-%d') . q{ 00:00:00} }
+            }
+        );
 
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
