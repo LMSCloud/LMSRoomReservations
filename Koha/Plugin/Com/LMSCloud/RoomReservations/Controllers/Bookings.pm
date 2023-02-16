@@ -218,7 +218,7 @@ sub _check_and_save_booking {
         return $c->render( status => 400, openapi => { error => __('The booking exceeds the maximum allowed time for the room.') } );
     }
 
-    if ( !is_open_during_booking_time( $body->{'start'}, $body->{'end'} ) ) {
+    if ( !is_open_during_booking_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
         $dbh->rollback;    # rollback transaction
         return $c->render( status => 400, openapi => { error => __('The institution is closed during the selected time frame.') } );
     }
