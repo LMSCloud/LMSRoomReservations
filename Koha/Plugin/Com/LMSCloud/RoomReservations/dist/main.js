@@ -352,7 +352,7 @@
         `/api/v1/contrib/roomreservations/static/locales/${this._locale}.json`
       );
 
-      if (response.status === 200) {
+      if (response.status >= 200 && response.status <= 299) {
         const translations = await response.json();
         this._i18n.loadJSON(translations, "messages");
         this._i18n.setLocale(this._locale);
@@ -1012,7 +1012,7 @@
         .add(duration, "minute")
         .format("YYYY-MM-DDTHH:mm");
 
-      const { response } = await requestHandler.createData({
+      const { response, data } = await requestHandler.createData({
         endpoint: "publicBookings",
         data: {
           borrowernumber: this.borrowernumber,
@@ -1026,7 +1026,7 @@
         },
       });
 
-      if ([201].includes(response.status)) {
+      if (response.status >= 200 && response.status <= 299) {
         inputs.forEach((input) => {
           input.value = "";
         });
@@ -1039,8 +1039,11 @@
         return;
       }
 
-      const result = await response.json();
-      this._alertMessage = `${this._i18n.gettext("Sorry")}! ${result.error}`;
+      const errorResponse = data.at(-1);
+
+      this._alertMessage = `${this._i18n.gettext("Sorry")}! ${this._i18n.gettext(
+      errorResponse?.error ?? this._i18n.gettext("Something went wrong.")
+    )}`;
     }
 
     _dismissAlert() {
@@ -1765,7 +1768,7 @@
         ),
       });
 
-      if (response.status === 201) {
+      if (response.status >= 200 && response.status <= 299) {
         this._toggleModal();
 
         const event = new CustomEvent("created", { bubbles: true });
@@ -2304,7 +2307,7 @@
         data: { borrowernumber, roomid, start, end },
       });
 
-      if ([200, 201].includes(response.status)) {
+      if (response.status >= 200 && response.status <= 299) {
         // Implement success message
         inputs.forEach((input) => {
           input.disabled = true;
@@ -2379,8 +2382,8 @@
       ];
 
       if (!this._bookings.length) {
-          this.data = [];
-          return;
+        this.data = [];
+        return;
       }
 
       if (this._bookings.length) {
@@ -2668,7 +2671,7 @@
         },
       });
 
-      if ([200, 201].includes(response.status)) {
+      if (response.status >= 200 && response.status <= 299) {
         // Emit an event with the current property values
         const event = new CustomEvent("modified", { bubbles: true });
         this.dispatchEvent(event);
@@ -2688,7 +2691,7 @@
         endpoint: "equipment",
       });
 
-      if (response.status === 204) {
+      if (response.status >= 200 && response.status <= 299) {
         // Emit an event with the current property values
         const event = new CustomEvent("modified", { bubbles: true });
         this.dispatchEvent(event);
@@ -3018,7 +3021,7 @@
         },
       });
 
-      if (response.status === 201) {
+      if (response.status >= 200 && response.status <= 299) {
         // Implement success message
         [start, end].forEach((input) => (input.disabled = true));
       }
@@ -3169,7 +3172,7 @@
         },
       });
 
-      if (response.status === 200) {
+      if (response.status >= 200 && response.status <= 299) {
         // Emit an event with the current property values
         const event = new CustomEvent("modified", { bubbles: true });
         this.dispatchEvent(event);
@@ -3193,7 +3196,7 @@
         endpoint: "rooms",
       });
 
-      if (response.status === 204) {
+      if (response.status >= 200 && response.status <= 299) {
         // Emit an event with the current property values
         const event = new CustomEvent("deleted", { bubbles: true });
         this.dispatchEvent(event);
@@ -3528,7 +3531,7 @@
             body: JSON.stringify({ value: input.value }),
           });
 
-      if ([201, 204].includes(response.status)) {
+      if (response.status >= 200 && response.status <= 299) {
         // Implement success message
         inputs.forEach((input) => {
           input.disabled = true;
@@ -5490,7 +5493,7 @@
         force,
       });
 
-      if (response.status === 200) {
+      if (response.status >= 200 && response.status <= 299) {
         const lmsBookingsTable = document.createElement("lms-bookings-table", {
           is: "lms-bookings-table",
         });
@@ -5591,7 +5594,7 @@
         force,
       });
 
-      if (response.status === 200) {
+      if (response.status >= 200 && response.status <= 299) {
         this._elements = data.map((equipmentItem) => {
           const lmsEquipmentItem = document.createElement("lms-equipment-item", {
             is: "lms-equipment-item",
@@ -5674,7 +5677,7 @@
         force,
       });
 
-      if (openHours.response.status === 200) {
+      if (openHours.response.status >= 200 && openHours.response.status <= 299) {
         const _openHours = openHours.data;
         if (_openHours.length) {
           const groupedResult = this._groupBy(_openHours, (item) => item.branch);
