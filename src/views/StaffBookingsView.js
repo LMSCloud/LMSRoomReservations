@@ -4,14 +4,31 @@ import { observeState } from "lit-element-state";
 import RequestHandler from "../state/RequestHandler";
 
 export default class StaffBookingsView extends observeState(LMSContainer) {
+  static get properties() {
+    return {
+      _lmsBookingsTableRef: { type: Object },
+      _confirmationModal: { type: Object },
+    };
+  }
+
   constructor() {
     super();
     this.classes = ["container-fluid"];
+    this._lmsBookingsTableRef = undefined;
+    this._confirmationModal = {
+      message: "",
+      isOpen: false,
+      callback: () => {
+        console.info("This callback wasn't implemented");
+      },
+    };
     this._init();
   }
 
   async _init() {
     await this._getElements({ force: false });
+    this._lmsBookingsTableRef =
+      this.renderRoot.querySelector("lms-bookings-table");
   }
 
   async _getElements({ force }) {
@@ -31,6 +48,36 @@ export default class StaffBookingsView extends observeState(LMSContainer) {
 
   _handleCreated() {
     this._getElements({ force: true });
+  }
+
+  _handleConfirmAction(e) {
+    const { id, endpoint, action, callback } = e.detail;
+    this._confirmationModal = {
+      message: html`<p>${endpoint}: ${action} #${id}?</p>`,
+      isOpen: true,
+      callback,
+    };
+  }
+
+  _handleAbort() {
+    this._confirmationModal = {
+      message: "",
+      isOpen: false,
+      callback: () => {
+        console.info("This callback wasn't implemented");
+      },
+    };
+  }
+
+  _handleConfirm() {
+    this._confirmationModal.callback();
+    this._confirmationModal = {
+      message: "",
+      isOpen: false,
+      callback: () => {
+        console.info("This callback wasn't implemented");
+      },
+    };
   }
 
   _handleError(e) {
@@ -54,6 +101,9 @@ export default class StaffBookingsView extends observeState(LMSContainer) {
         class=${this.classes.join(" ")}
         @created=${this._handleCreated}
         @error=${this._handleError}
+        @confirm-action=${this._handleConfirmAction}
+        @abort=${this._handleAbort}
+        @confirm=${this._handleConfirm}
       >
         <div class="row justify-content-start">
           ${this._elements?.map(
@@ -61,6 +111,10 @@ export default class StaffBookingsView extends observeState(LMSContainer) {
           )}
         </div>
         <lms-bookings-modal></lms-bookings-modal>
+        <lms-confirmation-modal
+          .isOpen=${this._confirmationModal.isOpen}
+          .message=${this._confirmationModal.message}
+        ></lms-confirmation-modal>
       </div>
     `;
   }

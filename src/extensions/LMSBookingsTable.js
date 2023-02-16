@@ -84,14 +84,30 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
       ),
     ];
 
-    const response = await fetch(
-      `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
-      { method: "DELETE" }
-    );
+    this.actionstate.status = "pending";
+    /** We have to emit an event to confirm that the
+     *  deletion is ok. */
+    this.dispatchEvent(
+      new CustomEvent("confirm-action", {
+        detail: {
+          id: bookingid,
+          endpoint: "bookings",
+          action: "delete",
+          callback: async () => {
+            const { response } = await RequestHandler.deleteData({
+              id: bookingid,
+              endpoint: "bookings",
+            });
 
-    if (response.status === 204) {
-      this._getData({ force: true });
-    }
+            if (response.status === 204) {
+              this._getData({ force: true });
+            }
+          },
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   async _getData({ force }) {
@@ -113,6 +129,11 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
       "created",
       "updated_at",
     ];
+
+    if (!this._bookings.length) {
+        this.data = [];
+        return;
+    }
 
     if (this._bookings.length) {
       this._borrowers = this._bookings.reduce((acc, booking) => {
@@ -236,9 +257,10 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
 
   constructor() {
     super();
+    this.data = [];
+    this.actionstate = { status: "idle", action: undefined, id: undefined };
     this._isEditable = true;
     this._isDeletable = true;
-    this.data = [];
     this._bookings = [];
     this._rooms = [];
     this._borrowers = new Set();
