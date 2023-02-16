@@ -2355,7 +2355,15 @@
         }
       } catch ({ message, response }) {
         if (response.status >= 400) {
-          this._renderToast(response.status, message);
+          const event = new CustomEvent("error", {
+            detail: {
+              errors: message,
+              status: response.status,
+            },
+            bubbles: true,
+            composed: true,
+          });
+          this.dispatchEvent(event);
         }
       }
     }
