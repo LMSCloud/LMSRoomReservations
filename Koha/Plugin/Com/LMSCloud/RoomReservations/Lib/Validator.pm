@@ -3,10 +3,12 @@ package Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
 use Moose;
 use utf8;
 use 5.010;
-use Locale::TextDomain;
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
 use POSIX qw(setlocale);
 use Encode;
+
+use C4::Context;
 
 our $VERSION = '1.0.0';
 use Exporter 'import';
@@ -17,21 +19,6 @@ has 'schema' => (
     required => 1,
 );
 
-has 'locale_dir_' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
-has 'locale_' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
-has 'textdomain_' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
 use constant {
     MAX_LENGTH_VARCHAR => 255,
     MAX_LENGTH_INT     => 2_147_483_647,
@@ -39,16 +26,19 @@ use constant {
 
 sub BUILD {
     my ($self) = @_;
-
-    if ( $self->locale_dir_ && $self->locale_ && $self->textdomain_ ) {
-        $ENV{LANGUAGE}       = length $self->locale_ > 2 ? substr( $self->locale_, 0, 2 ) : $self->locale_;
-        $ENV{OUTPUT_CHARSET} = 'UTF-8';
-
-        setlocale Locale::Messages::LC_MESSAGES(), q{};
-        textdomain $self->textdomain_;
-        bind_textdomain_filter $self->textdomain_, \&Encode::decode_utf8;
-        bindtextdomain $self->textdomain => $self->locale_dir_;
+    my $plugin = undef;
+    if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
+        $plugin = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
     }
+
+    my $locale = C4::Context->preference('language');
+    $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
+    $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
+    setlocale Locale::Messages::LC_MESSAGES(), q{};
+    textdomain 'com.lmscloud.roomreservations';
+    bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+    bindtextdomain 'com.lmscloud.roomreservations' => $plugin->bundle_path . '/locales/';
 
     return;
 }
