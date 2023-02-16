@@ -1,4 +1,5 @@
 import LMSBookie from "./components/LMSBookie";
+import LMSConfirmationModal from "./components/LMSConfirmationModal";
 import LMSModal from "./components/LMSModal";
 import LMSSearch from "./components/LMSSearch";
 import LMSTable from "./components/LMSTable";
@@ -29,6 +30,7 @@ import "./main.css";
 
 export {
   LMSBookie,
+  LMSConfirmationModal,
   LMSModal,
   LMSSearch,
   LMSRoom,
