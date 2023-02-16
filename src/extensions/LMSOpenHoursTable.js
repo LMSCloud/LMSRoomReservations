@@ -133,38 +133,27 @@ export default class LMSOpenHoursTable extends observeState(LMSTable) {
     const inputs = Array.from(parent.querySelectorAll("input"));
     const [start, end] = inputs;
 
-    const { response } = await RequestHandler.updateData({
-      id: start.name,
-      uriComponents: [this.branch],
-      endpoint: "openHours",
-      compareOn: ["branch", "day"],
-      data: {
-        start: start.value,
-        end: end.value,
-      },
-    });
+    try {
+      const { response } = await RequestHandler.updateData({
+        id: start.name,
+        uriComponents: [this.branch],
+        endpoint: "openHours",
+        compareOn: ["branch", "day"],
+        data: {
+          start: start.value,
+          end: end.value,
+        },
+      });
 
-    if (response.status >= 200 && response.status <= 299) {
-      // Implement success message
-      [start, end].forEach((input) => (input.disabled = true));
-    }
-
-    if (response.status >= 400) {
-      const result = await response.json();
-      if (result.error) {
-        this._errorLabel = {
-          status: response.status,
-          message: result.error,
-        };
-        return;
+      if (response.status >= 200 && response.status <= 299) {
+        // Implement success message
+        [start, end].forEach((input) => (input.disabled = true));
       }
-
-      if (result.errors) {
+    } catch ({ message, response }) {
+      if (response.status >= 400) {
         this._errorLabel = {
           status: response.status,
-          message: Object.values(result.errors)
-            .map(({ message, path }) => `Sorry! ${message} at ${path}`)
-            .join(" & "),
+          message,
         };
       }
     }
@@ -204,7 +193,10 @@ export default class LMSOpenHoursTable extends observeState(LMSTable) {
               >${this._branches[this.branch] ?? this.branch}</span
             >
             <span class="badge badge-danger" ?hidden=${!this._errorLabel}>
-              ${this._errorLabel?.status}: ${this._errorLabel?.message}
+              ${this._errorLabel?.status}:
+              ${this._i18n.gettext(
+                this._errorLabel?.message ?? "Something went wrong."
+              )}
             </span>
           </h4>
           ${super.render()}

@@ -144,38 +144,38 @@ export default class LMSBookie extends observeState(LitElement) {
       .add(duration, "minute")
       .format("YYYY-MM-DDTHH:mm");
 
-    const { response, data } = await RequestHandler.createData({
-      endpoint: "publicBookings",
-      data: {
-        borrowernumber: this.borrowernumber,
-        roomid,
-        start,
-        end,
-        blackedout: 0,
-        equipment,
-        send_confirmation: confirmation || 0,
-        letter_code: "ROOM_RESERVATION",
-      },
-    });
-
-    if (response.status >= 200 && response.status <= 299) {
-      inputs.forEach((input) => {
-        input.value = "";
+    try {
+      const { response } = await RequestHandler.createData({
+        endpoint: "publicBookings",
+        data: {
+          borrowernumber: this.borrowernumber,
+          roomid,
+          start,
+          end,
+          blackedout: 0,
+          equipment,
+          send_confirmation: confirmation || 0,
+          letter_code: "ROOM_RESERVATION",
+        },
       });
+
+      if (response.status >= 200 && response.status <= 299) {
+        inputs.forEach((input) => {
+          input.value = "";
+        });
+        this._alertMessage = `${this._i18n.gettext(
+          "Success"
+        )}! ${this._i18n.gettext("Your booking is set")}.`;
+
+        const event = new CustomEvent("submitted", { bubbles: true });
+        this.dispatchEvent(event);
+        return;
+      }
+    } catch ({ message }) {
       this._alertMessage = `${this._i18n.gettext(
-        "Success"
-      )}! ${this._i18n.gettext("Your booking is set")}.`;
-
-      const event = new CustomEvent("submitted", { bubbles: true });
-      this.dispatchEvent(event);
-      return;
+        "Sorry"
+      )}! ${this._i18n.gettext(message ?? "Something went wrong.")}`;
     }
-
-    const errorResponse = data.at(-1);
-
-    this._alertMessage = `${this._i18n.gettext("Sorry")}! ${this._i18n.gettext(
-      errorResponse?.error ?? this._i18n.gettext("Something went wrong.")
-    )}`;
   }
 
   _dismissAlert() {

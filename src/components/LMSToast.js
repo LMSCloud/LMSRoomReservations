@@ -11,7 +11,8 @@ export default class LMSToast extends LitElement {
     bootstrapStyles,
     css`
       div:first {
-        position: relative;
+        bottom: 1em;
+        position: absolute;
         min-height: 200px;
       }
 

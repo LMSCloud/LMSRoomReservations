@@ -66,35 +66,36 @@ export default class LMSRoom extends observeState(LitElement) {
   }
 
   async handleSave() {
-    const { response } = await RequestHandler.updateData({
-      id: this.roomid,
-      endpoint: "rooms",
-      data: {
-        maxcapacity: this.maxcapacity,
-        color: this.color,
-        image: this.image,
-        description: this.description,
-        maxbookabletime: this.maxbookabletime,
-        branch: this.branch,
-        roomnumber: this.roomnumber,
-      },
-    });
-
-    if (response.status >= 200 && response.status <= 299) {
-      // Emit an event with the current property values
-      const event = new CustomEvent("modified", { bubbles: true });
-      this.dispatchEvent(event);
-      this.editable = false;
-      return;
-    }
-
-    if (response.status >= 400) {
-      const result = await response.json();
-      const event = new CustomEvent("error", {
-        bubbles: true,
-        detail: { errors: result.error, status: response.status },
+    try {
+      const { response } = await RequestHandler.updateData({
+        id: this.roomid,
+        endpoint: "rooms",
+        data: {
+          maxcapacity: this.maxcapacity,
+          color: this.color,
+          image: this.image,
+          description: this.description,
+          maxbookabletime: this.maxbookabletime,
+          branch: this.branch,
+          roomnumber: this.roomnumber,
+        },
       });
-      this.dispatchEvent(event);
+
+      if (response.status >= 200 && response.status <= 299) {
+        // Emit an event with the current property values
+        const event = new CustomEvent("modified", { bubbles: true });
+        this.dispatchEvent(event);
+        this.editable = false;
+        return;
+      }
+    } catch ({ response, message }) {
+      if (response.status >= 400) {
+        const event = new CustomEvent("error", {
+          bubbles: true,
+          detail: { errors: message, status: response.status },
+        });
+        this.dispatchEvent(event);
+      }
     }
   }
 

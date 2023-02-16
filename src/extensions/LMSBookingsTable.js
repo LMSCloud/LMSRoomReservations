@@ -50,24 +50,25 @@ export default class LMSBookingsTable extends observeState(LMSTable) {
       ),
     ];
 
-    const { response } = await RequestHandler.updateData({
-      id: bookingid,
-      endpoint: "bookings",
-      data: { borrowernumber, roomid, start, end },
-    });
-
-    if (response.status >= 200 && response.status <= 299) {
-      // Implement success message
-      inputs.forEach((input) => {
-        input.disabled = true;
+    try {
+      const { response } = await RequestHandler.updateData({
+        id: bookingid,
+        endpoint: "bookings",
+        data: { borrowernumber, roomid, start, end },
       });
 
-      this._getData({ force: true });
-    }
+      if (response.status >= 200 && response.status <= 299) {
+        // Implement success message
+        inputs.forEach((input) => {
+          input.disabled = true;
+        });
 
-    if (response.status >= 400) {
-      const result = await response.json();
-      this._renderToast(response.status, result);
+        this._getData({ force: true });
+      }
+    } catch ({ message, response }) {
+      if (response.status >= 400) {
+        this._renderToast(response.status, message);
+      }
     }
   }
 

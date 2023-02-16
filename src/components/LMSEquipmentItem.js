@@ -57,7 +57,7 @@ export default class LMSEquipmentItem extends observeState(LitElement) {
     await translationHandler.loadTranslations();
     this._i18n = translationHandler.i18n;
 
-    const { data } = await RequestHandler.fetchData({ endpoint: "rooms"});
+    const { data } = await RequestHandler.fetchData({ endpoint: "rooms" });
     this._rooms = data.map((room) => ({
       value: room.roomid,
       name: room.roomnumber,
@@ -69,29 +69,33 @@ export default class LMSEquipmentItem extends observeState(LitElement) {
   }
 
   async handleSave() {
-    const { response } = await RequestHandler.updateData({
-      id: this.equipmentid,
-      endpoint: "equipment",
-      data: {
-        equipmentname: this.equipmentname,
-        description: this.description,
-        image: this.image,
-        maxbookabletime: this.maxbookabletime,
-        roomid: this.roomid,
-      },
-    });
+    try {
+      const { response } = await RequestHandler.updateData({
+        id: this.equipmentid,
+        endpoint: "equipment",
+        data: {
+          equipmentname: this.equipmentname,
+          description: this.description,
+          image: this.image,
+          maxbookabletime: this.maxbookabletime,
+          roomid: this.roomid,
+        },
+      });
 
-    if (response.status >= 200 && response.status <= 299) {
-      // Emit an event with the current property values
-      const event = new CustomEvent("modified", { bubbles: true });
-      this.dispatchEvent(event);
-      this.editable = false;
-    }
-
-    if (response.status >= 400) {
-      const error = await response.json();
-      const event = new CustomEvent("error", { bubbles: true, detail: error });
-      this.dispatchEvent(event);
+      if (response.status >= 200 && response.status <= 299) {
+        // Emit an event with the current property values
+        const event = new CustomEvent("modified", { bubbles: true });
+        this.dispatchEvent(event);
+        this.editable = false;
+      }
+    } catch ({ response, message }) {
+      if (response.status >= 400) {
+        const event = new CustomEvent("error", {
+          bubbles: true,
+          detail: { errors: message, status: response.status },
+        });
+        this.dispatchEvent(event);
+      }
     }
   }
 

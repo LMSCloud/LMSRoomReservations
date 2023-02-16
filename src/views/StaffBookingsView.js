@@ -84,14 +84,7 @@ export default class StaffBookingsView extends observeState(LMSContainer) {
     const { errors, status } = e.detail;
     const element = document.createElement("lms-toast", { is: "lms-toast" });
     element.setAttribute("heading", status);
-    element.setAttribute(
-      "message",
-      errors.reduce(
-        (acc, { message, path }, idx) =>
-          `${acc} message: ${message} path: ${path} ${idx > 0 ? "& " : ""}`,
-        ""
-      )
-    );
+    element.setAttribute("message", errors);
     this.renderRoot.appendChild(element);
   }
 

@@ -105,6 +105,15 @@ class RequestHandler extends LitState {
           ) ?? ""
         }${id ? `/${id}` : ""}`
       );
+
+      if (response.status >= 400) {
+        const message = await response.json();
+        const error = new Error(response.status);
+        error.response = response;
+        error.message = message.error;
+        throw error;
+      }
+
       const data = await response.json();
       this[endpoint].data = data;
       this[endpoint].lastResponse = response;
@@ -113,11 +122,11 @@ class RequestHandler extends LitState {
         response,
         data: this[endpoint].data,
       });
-    } catch (error) {
-      console.error(error);
+    } catch ({ response, message }) {
+      console.error(response, message);
       return Promise.reject({
-        response: this[endpoint].lastResponse,
-        error,
+        response,
+        message,
       });
     }
   }
@@ -137,6 +146,15 @@ class RequestHandler extends LitState {
           body: JSON.stringify(data),
         }
       );
+
+      if (response.status >= 400) {
+        const message = await response.json();
+        const error = new Error(response.status);
+        error.response = response;
+        error.message = message.error;
+        throw error;
+      }
+
       this[endpoint].lastResponse = response;
       const newData = await response.json();
 
@@ -152,11 +170,11 @@ class RequestHandler extends LitState {
 
       this[endpoint].data.push(newData);
       return Promise.resolve({ response, data: this[endpoint].data });
-    } catch (error) {
-      console.error(error);
+    } catch ({ response, message }) {
+      console.error(response, message);
       return Promise.reject({
-        response: this[endpoint].lastResponse,
-        error,
+        response,
+        message,
       });
     }
   }
@@ -176,6 +194,15 @@ class RequestHandler extends LitState {
           body: JSON.stringify(data),
         }
       );
+
+      if (response.status >= 400) {
+        const message = await response.json();
+        const error = new Error(response.status);
+        error.response = response;
+        error.message = message.error;
+        throw error;
+      }
+
       this[endpoint].lastResponse = response;
       const updatedData = await response.json();
 
@@ -190,7 +217,7 @@ class RequestHandler extends LitState {
       }
 
       let _compareOn = compareOn;
-      if (!compareOn) {
+      if (!_compareOn) {
         _compareOn = Object.keys(updatedData).find((key) =>
           key.match(/(\w+)id/g)
         );
@@ -211,11 +238,11 @@ class RequestHandler extends LitState {
       );
       this[endpoint].data.splice(index, 1, updatedData);
       return Promise.resolve({ response, data: updatedData });
-    } catch (error) {
-      console.error(error);
+    } catch ({ response, message }) {
+      console.error(response, message);
       return Promise.reject({
-        response: this[endpoint].lastResponse,
-        error,
+        response,
+        message,
       });
     }
   }
@@ -231,17 +258,26 @@ class RequestHandler extends LitState {
         }${id ? `/${id}` : ""}`,
         { method: "DELETE" }
       );
+
+      if (response.status >= 400) {
+        const message = await response.json();
+        const error = new Error(response.status);
+        error.response = response;
+        error.message = message.error;
+        throw error;
+      }
+
       this[endpoint].lastResponse = response;
       const index = this[endpoint].data.findIndex(
         (item) => item[/\w+id/] === id
       );
       this[endpoint].data.splice(index, 1);
       return Promise.resolve({ response });
-    } catch (error) {
-      console.error(error);
+    } catch ({ response, message }) {
+      console.error(response, message);
       return Promise.reject({
-        response: this[endpoint].lastResponse,
-        error,
+        response,
+        message,
       });
     }
   }
