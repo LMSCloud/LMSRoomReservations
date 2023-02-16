@@ -1392,6 +1392,12 @@
     icon: [512, 512, ["edit"], "f044", "M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.8 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"]
   };
   var faEdit = faPenToSquare;
+  var faBan = {
+    prefix: 'fas',
+    iconName: 'ban',
+    icon: [512, 512, [128683, "cancel"], "f05e", "M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"]
+  };
+  var faCancel = faBan;
   var faCube = {
     prefix: 'fas',
     iconName: 'cube',
@@ -1435,6 +1441,177 @@
     icon: [320, 512, [128473, 10005, 10006, 10060, 215, "close", "multiply", "remove", "times"], "f00d", "M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"]
   };
   var faClose = faXmark;
+  var faCheck = {
+    prefix: 'fas',
+    iconName: 'check',
+    icon: [512, 512, [10003, 10004], "f00c", "M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"]
+  };
+
+  /* eslint-disable no-underscore-dangle */
+
+  class LMSConfirmationModal extends s$4 {
+    static get properties() {
+      return {
+        isOpen: { type: Boolean },
+        message: { type: String },
+        _alertMessage: { state: true },
+        _modalTitle: { state: true },
+        _i18n: { state: true },
+      };
+    }
+
+    static get styles() {
+      return [
+        bootstrapStyles,
+        i$4`
+        .backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgb(0 0 0 / 50%);
+          z-index: 1048;
+        }
+
+        svg {
+          display: inline-block;
+          width: 1em;
+          height: 1em;
+          color: #ffffff;
+        }
+
+        button {
+          white-space: nowrap;
+        }
+
+        button.btn-modal > svg {
+          color: var(--text-color);
+        }
+      `,
+      ];
+    }
+
+    async _init() {
+      const translationHandler = new TranslationHandler();
+      await translationHandler.loadTranslations();
+      this._i18n = translationHandler.i18n;
+    }
+
+    constructor() {
+      super();
+      this.isOpen = false;
+      this.message = "";
+      this._alertMessage = "";
+      this._modalTitle = "";
+      this._i18n = undefined;
+      this._init();
+    }
+
+    _toggleModal() {
+      this.isOpen = !this.isOpen;
+    }
+
+    _dismissAlert() {
+      this._alertMessage = "";
+    }
+
+    _handleAbort() {
+      this._toggleModal();
+      this.dispatchEvent(
+        new CustomEvent("abort", {
+          bubbles: true,
+          composed: true,
+        })
+      );
+    }
+
+    _handleConfirm() {
+      this._toggleModal();
+      this.dispatchEvent(
+        new CustomEvent("confirm", {
+          bubbles: true,
+          composed: true,
+        })
+      );
+    }
+
+    render() {
+      return !this._i18n?.gettext
+        ? b$1
+        : y$1`
+          <div class="backdrop" ?hidden=${!this.isOpen}></div>
+          <div
+            class="modal fade ${this.isOpen && "d-block show"}"
+            id="lms-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="lms-modal-title"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="lms-modal-title">
+                    ${this._modalTitle || "Confirm"}
+                  </h5>
+                  <button
+                    @click=${this._handleAbort}
+                    type="button"
+                    class="close"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div
+                    role="alert"
+                    ?hidden=${!this._alertMessage}
+                    class="alert alert-${this._alertMessage.includes(
+                      "Sorry!"
+                    ) && "danger"} alert-dismissible fade show"
+                  >
+                    ${this._alertMessage}
+                    <button
+                      @click=${this._dismissAlert}
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  ${this.message}
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                    @click=${this._handleAbort}
+                  >
+                    ${litFontawesome_3(faCancel)}
+                    <span>${this._i18n.gettext("Cancel")}</span>
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    @click=${this._handleConfirm}
+                  >
+                    ${litFontawesome_3(faCheck)}
+                    <span>${this._i18n.gettext("Ok")}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+    }
+  }
+
+  customElements.define("lms-confirmation-modal", LMSConfirmationModal);
 
   /* eslint-disable no-underscore-dangle */
 
@@ -1878,15 +2055,15 @@
     }
 
     _handleEdit() {
-      console.log(this._notImplementedInBaseMessage);
+      console.info(this._notImplementedInBaseMessage);
     }
 
     _handleSave() {
-      console.log(this._notImplementedInBaseMessage);
+      console.info(this._notImplementedInBaseMessage);
     }
 
     _handleDelete() {
-      console.log(this._notImplementedInBaseMessage);
+      console.info(this._notImplementedInBaseMessage);
     }
 
     _renderToast(status, result) {
@@ -2155,14 +2332,30 @@
         ),
       ];
 
-      const response = await fetch(
-        `/api/v1/contrib/roomreservations/bookings/${bookingid}`,
-        { method: "DELETE" }
-      );
+      this.actionstate.status = "pending";
+      /** We have to emit an event to confirm that the
+       *  deletion is ok. */
+      this.dispatchEvent(
+        new CustomEvent("confirm-action", {
+          detail: {
+            id: bookingid,
+            endpoint: "bookings",
+            action: "delete",
+            callback: async () => {
+              const { response } = await requestHandler.deleteData({
+                id: bookingid,
+                endpoint: "bookings",
+              });
 
-      if (response.status === 204) {
-        this._getData({ force: true });
-      }
+              if (response.status === 204) {
+                this._getData({ force: true });
+              }
+            },
+          },
+          bubbles: true,
+          composed: true,
+        })
+      );
     }
 
     async _getData({ force }) {
@@ -2184,6 +2377,11 @@
         "created",
         "updated_at",
       ];
+
+      if (!this._bookings.length) {
+          this.data = [];
+          return;
+      }
 
       if (this._bookings.length) {
         this._borrowers = this._bookings.reduce((acc, booking) => {
@@ -2307,9 +2505,10 @@
 
     constructor() {
       super();
+      this.data = [];
+      this.actionstate = { status: "idle", action: undefined, id: undefined };
       this._isEditable = true;
       this._isDeletable = true;
-      this.data = [];
       this._bookings = [];
       this._rooms = [];
       this._borrowers = new Set();
@@ -5258,14 +5457,31 @@
   customElements.define("lms-container", LMSContainer);
 
   class StaffBookingsView extends observeState(LMSContainer) {
+    static get properties() {
+      return {
+        _lmsBookingsTableRef: { type: Object },
+        _confirmationModal: { type: Object },
+      };
+    }
+
     constructor() {
       super();
       this.classes = ["container-fluid"];
+      this._lmsBookingsTableRef = undefined;
+      this._confirmationModal = {
+        message: "",
+        isOpen: false,
+        callback: () => {
+          console.info("This callback wasn't implemented");
+        },
+      };
       this._init();
     }
 
     async _init() {
       await this._getElements({ force: false });
+      this._lmsBookingsTableRef =
+        this.renderRoot.querySelector("lms-bookings-table");
     }
 
     async _getElements({ force }) {
@@ -5285,6 +5501,36 @@
 
     _handleCreated() {
       this._getElements({ force: true });
+    }
+
+    _handleConfirmAction(e) {
+      const { id, endpoint, action, callback } = e.detail;
+      this._confirmationModal = {
+        message: y$1`<p>${endpoint}: ${action} #${id}?</p>`,
+        isOpen: true,
+        callback,
+      };
+    }
+
+    _handleAbort() {
+      this._confirmationModal = {
+        message: "",
+        isOpen: false,
+        callback: () => {
+          console.info("This callback wasn't implemented");
+        },
+      };
+    }
+
+    _handleConfirm() {
+      this._confirmationModal.callback();
+      this._confirmationModal = {
+        message: "",
+        isOpen: false,
+        callback: () => {
+          console.info("This callback wasn't implemented");
+        },
+      };
     }
 
     _handleError(e) {
@@ -5308,6 +5554,9 @@
         class=${this.classes.join(" ")}
         @created=${this._handleCreated}
         @error=${this._handleError}
+        @confirm-action=${this._handleConfirmAction}
+        @abort=${this._handleAbort}
+        @confirm=${this._handleConfirm}
       >
         <div class="row justify-content-start">
           ${this._elements?.map(
@@ -5315,6 +5564,10 @@
           )}
         </div>
         <lms-bookings-modal></lms-bookings-modal>
+        <lms-confirmation-modal
+          .isOpen=${this._confirmationModal.isOpen}
+          .message=${this._confirmationModal.message}
+        ></lms-confirmation-modal>
       </div>
     `;
     }
@@ -5817,6 +6070,7 @@
   exports.LMSBookingsModal = LMSBookingsModal;
   exports.LMSBookingsTable = LMSBookingsTable;
   exports.LMSCalendar = LMSCalendar$1;
+  exports.LMSConfirmationModal = LMSConfirmationModal;
   exports.LMSEquipmentItem = LMSEquipmentItem;
   exports.LMSEquipmentModal = LMSEquipmentModal;
   exports.LMSModal = LMSModal;
