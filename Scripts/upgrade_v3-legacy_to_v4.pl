@@ -209,12 +209,12 @@ EOF
 $dbh->do($copy_sql);
 
 $self->store_data(
-    {   default_max_booking_time       => q{},
-        absolute_reservation_limit     => q{},
-        daily_reservation_limit        => q{},
-        restrict_message               => q{},
+    {   default_max_booking_time       => q{1440},
+        absolute_reservation_limit     => q{20},
+        daily_reservation_limit        => q{5},
+        restrict_message               => q{Leider haben Sie nicht die notwendige Berechtigung, um Reservierungen vorzunehmen.},
         reply_to_address               => q{},
-        remove_past_reservations_after => q{},
+        remove_past_reservations_after => q{7},
     }
 );
 
