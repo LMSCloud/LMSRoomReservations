@@ -1,8 +1,13 @@
 #!/usr/bin/perl
 
+# Don't forget to backup 
+# mysqldump koha_<INSTANCE> bookings booking_rooms booking_opening_hours booking_equipment bookings_equipment booking_room_equipment booking_bookings_equipment > backup_before_roomreservations_v4_migration$(date +%Y-%m-%d_%H-%M-%S).sql
+
 use Modern::Perl;
 use utf8;
 use 5.032;
+
+use C4::Context;
 
 our $VERSION = '1.0.0';
 
@@ -14,6 +19,8 @@ if ( !$self ) {
     say 'Execution failed: Room Reservations plugin not found.'
         or croak "say failed: $ERRNO";
 }
+
+my $dbh = C4::Context->dbh;
 
 my $ROOMS                  = $self->get_qualified_table_name('rooms');
 my $ROOMS_IDX              = $self->get_qualified_table_name('rooms_idx');
@@ -134,7 +141,7 @@ $copy_sql = <<"EOF";
     openid, day, start, end, branch
   ) SELECT
     openid, day, start, end, '<DEFAULT_BRANCH>' AS branch
-  FROM booking_open_hours
+  FROM booking_opening_hours
 EOF
 $dbh->do($copy_sql);
 
