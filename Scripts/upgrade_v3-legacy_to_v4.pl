@@ -154,14 +154,14 @@ $dbh->do($_) for @create_sql;
 
 # Copy data from old tables to new tables
 # Here we need to insert the branch that was previously the catchall
-my $copy_sql = <<"EOF";
-  INSERT INTO $OPEN_HOURS (
-    openid, day, start, end, branch
-  ) SELECT
-    openid, day, start, end, '<DEFAULT_BRANCH>' AS branch
-  FROM booking_opening_hours
-EOF
-$dbh->do($copy_sql);
+# my $copy_sql = <<"EOF";
+#   INSERT INTO $OPEN_HOURS (
+#     openid, day, start, end, branch
+#   ) SELECT
+#     openid, day, start, end, '<DEFAULT_BRANCH>' AS branch
+#   FROM booking_opening_hours
+# EOF
+# $dbh->do($copy_sql);
 
 $copy_sql = <<"EOF";
   INSERT INTO $ROOMS (
@@ -207,5 +207,15 @@ $copy_sql = <<"EOF";
   FROM booking_bookings_equipment
 EOF
 $dbh->do($copy_sql);
+
+$self->store_data(
+    {   default_max_booking_time       => q{},
+        absolute_reservation_limit     => q{},
+        daily_reservation_limit        => q{},
+        restrict_message               => q{},
+        reply_to_address               => q{},
+        remove_past_reservations_after => q{},
+    }
+);
 
 1;
