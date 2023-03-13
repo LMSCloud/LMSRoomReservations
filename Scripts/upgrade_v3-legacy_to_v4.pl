@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Don't forget to backup 
+# Don't forget to backup
 # mysqldump koha_<INSTANCE> bookings booking_rooms booking_opening_hours booking_equipment bookings_equipment booking_room_equipment booking_bookings_equipment > backup_before_roomreservations_v4_migration$(date +%Y-%m-%d_%H-%M-%S).sql
 
 use Modern::Perl;
@@ -11,6 +11,7 @@ use C4::Context;
 
 our $VERSION = '1.0.0';
 
+my $self = undef;
 if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 }
