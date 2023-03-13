@@ -254,7 +254,7 @@ sub install() {
         my $original_version = $self->retrieve_data('plugin_version');    # is this a new install or an upgrade?
 
         my @installer_statements = (
-            qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT, $ROOMS_EQUIPMENT, $EQUIPMENT, $OPEN_HOURS, $BOOKINGS, $ROOMS },
+            #qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT, $ROOMS_EQUIPMENT, $EQUIPMENT, $OPEN_HOURS, $BOOKINGS, $ROOMS },
             <<~"EOF",
             CREATE TABLE $ROOMS (
               `roomid` INT NOT NULL AUTO_INCREMENT,
