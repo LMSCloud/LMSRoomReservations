@@ -137,6 +137,7 @@ $copy_sql = <<"EOF";
 EOF
 $dbh->do($copy_sql);
 
+# Here we need to insert the branch that was previously the catchall
 $copy_sql = <<"EOF";
   INSERT INTO $OPEN_HOURS (
     openid, day, start, end, branch
