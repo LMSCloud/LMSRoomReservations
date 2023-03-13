@@ -1,28 +1,31 @@
 #!/usr/bin/perl
 
 # Don't forget to backup
-# mysqldump koha_<INSTANCE> bookings booking_rooms booking_opening_hours booking_equipment bookings_equipment booking_room_equipment booking_bookings_equipment > backup_before_roomreservations_v4_migration$(date +%Y-%m-%d_%H-%M-%S).sql
+# mysqldump koha_<INSTANCE> bookings booking_rooms booking_opening_hours booking_equipment booking_room_equipment booking_bookings_equipment > backup_before_roomreservations_v4_migration$(date +%Y-%m-%d_%H-%M-%S).sql
 
 use Modern::Perl;
 use utf8;
 use 5.032;
+use English qw( -no_match_vars );
+use Carp;
 use Array::Utils qw(array_minus);
 use Module::Load::Conditional qw(can_load);
 use Module::Load qw(load);
-use Data::Dumper;
+
+# use Data::Dumper;
 
 use C4::Context;
 
 BEGIN {
-    my $pluginsdir = C4::Context->config("pluginsdir");
-    my @pluginsdir = ref($pluginsdir) eq 'ARRAY' ? @$pluginsdir : $pluginsdir;
+    my $pluginsdir = C4::Context->config('pluginsdir');
+    my @pluginsdir = ref($pluginsdir) eq 'ARRAY' ? @{$pluginsdir} : $pluginsdir;
     push @INC, array_minus( @pluginsdir, @INC );
-    pop @INC if $INC[-1] eq '.';
+    pop @INC if $INC[-1] eq q{.};
 }
 
 our $VERSION = '1.0.0';
 
-print Dumper( \@INC );
+# print Dumper( \@INC );
 
 my $self         = undef;
 my $plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations';
@@ -37,7 +40,7 @@ if ( can_load( modules => { $plugin_class => undef }, nocache => 1 ) ) {
 }
 
 if ( !$self ) {
-    say 'Execution failed: Room Reservations plugin not found.';
+    say 'Execution failed: Room Reservations plugin not found.' or croak $ERRNO;
     exit;
 }
 
