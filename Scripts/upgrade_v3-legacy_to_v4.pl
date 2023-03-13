@@ -6,19 +6,39 @@
 use Modern::Perl;
 use utf8;
 use 5.032;
+use Array::Utils qw(array_minus);
+use Module::Load::Conditional qw(can_load);
+use Module::Load qw(load);
+use Data::Dumper;
 
 use C4::Context;
 
+BEGIN {
+    my $pluginsdir = C4::Context->config("pluginsdir");
+    my @pluginsdir = ref($pluginsdir) eq 'ARRAY' ? @$pluginsdir : $pluginsdir;
+    push @INC, array_minus( @pluginsdir, @INC );
+    pop @INC if $INC[-1] eq '.';
+}
+
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+print Dumper( \@INC );
+
+my $self         = undef;
+my $plugin_class = 'Koha::Plugin::Com::MarywoodUniversity::RoomReservations';
+if ( can_load( modules => { $plugin_class => undef }, nocache => 1 ) ) {
+    $self = $plugin_class->new(
+        {   enable_plugins => $self->{'enable_plugins'}
+
+                # loads even if plugins are disabled
+                # FIXME: is this for testing without bothering to mock config?
+        }
+    );
 }
 
 if ( !$self ) {
-    say 'Execution failed: Room Reservations plugin not found.'
-        or croak "say failed: $ERRNO";
+    say 'Execution failed: Room Reservations plugin not found.';
+    exit;
 }
 
 my $dbh = C4::Context->dbh;
@@ -36,8 +56,22 @@ my $OPEN_HOURS_IDX         = $self->get_qualified_table_name('open_hours_idx');
 my $BOOKINGS_EQUIPMENT     = $self->get_qualified_table_name('bookings_equipment');
 my $BOOKINGS_EQUIPMENT_IDX = $self->get_qualified_table_name('bookings_equipment_idx');
 
+$ROOMS                  =~ s/marywooduniversity/lmscloud/;
+$ROOMS_IDX              =~ s/marywooduniversity/lmscloud/;
+$BOOKINGS               =~ s/marywooduniversity/lmscloud/;
+$BOOKINGS_IDX           =~ s/marywooduniversity/lmscloud/;
+$EQUIPMENT              =~ s/marywooduniversity/lmscloud/;
+$EQUIPMENT_IDX          =~ s/marywooduniversity/lmscloud/;
+$ROOMS_EQUIPMENT        =~ s/marywooduniversity/lmscloud/;
+$ROOMS_EQUIPMENT_IDX    =~ s/marywooduniversity/lmscloud/;
+$OPEN_HOURS             =~ s/marywooduniversity/lmscloud/;
+$OPEN_HOURS_IDX         =~ s/marywooduniversity/lmscloud/;
+$BOOKINGS_EQUIPMENT     =~ s/marywooduniversity/lmscloud/;
+$BOOKINGS_EQUIPMENT_IDX =~ s/marywooduniversity/lmscloud/;
+
 # Create the new tables
-my $create_sql = (
+my @create_sql = (
+    qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT, $ROOMS_EQUIPMENT, $EQUIPMENT, $OPEN_HOURS, $BOOKINGS, $ROOMS },
     <<~"EOF",
             CREATE TABLE $ROOMS (
               `roomid` INT NOT NULL AUTO_INCREMENT,
@@ -51,7 +85,6 @@ my $create_sql = (
             PRIMARY KEY (roomid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-    qq{CREATE INDEX $ROOMS_IDX ON $ROOMS(roomid);},
     <<~"EOF",
             CREATE TABLE $BOOKINGS (
               `bookingid` INT NOT NULL AUTO_INCREMENT,
@@ -78,7 +111,6 @@ my $create_sql = (
               PRIMARY KEY (openid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-    qq{CREATE INDEX $OPEN_HOURS_IDX ON $OPEN_HOURS(openid);},
     <<~"EOF",
             CREATE TABLE $EQUIPMENT (
               `equipmentid` INT NOT NULL AUTO_INCREMENT,
@@ -89,7 +121,6 @@ my $create_sql = (
               PRIMARY KEY (equipmentid)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
-    qq{CREATE INDEX $EQUIPMENT_IDX ON $EQUIPMENT(equipmentid);},
     <<~"EOF",
             CREATE TABLE $ROOMS_EQUIPMENT (
               `roomid` INT NOT NULL,
@@ -116,15 +147,16 @@ my $create_sql = (
     qq{CREATE INDEX $BOOKINGS_EQUIPMENT_IDX ON $BOOKINGS_EQUIPMENT(bookingid, equipmentid);},
 );
 
-$dbh->do($_) for $create_sql;
+$dbh->do($_) for @create_sql;
 
 # Copy data from old tables to new tables
+# Here we need to insert the branch that was previously the catchall
 my $copy_sql = <<"EOF";
-  INSERT INTO $BOOKINGS (
-    bookingid, borrowernumber, roomid, start, end, blackedout, created, updated_at
+  INSERT INTO $OPEN_HOURS (
+    openid, day, start, end, branch
   ) SELECT
-    bookingid, borrowernumber, roomid, start, end, blackedout, created, updated_at
-  FROM bookings
+    openid, day, start, end, '<DEFAULT_BRANCH>' AS branch
+  FROM booking_opening_hours
 EOF
 $dbh->do($copy_sql);
 
@@ -137,22 +169,21 @@ $copy_sql = <<"EOF";
 EOF
 $dbh->do($copy_sql);
 
-# Here we need to insert the branch that was previously the catchall
-$copy_sql = <<"EOF";
-  INSERT INTO $OPEN_HOURS (
-    openid, day, start, end, branch
-  ) SELECT
-    openid, day, start, end, '<DEFAULT_BRANCH>' AS branch
-  FROM booking_opening_hours
-EOF
-$dbh->do($copy_sql);
-
 $copy_sql = <<"EOF";
   INSERT INTO $EQUIPMENT (
     equipmentid, equipmentname
   ) SELECT
     equipmentid, equipmentname
   FROM booking_equipment
+EOF
+$dbh->do($copy_sql);
+
+$copy_sql = <<"EOF";
+  INSERT INTO $BOOKINGS (
+    bookingid, borrowernumber, roomid, start, end, blackedout, created, updated_at
+  ) SELECT
+    bookingid, borrowernumber, roomid, start, end, blackedout, created, updated_at
+  FROM bookings
 EOF
 $dbh->do($copy_sql);
 
@@ -175,4 +206,3 @@ EOF
 $dbh->do($copy_sql);
 
 1;
-
