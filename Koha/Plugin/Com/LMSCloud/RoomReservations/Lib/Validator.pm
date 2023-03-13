@@ -74,7 +74,7 @@ sub is_valid_string {
     return ( 0, [ __('The given value is not defined.') ] ) if !defined $args->{'value'};
 
     # Uses a regular expression to check whether the given value is alphanumeric.
-    my $is_alphanumeric = defined $args->{'alphanumeric'} && $args->{'alphanumeric'} ? $args->{'value'} =~ m/^[[:alpha:]\d]+$/smx : 1;
+    my $is_alphanumeric = defined $args->{'alphanumeric'} && $args->{'alphanumeric'} ? 1 : $args->{'value'} =~ m/^[[:alpha:]\d]+$/smx;
 
     # Uses a regular expression to check whether the given value has a certain length using the supplied length.
     my $has_given_length = defined $args->{'length'} ? $args->{'value'} =~ m/^.{1,$args->{'length'}}$/smx : 1;
