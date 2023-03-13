@@ -90,7 +90,7 @@ sub add {
         my $equipment = $c->validation->param('body');
         my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
             {   schema => [
-                    { key => 'equipmentname',   value => $equipment->{'equipmentname'},   type => 'string', options => { length   => 20 } },
+                    { key => 'equipmentname',   value => $equipment->{'equipmentname'},   type => 'string', options => { length   => 20, alphanumeric => 0 } },
                     { key => 'maxbookabletime', value => $equipment->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
                 ]
             }
@@ -138,7 +138,7 @@ sub update {
             $new_equipment = { map { $_ => $new_equipment->{$_} || undef } keys %{$new_equipment} };
             my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
                 {   schema => [
-                        { key => 'equipmentname',   value => $new_equipment->{'equipmentname'},   type => 'string', options => { length   => 20 } },
+                        { key => 'equipmentname',   value => $new_equipment->{'equipmentname'},   type => 'string', options => { length   => 20, alphanumeric => 0 } },
                         { key => 'maxbookabletime', value => $new_equipment->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
                     ]
                 }

@@ -80,7 +80,7 @@ sub add {
                     {   key     => 'roomnumber',
                         value   => $room->{'roomnumber'},
                         type    => 'string',
-                        options => { length => 20 }
+                        options => { length => 20, alphanumeric => 0 }
                     },
                 ]
             }
@@ -140,7 +140,7 @@ sub update {
                     {   key     => 'roomnumber',
                         value   => $new_room->{'roomnumber'},
                         type    => 'string',
-                        options => { length => 20 }
+                        options => { length => 20, alphanumeric => 0 }
                     },
                 ]
             }
