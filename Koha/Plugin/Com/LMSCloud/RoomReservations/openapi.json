@@ -1580,7 +1580,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#list",
       "tags": ["settings"],
       "summary": "Get all settings and their values",
-      "operationId": "getSettings",
+      "operationId": "getRoomReservationsSettings",
       "produces": ["application/json"],
       "responses": {
         "200": {
@@ -1698,7 +1698,7 @@
     },
     "post": {
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#add",
-      "operationId": "addSettings",
+      "operationId": "addRoomReservationsSettings",
       "tags": ["settings"],
       "summary": "Add settings",
       "parameters": [
@@ -1828,7 +1828,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Settings#get",
       "tags": ["settings"],
       "summary": "Get a setting by its name",
-      "operationId": "getSettingPublic",
+      "operationId": "getRoomReservationsSettingPublic",
       "parameters": [
         {
           "name": "setting",
@@ -1933,7 +1933,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#get",
       "tags": ["settings"],
       "summary": "Get a setting by its name",
-      "operationId": "getSetting",
+      "operationId": "getRoomReservationsSetting",
       "parameters": [
         {
           "name": "setting",
@@ -2041,7 +2041,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#update",
       "tags": ["settings"],
       "summary": "Update a setting by its name",
-      "operationId": "updateSetting",
+      "operationId": "updateRoomReservationsSetting",
       "parameters": [
         {
           "name": "setting",
@@ -2161,7 +2161,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#delete",
       "tags": ["settings"],
       "summary": "Delete a setting by its name",
-      "operationId": "deleteSetting",
+      "operationId": "deleteRoomReservationsSetting",
       "parameters": [
         {
           "name": "setting",
