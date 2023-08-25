@@ -1,6 +1,20 @@
-archive/
 node_modules/
+img/
+
+archive
 package-lock.json
+pnpm-lock.yaml
 *.kpz
+p-kpz
+kpt
+TO-DO.md
+script.log
+.prettier.cache
+
+.DS_Store
 .vscode/
-create-koha-plugin/
+.idea/
+
+# Ignore .d.ts and .map files in the "dist" directory
+Koha/Plugin/Com/LMSCloud/RoomReservations/dist/**/*.d.ts
+Koha/Plugin/Com/LMSCloud/RoomReservations/dist/**/*.d.ts.map

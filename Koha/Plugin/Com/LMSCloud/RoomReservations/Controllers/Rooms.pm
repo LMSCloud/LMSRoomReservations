@@ -12,14 +12,11 @@ use SQL::Abstract;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
-}
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 
 my $ROOMS_TABLE = $self ? $self->get_qualified_table_name('rooms') : undef;
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -32,8 +29,7 @@ sub list {
 
         my $rooms = $sth->fetchall_arrayref( {} );
         return $c->render( status => 200, openapi => $rooms );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -58,8 +54,7 @@ sub get {
         }
 
         return $c->render( status => 200, openapi => $room );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     }
 }
@@ -72,12 +67,27 @@ sub add {
         my $dbh = C4::Context->dbh;
 
         my $room      = $c->validation->param('body');
-        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
-            {   schema => [
-                    { key => 'maxcapacity',     value => $room->{'maxcapacity'},     type => 'number' },
-                    { key => 'color',           value => $room->{'color'},           type => 'color' },
-                    { key => 'maxbookabletime', value => $room->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
-                    {   key     => 'roomnumber',
+        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
+            {
+                schema => [
+                    {
+                        key   => 'maxcapacity',
+                        value => $room->{'maxcapacity'},
+                        type  => 'number'
+                    },
+                    {
+                        key   => 'color',
+                        value => $room->{'color'},
+                        type  => 'color'
+                    },
+                    {
+                        key     => 'maxbookabletime',
+                        value   => $room->{'maxbookabletime'},
+                        type    => 'number',
+                        options => { nullable => 1 }
+                    },
+                    {
+                        key     => 'roomnumber',
                         value   => $room->{'roomnumber'},
                         type    => 'string',
                         options => { length => 20, alphanumeric => 0 }
@@ -101,8 +111,7 @@ sub add {
             status  => 201,
             openapi => $room
         );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -131,13 +140,29 @@ sub update {
 
         # We have to convert all nullish values to NULL in our new_room to undef before passing them to SQL::Abstract.
         # To do this we assign a new hashref back to $new_room and check for each key if the value is nullish, e.g. undef or empty string.
-        $new_room = { map { $_ => $new_room->{$_} || undef } keys %{$new_room} };
-        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
-            {   schema => [
-                    { key => 'maxcapacity',     value => $new_room->{'maxcapacity'},     type => 'number' },
-                    { key => 'color',           value => $new_room->{'color'},           type => 'color' },
-                    { key => 'maxbookabletime', value => $new_room->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
-                    {   key     => 'roomnumber',
+        $new_room =
+            { map { $_ => $new_room->{$_} || undef } keys %{$new_room} };
+        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
+            {
+                schema => [
+                    {
+                        key   => 'maxcapacity',
+                        value => $new_room->{'maxcapacity'},
+                        type  => 'number'
+                    },
+                    {
+                        key   => 'color',
+                        value => $new_room->{'color'},
+                        type  => 'color'
+                    },
+                    {
+                        key     => 'maxbookabletime',
+                        value   => $new_room->{'maxbookabletime'},
+                        type    => 'number',
+                        options => { nullable => 1 }
+                    },
+                    {
+                        key     => 'roomnumber',
                         value   => $new_room->{'roomnumber'},
                         type    => 'string',
                         options => { length => 20, alphanumeric => 0 }
@@ -153,7 +178,8 @@ sub update {
             );
         }
 
-        my ( $stmt, @bind ) = $sql->update( $ROOMS_TABLE, $new_room, { roomid => $roomid } );
+        my ( $stmt, @bind ) =
+            $sql->update( $ROOMS_TABLE, $new_room, { roomid => $roomid } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
@@ -161,8 +187,7 @@ sub update {
             status  => 200,
             openapi => { %{$new_room}, roomid => $roomid }
         );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -176,7 +201,8 @@ sub delete {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my ( $stmt, @bind ) = $sql->select( $ROOMS_TABLE, q{*}, { roomid => $roomid } );
+        my ( $stmt, @bind ) =
+            $sql->select( $ROOMS_TABLE, q{*}, { roomid => $roomid } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
@@ -196,8 +222,7 @@ sub delete {
             status  => 204,
             openapi => q{}
         );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }

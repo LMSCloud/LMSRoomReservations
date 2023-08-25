@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Checks;
+package Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Checks;
 
 use Modern::Perl;
 use utf8;
@@ -15,7 +15,8 @@ use Encode;
 use C4::Context;
 use Koha::Patrons;
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::State qw( get_patron_categories get_restricted_patron_categories );
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::State
+    qw( get_patron_categories get_restricted_patron_categories );
 
 our $VERSION = '1.0.0';
 use Exporter 'import';
@@ -30,18 +31,15 @@ BEGIN {
     );
 }
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
-    my $locale = C4::Context->preference('language');
-    $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
-    $ENV{OUTPUT_CHARSET} = 'UTF-8';
+my $self   = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+my $locale = C4::Context->preference('language');
+$ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
+$ENV{OUTPUT_CHARSET} = 'UTF-8';
 
-    setlocale Locale::Messages::LC_MESSAGES(), q{};
-    textdomain 'com.lmscloud.roomreservations';
-    bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
-    bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
-}
+setlocale Locale::Messages::LC_MESSAGES(), q{};
+textdomain 'com.lmscloud.roomreservations';
+bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 
 my $BOOKINGS_TABLE   = $self ? $self->get_qualified_table_name('bookings')   : undef;
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
@@ -63,7 +61,8 @@ sub is_bookable_time {
     # Check if the difference between start and end times exceeds the maxbookabletime
     my $_start_time = Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' );
     my $_end_time   = Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' );
-    my $duration    = ( $_end_time - $_start_time )->minutes || $self->retrieve_data('default_max_booking_time');
+    my $duration    = ( $_end_time - $_start_time )->minutes
+        || $self->retrieve_data('default_max_booking_time');
 
     return $duration <= $max_bookable_time;
 }
@@ -79,7 +78,8 @@ sub is_open_during_booking_time {
     my $dbh = C4::Context->dbh;
 
     # First we need to get the branchcode of the branch the room is located in
-    my ( $stmt, @bind ) = $sql->select( $ROOMS_TABLE, 'branch', { roomid => $roomid } );
+    my ( $stmt, @bind ) =
+        $sql->select( $ROOMS_TABLE, 'branch', { roomid => $roomid } );
     my $sth = $dbh->prepare($stmt);
     $sth->execute(@bind);
     my ($branch) = $sth->fetchrow_array;
@@ -105,8 +105,10 @@ sub is_open_during_booking_time {
     # Now we have to use Time::Piece to check if the $start_time's time portion is equal or
     # greater than the $start_hour and if the $end_time's time portion is equal or less than
     # the $end_hour.
-    return Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms >= Time::Piece->strptime( $start_hour, '%H:%M:%S' )->hms
-        && Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' )->hms <= Time::Piece->strptime( $end_hour,   '%H:%M:%S' )->hms;
+    return Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms >=
+        Time::Piece->strptime( $start_hour, '%H:%M:%S' )->hms
+        && Time::Piece->strptime( $end_time, '%Y-%m-%dT%H:%M' )->hms <=
+        Time::Piece->strptime( $end_hour, '%H:%M:%S' )->hms;
 }
 
 sub has_conflicting_booking {
@@ -119,7 +121,8 @@ sub has_conflicting_booking {
     # any other booking but if it starts on the same minute another booking ends
     # we have to allow it.
     my ( $where, @bind ) = $sql->where(
-        {   roomid => $room_id,
+        {
+            roomid => $room_id,
             -and   => [
                 start => { '<' => $end_time },
                 end   => { '>' => $start_time },
@@ -149,7 +152,8 @@ sub has_reached_reservation_limit {
         my ( $stmt, @bind ) = $sql->select(
             $BOOKINGS_TABLE,
             ['COUNT(*)'],
-            {   borrowernumber => $borrowernumber,
+            {
+                borrowernumber => $borrowernumber,
                 start          => { '>=', Time::Piece->new->strftime('%Y-%m-%d') . q{ 00:00:00} }
             }
         );
@@ -171,8 +175,9 @@ sub has_reached_reservation_limit {
         my ( $stmt, @bind ) = $sql->select(
             $BOOKINGS_TABLE,
             ['COUNT(*)'],
-            {   borrowernumber => $borrowernumber,
-                start          => { 'like' => Time::Piece->strptime( $start, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d') . q{%} }
+            {
+                borrowernumber => $borrowernumber,
+                start => { 'like' => Time::Piece->strptime( $start, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d') . q{%} }
             }
         );
         my $sth = $dbh->prepare($stmt);

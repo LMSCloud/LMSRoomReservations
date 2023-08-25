@@ -1,4 +1,5 @@
 [%- USE JSON.Escape; -%]
+[% USE gtx = Gettext('com.lmscloud.roomreservations', LANG, 'utf-8', LOCALES) %]
 
 [% USE Koha %]
 [% USE Branches %]
@@ -20,29 +21,21 @@
         <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="/cgi-bin/koha/opac-main.pl" aria-current="page">Home</a>
+                    <a href="/cgi-bin/koha/opac-main.pl" aria-current="page">[% "Home" | gettext %]</a>
                 </li>
                 <li class="breadcrumb-item active">
-                    <a href="#" aria-current="page">Loading...</a>
+                    <a href="#" aria-current="page">[% "Room Reservations" | gettext %]</a>
                 </li>
             </ol>
         </nav> <!-- /#breadcrumbs -->
         <div class="lmsr-content-main">
             <div class="lmsr-content-block">
-                <h1>Loading...</h1>
-                <lms-room-reservations-view borrowernumber="[% borrowernumber%]"></lms-room-reservations-view>
+                <h1>[% "Room Reservations" | gettext %]</h1>
+                <lms-room-reservations-view borrowernumber="[% borrowernumber %]"></lms-room-reservations-view>
             </div>
         </div>
     </div>
 
 [% INCLUDE 'opac-bottom.inc' %]
 [% BLOCK jsinclude %]
-    <script>
-        const lmsrHeading = document.querySelector('.lmsr-content-block > h1');
-        const lastBreadcrumb = document.querySelector('.breadcrumb-item.active > a');
-        const { TranslationHandler } = RoomReservationBundle;
-        const translationHandler = new TranslationHandler();
-        lmsrHeading.textContent = translationHandler.templateTranslations.heading;
-        lastBreadcrumb.textContent = translationHandler.templateTranslations.heading;
-    </script>
 [% END %]

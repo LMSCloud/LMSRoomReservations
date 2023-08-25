@@ -12,15 +12,12 @@ use SQL::Abstract;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
-}
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 
 my $EQUIPMENT_TABLE       = $self ? $self->get_qualified_table_name('equipment')       : undef;
 my $ROOMS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('rooms_equipment') : undef;
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -73,9 +70,13 @@ sub get {
 
         my $roomid = $sth->fetchrow_hashref();
 
-        return $c->render( status => 200, openapi => $roomid ? { %{$equipment}, roomid => $roomid } : $equipment );
-    }
-    catch {
+        return $c->render(
+            status  => 200,
+            openapi => $roomid
+            ? { %{$equipment}, roomid => $roomid }
+            : $equipment
+        );
+    } catch {
         $c->unhandled_exception($_);
     }
 }
@@ -88,10 +89,21 @@ sub add {
         my $dbh = C4::Context->dbh;
 
         my $equipment = $c->validation->param('body');
-        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
-            {   schema => [
-                    { key => 'equipmentname',   value => $equipment->{'equipmentname'},   type => 'string', options => { length   => 20, alphanumeric => 0 } },
-                    { key => 'maxbookabletime', value => $equipment->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
+        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
+            {
+                schema => [
+                    {
+                        key     => 'equipmentname',
+                        value   => $equipment->{'equipmentname'},
+                        type    => 'string',
+                        options => { length => 20, alphanumeric => 0 }
+                    },
+                    {
+                        key     => 'maxbookabletime',
+                        value   => $equipment->{'maxbookabletime'},
+                        type    => 'number',
+                        options => { nullable => 1 }
+                    },
                 ]
             }
         );
@@ -111,8 +123,7 @@ sub add {
             status  => 201,
             openapi => $equipment
         );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -135,11 +146,25 @@ sub update {
 
             # We have to convert all nullish values to NULL in our new_equipment to undef before passing them to SQL::Abstract.
             # To do this we assign a new hashref back to $new_equipment and check for each key if the value is nullish, e.g. undef or empty string.
-            $new_equipment = { map { $_ => $new_equipment->{$_} || undef } keys %{$new_equipment} };
-            my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
-                {   schema => [
-                        { key => 'equipmentname',   value => $new_equipment->{'equipmentname'},   type => 'string', options => { length   => 20, alphanumeric => 0 } },
-                        { key => 'maxbookabletime', value => $new_equipment->{'maxbookabletime'}, type => 'number', options => { nullable => 1 } },
+            $new_equipment = {
+                map { $_ => $new_equipment->{$_} || undef }
+                    keys %{$new_equipment}
+            };
+            my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
+                {
+                    schema => [
+                        {
+                            key     => 'equipmentname',
+                            value   => $new_equipment->{'equipmentname'},
+                            type    => 'string',
+                            options => { length => 20, alphanumeric => 0 }
+                        },
+                        {
+                            key     => 'maxbookabletime',
+                            value   => $new_equipment->{'maxbookabletime'},
+                            type    => 'number',
+                            options => { nullable => 1 }
+                        },
                     ]
                 }
             );
@@ -160,15 +185,20 @@ sub update {
             $sth->execute(@bind);
 
             # Handles a new association
-            if ( exists $new_equipment->{'roomid'} && $new_equipment->{'roomid'} ) {
+            if ( exists $new_equipment->{'roomid'}
+                && $new_equipment->{'roomid'} )
+            {
                 $roomid = delete $new_equipment->{'roomid'};
 
-                ( $stmt, @bind ) = $sql->insert( $ROOMS_EQUIPMENT_TABLE, { roomid => $roomid, equipmentid => $equipmentid } );
+                ( $stmt, @bind ) =
+                    $sql->insert( $ROOMS_EQUIPMENT_TABLE, { roomid => $roomid, equipmentid => $equipmentid } );
                 $sth = $dbh->prepare($stmt);
                 $sth->execute(@bind);
             }
 
-            if ( exists $new_equipment->{'roomid'} && !$new_equipment->{'roomid'} ) {
+            if ( exists $new_equipment->{'roomid'}
+                && !$new_equipment->{'roomid'} )
+            {
                 $roomid = delete $new_equipment->{'roomid'};
 
                 ( $stmt, @bind ) = $sql->delete( $ROOMS_EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
@@ -182,7 +212,13 @@ sub update {
 
             return $c->render(
                 status  => 200,
-                openapi => $roomid ? { %{$new_equipment}, equipmentid => $equipmentid, roomid => $roomid } : { %{$new_equipment}, equipmentid => $equipmentid }
+                openapi => $roomid
+                ? {
+                    %{$new_equipment},
+                    equipmentid => $equipmentid,
+                    roomid      => $roomid
+                    }
+                : { %{$new_equipment}, equipmentid => $equipmentid }
             );
         }
 
@@ -190,8 +226,7 @@ sub update {
             status  => 404,
             openapi => { error => 'Item not found' }
         );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -262,7 +297,8 @@ sub delete {
             );
         }
 
-        ( $stmt, @bind ) = $sql->delete( $EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
+        ( $stmt, @bind ) =
+            $sql->delete( $EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
@@ -270,8 +306,7 @@ sub delete {
             status  => 204,
             openapi => q{}
         );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
