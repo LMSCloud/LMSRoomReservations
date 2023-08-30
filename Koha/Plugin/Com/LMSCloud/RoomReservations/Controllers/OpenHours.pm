@@ -18,22 +18,15 @@ use Encode;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
-    my $locale = C4::Context->preference('language');
-    $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
-    $ENV{OUTPUT_CHARSET} = 'UTF-8';
-
-    setlocale Locale::Messages::LC_MESSAGES(), q{};
-    textdomain 'com.lmscloud.roomreservations';
-    bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
-    bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
-}
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+setlocale Locale::Messages::LC_MESSAGES(), q{};
+textdomain 'com.lmscloud.roomreservations';
+bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -49,8 +42,7 @@ sub list {
         my $open_hours = $sth->fetchall_arrayref( {} );
 
         return $c->render( status => 200, openapi => $open_hours );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -74,8 +66,7 @@ sub add {
 
         return $c->render( status => 201, openapi => $body );
 
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -103,8 +94,7 @@ sub get {
         }
 
         return $c->render( status => 200, openapi => $open_hours );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     }
 }
@@ -113,6 +103,8 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $branch = $c->validation->param('branch');
         my $day    = $c->validation->param('day');
 
@@ -137,9 +129,26 @@ sub update {
         # that's needlessly supplied by firefox's time picker.
         # To do that we map the $new_open_hours hash and strip
         # of the seconds.
-        $new_open_hours = { map { $_ => substr $new_open_hours->{$_}, 0, 5 } keys %{$new_open_hours} };
-        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
-            { schema => [ { type => 'time', key => 'start', value => $new_open_hours->{'start'} }, { type => 'time', key => 'end', value => $new_open_hours->{'end'} }, ] } );
+        $new_open_hours = {
+            map { $_ => substr $new_open_hours->{$_}, 0, 5 }
+                keys %{$new_open_hours}
+        };
+        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
+            {
+                schema => [
+                    {
+                        type  => 'time',
+                        key   => 'start',
+                        value => $new_open_hours->{'start'}
+                    },
+                    {
+                        type  => 'time',
+                        key   => 'end',
+                        value => $new_open_hours->{'end'}
+                    },
+                ]
+            }
+        );
         my ( $is_valid, $errors ) = $validator->validate();
         if ( !$is_valid ) {
             return $c->render(
@@ -148,7 +157,9 @@ sub update {
             );
         }
 
-        if ( Time::Piece->strptime( $new_open_hours->{'end'}, '%H:%M:%S' )->epoch < Time::Piece->strptime( $new_open_hours->{'start'}, '%H:%M:%S' )->epoch ) {
+        if ( Time::Piece->strptime( $new_open_hours->{'end'}, '%H:%M:%S' )->epoch <
+            Time::Piece->strptime( $new_open_hours->{'start'}, '%H:%M:%S' )->epoch )
+        {
             return $c->render(
                 status  => 400,
                 openapi => { error => __('End time must be after start time') }
@@ -159,11 +170,32 @@ sub update {
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        return $c->render( status => 201, openapi => { %{$new_open_hours}, day => $day, branch => $branch } );
-    }
-    catch {
+        return $c->render(
+            status  => 201,
+            openapi => { %{$new_open_hours}, day => $day, branch => $branch }
+        );
+    } catch {
         $c->unhandled_exception($_);
     };
+}
+
+sub delete {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $branch = $c->validation->param('branch');
+
+        my $sql = SQL::Abstract->new;
+        my $dbh = C4::Context->dbh;
+
+        my ( $stmt, @bind ) = $sql->delete( $OPEN_HOURS_TABLE, { branch => $branch } );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        return $c->render( status => 204, openapi => {} );
+    } catch {
+        $c->unhandled_exception($_);
+    }
 }
 
 1;

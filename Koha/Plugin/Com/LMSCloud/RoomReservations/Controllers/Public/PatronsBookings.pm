@@ -18,10 +18,7 @@ use C4::Context;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
-}
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 
 my $BOOKINGS_TABLE           = $self ? $self->get_qualified_table_name('bookings')           : undef;
 my $BOOKINGS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('bookings_equipment') : undef;
@@ -43,7 +40,10 @@ sub list {
         }
 
         # We get all bookings associated with the supplied borrowernumber
-        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, [ 'roomid', 'start', 'end' ], { borrowernumber => $borrower->borrowernumber } );
+        my ( $stmt, @bind ) = $sql->select(
+            $BOOKINGS_TABLE, [ 'roomid', 'start', 'end' ],
+            { borrowernumber => $borrower->borrowernumber }
+        );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
@@ -56,8 +56,7 @@ sub list {
         }
 
         return $c->render( status => 200, openapi => $bookings );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }

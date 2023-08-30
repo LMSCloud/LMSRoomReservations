@@ -1,4 +1,9 @@
-[submodule "src/components/LMSCalendar"]
-	path = src/components/LMSCalendar
-	url = git@github.com:LMSCloudPaulD/LMSCalendar.git
-	branch = master
+[submodule "ktd-plugin-tools"]
+	path = ktd-plugin-tools
+	url = https://github.com/LMSCloudPaulD/ktd-plugin-tools
+[submodule "package-kpz"]
+	path = package-kpz
+	url = https://github.com/LMSCloudPaulD/package-kpz
+[submodule "src/components/custom/LMSCalendar"]
+	path = src/components/custom/LMSCalendar
+	url = https://github.com/LMSCloudPaulD/LMSCalendar

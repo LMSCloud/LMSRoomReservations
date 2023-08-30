@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::State;
+package Koha::Plugin::Com::LMSCloud::RoomReservations::lib::State;
 
 use Modern::Perl;
 use utf8;
@@ -20,7 +20,8 @@ sub get_patron_categories {
     my $sql = SQL::Abstract->new;
     my $dbh = C4::Context->dbh;
 
-    my ( $stmt, @bind ) = $sql->select( 'categories', [ 'categorycode', 'description' ], undef, { -asc => 'categorycode' } );
+    my ( $stmt, @bind ) =
+        $sql->select( 'categories', [ 'categorycode', 'description' ], undef, { -asc => 'categorycode' } );
 
     my $sth = $dbh->prepare($stmt);
     $sth->execute(@bind);

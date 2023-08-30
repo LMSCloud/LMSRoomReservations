@@ -1,9 +1,0 @@
-name: LMSRoomReservations
-author: Paul Derscheid
-date_authored: 2009-01-27
-date_updated: 1900-01-01
-minimum_version: 21.05.14.000
-maximum_version:
-version: {VERSION}
-description: This plugin enbles you to manage bookable spaces in your institution.
-module: Koha::Plugin::Com::LMSCloud::RoomReservations

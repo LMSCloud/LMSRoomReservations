@@ -13,10 +13,7 @@ use SQL::Abstract;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
-}
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
 
@@ -34,8 +31,7 @@ sub list {
         my $open_hours = $sth->fetchall_arrayref( {} );
 
         return $c->render( status => 200, openapi => $open_hours );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }

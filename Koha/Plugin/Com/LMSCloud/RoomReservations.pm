@@ -28,8 +28,10 @@ use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
 use Try::Tiny;
 
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper;
+
 ## Here we set our plugin version
-our $VERSION         = "{VERSION}";
+our $VERSION         = "4.0.24";
 our $MINIMUM_VERSION = "{MINIMUM_VERSION}";
 
 ## Here is our metadata, some keys are required, some are optional
@@ -37,7 +39,7 @@ our $metadata = {
     name            => 'LMSRoomReservations',
     author          => 'Paul Derscheid @ LMSCloud GmbH',
     date_authored   => '2009-01-27',
-    date_updated    => "1900-01-01",
+    date_updated    => "2023-08-22",
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
@@ -92,98 +94,7 @@ sub opac_js {
     my ($self) = @_;
 
     return <<~'JS';
-        <script>
-            const userMenuUl = document.querySelector("#usermenu > #menu > ul");
-            if (userMenuUl) {
-                fetch("/api/v1/contrib/roomreservations/static/dist/main.js")
-                    .then((response) => response.text())
-                    .then((text) => {
-                        const script = document.createElement("script");
-                        script.text = text;
-                        document.body.appendChild(script);
-                        return Promise.resolve();
-                    })
-                    .then(() => {
-                        const translationHandler = new RoomReservationBundle.TranslationHandler();
-                        const roomReservationsMenuEntry = document.createElement("li");
-                        roomReservationsMenuEntry.innerHTML = `
-                                    <a href="#"> ${translationHandler.templateTranslations.heading} </a>
-                                `;
-                        userMenuUl.appendChild(roomReservationsMenuEntry);
-                        roomReservationsMenuEntry.addEventListener("click", () => {
-                            Array.from(userMenuUl.children).forEach((element) => {
-                                element.classList.remove("active");
-                            });
-                            roomReservationsMenuEntry.classList.add("active");
-                            const mainContent = document.querySelector(".maincontent");
-                            mainContent.innerHTML = `
-                                        <h1>${translationHandler.templateTranslations.heading}</h1>
-                                        <p>${translationHandler.templateTranslations.info}</p>
-                                        <p>${translationHandler.templateTranslations.loading}</p>
-                                    `;
-                            const responses = Promise.all([
-                                fetch("/api/v1/contrib/roomreservations/public/patrons_bookings"),
-                                fetch("/api/v1/contrib/roomreservations/public/rooms"),
-                            ]);
-                            responses
-                                .then(([patronsBookings, rooms]) =>
-                                    Promise.all([patronsBookings.json(), rooms.json()])
-                                )
-                                .then(([patronsBookings, rooms]) => {
-                                    mainContent.innerHTML = `
-                                                <h1>${
-                                                translationHandler
-                                                    .templateTranslations.heading
-                                                }</h1>
-                                                <p>${
-                                                translationHandler
-                                                    .templateTranslations.info
-                                                }</p>
-                                                <table class="table table-striped table-bordered table-responsive-sm">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>${
-                                                        translationHandler
-                                                            .templateTranslations.room
-                                                        }</th>
-                                                        <th>${
-                                                        translationHandler
-                                                            .templateTranslations.start
-                                                        }</th>
-                                                        <th>${
-                                                        translationHandler
-                                                            .templateTranslations.end
-                                                        }</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    ${patronsBookings
-                                                    .map(
-                                                        (booking) => `
-                                                        <tr>
-                                                            <td>${
-                                                            rooms.find(
-                                                                (room) =>
-                                                                room.roomid ===
-                                                                booking.roomid
-                                                            ).roomnumber
-                                                            }</td>
-                                                            <td>${translationHandler.convertToFormat(
-                                                            booking.start,
-                                                            "datetime"
-                                                            )}</td>
-                                                            <td>${translationHandler.convertToFormat(
-                                                            booking.end,
-                                                            "datetime"
-                                                            )}</td>
-                                                            </tr>`
-                                                    )
-                                                    .join("")} </tbody> </table> `;
-                                });
-                        });
-                    });
-            }
-        </script>
+        <script src="/api/v1/contrib/roomreservations/static/assets/patronsBookings.js" defer></script>
     JS
 }
 
@@ -195,7 +106,6 @@ sub intranet_js {
     my ($self) = @_;
 
     return <<~'JS';
-        <script>console.log("Thanks for testing the kitchen sink plugin!");</script>
     JS
 }
 
@@ -237,111 +147,36 @@ sub configure {
 sub install() {
     my ( $self, $args ) = @_;
 
-    try {
-        my $ROOMS                  = $self->get_qualified_table_name('rooms');
-        my $ROOMS_IDX              = $self->get_qualified_table_name('rooms_idx');
-        my $BOOKINGS               = $self->get_qualified_table_name('bookings');
-        my $BOOKINGS_IDX           = $self->get_qualified_table_name('bookings_idx');
-        my $EQUIPMENT              = $self->get_qualified_table_name('equipment');
-        my $EQUIPMENT_IDX          = $self->get_qualified_table_name('equipment_idx');
-        my $ROOMS_EQUIPMENT        = $self->get_qualified_table_name('rooms_equipment');
-        my $ROOMS_EQUIPMENT_IDX    = $self->get_qualified_table_name('rooms_equipment_idx');
-        my $OPEN_HOURS             = $self->get_qualified_table_name('open_hours');
-        my $OPEN_HOURS_IDX         = $self->get_qualified_table_name('open_hours_idx');
-        my $BOOKINGS_EQUIPMENT     = $self->get_qualified_table_name('bookings_equipment');
-        my $BOOKINGS_EQUIPMENT_IDX = $self->get_qualified_table_name('bookings_equipment_idx');
+    my $file       = __FILE__;
+    my $bundle_dir = $file;
+    $bundle_dir =~ s/[.]pm$//smx;
 
-        my $original_version = $self->retrieve_data('plugin_version');    # is this a new install or an upgrade?
+    my $bundle_path = $bundle_dir;
 
-        my @installer_statements = (
-            #qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT, $ROOMS_EQUIPMENT, $EQUIPMENT, $OPEN_HOURS, $BOOKINGS, $ROOMS },
-            <<~"EOF",
-            CREATE TABLE $ROOMS (
-              `roomid` INT NOT NULL AUTO_INCREMENT,
-              `roomnumber` VARCHAR(20) NOT NULL, -- alphanumeric room identifier
-              `maxcapacity` INT NOT NULL, -- maximum number of people allowed in the room
-              `description` TEXT, -- room description to display in OPAC
-              `color` VARCHAR(7), -- room color to display in OPAC
-              `image` TEXT, -- room image to display in OPAC
-              `branch` VARCHAR(255), -- branch that contains the room
-              `maxbookabletime` INT, -- the maximum timespan for a booking on this room
-            PRIMARY KEY (roomid)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-        EOF
-            qq{CREATE INDEX $ROOMS_IDX ON $ROOMS(roomid);},
-            <<~"EOF",
-            CREATE TABLE $BOOKINGS (
-              `bookingid` INT NOT NULL AUTO_INCREMENT,
-              `borrowernumber` INT NOT NULL, -- foreign key; borrowers table
-              `roomid` INT NOT NULL, -- foreign key; $ROOMS table
-              `start` DATETIME NOT NULL, -- start date/time of booking
-              `end` DATETIME NOT NULL, -- end date/time of booking
-              `blackedout` TINYINT(1) NOT NULL DEFAULT 0, -- shows blackouts if true
-              `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date
-              `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a booking has been updated
-              PRIMARY KEY (bookingid),
-              CONSTRAINT lmsr_v4_calendar_icfk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid),
-              CONSTRAINT lmsr_v4_calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-        EOF
-            qq{CREATE INDEX $BOOKINGS_IDX ON $BOOKINGS(borrowernumber, roomid);},
-            <<~"EOF",
-            CREATE TABLE $OPEN_HOURS (
-              `openid` INT NOT NULL AUTO_INCREMENT,
-              `day` INT NOT NULL,
-              `start` TIME NOT NULL, -- start date/time of opening hours
-              `end` TIME NOT NULL, -- end date/time of opening hours
-              `branch` VARCHAR(255), -- branch on which open hours apply
-              PRIMARY KEY (openid)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-        EOF
-            qq{CREATE INDEX $OPEN_HOURS_IDX ON $OPEN_HOURS(openid);},
-            <<~"EOF",
-            CREATE TABLE $EQUIPMENT (
-              `equipmentid` INT NOT NULL AUTO_INCREMENT,
-              `equipmentname` VARCHAR(20) NOT NULL,
-              `description` TEXT DEFAULT NULL, -- equipment description to display in OPAC
-              `image` TEXT DEFAULT NULL, -- equipment image to display in OPAC
-              `maxbookabletime` INT DEFAULT NULL, -- the maximum timespan for a booking of this item
-              PRIMARY KEY (equipmentid)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-        EOF
-            qq{CREATE INDEX $EQUIPMENT_IDX ON $EQUIPMENT(equipmentid);},
-            <<~"EOF",
-            CREATE TABLE $ROOMS_EQUIPMENT (
-              `roomid` INT NOT NULL,
-              `equipmentid` INT NOT NULL,
-              `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date of the relation
-              `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a relation has been updated
-              PRIMARY KEY (roomid, equipmentid),
-              CONSTRAINT lmsr_v4_roomequipment_iafk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid) ON DELETE CASCADE,
-              CONSTRAINT lmsr_v4_roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-        EOF
-            qq{CREATE INDEX $ROOMS_EQUIPMENT_IDX ON $ROOMS_EQUIPMENT(roomid, equipmentid);},
-            <<~"EOF",
-            CREATE TABLE $BOOKINGS_EQUIPMENT (
-                `bookingid` INT NOT NULL,
-                `equipmentid` INT NOT NULL,
-                `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- creation date of the relation
-                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a relation has been updated
-                PRIMARY KEY (bookingid, equipmentid),
-                CONSTRAINT lmsr_v4_bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES $BOOKINGS(bookingid) ON DELETE CASCADE,
-                CONSTRAINT lmsr_v4_bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES $EQUIPMENT(equipmentid) ON DELETE CASCADE
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-        EOF
-            qq{CREATE INDEX $BOOKINGS_EQUIPMENT_IDX ON $BOOKINGS_EQUIPMENT(bookingid, equipmentid);},
+    return try {
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper->new(
+            {
+                table_name_mappings => {
+                    rooms                  => $self->get_qualified_table_name('rooms'),
+                    rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
+                    bookings               => $self->get_qualified_table_name('bookings'),
+                    bookings_idx           => $self->get_qualified_table_name('bookings_idx'),
+                    equipment              => $self->get_qualified_table_name('equipment'),
+                    equipment_idx          => $self->get_qualified_table_name('equipment_idx'),
+                    rooms_equipment        => $self->get_qualified_table_name('rooms_equipment'),
+                    rooms_equipment_idx    => $self->get_qualified_table_name('rooms_equipment_idx'),
+                    open_hours             => $self->get_qualified_table_name('open_hours'),
+                    open_hours_idx         => $self->get_qualified_table_name('open_hours_idx'),
+                    bookings_equipment     => $self->get_qualified_table_name('bookings_equipment'),
+                    bookings_equipment_idx => $self->get_qualified_table_name('bookings_equipment_idx'),
+                },
+                bundle_path => $bundle_path,
+            }
         );
 
-        if ( !defined $original_version ) {
-            for (@installer_statements) {
-                my $sth = C4::Context->dbh->prepare($_);
-                $sth->execute;
-            }
-        }
-
         $self->store_data(
-            {   plugin_version                 => $VERSION,
+            {
+                plugin_version                 => $VERSION,
                 default_max_booking_time       => q{},
                 absolute_reservation_limit     => q{},
                 daily_reservation_limit        => q{},
@@ -351,12 +186,14 @@ sub install() {
             }
         );
 
+        my $is_success = $migration_helper->install( { plugin => $self } );
+        if ( !$is_success ) {
+            croak 'Migration failed';
+        }
+
         return 1;
-    }
-    catch {
+    } catch {
         my $error = $_;
-        use Data::Dumper;
-        carp Dumper($error);
         carp "INSTALL ERROR: $error";
 
         return 0;
@@ -368,16 +205,45 @@ sub install() {
 sub upgrade {
     my ( $self, $args ) = @_;
 
-    try {
+    # We have to go the manual route because $self->bundle_path is undef at this point
+    my $file       = __FILE__;
+    my $bundle_dir = $file;
+    $bundle_dir =~ s/[.]pm$//smx;
+
+    my $bundle_path = $bundle_dir;
+
+    return try {
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper->new(
+            {
+                table_name_mappings => {
+                    rooms                  => $self->get_qualified_table_name('rooms'),
+                    rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
+                    bookings               => $self->get_qualified_table_name('bookings'),
+                    bookings_idx           => $self->get_qualified_table_name('bookings_idx'),
+                    equipment              => $self->get_qualified_table_name('equipment'),
+                    equipment_idx          => $self->get_qualified_table_name('equipment_idx'),
+                    rooms_equipment        => $self->get_qualified_table_name('rooms_equipment'),
+                    rooms_equipment_idx    => $self->get_qualified_table_name('rooms_equipment_idx'),
+                    open_hours             => $self->get_qualified_table_name('open_hours'),
+                    open_hours_idx         => $self->get_qualified_table_name('open_hours_idx'),
+                    bookings_equipment     => $self->get_qualified_table_name('bookings_equipment'),
+                    bookings_equipment_idx => $self->get_qualified_table_name('bookings_equipment_idx'),
+                },
+                bundle_path => $bundle_path,
+            }
+        );
+
+        my $is_success = $migration_helper->upgrade( { plugin => $self } );
+        if ( !$is_success ) {
+            croak 'Migration failed';
+        }
+
         my $dt = dt_from_string();
         $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
 
         return 1;
-    }
-    catch {
+    } catch {
         my $error = $_;
-        use Data::Dumper;
-        carp Dumper($error);
         carp "UPGRADE ERROR: $error";
 
         return 0;

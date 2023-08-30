@@ -2,6 +2,7 @@
 
 <lms-room-reservations-menu
   brand="LMSRoomReservations"
-  baseurl="[% base_url %]"
-  pluginclass="[% CLASS %]"
+  logo='{"src":"/api/v1/contrib/roomreservations/static/assets/lmscloud.webp","alt":"LMSCloud logo"}'
+  base-url="[% base_url %]"
+  plugin-class="[% CLASS %]"
 ></lms-room-reservations-menu>

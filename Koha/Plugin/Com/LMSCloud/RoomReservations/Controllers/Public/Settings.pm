@@ -13,10 +13,7 @@ use SQL::Abstract;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::RoomReservations->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
-}
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 
 sub get {
     my $c = shift->openapi->valid_input or return;
@@ -36,9 +33,11 @@ sub get {
 
         my $value = $self->retrieve_data($setting);
 
-        return $c->render( status => 200, openapi => { setting => $setting, value => $value } );
-    }
-    catch {
+        return $c->render(
+            status  => 200,
+            openapi => { setting => $setting, value => $value }
+        );
+    } catch {
         $c->unhandled_exception($_);
     }
 }
