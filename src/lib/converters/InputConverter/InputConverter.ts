@@ -1,4 +1,6 @@
-import { html, TemplateResult } from "lit";
+import { faHashtag, faIdCard } from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { TemplateResult, html } from "lit";
 import { InputType, InputTypeValue, ModalField, SelectOption, TaggedData } from "../../../types/common";
 import { dayMapping } from "../../../views/StaffOpenHoursView";
 import { __, localeFull } from "../../translate";
@@ -7,6 +9,10 @@ import Checkbox from "./inputs/Checkbox";
 import Checklist from "./inputs/Checklist";
 import DatetimeLocalInput from "./inputs/DatetimeLocalInput";
 import EmailInput from "./inputs/EmailInput";
+import NumberInput from "./inputs/NumberInput";
+import Select from "./inputs/Select";
+import TextInput from "./inputs/TextInput";
+import TimeInput from "./inputs/TimeInput";
 import ModalCheckboxInput from "./inputs/modal/ModalCheckboxInput";
 import ModalChecklist from "./inputs/modal/ModalChecklist";
 import ModalColorInput from "./inputs/modal/ModalColorInput";
@@ -16,10 +22,6 @@ import ModalInfo from "./inputs/modal/ModalInfo";
 import ModalNumberInput from "./inputs/modal/ModalNumberInputs";
 import ModalSelect from "./inputs/modal/ModalSelect";
 import ModalTextInput from "./inputs/modal/ModalTextInput";
-import NumberInput from "./inputs/NumberInput";
-import Select from "./inputs/Select";
-import TextInput from "./inputs/TextInput";
-import TimeInput from "./inputs/TimeInput";
 
 type TemplateQuery = {
     name: string;
@@ -67,7 +69,12 @@ export class InputConverter {
                     borrowernumber = Number(borrowernumber);
                 }
 
-                const { firstname, surname } = data?.[borrowernumber];
+                const borrower = data?.[borrowernumber];
+                if (!borrower) {
+                    return html``;
+                }
+
+                const { firstname, surname, cardnumber } = borrower;
                 return html`
                     <a
                         class="link-primary link"
@@ -75,7 +82,19 @@ export class InputConverter {
                         >${firstname}&nbsp;${surname}</a
                     >
                     &nbsp;
-                    <div class="badge">${value}</div>
+                    <div class="badge">
+                        ${litFontawesome(faHashtag, {
+                            className: "inline-block w-4 h-4",
+                        })}&nbsp;
+                        ${value}
+                    </div>
+                    &nbsp;
+                    <div class="badge">
+                        ${litFontawesome(faIdCard, {
+                            className: "inline-block w-4 h-4",
+                        })}&nbsp;
+                        ${cardnumber}
+                    </div>
                 `;
             },
             created: (value) => html`${formatDatetimeByLocale(value as string, localeFull)}`,
