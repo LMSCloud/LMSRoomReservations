@@ -25,16 +25,16 @@ export default class LMSBookingsModal extends LMSModal {
         };
         this.fields = [
             {
-                name: "borrowernumber",
-                type: "patron-search",
-                desc: __("Borrowernumber"),
-                placeholder: attr__("The borrowernumber of the borrower which the booking is for"),
+                name: "roomid",
+                type: "select",
+                desc: __("Roomid (Changing this resets other fields)"),
                 required: true,
             },
             {
-                name: "roomid",
-                type: "select",
-                desc: __("Roomid"),
+                name: "borrowernumber",
+                type: "patron-search",
+                desc: __("Borrowernumber (Search)"),
+                placeholder: attr__("The borrowernumber of the borrower which the booking is for"),
                 required: true,
             },
             {
