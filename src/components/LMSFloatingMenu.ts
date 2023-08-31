@@ -67,7 +67,10 @@ export default class LMSFloatingMenu extends LitElement {
                     >
                         <img src=${this.logo?.src} alt=${this.logo?.alt} class="h-8 w-8" />
                     </figure>
-                    <a class="text-xl normal-case" href="https://github.com/LMSCloud/LMSEventManagement" target="_blank"
+                    <a
+                        class="text-xl normal-case"
+                        href="https://github.com/LMSCloud/LMSRoomReservations"
+                        target="_blank"
                         ><strong ?hidden=${!this.brand}>${this.brand}</strong></a
                     >
                 </div>
