@@ -1,6 +1,6 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { InputTypeValue, ModalField, TranslatedString } from "../../../../../types/common";
-import { convertToISO8601 } from "../../../datetimeConverters";
+import { convertToISO8601, normalizeForInput } from "../../../datetimeConverters";
 
 export default class ModalDatetimeLocalInput {
     private name: string;
@@ -18,6 +18,10 @@ export default class ModalDatetimeLocalInput {
         this.value = value.value;
     }
 
+    private normalizeIfString(value: unknown) {
+        return typeof value === "string" ? normalizeForInput(value, "datetime-locale") : nothing;
+    }
+
     public render() {
         return html` <div class="form-control w-full" @change=${this.handleDatetimeLocalChange}>
             <label class="label">
@@ -28,7 +32,7 @@ export default class ModalDatetimeLocalInput {
                 type="datetime-local"
                 name=${this.name}
                 ?required=${this.required}
-                value=${this.value}
+                value=${this.normalizeIfString(this.value)}
             />
         </div>`;
     }
