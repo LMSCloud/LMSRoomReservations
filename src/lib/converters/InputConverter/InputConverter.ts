@@ -6,6 +6,7 @@ import { formatDatetimeByLocale } from "../datetimeConverters";
 import Checkbox from "./inputs/Checkbox";
 import Checklist from "./inputs/Checklist";
 import DatetimeLocalInput from "./inputs/DatetimeLocalInput";
+import EmailInput from "./inputs/EmailInput";
 import ModalCheckboxInput from "./inputs/modal/ModalCheckboxInput";
 import ModalChecklist from "./inputs/modal/ModalChecklist";
 import ModalColorInput from "./inputs/modal/ModalColorInput";
@@ -144,6 +145,9 @@ export class InputConverter {
                     }
                     case "number": {
                         return new NumberInput("value", _value, placeholder).render();
+                    }
+                    case "email": {
+                        return new EmailInput("value", _value, placeholder).render();
                     }
                     case "array": {
                         const mappedValue = _value.map((item: Record<string, string>) => {

@@ -81,14 +81,14 @@ sub list {
                 setting     => 'restrict_message',
                 value       => $self->retrieve_data('restrict_message'),
                 description => __('Message that is shown to restricted patron categories trying to book rooms'),
-                type        => 'string',
+                type        => 'text',
                 placeholder => __(q{A message, e.g. 'You are not allowed to book rooms'}),
             },
             {
                 setting     => 'reply_to_address',
                 value       => $self->retrieve_data('reply_to_address'),
                 description => __('Email address to which confirmation emails for patrons are mirrored'),
-                type        => 'string',
+                type        => 'email',
                 placeholder => __('An email address, e.g. contact@institution.com'),
             },
             {
