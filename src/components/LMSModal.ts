@@ -198,7 +198,7 @@ export default class LMSModal extends LitElement {
         }
 
         if (this.modal) {
-            this.snapshot = new InputsSnapshot(this.modal.querySelectorAll("input, select, textarea"));
+            this.snapshot = new InputsSnapshot(this.modal.querySelectorAll("input, select, textarea, .lit-element"));
         }
     }
 
