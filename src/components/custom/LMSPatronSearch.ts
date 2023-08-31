@@ -290,6 +290,7 @@ export default class LMSPatronSearch extends LitElement {
                     name=${this.name}
                     placeholder=${this.placeholder}
                     ?required=${this.required}
+                    value=${this.value}
                     @input=${this.handleInput}
                     @blur=${this.handleInputBlur}
                     autocomplete="off"
