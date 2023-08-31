@@ -20,7 +20,7 @@ Here we grant access to the plugins directory to get around circumvent problems.
 
 ```conf
 <Directory /var/lib/koha/kohadev/plugins/>
-    Options Indexes FollowSymLinks
+    Options FollowSymLinks
     AllowOverride None
     Require all granted
 </Directory>
