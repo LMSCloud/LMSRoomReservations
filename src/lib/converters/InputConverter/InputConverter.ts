@@ -119,13 +119,15 @@ export class InputConverter {
             modal_select: (value, data) => new ModalSelect(value as ModalField, data as SelectOption[]).render(),
             modal_text: (value) => new ModalTextInput(value as ModalField).render(),
             "modal_patron-search": (value) => {
-                const { name, desc, placeholder, required } = value as ModalField;
+                const { name, desc, placeholder, required, value: _value } = value as ModalField;
                 return html`
                     <lms-patron-search
                         .name=${name}
                         .description=${desc}
                         .placeholder=${placeholder}
+                        .value=${_value}
                         .required=${required}
+                        class="lit-element"
                     ></lms-patron-search>
                 `;
             },
