@@ -1,4 +1,4 @@
-import { TemplateResult } from "lit";
+import { LitElement, TemplateResult } from "lit";
 import { DirectiveResult } from "lit/directive";
 import { TranslateDirective } from "../lib/translate";
 
@@ -44,7 +44,7 @@ export type Input = {
     value: string;
 };
 
-export type InputElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+export type InputElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | LitElement;
 
 export type InputType =
     | "button"
