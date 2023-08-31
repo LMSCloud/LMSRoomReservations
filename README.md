@@ -26,6 +26,19 @@ Here we grant access to the plugins directory to get around circumvent problems.
 </Directory>
 ```
 
+### Or just in INSTANCE.conf
+
+```conf
+ScriptAlias /roomreservations "/var/lib/koha/INSTANCE/plugins/Koha/Plugin/Com/LMSCloud/RoomReservations/Opac/calendar.pl"
+Alias /plugin "/var/lib/koha/INSTANCE/plugins"
+
+<Directory /var/lib/koha/INSTANCE/plugins/>
+    Options FollowSymLinks
+    AllowOverride None
+    Require all granted
+</Directory>
+```
+
 ### Components
 
 - There is one component in the src/components dir that is a git submodule: **LMSCalendar**. Changes to this submodule must be staged and committed seperately.
