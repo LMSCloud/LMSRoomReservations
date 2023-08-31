@@ -4,6 +4,7 @@ import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, property, query, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { repeat } from "lit/directives/repeat.js";
 import { searchSyntax } from "../docs/searchSyntax";
 import { InputsSnapshot } from "../lib/InputsSnapshot";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
@@ -91,6 +92,8 @@ export default class LMSTable extends LitElement {
     private snapshot?: InputsSnapshot;
 
     private orphanedTableRow?: HTMLTableRowElement;
+
+    private UUIDs = new Set<string>();
 
     static override styles = [
         tailwindStyles,
@@ -504,6 +507,36 @@ export default class LMSTable extends LitElement {
         this.intersectionObserverHandler?.destroy();
     }
 
+    private generateRandomUUID() {
+        const array = new Uint32Array(4);
+        crypto.getRandomValues(array);
+
+        const valueString = array.map((value) => Number(value.toString(16).padStart(8, "0"))).join("");
+
+        return [
+            valueString.slice(0, 8),
+            valueString.slice(8, 12),
+            valueString.slice(12, 16),
+            valueString.slice(16, 20),
+            valueString.slice(20),
+        ].join("-");
+    }
+
+    protected override updated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
+        if (_changedProperties.has("data")) {
+            this.data.forEach((datum) => {
+                if (!datum["uuid"]) {
+                    let newUUID = this.generateRandomUUID();
+                    while (this.UUIDs.has(newUUID)) {
+                        newUUID = this.generateRandomUUID();
+                    }
+                    datum["uuid"] = newUUID;
+                    this.UUIDs.add(newUUID);
+                }
+            });
+        }
+    }
+
     override render() {
         if (!this.data.length) {
             html`<h1 class="text-center">${this.emptyTableMessage}</h1>`;
@@ -569,8 +602,9 @@ export default class LMSTable extends LitElement {
                             </tr>
                         </thead>
                         <tbody>
-                            ${map(
+                            ${repeat(
                                 this.data,
+                                (datum) => datum["uuid"],
                                 (datum) => html`
                                     <tr class="h-full">
                                         ${map(
