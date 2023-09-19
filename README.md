@@ -93,6 +93,7 @@ If want to add translations for new modules or fix the spelling in the source lo
   2. (Optionally) get other errors that lead you on a wrong path.
 - Always validate your create statements **first** or you will regret it 2 hours down the line.
 - Example: I had an excess comma on the last line of a create statement:
+
   ```sql
     CREATE TABLE $EQUIPMENT (
         `equipmentid` INT NOT NULL AUTO_INCREMENT,
@@ -103,18 +104,22 @@ If want to add translations for new modules or fix the spelling in the source lo
         PRIMARY KEY (equipmentid), -- THIS ONE!
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
   ```
+
   This produced the following errors:
+
   ```log
     Calling 'install' died for plugin Koha::Plugin::Com::LMSCloud::RoomReservations at /kohadevbox/koha/Koha/Plugins.pm line 246.
     Calling 'install' died for plugin Koha::Plugin::Com::LMSCloud::RoomReservationsCompilation failed in require at /usr/share/perl/5.32/Module/Load.pm line 77.
     Can't locate Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings in @INC (@INC contains: /kohadevbox/koha /kohadevbox/koha/lib /kohadevbox/qa-test-tools /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.32.1 /usr/local/share/perl/5.32.1 /usr/lib/aarch64-linux-gnu/perl5/5.32 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.32 /usr/share/perl/5.32 /usr/local/lib/site_perl /var/lib/koha/kohadev/plugins) at /usr/share/perl/5.32/Module/Load.pm line 77.
     ...
   ```
+
   Don't look at the **files it can't locate**, that's (most likely) **not** the source of your problems.
 
 #### Requesting the wrong endpoint
 
 - If you see these errors popping up
+
   ```log
     [2023/01/18 15:19:42] [WARN] ERROR: Unsupported method history at /kohadevbox/koha/Koha/Logger.pm line 135.
     [2023/01/18 15:19:42] [ERROR] Can't use an undefined value as an ARRAY reference at template mojo/debug.h
@@ -125,13 +130,13 @@ If want to add translations for new modules or fix the spelling in the source lo
       285:             </div>
       286:           </div>
   ```
+
   you **likely** didn't request the endpoint, you think you did.
 - Check your AJAX or whatever you use for the requests to hit the endpoint/method you intended.
 
-
 ## Message Templates
 
-__ROOM_RESERVATION__
+**ROOM_RESERVATION**
 
 ```sql
 INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
@@ -204,7 +209,7 @@ INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, mess
 );
 ```
 
-__ROOM_CANCELLATION__
+**ROOM_CANCELLATION**
 
 ```sql
 INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
