@@ -19,7 +19,6 @@ use Modern::Perl;
 
 use Mojo::Base 'Mojolicious::Controller';
 use Koha::Libraries;
-use Koha::Library;
 
 use Try::Tiny qw( catch try );
 use Readonly;
