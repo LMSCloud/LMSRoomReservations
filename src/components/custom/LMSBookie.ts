@@ -42,6 +42,8 @@ export default class LMSBookie extends LitElement {
     @queryAll(".equipment-item")
     equipmentItemInputs!: NodeListOf<HTMLInputElement>;
 
+    private preselectedRoom: any | undefined;
+
     static override styles = [tailwindStyles];
 
     private async handleSubmit() {
@@ -139,10 +141,12 @@ export default class LMSBookie extends LitElement {
         return queryParams.get("roomid");
     }
 
-    protected override firstUpdated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
-        const preselectedRoom = this.getPreselectedRoomid();
-        if (preselectedRoom) {
-            this.selectedRoom = this.rooms?.find((room) => room.roomid == preselectedRoom);
+    protected override updated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
+        if (_changedProperties.has("rooms") && !this.selectedRoom) {
+            this.preselectedRoom = this.getPreselectedRoomid();
+            if (this.preselectedRoom) {
+                this.selectedRoom = this.rooms.find((room) => room.roomid === parseInt(this.preselectedRoom, 10));
+            }
         }
     }
 
