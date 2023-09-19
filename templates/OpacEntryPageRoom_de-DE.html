@@ -1,0 +1,91 @@
+<div class="main">
+    <div class="card-deck" id="lms-rooms"></div>
+</div>
+
+<script defer>
+    const cardDeck = document.getElementById("lms-rooms"); 
+    Promise.all([
+        fetch("/api/v1/contrib/roomreservations/public/rooms"),
+        fetch("/api/v1/contrib/roomreservations/public/equipment"),
+        fetch("/api/v1/contrib/roomreservations/public/libraries")
+    ])
+    .then((responses) => Promise.all(responses.map((response) => response.json())))
+    .then(([rooms, equipment, libraries]) => {
+        generateRoomCards({ rooms, libraries, equipment, cardDeck });
+    });
+
+    function formatMinutesHumanReadable(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        let formattedTime = "";
+        if (hours > 0) {
+            formattedTime += hours + " " + (hours === 1 ? "Stunde" : "Stunden");
+        }
+        if (remainingMinutes > 0) {
+            if (formattedTime.length > 0) {
+                formattedTime += " ";
+            }
+            formattedTime += remainingMinutes + " " + (remainingMinutes === 1 ? "Minute" : "Minuten");
+        }
+        return formattedTime;
+    }
+
+    function generateRoomCards({ rooms, libraries, equipment, cardDeck }) {
+        if (!(cardDeck instanceof HTMLDivElement)) {
+            return;
+        }
+
+        let result = "";
+        for (const room of rooms) {
+            const { branch, color, description, image, maxbookabletime, maxcapacity, roomnumber, roomid } = room;
+            const library = libraries.find((library) => library.library_id === branch);
+
+            const roomEquipment = equipment.filter((item) => item.roomid === room.roomid);
+
+            result += `
+            <div class="card mb-4" style="max-width:24rem;">
+                <img
+                    class="card-img-top"
+                    src="${image}"
+                    alt="${"Eine Darstellung des Raumes"}&nbsp;${roomnumber}"
+                />
+                <div class="card-body">
+                    <h2 class="card-title">
+                        ${roomnumber}&nbsp;<span
+                            class="badge"
+                            style="background-color: ${color};"
+                        ></span>
+                    </h2>
+                    <p>${description}</p>
+                    <hr />
+                    <!-- List of Properties -->
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="font-weight-bold">${"Bibliothek"}</span>: ${library.name}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="font-weight-bold">${"Maximale buchbare Zeit"}</span>: ${formatMinutesHumanReadable(parseInt(maxbookabletime, 10))}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="font-weight-bold">${"Maximale Kapazität"}</span>: ${maxcapacity} ${"Personen"}
+                        </li>
+                        ${roomEquipment.length > 0
+                            ? `<li class="list-group-item">
+                                    <span class="font-weight-bold">${"Ausstattung"}</span>:
+                                    <ul>
+                                        ${roomEquipment.map((item) => `<li>${item.name}</li>`).join("")}
+                                    </ul>
+                                </li>`
+                            : ""
+                        }
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-primary" href="/roomreservations?roomid=${roomid}">${"Diesen Raum buchen"}</a>
+                </div>
+            </div>
+        `;
+        }
+        cardDeck.innerHTML = result;
+    }
+</script>
