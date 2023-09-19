@@ -2468,13 +2468,6 @@
       "operationId": "listRoomReservationsLibrariesPublic",
       "parameters": [
         {
-          "description": "ISO 639-1",
-          "in": "query",
-          "name": "lang",
-          "required": false,
-          "type": "string"
-        },
-        {
           "description": "Request id header",
           "in": "header",
           "name": "x-koha-request-id",

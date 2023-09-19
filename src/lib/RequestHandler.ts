@@ -301,9 +301,6 @@ const endpoints: ApiEndpoints = {
         librariesPublic: {
             url: `${BASE_URL}/public/libraries`,
             cache: false,
-            queryParams: {
-                lang: locale,
-            },
         },
     },
     post: {
