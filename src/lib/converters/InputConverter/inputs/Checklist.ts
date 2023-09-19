@@ -13,7 +13,7 @@ export default class Checklist {
                 ${this.value.map(
                     (datum: any) => html`
                         <div class="form-control">
-                            <label class="label cursor-pointer">
+                            <label class="label cursor-pointer whitespace-nowrap">
                                 <input
                                     type="checkbox"
                                     id=${datum.name}

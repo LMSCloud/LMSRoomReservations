@@ -227,7 +227,7 @@ export class InputConverter {
      * @returns The rendered value as a TemplateResult.
      */
     private renderValue(value: InputTypeValue): TemplateResult {
-        return html`${value}`;
+        return html`<span class="whitespace-nowrap px-2">${value}</span>`;
     }
 
     /**
