@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { LitElement, TemplateResult, html, nothing } from "lit";
+import { LitElement, PropertyValueMap, TemplateResult, html, nothing } from "lit";
 import { customElement, property, query, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -129,7 +129,21 @@ export default class LMSBookie extends LitElement {
     }
 
     private shouldDisplayEquipment() {
-        return this.equipment.some((item: any) => item.roomid === this.selectedRoom?.roomid);
+        return this.equipment.some(
+            (item: any) => item.roomid === this.selectedRoom?.roomid && this.selectedRoom?.rooms !== undefined,
+        );
+    }
+
+    private getPreselectedRoomid() {
+        const queryParams = new URLSearchParams(window.location.search);
+        return queryParams.get("roomid");
+    }
+
+    protected override firstUpdated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
+        const preselectedRoom = this.getPreselectedRoomid();
+        if (preselectedRoom) {
+            this.selectedRoom = this.rooms?.find((room) => room.roomid == preselectedRoom);
+        }
     }
 
     override render() {
