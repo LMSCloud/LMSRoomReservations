@@ -297,6 +297,14 @@ const endpoints: ApiEndpoints = {
                 lang: locale,
             },
         },
+        // TODO: Replace librariesPublic on 22.11 w/ native endpoint
+        librariesPublic: {
+            url: `${BASE_URL}/public/libraries`,
+            cache: false,
+            queryParams: {
+                lang: locale,
+            },
+        },
     },
     post: {
         rooms: {

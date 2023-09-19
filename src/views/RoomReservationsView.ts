@@ -53,7 +53,8 @@ export default class RoomReservationsView extends LitElement {
         super.connectedCallback();
 
         Promise.all([
-            fetch("/api/v1/public/libraries"),
+            // TODO: Replace librariesPublic on 22.11 w/ native endpoint
+            requestHandler.get("librariesPublic"),
             requestHandler.get("openHoursPublic"),
             requestHandler.get("roomsPublic"),
             requestHandler.get("equipmentPublic"),

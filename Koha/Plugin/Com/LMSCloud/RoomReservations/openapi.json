@@ -2463,6 +2463,280 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Equipment#list"
     }
   },
+  "/public/libraries": {
+    "get": {
+      "operationId": "listRoomReservationsLibrariesPublic",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "description": "Request id header",
+          "in": "header",
+          "name": "x-koha-request-id",
+          "required": false,
+          "type": "integer"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "address1": {
+                  "description": "the first address line of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "address2": {
+                  "description": "the second address line of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "address3": {
+                  "description": "the third address line of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "city": {
+                  "description": "the city or province of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "country": {
+                  "description": "the county of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "email": {
+                  "description": "the primary email address of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "fax": {
+                  "description": "the fax number of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "geolocation": {
+                  "description": "geolocation of your library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "illemail": {
+                  "description": "the ILL staff email address of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ip": {
+                  "description": "the IP address for your library or branch",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "library_id": {
+                  "description": "internally assigned library identifier",
+                  "maxLength": 10,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "marc_org_code": {
+                  "description": "MARC Organization Code, see http:\/\/www.loc.gov\/marc\/organizations\/orgshome.html, when empty defaults to syspref MARCOrgCode",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "description": "Printable name of library",
+                  "type": "string"
+                },
+                "needs_override": {
+                  "description": "If the library needs an override to act as pickup location for a hold",
+                  "type": "boolean"
+                },
+                "notes": {
+                  "description": "notes related to your library or branch",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "phone": {
+                  "description": "the primary phone of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "pickup_location": {
+                  "description": "If the library can act as a pickup location",
+                  "type": "boolean"
+                },
+                "postal_code": {
+                  "description": "the postal code of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "public": {
+                  "description": "If the library is visible to the public",
+                  "type": "boolean"
+                },
+                "reply_to_email": {
+                  "description": "the email to be used as a Reply-To",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "return_path_email": {
+                  "description": "the email to be used as Return-Path",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "smtp_server": {
+                  "description": "The library effective SMTP server",
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "state": {
+                  "description": "the reqional state of the library",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "url": {
+                  "description": "the URL for your library or branch's website",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "library_id",
+                "name"
+              ],
+              "type": "object"
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "List libraries",
+      "tags": [
+        "libraries"
+      ],
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Libraries#list"
+    }
+  },
   "/public/open_hours": {
     "get": {
       "operationId": "getOpenHoursPublic",
