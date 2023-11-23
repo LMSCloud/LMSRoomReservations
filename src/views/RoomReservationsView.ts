@@ -8,13 +8,22 @@ import { __, attr__ } from "../lib/translate";
 import { LMSBookie, LMSCalendar } from "../main";
 import { tailwindStyles } from "../tailwind.lit";
 
+declare global {
+    interface HTMLElementTagNameMap {
+        "lms-bookie": LMSBookie;
+        "lms-calendar": LMSCalendar;
+    }
+}
+
 @customElement("lms-room-reservations-view")
 export default class RoomReservationsView extends LitElement {
     @state() hasLoaded = false;
 
-    @state() selectedRoom: any | undefined;
+    @state() selectedRoom?: any;
 
-    @property({ type: String }) borrowernumber: string = "";
+    @property({ type: String }) borrowernumber?: string;
+
+    private patron?: Record<string, any>;
 
     private bookings: any[] = [];
 
@@ -60,14 +69,17 @@ export default class RoomReservationsView extends LitElement {
             requestHandler.get("equipmentPublic"),
             requestHandler.get("settingsPublic", undefined, ["default_max_booking_time"]),
             requestHandler.get("bookingsPublic"),
+            requestHandler.get("patronPublic"),
         ])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
-            .then(([libraries, openHours, rooms, equipment, default_max_booking_time, bookings]) => {
-                (this.libraries = libraries), (this.openHours = openHours);
+            .then(([libraries, openHours, rooms, equipment, default_max_booking_time, bookings, patron]) => {
+                this.libraries = libraries;
+                this.openHours = openHours;
                 this.rooms = rooms;
                 this.equipment = equipment;
                 this.defaultMaxBookingtime = default_max_booking_time.value;
                 this.bookings = bookings;
+                this.patron = patron;
             })
             .then(() => {
                 this.lmsCalendar.activeDate = {
@@ -128,6 +140,7 @@ export default class RoomReservationsView extends LitElement {
         return html` <div class="flex w-full flex-col gap-4 lg:mx-4 lg:flex-row">
                 <lms-bookie
                     .borrowernumber=${this.borrowernumber}
+                    .patron=${this.patron}
                     .openHours=${this.openHours}
                     .rooms=${this.rooms}
                     .equipment=${this.equipment}

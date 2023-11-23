@@ -1,3 +1,5 @@
+import { faCheckCircle, faExclamationCircle, faInfoCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
 import dayjs from "dayjs";
 import { LitElement, PropertyValueMap, TemplateResult, html, nothing } from "lit";
 import { customElement, property, query, queryAll, state } from "lit/decorators.js";
@@ -17,7 +19,9 @@ type Alert = {
 
 @customElement("lms-bookie")
 export default class LMSBookie extends LitElement {
-    @property({ type: String }) borrowernumber: string | undefined;
+    @property({ type: String }) borrowernumber?: string;
+
+    @property({ type: Object }) patron?: Record<string, any>;
 
     @property({ type: Array }) openHours: any[] = [];
 
@@ -27,9 +31,9 @@ export default class LMSBookie extends LitElement {
 
     @property({ type: Number }) defaultMaxBookingTime: number = 0;
 
-    @property({ type: Object }) selectedRoom: any | undefined;
+    @property({ type: Object }) selectedRoom?: any;
 
-    @state() alert: Alert | undefined;
+    @state() alert?: Alert;
 
     @query("#room") roomSelect!: HTMLSelectElement;
 
@@ -42,11 +46,12 @@ export default class LMSBookie extends LitElement {
     @queryAll(".equipment-item")
     equipmentItemInputs!: NodeListOf<HTMLInputElement>;
 
-    private preselectedRoom: any | undefined;
+    private preselectedRoom?: any;
 
     static override styles = [tailwindStyles];
 
-    private async handleSubmit() {
+    private async handleSubmit(e: SubmitEvent) {
+        e.preventDefault();
         const inputs = [this.roomSelect, this.startDatetimeInput, this.durationInput, this.confirmationEmailInput];
         const [roomid, start, duration, confirmation] = inputs.map((input) => input.value);
 
@@ -80,7 +85,8 @@ export default class LMSBookie extends LitElement {
             this.alert = {
                 active: true,
                 type: "Success",
-                message: html`${__("Success")}! ${__("Your booking is set")}.`,
+                message: html`<h3 class="font-bold">${__("Success")}!</h3>
+                    <span class="text-xs">${__("Your booking is set")}.</span>`,
             };
 
             const event = new CustomEvent("updated", { bubbles: true });
@@ -92,7 +98,8 @@ export default class LMSBookie extends LitElement {
             this.alert = {
                 active: true,
                 type: "Warning",
-                message: html`${__("Sorry")}! ${message ?? `${__("Something went wrong")}.`}`,
+                message: html`<h3 class="font-bold">${__("Sorry")}!</h3>
+                    <span class="text-xs">${message ?? `${__("Something went wrong")}.`}</span>`,
             };
         }
     }
@@ -110,7 +117,7 @@ export default class LMSBookie extends LitElement {
      * @param defaultMaxBookingTime
      * @returns
      */
-    private generateTimeOptions() {
+    private renderTimeOptionsMaybe() {
         const maxBookingTime = this.selectedRoom?.maxbookabletime || this.defaultMaxBookingTime;
 
         return maxBookingTime
@@ -141,6 +148,25 @@ export default class LMSBookie extends LitElement {
         return queryParams.get("roomid");
     }
 
+    /** Tries to open the loginModal if no borrowernumber is obtained from koha. */
+    private showLoginModalMaybe() {
+        if (!this.borrowernumber) {
+            (document.getElementById("members")?.querySelector(".loginModal-trigger") as HTMLElement)?.click();
+        }
+    }
+
+    private renderLoginPromptMaybe() {
+        return !this.borrowernumber
+            ? html`<div class="alert my-2" role="alert">
+                  ${litFontawesome(faInfoCircle, { className: "inline-block w-4 h-4" })}
+                  <span>${__("Please log in to book rooms")}.</span>
+                  <div>
+                      <button class="btn btn-sm" @click=${this.showLoginModalMaybe}>${__("Log in")}</button>
+                  </div>
+              </div>`
+            : nothing;
+    }
+
     protected override updated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
         if (_changedProperties.has("rooms") && !this.selectedRoom) {
             this.preselectedRoom = this.getPreselectedRoomid();
@@ -153,136 +179,178 @@ export default class LMSBookie extends LitElement {
     override render() {
         const shouldDisplayEquipment = this.shouldDisplayEquipment();
         return html`
-            <div ?hidden=${!this.rooms.length} class="card bg-base-100 shadow-lg">
+            <div class="card bg-base-100 shadow-lg">
                 <div class="card-body">
                     <section>
                         <h5 id="book-it-here">${__("Book a room")}</h5>
+                        ${this.renderLoginPromptMaybe()}
                         <div
                             class="${classMap({
-                                "alert-success": this.alert?.type === "Success",
-                                "alert-warning": this.alert?.type === "Warning",
-                                hidden: !this.alert,
-                            })} alert"
+                                hidden: !(this.alert?.type === "Warning"),
+                            })} alert alert-warning my-2"
                             role="alert"
                         >
-                            <button
-                                @click=${this.dismissAlert}
-                                type="button"
-                                class="close"
-                                data-dismiss="alert"
-                                aria-label="Close"
-                            >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <span> ${this.alert?.message} </span>
+                            ${litFontawesome(faExclamationCircle, { className: "inline-block w-4 h-4" })}
+                            <div>${this.alert?.message}</div>
+                            <div>
+                                <button
+                                    @click=${this.dismissAlert}
+                                    type="button"
+                                    class="btn btn-circle btn-ghost btn-sm"
+                                    data-dismiss="alert"
+                                    aria-label="Close"
+                                >
+                                    ${litFontawesome(faTimes, { className: "inline-block w-4 h-4" })}
+                                </button>
+                            </div>
                         </div>
                         <div id="booking">
-                            <div class="form-control">
-                                <label class="label" for="room">
-                                    <span class="label-text"> ${__("Room")} </span>
-                                </label>
-                                <select
-                                    id="room"
-                                    name="room"
-                                    class="select select-bordered w-full"
-                                    aria-describedby="booking-help"
-                                    @change=${this.handleRoomChange}
-                                >
-                                    <option value="">${__("Please select a room")}</option>
-                                    ${map(this.rooms, (room) => {
-                                        const { roomid, roomnumber } = room;
-                                        const isSelected = roomid === this.selectedRoom?.roomid;
-                                        return html`<option value=${roomid} ?selected=${isSelected}>
-                                            ${roomnumber}
-                                        </option>`;
-                                    })}
-                                </select>
-                            </div>
-                            <div class="form-control">
-                                <label class="label" for="start-datetime">
-                                    <span class="label-text"> ${__("Date & Time")} </span>
-                                </label>
-                                <input
-                                    type="datetime-local"
-                                    id="start-datetime"
-                                    name="start-datetime"
-                                    class="input input-bordered w-full"
-                                    aria-describedby="booking-help"
-                                />
-                            </div>
-                            <div class="form-control">
-                                <label class="label" for="duration">
-                                    <span class="label-text">${__("Duration")}</span></label
-                                >
-                                <input
-                                    type="number"
-                                    list="durations"
-                                    id="duration"
-                                    name="duration"
-                                    class="input input-bordered w-full"
-                                    aria-describedby="booking-help"
-                                    placeholder=${attr__("In minutes, e.g. 60")}
-                                    max=${ifDefined(this.selectedRoom?.maxbookabletime)}
-                                />
-                                <datalist id="durations" multiple>${this.generateTimeOptions()}</datalist>
-                            </div>
-                            <div class=${classMap({ hidden: !shouldDisplayEquipment })}>
-                                <div class="divider">
-                                    <span class="label-text"> ${__("Equipment")} </span>
-                                </div>
-                                ${map(
-                                    this.equipment.filter((item) => item.roomid == this.selectedRoom?.roomid),
-                                    (item) => {
-                                        const { equipmentid, equipmentname } = item;
-                                        return html`
-                                            <div class="form-control">
-                                                <label class="label" for=${equipmentid}>
-                                                    <input
-                                                        type="checkbox"
-                                                        class="equipment-item checkbox"
-                                                        id=${equipmentid}
-                                                    />
-                                                    <span class="label-text"> ${equipmentname} </span>
-                                                </label>
-                                            </div>
-                                        `;
-                                    },
-                                )}
-                                <div class="divider"></div>
-                            </div>
-                            <div class="form-control">
-                                <label class="label" for="confirmation">
-                                    <span class="label-text"> ${__("Confirmation Email")} </span>
-                                </label>
+                            <form @submit=${this.handleSubmit}>
                                 <div class="form-control">
-                                    <label class="label" for="confirmation-email">
-                                        <input
-                                            type="checkbox"
-                                            value="1"
-                                            id="confirmation-email"
-                                            name="confirmation-email"
-                                            class="checkbox"
-                                            checked
-                                        />
-                                        <span class="label-text">
-                                            ${__("Should we send you a confirmation email")}?
-                                        </span>
+                                    <label class="label" for="room">
+                                        <span class="label-text"> ${__("Room")} </span>
                                     </label>
-                                </div>
-                            </div>
-                            <div class="my-4">
-                                <small class="text-muted" id="booking-help"
-                                    >${__("Pick a room, a date, a time")}<span
-                                        class=${classMap({ hidden: !shouldDisplayEquipment })}
-                                        >, ${__("items you'd like to use")}</span
+                                    <select
+                                        id="room"
+                                        name="room"
+                                        class="select select-bordered w-full"
+                                        aria-describedby="booking-help"
+                                        @change=${this.handleRoomChange}
+                                        ?disabled=${!this.borrowernumber}
+                                        required
                                     >
-                                    ${__("and the duration of your reservation")}.</small
-                                >
-                            </div>
-                            <div class="card-actions justify-end">
-                                <button type="submit" @click=${this.handleSubmit} class="btn btn-primary">
-                                    ${__("Submit")}
-                                </button>
+                                        <option value="">${__("Please select a room")}</option>
+                                        ${map(this.rooms, (room) => {
+                                            const { roomid, roomnumber } = room;
+                                            const isSelected = roomid === this.selectedRoom?.roomid;
+                                            return html`<option value=${roomid} ?selected=${isSelected}>
+                                                ${roomnumber}
+                                            </option>`;
+                                        })}
+                                    </select>
+                                </div>
+                                <div class="form-control">
+                                    <label class="label" for="start-datetime">
+                                        <span class="label-text"> ${__("Date & Time")} </span>
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        id="start-datetime"
+                                        name="start-datetime"
+                                        class="input input-bordered w-full"
+                                        aria-describedby="booking-help"
+                                        ?disabled=${!this.borrowernumber}
+                                        required
+                                    />
+                                </div>
+                                <div class="form-control">
+                                    <label class="label" for="duration">
+                                        <span class="label-text">${__("Duration")}</span></label
+                                    >
+                                    <input
+                                        type="number"
+                                        list="durations"
+                                        id="duration"
+                                        name="duration"
+                                        class="input input-bordered w-full"
+                                        aria-describedby="booking-help"
+                                        placeholder=${attr__("In minutes, e.g. 60")}
+                                        max=${ifDefined(this.selectedRoom?.maxbookabletime)}
+                                        ?disabled=${!this.borrowernumber}
+                                        required
+                                    />
+                                    <datalist id="durations">${this.renderTimeOptionsMaybe()}</datalist>
+                                </div>
+                                <div class=${classMap({ hidden: !shouldDisplayEquipment })}>
+                                    <div class="divider">
+                                        <span class="label-text"> ${__("Equipment")} </span>
+                                    </div>
+                                    ${map(
+                                        this.equipment.filter((item) => item.roomid == this.selectedRoom?.roomid),
+                                        (item) => {
+                                            const { equipmentid, equipmentname } = item;
+                                            return html`
+                                                <div class="form-control">
+                                                    <label class="label" for=${equipmentid}>
+                                                        <input
+                                                            type="checkbox"
+                                                            class="equipment-item checkbox"
+                                                            id=${equipmentid}
+                                                            ?disabled=${!this.borrowernumber}
+                                                        />
+                                                        <span class="label-text"> ${equipmentname} </span>
+                                                    </label>
+                                                </div>
+                                            `;
+                                        },
+                                    )}
+                                    <div class="divider"></div>
+                                </div>
+                                <div class="form-control">
+                                    <label class="label" for="confirmation">
+                                        <span class="label-text"> ${__("Confirmation Email")} </span>
+                                    </label>
+                                    <div class="form-control">
+                                        <label class="label" for="confirmation-email">
+                                            <input
+                                                type="checkbox"
+                                                value="1"
+                                                id="confirmation-email"
+                                                name="confirmation-email"
+                                                class="checkbox"
+                                                ?disabled=${!this.borrowernumber}
+                                                checked
+                                            />
+                                            <span class="label-text">
+                                                ${__("Should we send you a confirmation email")}?
+                                            </span>
+                                        </label>
+                                        <div
+                                            class="${classMap({
+                                                hidden: !this.patron?.["email"],
+                                            })} text-sm"
+                                        >
+                                            ${__("We would use")}&nbsp;
+                                            <span class="badge badge-neutral badge-outline">
+                                                ${this.patron?.["email"]}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="my-4">
+                                    <small class="text-muted" id="booking-help"
+                                        >${__("Pick a room, a date, a time")}<span
+                                            class=${classMap({ hidden: !shouldDisplayEquipment })}
+                                            >, ${__("items you'd like to use")}</span
+                                        >
+                                        ${__("and the duration of your reservation")}.</small
+                                    >
+                                </div>
+                                <div class="card-actions justify-end">
+                                    <button type="submit" class="btn btn-primary" ?disabled=${!this.borrowernumber}>
+                                        ${__("Submit")}
+                                    </button>
+                                </div>
+                            </form>
+                            <div
+                                class="${classMap({
+                                    hidden: !(this.alert?.type === "Success"),
+                                })} alert alert-success my-2"
+                                role="alert"
+                            >
+                                ${litFontawesome(faCheckCircle, { className: "inline-block w-4 h-4" })}
+                                <div>${this.alert?.message}</div>
+                                <div>
+                                    <button
+                                        @click=${this.dismissAlert}
+                                        type="button"
+                                        class="btn btn-circle btn-ghost btn-sm"
+                                        data-dismiss="alert"
+                                        aria-label="Close"
+                                    >
+                                        ${litFontawesome(faTimes, { className: "inline-block w-4 h-4" })}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </section>
