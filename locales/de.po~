@@ -1,206 +1,210 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# German translations for PACKAGE package
+# German translation for PACKAGE.
+# Copyright (C) 2023 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Paul Derscheid <paul.derscheid@lmscloud.de>, 2023.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
-"MIME-Version: \n"
+"POT-Creation-Date: 2023-02-16 20:18+0100\n"
+"PO-Revision-Date: 2023-08-31 15:07+0200\n"
+"Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: src/dynamically_added_strings.ts:8
 msgid "setting"
-msgstr ""
+msgstr "Einstellung"
 
 #: src/dynamically_added_strings.ts:9
 msgid "value"
-msgstr ""
+msgstr "Wert"
 
 #: src/dynamically_added_strings.ts:10
 msgid "description"
-msgstr ""
+msgstr "Beschreibung"
 
 #: src/dynamically_added_strings.ts:11
 msgid "bookingid"
-msgstr ""
+msgstr "Buchungsid"
 
 #: src/dynamically_added_strings.ts:12
 msgid "borrowernumber"
-msgstr ""
+msgstr "Benutzer*innennummer"
 
 #: src/dynamically_added_strings.ts:13
 msgid "roomid"
-msgstr ""
+msgstr "Raumid"
 
 #: src/dynamically_added_strings.ts:14
 msgid "start"
-msgstr ""
+msgstr "Start"
 
 #: src/dynamically_added_strings.ts:15
 msgid "end"
-msgstr ""
+msgstr "Ende"
 
 #: src/dynamically_added_strings.ts:16
 msgid "blackedout"
-msgstr ""
+msgstr "Ist Sperrzeit"
 
 #: src/dynamically_added_strings.ts:17
 msgid "equipment"
-msgstr ""
+msgstr "Gegenstände"
 
 #: src/dynamically_added_strings.ts:18
 msgid "created"
-msgstr ""
+msgstr "Hinzugefügt"
 
 #: src/dynamically_added_strings.ts:19
 msgid "updated_at"
-msgstr ""
+msgstr "Aktualisiert"
 
 #: src/dynamically_added_strings.ts:20 src/lib/converters/timeConverter.ts:11
 msgid "day"
-msgstr ""
+msgstr "Tag"
 
 #: src/dynamically_added_strings.ts:21
 msgid "Monday"
-msgstr ""
+msgstr "Montag"
 
 #: src/dynamically_added_strings.ts:22
 msgid "Tuesday"
-msgstr ""
+msgstr "Dienstag"
 
 #: src/dynamically_added_strings.ts:23
 msgid "Wednesday"
-msgstr ""
+msgstr "Mittwoch"
 
 #: src/dynamically_added_strings.ts:24
 msgid "Thursday"
-msgstr ""
+msgstr "Donnerstag"
 
 #: src/dynamically_added_strings.ts:25
 msgid "Friday"
-msgstr ""
+msgstr "Freitag"
 
 #: src/dynamically_added_strings.ts:26
 msgid "Saturday"
-msgstr ""
+msgstr "Samstag"
 
 #: src/dynamically_added_strings.ts:27
 msgid "Sunday"
-msgstr ""
+msgstr "Sonntag"
 
 #: src/components/LMSConfirmationModal.ts:45 src/components/LMSTable.ts:638
 #: src/components/custom/LMSEquipmentItem.ts:170
 #: src/components/custom/LMSRoom.ts:182
 msgid "Abort"
-msgstr ""
+msgstr "Abbrechen"
 
 #: src/components/LMSConfirmationModal.ts:46
 msgid "Confirm"
-msgstr ""
+msgstr "Bestäigen"
 
 #: src/components/LMSDataNavbar.ts:91
 msgid "Table Controls"
-msgstr ""
+msgstr "Tabellen-Steuerung"
 
 #: src/components/LMSModal.ts:244
 msgid "Add"
-msgstr ""
+msgstr "Hinzufügen"
 
 #: src/components/LMSModal.ts:275
 msgid "Close"
-msgstr ""
+msgstr "Abbrechen"
 
 #: src/components/LMSModal.ts:281
 msgid "Create"
-msgstr ""
+msgstr "Hinzufügen"
 
 #: src/components/LMSPagination.ts:138
 msgid "Table navigation"
-msgstr ""
+msgstr "Tabellen-Navigation"
 
 #: src/components/LMSPagination.ts:144
 msgid "Previous"
-msgstr ""
+msgstr "Zurück"
 
 #: src/components/LMSPagination.ts:167
 msgid "Next"
-msgstr ""
+msgstr "Weiter"
 
 #: src/components/LMSPagination.ts:177
 msgid "Loading"
-msgstr ""
+msgstr "Läd"
 
 #: src/components/LMSSearch.ts:243 src/components/LMSSearch.ts:244
 msgid "Search"
-msgstr ""
+msgstr "Suche"
 
 #: src/components/LMSTable.ts:76
 msgid "No data to display"
-msgstr ""
+msgstr "Es sind keine Daten vorhanden, die angezeigt werden könnten"
 
 #: src/components/LMSTable.ts:250 src/components/custom/LMSEquipmentItem.ts:79
 #: src/components/custom/LMSRoom.ts:86
 msgid "Please confirm"
-msgstr ""
+msgstr "Bitte bestätigen"
 
 #: src/components/LMSTable.ts:254 src/components/custom/LMSEquipmentItem.ts:83
 #: src/components/custom/LMSRoom.ts:90
 msgid "Are you sure you want to delete: "
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie folgendes löschen möchten: "
 
 #: src/components/LMSTable.ts:257 src/components/custom/LMSEquipmentItem.ts:86
 #: src/components/custom/LMSRoom.ts:93
 msgid "Are you sure you want to delete this entry?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie diesen Eintrag löschen möchten?"
 
 #: src/components/LMSTable.ts:336
 msgid "Path"
-msgstr ""
+msgstr "Pfad"
 
 #: src/components/LMSTable.ts:570
 msgid "No matches found"
-msgstr ""
+msgstr "Keine Treffer gefunden"
 
 #: src/components/LMSTable.ts:571
 msgid "Try refining your search."
-msgstr ""
+msgstr "Versuchen Sie, Ihre Suche zu verfeineren."
 
 #: src/components/LMSTable.ts:572
 msgid "Help"
-msgstr ""
+msgstr "Hilfe"
 
 #: src/components/LMSTable.ts:600
 msgid "actions"
-msgstr ""
+msgstr "Aktionen"
 
 #: src/components/LMSTable.ts:622 src/components/LMSTable.ts:629
 #: src/components/custom/LMSEquipmentItem.ts:174
 #: src/components/custom/LMSRoom.ts:186
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: src/components/LMSTable.ts:646 src/components/LMSTable.ts:651
 #: src/components/custom/LMSEquipmentItem.ts:180
 #: src/components/custom/LMSRoom.ts:192
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 #: src/components/LMSTable.ts:659 src/components/LMSTable.ts:664
 #: src/components/custom/LMSEquipmentItem.ts:186
 #: src/components/custom/LMSRoom.ts:198
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
 #: src/components/LMSToast.ts:53
 msgid "sec ago"
-msgstr ""
+msgstr "Sek."
 
 #: src/docs/searchSyntax.ts:4
 msgid "Advanced Search Syntax"
@@ -216,7 +220,9 @@ msgid "Syntax: "
 msgstr ""
 
 #: src/docs/searchSyntax.ts:7
-msgid "This will match results where the given field name matches the specified value."
+msgid ""
+"This will match results where the given field name matches the specified "
+"value."
 msgstr ""
 
 #: src/docs/searchSyntax.ts:9 src/docs/searchSyntax.ts:23
@@ -260,11 +266,15 @@ msgid "Multi-field Filtering"
 msgstr ""
 
 #: src/docs/searchSyntax.ts:31
-msgid "This will filter the response to only those results where both field1 contains value1 AND field2 contains value2."
+msgid ""
+"This will filter the response to only those results where both field1 "
+"contains value1 AND field2 contains value2."
 msgstr ""
 
 #: src/docs/searchSyntax.ts:36
-msgid " will return results where the name field is John AND the age field equals 25."
+msgid ""
+" will return results where the name field is John AND the age field equals "
+"25."
 msgstr ""
 
 #: src/docs/searchSyntax.ts:39
@@ -272,7 +282,8 @@ msgid "OR Queries"
 msgstr ""
 
 #: src/docs/searchSyntax.ts:41
-msgid "This will return results where the fieldname is either value1 OR value2."
+msgid ""
+"This will return results where the fieldname is either value1 OR value2."
 msgstr ""
 
 #: src/docs/searchSyntax.ts:47
@@ -280,7 +291,9 @@ msgid "Exact Matches"
 msgstr ""
 
 #: src/docs/searchSyntax.ts:48
-msgid "If you quote the search term in double quotes, it will find only exact matches."
+msgid ""
+"If you quote the search term in double quotes, it will find only exact "
+"matches."
 msgstr ""
 
 #: src/docs/searchSyntax.ts:54
@@ -288,7 +301,9 @@ msgid "Wildcard Matches"
 msgstr ""
 
 #: src/docs/searchSyntax.ts:57
-msgid "If a value is not quoted, it will perform a search with wildcard matches, meaning it will return results where the field contains the specified value."
+msgid ""
+"If a value is not quoted, it will perform a search with wildcard matches, "
+"meaning it will return results where the field contains the specified value."
 msgstr ""
 
 #: src/docs/searchSyntax.ts:65
@@ -296,7 +311,9 @@ msgid "Nested Data Query"
 msgstr ""
 
 #: src/docs/searchSyntax.ts:68
-msgid "If you are requesting related data be embedded into the response one can query on the related data using dot notation in the field names."
+msgid ""
+"If you are requesting related data be embedded into the response one can "
+"query on the related data using dot notation in the field names."
 msgstr ""
 
 #: src/docs/searchSyntax.ts:74
@@ -312,464 +329,482 @@ msgid "Bare Search"
 msgstr ""
 
 #: src/docs/searchSyntax.ts:81
-msgid "A bare search without keywords will search all fields with forward and backward truncation meaning *SEARCH_TERM*. This can be used for broad queries where the specific field isn't known."
+msgid ""
+"A bare search without keywords will search all fields with forward and "
+"backward truncation meaning *SEARCH_TERM*. This can be used for broad "
+"queries where the specific field isn't known."
 msgstr ""
 
 #: src/extensions/LMSBookingsModal.ts:22
 msgid "Add Booking"
-msgstr ""
+msgstr "Buchung hinzufügen"
 
 #: src/extensions/LMSBookingsModal.ts:30
 msgid "Roomid (Changing this resets other fields)"
-msgstr ""
+msgstr "Raum (Änderung überschreibt andere Felder)"
 
 #: src/extensions/LMSBookingsModal.ts:36
 msgid "Borrowernumber (Search)"
-msgstr ""
+msgstr "Benutzer*innennummer (Suche)"
 
 #: src/extensions/LMSBookingsModal.ts:37
 msgid "The borrowernumber of the borrower which the booking is for"
-msgstr ""
+msgstr "Die Benutzernr. für die die Buchung bestimmt ist"
 
 #: src/extensions/LMSBookingsModal.ts:43
 msgid "Starts at"
-msgstr ""
+msgstr "Startet am"
 
 #: src/extensions/LMSBookingsModal.ts:49
 msgid "Ends at"
-msgstr ""
+msgstr "Endet am"
 
 #: src/extensions/LMSBookingsModal.ts:55
 msgid "Equipment items"
-msgstr ""
+msgstr "Gegenstände"
 
 #: src/extensions/LMSBookingsModal.ts:62
 msgid "Is blackout"
-msgstr ""
+msgstr "Ist Sperrzeit"
 
 #: src/extensions/LMSBookingsModal.ts:68
 msgid "Send confirmation to patron"
-msgstr ""
+msgstr "Bestätigung an Benutzer*in senden"
 
 #: src/extensions/LMSEquipmentModal.ts:13
 msgid "Add Equipment"
-msgstr ""
+msgstr "Gegenstände hinzufügen"
 
 #: src/extensions/LMSEquipmentModal.ts:21
 #: src/components/custom/LMSEquipmentItem.ts:131
 msgid "Equipmentname"
-msgstr ""
+msgstr "Bezeichnung"
 
 #: src/extensions/LMSEquipmentModal.ts:22
 msgid "An identifier for the equipment, e.g. 'Laptop' or '3D-Printer'"
-msgstr ""
+msgstr "Eine Bezeichnung für den Gegenstand, bspw. ‘Laptop’ oder ‘3D-Drucker’"
 
 #: src/extensions/LMSEquipmentModal.ts:28 src/extensions/LMSRoomModal.ts:45
 #: src/components/custom/LMSEquipmentItem.ts:137
 #: src/components/custom/LMSRoom.ts:147
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
 #: src/extensions/LMSEquipmentModal.ts:29
 msgid "A short description for the equipment"
-msgstr ""
+msgstr "Eine kurze Beschreibung des Gegenstands"
 
 #: src/extensions/LMSEquipmentModal.ts:35 src/extensions/LMSRoomModal.ts:38
 #: src/components/custom/LMSEquipmentItem.ts:142
 #: src/components/custom/LMSRoom.ts:156
 msgid "Image"
-msgstr ""
+msgstr "Bild"
 
 #: src/extensions/LMSEquipmentModal.ts:36
 msgid "A URL for the image of the equipment, e.g. 'https://example.com/room'"
 msgstr ""
+"Eine URL für das Bild des Gegenstandes, bspw. ‘https://example.com/room'"
 
 #: src/extensions/LMSEquipmentModal.ts:42
 msgid "Max time the equipment is allowed to be booked (in minutes), e.g. '120'"
-msgstr ""
+msgstr "Die maximale Buchungszeit für den Gegenstand (in Minuten), bspw. ‘120’"
 
 #: src/extensions/LMSEquipmentModal.ts:43 src/extensions/LMSRoomModal.ts:53
 msgid "Max bookable time"
-msgstr ""
+msgstr "Maximale Buchungszeit"
 
 #: src/extensions/LMSEquipmentModal.ts:48
 msgid "You can assign this item to a room once its created."
 msgstr ""
+"Sie können diesen Gegenstand einem Raum hinzufügen sobald er hinzugefügt "
+"wurde."
 
 #: src/extensions/LMSRoomModal.ts:15
 msgid "Add a Room"
-msgstr ""
+msgstr "Raum hinzufügen"
 
 #: src/extensions/LMSRoomModal.ts:23
 msgid "Max capacity"
-msgstr ""
+msgstr "Maximalkapazität"
 
 #: src/extensions/LMSRoomModal.ts:25
-msgid "The max allowed number of people that can use this room at the same time, e.g. '10'"
+msgid ""
+"The max allowed number of people that can use this room at the same time, e."
+"g. '10'"
 msgstr ""
+"Die maximale Anzahl an Personen, die sich gleichzeitig im Raum aufhalten "
+"darf, bspw. ’10’"
 
 #: src/extensions/LMSRoomModal.ts:32 src/components/custom/LMSRoom.ts:152
 msgid "Color"
-msgstr ""
+msgstr "Farbe"
 
 #: src/extensions/LMSRoomModal.ts:39
 msgid "A URL for the image of the room, e.g. 'https://example.com/room'"
-msgstr ""
+msgstr "Eine URL für das Bild des Raums, bspw. ‘https://example.com/room'"
 
 #: src/extensions/LMSRoomModal.ts:46
-msgid "A short description for the room, e.g. 'Small room with blankets and couches'"
+msgid ""
+"A short description for the room, e.g. 'Small room with blankets and couches'"
 msgstr ""
+"Eine kurze Beschreibung des Raums, bspw. ‘Kleiner Raum mit Decken und "
+"Couches’"
 
 #: src/extensions/LMSRoomModal.ts:52
 msgid "Max time the room is allowed to be booked (in minutes), e.g. '120'"
-msgstr ""
+msgstr "Maximale Buchungszeit des Raums (in Minuten), bspw. ‘120’"
 
-#: src/extensions/LMSRoomModal.ts:58 src/views/RoomReservationsView.ts:184
+#: src/extensions/LMSRoomModal.ts:58 src/views/RoomReservationsView.ts:170
 #: src/components/custom/LMSRoom.ts:160
 msgid "Branch"
-msgstr ""
+msgstr "Zweigstelle"
 
 #: src/extensions/LMSRoomModal.ts:64 src/components/custom/LMSRoom.ts:135
 msgid "Roomnumber"
-msgstr ""
+msgstr "Bezeichnung"
 
 #: src/extensions/LMSRoomModal.ts:65
 msgid "An identifier for the room, e.g. '101' or 'Concert Hall'"
-msgstr ""
+msgstr "Eine Bezeichnung für den Raum, bspw. ‘101’ oder ‘Konzerthalle’"
 
 #: src/extensions/LMSRoomReservationsMenu.ts:30
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #: src/extensions/LMSRoomReservationsMenu.ts:36
 msgid "Rooms"
-msgstr ""
+msgstr "Räume"
 
 #: src/extensions/LMSRoomReservationsMenu.ts:42
-#: src/components/custom/LMSBookie.ts:266
+#: src/components/custom/LMSBookie.ts:213
 msgid "Equipment"
-msgstr ""
+msgstr "Gegenstände"
 
 #: src/extensions/LMSRoomReservationsMenu.ts:48
 msgid "Bookings"
-msgstr ""
+msgstr "Buchungen"
 
 #: src/extensions/LMSRoomReservationsMenu.ts:54
 msgid "Open Hours"
-msgstr ""
+msgstr "Öffnungszeiten"
 
 #: src/opac/PatronsBookingsTable.ts:36
 msgid "There has been a technical error. Please inform the staff."
 msgstr ""
+"Es ist ein technisches Problem aufgetreten. Bitte informieren Sie das "
+"Personal."
 
 #: src/opac/PatronsBookingsTable.ts:40
 msgid "Your bookings"
-msgstr ""
+msgstr "Ihre Buchungen"
 
 #: src/opac/PatronsBookingsTable.ts:41
 msgid "This table shows your current room reservations"
-msgstr ""
+msgstr "Diese Tabelle zeigt Ihre derzeitigen und vergangenen Buchungen an."
 
-#: src/opac/PatronsBookingsTable.ts:45 src/components/custom/LMSBookie.ts:211
+#: src/opac/PatronsBookingsTable.ts:45 src/components/custom/LMSBookie.ts:164
 msgid "Room"
-msgstr ""
+msgstr "Raum"
 
 #: src/opac/PatronsBookingsTable.ts:46
 msgid "Start"
-msgstr ""
+msgstr "Von"
 
 #: src/opac/PatronsBookingsTable.ts:47
 msgid "End"
-msgstr ""
+msgstr "Bis"
 
-#: src/views/RoomReservationsView.ts:120
+#: src/views/RoomReservationsView.ts:107
 msgid "Blocked"
-msgstr ""
+msgstr "Geblockt"
 
-#: src/views/RoomReservationsView.ts:120
+#: src/views/RoomReservationsView.ts:107
 msgid "Booked"
-msgstr ""
+msgstr "Gebucht"
 
-#: src/views/RoomReservationsView.ts:188
+#: src/views/RoomReservationsView.ts:174
 #: src/components/custom/LMSEquipmentItem.ts:147
 #: src/components/custom/LMSRoom.ts:172
 msgid "Max Bookable Time"
-msgstr ""
+msgstr "Maximale Buchungszeit"
 
-#: src/views/RoomReservationsView.ts:192 src/components/custom/LMSRoom.ts:141
+#: src/views/RoomReservationsView.ts:178 src/components/custom/LMSRoom.ts:141
 msgid "Max Capacity"
-msgstr ""
+msgstr "Maximalkapazität"
 
-#: src/views/RoomReservationsView.ts:193
+#: src/views/RoomReservationsView.ts:179
 msgid "persons"
-msgstr ""
+msgstr "Personen"
 
-#: src/views/RoomReservationsView.ts:199
+#: src/views/RoomReservationsView.ts:185
 msgid "Book this room"
-msgstr ""
+msgstr "Diesen Raum buchen"
 
 #: src/views/StaffBookingsView.ts:102
 msgid "You can add a new booking by clicking on the + button below"
 msgstr ""
+"Sie können eine neue Buchung hinzufügen, indem Sie auf den + Button unten "
+"rechts klicken"
 
 #: src/views/StaffEquipmentView.ts:66
 msgid "You can add a new equipment item by clicking on the + button below"
 msgstr ""
+"Sie können einen neuen Gegenstand hinzufügen, indem Sie auf den + Button "
+"unten rechts klicken"
 
 #: src/views/StaffOpenHoursView.ts:148
 msgid "Please select the branches you'd like to define open hours for"
 msgstr ""
+"Bitte wählen Sie die Zweigstellen aus, für die Sie Öffnungszeiten definieren "
+"möchten"
 
 #: src/views/StaffOpenHoursView.ts:169
 msgid "Update"
-msgstr ""
+msgstr "Aktualisieren"
 
 #: src/views/StaffRoomsView.ts:67
 msgid "You can add a new room by clicking on the + button below"
 msgstr ""
+"Sie können einen neuen Raum hinzufügen, indem Sie auf den + Button unten "
+"rechts klicken"
 
 #: src/views/StaffSettingsView.ts:56
 msgid "No settings found"
-msgstr ""
+msgstr "Keine Einstellungen gefunden"
 
-#: src/components/custom/LMSBookie.ts:88
+#: src/components/custom/LMSBookie.ts:81
 msgid "Success"
-msgstr ""
+msgstr "Erledigt"
 
-#: src/components/custom/LMSBookie.ts:89
+#: src/components/custom/LMSBookie.ts:81
 msgid "Your booking is set"
-msgstr ""
+msgstr "Ihre Buchung wurde eingetragen"
 
-#: src/components/custom/LMSBookie.ts:101
+#: src/components/custom/LMSBookie.ts:93
 msgid "Sorry"
-msgstr ""
+msgstr "Sorry"
 
-#: src/components/custom/LMSBookie.ts:102
+#: src/components/custom/LMSBookie.ts:93
 msgid "Something went wrong"
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten"
 
-#: src/components/custom/LMSBookie.ts:162
-msgid "Please log in to book rooms"
-msgstr ""
+#: src/components/custom/LMSBookie.ts:141
+msgid "Book a room"
+msgstr "Einen Raum buchen"
 
-#: src/components/custom/LMSBookie.ts:164
-msgid "Log in"
-msgstr ""
+#: src/components/custom/LMSBookie.ts:173
+msgid "Please select a room"
+msgstr "Bitte wählen Sie einen Raum"
 
 #: src/components/custom/LMSBookie.ts:185
-msgid "Book a room"
-msgstr ""
-
-#: src/components/custom/LMSBookie.ts:222
-msgid "Please select a room"
-msgstr ""
-
-#: src/components/custom/LMSBookie.ts:234
 msgid "Date & Time"
-msgstr ""
+msgstr "Datum & Uhrzeit"
 
-#: src/components/custom/LMSBookie.ts:248
+#: src/components/custom/LMSBookie.ts:197
 msgid "Duration"
-msgstr ""
+msgstr "Dauer"
+
+#: src/components/custom/LMSBookie.ts:206
+msgid "In minutes, e.g. 60"
+msgstr "In Minuten, bspw. 60"
+
+#: src/components/custom/LMSBookie.ts:237
+msgid "Confirmation Email"
+msgstr "Bestätigungsmail"
+
+#: src/components/custom/LMSBookie.ts:250
+msgid "Should we send you a confirmation email"
+msgstr "Möchten Sie eine Bestätigungsmail erhalten"
 
 #: src/components/custom/LMSBookie.ts:257
-msgid "In minutes, e.g. 60"
-msgstr ""
-
-#: src/components/custom/LMSBookie.ts:291
-msgid "Confirmation Email"
-msgstr ""
-
-#: src/components/custom/LMSBookie.ts:305
-msgid "Should we send you a confirmation email"
-msgstr ""
-
-#: src/components/custom/LMSBookie.ts:313
-msgid "We would use"
-msgstr ""
-
-#: src/components/custom/LMSBookie.ts:322
 msgid "Pick a room, a date, a time"
-msgstr ""
+msgstr "Wählen Sie einen Raum, ein Datum, eine Uhrzeit"
 
-#: src/components/custom/LMSBookie.ts:324
+#: src/components/custom/LMSBookie.ts:259
 msgid "items you'd like to use"
-msgstr ""
+msgstr "Gegenstände, die Sie nutzen möchten"
 
-#: src/components/custom/LMSBookie.ts:326
+#: src/components/custom/LMSBookie.ts:261
 msgid "and the duration of your reservation"
-msgstr ""
+msgstr "und die Dauer Ihrer Buchung"
 
-#: src/components/custom/LMSBookie.ts:331
+#: src/components/custom/LMSBookie.ts:266
 msgid "Submit"
-msgstr ""
+msgstr "Abschicken"
 
-#: src/components/custom/LMSBookie.ts:358
+#: src/components/custom/LMSBookie.ts:272
 msgid "Open hours"
-msgstr ""
+msgstr "Öffnungszeiten"
 
-#: src/components/custom/LMSBookie.ts:364
+#: src/components/custom/LMSBookie.ts:278
 msgid "Day"
-msgstr ""
+msgstr "Tag"
 
-#: src/components/custom/LMSBookie.ts:365
+#: src/components/custom/LMSBookie.ts:279
 msgid "Open from"
-msgstr ""
+msgstr "Von"
 
-#: src/components/custom/LMSBookie.ts:366
+#: src/components/custom/LMSBookie.ts:280
 msgid "Closed after"
-msgstr ""
+msgstr "Bis"
 
-#: src/components/custom/LMSBookie.ts:382
+#: src/components/custom/LMSBookie.ts:296
 msgid "Closed"
-msgstr ""
+msgstr "Geschlossen"
 
 #: src/components/custom/LMSEquipmentItem.ts:152
 msgid "Roomid"
-msgstr ""
+msgstr "Raum"
 
 #: src/components/custom/LMSEquipmentItem.ts:161
 msgid "No room associated"
-msgstr ""
+msgstr "Kein Raum assoziiert"
 
 #: src/components/custom/LMSPatronSearch.ts:246
 msgid "Cardno"
-msgstr ""
+msgstr "Ausweisnr"
 
 #: src/components/custom/LMSPatronSearch.ts:250
 msgid "Id"
-msgstr ""
+msgstr "Nr"
 
 #: src/lib/converters/datetimeConverters.ts:29
 msgid "Error: Invalid date"
-msgstr ""
+msgstr "Fehler: Ungültiges Datum"
 
 #: src/lib/converters/datetimeConverters.ts:80
 msgid "There's been an error"
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten"
 
 #: src/lib/converters/timeConverter.ts:11
 msgid "days"
-msgstr ""
+msgstr "Tage"
 
 #: src/lib/converters/timeConverter.ts:15
 msgid "hour"
-msgstr ""
+msgstr "Stunde"
 
 #: src/lib/converters/timeConverter.ts:15
 msgid "hours"
-msgstr ""
+msgstr "Stunden"
 
 #: src/lib/converters/timeConverter.ts:19
 msgid "minutes"
-msgstr ""
+msgstr "Minuten"
 
 #: src/lib/converters/InputConverter/InputConverter.ts:238
 #: src/lib/converters/InputConverter/inputs/modal/ModalChecklist.ts:72
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:44
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:34
 msgid "Please select an option"
-msgstr ""
+msgstr "Bitte wählen Sie eine Option"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:223
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/OpenHours.pm:165
 msgid "End time must be after start time"
-msgstr ""
+msgstr "Endzeit muss nach Startzeit liegen"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:232
 msgid "The patron is not allowed to book rooms."
-msgstr ""
+msgstr "Benutzer*in hat keine Berechtigung, Räume zu buchen."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:240
 msgid "The booking exceeds the maximum allowed time for the room."
-msgstr ""
+msgstr "Die Buchung überschreitet die maximale Buchungsdauer für diesen Raum."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:248
 msgid "The institution is closed during the selected time frame."
-msgstr ""
+msgstr "Die Institution ist während des gewählten Zeitraums geschlossen."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:256
 msgid "There is a conflicting booking."
-msgstr ""
+msgstr "Es gibt einen Konflikt mit einer anderen Buchung."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:267
 msgid "The borrower has reached the "
-msgstr ""
+msgstr "Benutzer*in hat das "
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:267
 msgid " limit of reservations."
-msgstr ""
+msgstr " Reservierungslimit erreicht."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:40
 msgid "Default maximum bookable time for all rooms"
-msgstr ""
+msgstr "Voreinstellung der maximalen Buchungsdauer für alle Räume"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:42
 msgid "A duration in minutes, e.g. 60 for an hour"
-msgstr ""
+msgstr "Eine Dauer in Minuten, bspw. 60 für eine Stunde"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:47
 msgid "Absolute reservation limit per patron"
-msgstr ""
+msgstr "Absolutes Reservierungslimit pro Benutzer*in"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:49
 msgid "A number, e.g. 5 for five reservations"
-msgstr ""
+msgstr "Eine Ganzzahl, bspw. 5 für fünf Reservierungen"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:54
 msgid "Daily reservation limit per patron"
-msgstr ""
+msgstr "Tägliches Reservierungslimit pro Benutzer*in zu einem beliebigen Datum"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:56
 msgid "A number, e.g. 3 for three reservations"
-msgstr ""
+msgstr "Eine Ganzzahl, bspw. 3 für drei Reservierungen"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:61
 msgid "Restricted patron categories which are not allowed to book rooms"
 msgstr ""
+"Beschränkte Benuzter*innenkategorien, denen es nicht erlaubt ist, Räume zu "
+"buchen"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:77
 msgid "Existing patron categories"
-msgstr ""
+msgstr "Existierende Benutzer*innenkategorien"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:83
-msgid "Message that is shown to restricted patron categories trying to book rooms"
+msgid ""
+"Message that is shown to restricted patron categories trying to book rooms"
 msgstr ""
+"Nachricht, die beschränkten Benutzer*innenkategorien, beim Versuch Räume zu "
+"buchen, angezeigt wird"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:85
 msgid "A message, e.g. 'You are not allowed to book rooms'"
-msgstr ""
+msgstr "Eine Nachricht, bspw. ‘Sie sind nicht berechtigt, Räume zu buchen.’"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:90
 msgid "Email address to which confirmation emails for patrons are mirrored"
-msgstr ""
+msgstr "Mailadresse, an die Bestätigungsmails gespiegelt werden"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:92
 msgid "An email address, e.g. contact@institution.com"
-msgstr ""
+msgstr "Eine Mailadresse, bspw. kontakt@institution.de"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:97
 msgid "Days after which past reservations are removed from the system"
 msgstr ""
+"Anzahl der Tage, nachdem vergangene Reservierungen aus dem System entfernt "
+"werden"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:99
 msgid "A number of days, e.g. 14"
-msgstr ""
+msgstr "Eine Anzahl Tage, bspw. 14"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:166
 msgid "absolute"
-msgstr ""
+msgstr "absolute"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:188
 msgid "daily"
-msgstr ""
+msgstr "tägliche"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:133
 msgid "The given value is not defined."
-msgstr ""
+msgstr "Der eingegebene Wert ist nicht definiert."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:199
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:269
@@ -777,7 +812,7 @@ msgstr ""
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:374
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:412
 msgid "The given value for "
-msgstr ""
+msgstr "Der eingegebene Wert für "
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:200
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:270
@@ -785,63 +820,119 @@ msgstr ""
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:375
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:413
 msgid "The given value: "
-msgstr ""
+msgstr "Der eingegebene Wert: "
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:201
 msgid " is not alphanumeric."
-msgstr ""
+msgstr " ist nicht alphanumerisch."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:203
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:272
 msgid " has not the given length."
-msgstr ""
+msgstr " hat nicht die angegebene Länge."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:205
 msgid " exceeds the maximum length."
-msgstr ""
+msgstr " überschreitet die Maximallänge."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:271
 msgid " is not a number."
-msgstr ""
+msgstr " ist keine Zahl."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:274
 msgid " is not positive."
-msgstr ""
+msgstr " ist nicht positiv."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:275
 msgid " exceeds the maximum value."
-msgstr ""
+msgstr " überschreitet den Maximalwert."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:277
 msgid " is not in the given range."
-msgstr ""
+msgstr " ist nicht im angegebenen Bereich."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:331
 msgid " is not a valid datetime value."
-msgstr ""
+msgstr " ist kein erlaubter DateTime-Wert."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:333
 msgid " is not after the current localtime."
-msgstr ""
+msgstr " liegt nicht nach der momentanen lokalen Uhrzeit."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:335
 msgid " is not before the given datetime."
-msgstr ""
+msgstr " liegt nicht vor dem angegebenen DateTime."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:378
-msgid " is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0)."
+msgid ""
+" is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or "
+"rgba(0-255, 0-255, 0-255, 0.0-1.0)."
 msgstr ""
+" ist keine Farbe im Format #RRGGBB oder rgb(0-255, 0-255, 0-255) oder "
+"rgba(0-255, 0-255, 0-255, 0.0-1.0)."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:414
 msgid " is not a time in the format HH:mm."
-msgstr ""
+msgstr " ist keine Uhrzeit im Format HH:mm."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/views/opac/calendar.tt:24
 msgid "Home"
-msgstr ""
+msgstr "Start"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/views/opac/calendar.tt:27
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/views/opac/calendar.tt:33
 msgid "Room Reservations"
-msgstr ""
+msgstr "Raumbuchungen"
 
+#~ msgid "Current Bookings"
+#~ msgstr "Aktuelle Buchungen"
+
+#~ msgid "Mon"
+#~ msgstr "Mo"
+
+#~ msgid "Tues"
+#~ msgstr "Di"
+
+#~ msgid "Wed"
+#~ msgstr "Mi"
+
+#~ msgid "Thurs"
+#~ msgstr "Do"
+
+#~ msgid "Fri"
+#~ msgstr "Fr"
+
+#~ msgid "Sat"
+#~ msgstr "Sa"
+
+#~ msgid "Sun"
+#~ msgstr "So"
+
+#~ msgid "Cancel"
+#~ msgstr "Abbrechen"
+
+#~ msgid "Ok"
+#~ msgstr "Ok"
+
+#~ msgid "current"
+#~ msgstr "momentan"
+
+#~ msgid "Room Number"
+#~ msgstr "Bezeichnung"
+
+#~ msgid "You need to login first to book rooms."
+#~ msgstr "Sie müssen sich erst einloggen, um Räume zu buchen."
+
+#~ msgid "You are not allowed to book rooms"
+#~ msgstr "Sie haben keine Berechtigung, Räume zu buchen"
+
+#~ msgid "You have reached the "
+#~ msgstr "Sie haben das "
+
+#~ msgid " is not a datetime in the format YYYY-MM-DDTHH:mm."
+#~ msgstr " ist kein DateTime im Format YYYY-MM-DDTHH:mm."
+
+#, fuzzy
+#~| msgid "End time must be after start time"
+#~ msgid "End time must be after start time."
+#~ msgstr "Endzeit muss vor Startzeit liegen"

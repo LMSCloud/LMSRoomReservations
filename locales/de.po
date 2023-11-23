@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-16 20:18+0100\n"
-"PO-Revision-Date: 2023-08-31 15:07+0200\n"
+"PO-Revision-Date: 2023-11-23 21:19+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #: src/dynamically_added_strings.ts:8
 msgid "setting"
@@ -454,7 +454,7 @@ msgstr ""
 msgid "Max time the room is allowed to be booked (in minutes), e.g. '120'"
 msgstr "Maximale Buchungszeit des Raums (in Minuten), bspw. ‘120’"
 
-#: src/extensions/LMSRoomModal.ts:58 src/views/RoomReservationsView.ts:170
+#: src/extensions/LMSRoomModal.ts:58 src/views/RoomReservationsView.ts:184
 #: src/components/custom/LMSRoom.ts:160
 msgid "Branch"
 msgstr "Zweigstelle"
@@ -476,7 +476,7 @@ msgid "Rooms"
 msgstr "Räume"
 
 #: src/extensions/LMSRoomReservationsMenu.ts:42
-#: src/components/custom/LMSBookie.ts:213
+#: src/components/custom/LMSBookie.ts:266
 msgid "Equipment"
 msgstr "Gegenstände"
 
@@ -502,7 +502,7 @@ msgstr "Ihre Buchungen"
 msgid "This table shows your current room reservations"
 msgstr "Diese Tabelle zeigt Ihre derzeitigen und vergangenen Buchungen an."
 
-#: src/opac/PatronsBookingsTable.ts:45 src/components/custom/LMSBookie.ts:164
+#: src/opac/PatronsBookingsTable.ts:45 src/components/custom/LMSBookie.ts:211
 msgid "Room"
 msgstr "Raum"
 
@@ -514,29 +514,29 @@ msgstr "Von"
 msgid "End"
 msgstr "Bis"
 
-#: src/views/RoomReservationsView.ts:107
+#: src/views/RoomReservationsView.ts:120
 msgid "Blocked"
 msgstr "Geblockt"
 
-#: src/views/RoomReservationsView.ts:107
+#: src/views/RoomReservationsView.ts:120
 msgid "Booked"
 msgstr "Gebucht"
 
-#: src/views/RoomReservationsView.ts:174
+#: src/views/RoomReservationsView.ts:188
 #: src/components/custom/LMSEquipmentItem.ts:147
 #: src/components/custom/LMSRoom.ts:172
 msgid "Max Bookable Time"
 msgstr "Maximale Buchungszeit"
 
-#: src/views/RoomReservationsView.ts:178 src/components/custom/LMSRoom.ts:141
+#: src/views/RoomReservationsView.ts:192 src/components/custom/LMSRoom.ts:141
 msgid "Max Capacity"
 msgstr "Maximalkapazität"
 
-#: src/views/RoomReservationsView.ts:179
+#: src/views/RoomReservationsView.ts:193
 msgid "persons"
 msgstr "Personen"
 
-#: src/views/RoomReservationsView.ts:185
+#: src/views/RoomReservationsView.ts:199
 msgid "Book this room"
 msgstr "Diesen Raum buchen"
 
@@ -572,83 +572,95 @@ msgstr ""
 msgid "No settings found"
 msgstr "Keine Einstellungen gefunden"
 
-#: src/components/custom/LMSBookie.ts:81
+#: src/components/custom/LMSBookie.ts:88
 msgid "Success"
 msgstr "Erledigt"
 
-#: src/components/custom/LMSBookie.ts:81
+#: src/components/custom/LMSBookie.ts:89
 msgid "Your booking is set"
 msgstr "Ihre Buchung wurde eingetragen"
 
-#: src/components/custom/LMSBookie.ts:93
+#: src/components/custom/LMSBookie.ts:101
 msgid "Sorry"
 msgstr "Sorry"
 
-#: src/components/custom/LMSBookie.ts:93
+#: src/components/custom/LMSBookie.ts:102
 msgid "Something went wrong"
 msgstr "Es ist ein Fehler aufgetreten"
 
-#: src/components/custom/LMSBookie.ts:141
+#: src/components/custom/LMSBookie.ts:162
+msgid "Please log in to book rooms"
+msgstr "Bitte loggen Sie sich ein, um Räume zu buchen"
+
+#: src/components/custom/LMSBookie.ts:164
+msgid "Log in"
+msgstr "Einloggen"
+
+#: src/components/custom/LMSBookie.ts:185
 msgid "Book a room"
 msgstr "Einen Raum buchen"
 
-#: src/components/custom/LMSBookie.ts:173
+#: src/components/custom/LMSBookie.ts:222
 msgid "Please select a room"
 msgstr "Bitte wählen Sie einen Raum"
 
-#: src/components/custom/LMSBookie.ts:185
+#: src/components/custom/LMSBookie.ts:234
 msgid "Date & Time"
 msgstr "Datum & Uhrzeit"
 
-#: src/components/custom/LMSBookie.ts:197
+#: src/components/custom/LMSBookie.ts:248
 msgid "Duration"
 msgstr "Dauer"
 
-#: src/components/custom/LMSBookie.ts:206
+#: src/components/custom/LMSBookie.ts:257
 msgid "In minutes, e.g. 60"
 msgstr "In Minuten, bspw. 60"
 
-#: src/components/custom/LMSBookie.ts:237
+#: src/components/custom/LMSBookie.ts:291
 msgid "Confirmation Email"
 msgstr "Bestätigungsmail"
 
-#: src/components/custom/LMSBookie.ts:250
+#: src/components/custom/LMSBookie.ts:305
 msgid "Should we send you a confirmation email"
 msgstr "Möchten Sie eine Bestätigungsmail erhalten"
 
-#: src/components/custom/LMSBookie.ts:257
+#: src/components/custom/LMSBookie.ts:313
+msgid "We would use"
+msgstr "Ihre Email-Adresse"
+
+#: src/components/custom/LMSBookie.ts:322
 msgid "Pick a room, a date, a time"
 msgstr "Wählen Sie einen Raum, ein Datum, eine Uhrzeit"
 
-#: src/components/custom/LMSBookie.ts:259
+#: src/components/custom/LMSBookie.ts:324
 msgid "items you'd like to use"
 msgstr "Gegenstände, die Sie nutzen möchten"
 
-#: src/components/custom/LMSBookie.ts:261
+#: src/components/custom/LMSBookie.ts:326
 msgid "and the duration of your reservation"
 msgstr "und die Dauer Ihrer Buchung"
 
-#: src/components/custom/LMSBookie.ts:266
+#: src/components/custom/LMSBookie.ts:331
 msgid "Submit"
 msgstr "Abschicken"
 
-#: src/components/custom/LMSBookie.ts:272
+#: src/components/custom/LMSBookie.ts:358
 msgid "Open hours"
 msgstr "Öffnungszeiten"
 
-#: src/components/custom/LMSBookie.ts:278
+#: src/components/custom/LMSBookie.ts:364
 msgid "Day"
 msgstr "Tag"
 
-#: src/components/custom/LMSBookie.ts:279
+#: src/components/custom/LMSBookie.ts:365
 msgid "Open from"
 msgstr "Von"
 
-#: src/components/custom/LMSBookie.ts:280
+#: src/components/custom/LMSBookie.ts:366
 msgid "Closed after"
 msgstr "Bis"
 
-#: src/components/custom/LMSBookie.ts:296
+#: src/components/custom/LMSBookie.ts:382
 msgid "Closed"
 msgstr "Geschlossen"
 
@@ -919,9 +931,6 @@ msgstr "Raumbuchungen"
 
 #~ msgid "Room Number"
 #~ msgstr "Bezeichnung"
-
-#~ msgid "You need to login first to book rooms."
-#~ msgstr "Sie müssen sich erst einloggen, um Räume zu buchen."
 
 #~ msgid "You are not allowed to book rooms"
 #~ msgstr "Sie haben keine Berechtigung, Räume zu buchen"
