@@ -24,14 +24,14 @@ use Koha::Patron;
 use Cwd qw(abs_path);
 use LWP::UserAgent;
 use MARC::Record;
-use Mojo::JSON qw(decode_json);
+use Mojo::JSON  qw(decode_json);
 use URI::Escape qw(uri_unescape);
 use Try::Tiny;
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper;
 
 ## Here we set our plugin version
-our $VERSION         = "4.1.4";
+our $VERSION         = "4.3.0";
 our $MINIMUM_VERSION = '21.05';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -39,7 +39,7 @@ our $metadata = {
     name            => 'LMSRoomReservations',
     author          => 'Paul Derscheid @ LMSCloud GmbH',
     date_authored   => '2009-01-27',
-    date_updated    => "2023-09-19",
+    date_updated    => "2023-11-23",
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
