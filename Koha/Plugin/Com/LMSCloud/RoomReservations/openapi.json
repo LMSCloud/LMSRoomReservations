@@ -2849,9 +2849,108 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::OpenHours#list"
     }
   },
-  "/public/patrons_bookings": {
+  "/public/patron": {
     "get": {
-      "operationId": "getPatronsBookingsPublic",
+      "operationId": "getPatronPublic",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response"
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "Get authorized patron",
+      "tags": [
+        "patron"
+      ],
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Patron#get"
+    }
+  },
+  "/public/patron/bookings": {
+    "get": {
+      "operationId": "getPatronBookingsPublic",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -2960,9 +3059,10 @@
       },
       "summary": "Get room bookings for an authenticated patron",
       "tags": [
+        "patron",
         "bookings"
       ],
-      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::PatronsBookings#list"
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Patron::Bookings#list"
     }
   },
   "/public/rooms": {

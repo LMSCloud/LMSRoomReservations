@@ -42,7 +42,7 @@ if (userMenuUl) {
             mainContent.innerHTML = "";
 
             const [patronsBookingsResponse, roomsResponse] = await Promise.all([
-                fetch("/api/v1/contrib/roomreservations/public/patrons_bookings"),
+                fetch("/api/v1/contrib/roomreservations/public/patron/bookings"),
                 fetch("/api/v1/contrib/roomreservations/public/rooms"),
             ]);
 
