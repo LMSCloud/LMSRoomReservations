@@ -76,7 +76,7 @@
   },
   "scripts": {
     "archive": "./tools/archive.mjs",
-    "build": "npm run format && ./tools/generate_tw_css_result.mjs -o src && npx rollup -c && ./p-kpz -r \"lms-room-reservations\" -p \"Koha/Plugin/Com/LMSCloud/RoomReservations.pm\"",
+    "build": "npm run format && ./tools/generate_tw_css_result.mjs -o src && npx rollup -c && p-kpz -r \"lms-room-reservations\" -p \"Koha/Plugin/Com/LMSCloud/RoomReservations.pm\"",
     "css:build": "./tools/generate_tw_css_result.mjs -o src",
     "docs:package": "./tools/generate_docs.mjs",
     "format": "prettier --write --cache --cache-location=.prettier.cache \"src/**/*.ts\" && find Koha/Plugin -type f -name '*.pl' -o -name '*.pm' -exec perltidy -b -nst -bext='/' {} \\;",
