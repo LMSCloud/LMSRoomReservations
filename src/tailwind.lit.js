@@ -4168,9 +4168,8 @@ details.collapse summary::-webkit-details-marker {
     width: 100%;
   }
 
-  .sm\\:min-w-max {
-    min-width: -moz-max-content;
-    min-width: max-content;
+  .sm\\:min-w-0 {
+    min-width: 0px;
   }
 
   .sm\\:flex-row {

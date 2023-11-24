@@ -157,7 +157,7 @@ export default class RoomReservationsView extends LitElement {
                     const library = this.libraries.find((library) => library.library_id === branch);
 
                     return html`
-                        <div class="card min-w-full border bg-base-100 sm:w-96 sm:min-w-max">
+                        <div class="card min-w-full border bg-base-100 sm:w-96 sm:min-w-0">
                             <figure>
                                 <img
                                     class="w-full object-cover"
