@@ -1,8 +1,8 @@
-import { LitElement, PropertyValueMap, html } from "lit";
+import { LitElement, PropertyValueMap, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { formatDatetimeByLocale } from "../lib/converters/datetimeConverters";
-import { locale } from "../lib/translate";
+import { __, locale } from "../lib/translate";
 
 @customElement("lms-patrons-bookings-table")
 export default class PatronsBookingsTable extends LitElement {
@@ -31,6 +31,47 @@ export default class PatronsBookingsTable extends LitElement {
         }
     }
 
+    private renderInfoMaybe() {
+        return this.patronsBookings.length
+            ? nothing
+            : html`
+                  <p>
+                      ${__(
+                          "You haven't made any room reservations yet. Future reservations will show up right here in your user profile.",
+                      )}
+                  </p>
+              `;
+    }
+
+    private renderPatronsBookingsTableMaybe() {
+        return !this.patronsBookings.length
+            ? nothing
+            : html`
+                  <p>${__("This table shows your current room reservations")}.</p>
+                  <table class="table-striped table-bordered table-responsive-sm table">
+                      <thead>
+                          <tr>
+                              <th>${__("Room")}</th>
+                              <th>${__("Start")}</th>
+                              <th>${__("End")}</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          ${map(this.patronsBookings, (booking) => {
+                              const { roomid, start, end } = booking;
+                              return html`
+                                  <tr>
+                                      <td>${this.rooms.find((room) => room.roomid == roomid).roomnumber}</td>
+                                      <td>${formatDatetimeByLocale(start, locale)}</td>
+                                      <td>${formatDatetimeByLocale(end, locale)}</td>
+                                  </tr>
+                              `;
+                          })}
+                      </tbody>
+                  </table>
+              `;
+    }
+
     override render() {
         if (this.error) {
             return html` <p>${__("There has been a technical error. Please inform the staff.")}</p> `;
@@ -38,28 +79,9 @@ export default class PatronsBookingsTable extends LitElement {
 
         return html`
             <h1>${__("Your bookings")}</h1>
-            <p>${__("This table shows your current room reservations")}.</p>
-            <table class="table-striped table-bordered table-responsive-sm table">
-                <thead>
-                    <tr>
-                        <th>${__("Room")}</th>
-                        <th>${__("Start")}</th>
-                        <th>${__("End")}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${map(this.patronsBookings, (booking) => {
-                        const { roomid, start, end } = booking;
-                        return html`
-                            <tr>
-                                <td>${this.rooms.find((room) => room.roomid == roomid).roomnumber}</td>
-                                <td>${formatDatetimeByLocale(start, locale)}</td>
-                                <td>${formatDatetimeByLocale(end, locale)}</td>
-                            </tr>
-                        `;
-                    })}
-                </tbody>
-            </table>
+            ${this.renderInfoMaybe()}
+            <a class="py-2" href="/roomreservations">${__("Make a reservation")}</a>
+            ${this.renderPatronsBookingsTableMaybe()}
         `;
     }
 }

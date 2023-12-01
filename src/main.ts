@@ -14,7 +14,6 @@ import LMSOpenHoursTable from "./extensions/LMSOpenHoursTable";
 import LMSRoomModal from "./extensions/LMSRoomModal";
 import LMSRoomReservationsMenu from "./extensions/LMSRoomReservationsMenu";
 import LMSSettingsTable from "./extensions/LMSSettingsTable";
-import PatronsBookingsTable from "./opac/PatronsBookingsTable";
 import RoomReservationsView from "./views/RoomReservationsView";
 import StaffBookingsView from "./views/StaffBookingsView";
 import StaffEquipmentView from "./views/StaffEquipmentView";
@@ -42,7 +41,6 @@ export {
     LMSSettingsTable,
     LMSTable,
     LMSToast,
-    PatronsBookingsTable,
     RoomReservationsView,
     StaffBookingsView,
     StaffEquipmentView,
