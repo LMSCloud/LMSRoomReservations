@@ -131,6 +131,7 @@ export default class LMSBookie extends LitElement {
     private handleRoomChange(e: Event) {
         const target = e.target as HTMLOptionElement;
         if (!target?.value) {
+            this.selectedRoom = undefined;
             return;
         }
 
@@ -138,9 +139,7 @@ export default class LMSBookie extends LitElement {
     }
 
     private shouldDisplayEquipment() {
-        return this.equipment.some(
-            (item: any) => item.roomid === this.selectedRoom?.roomid && this.selectedRoom?.rooms !== undefined,
-        );
+        return this.equipment.some((item: any) => item.roomid === this.selectedRoom?.roomid);
     }
 
     private getPreselectedRoomid() {
