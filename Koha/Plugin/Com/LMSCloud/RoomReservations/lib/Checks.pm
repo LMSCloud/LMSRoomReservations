@@ -9,7 +9,7 @@ use Try::Tiny;
 use Time::Piece;
 use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
+use POSIX            qw(setlocale);
 use Encode;
 
 use C4::Context;
@@ -28,13 +28,14 @@ BEGIN {
         is_open_during_booking_time
         has_conflicting_booking
         has_reached_reservation_limit
+        has_passed
     );
 }
 
 my $self   = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
 my $locale = C4::Context->preference('language');
-$ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
-$ENV{OUTPUT_CHARSET} = 'UTF-8';
+local $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
+local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
 setlocale Locale::Messages::LC_MESSAGES(), q{};
 textdomain 'com.lmscloud.roomreservations';
@@ -44,6 +45,19 @@ bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales
 my $BOOKINGS_TABLE   = $self ? $self->get_qualified_table_name('bookings')   : undef;
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
 my $ROOMS_TABLE      = $self ? $self->get_qualified_table_name('rooms')      : undef;
+
+sub has_passed {
+    my ($start_time) = @_;
+
+    # Parse the start time into a Time::Piece object
+    my $parsed_start_time = Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' );
+
+    # Get the current time as a Time::Piece object
+    my $current_time = localtime;
+
+    # Return true if the start time is in the past
+    return $parsed_start_time < $current_time;
+}
 
 sub is_bookable_time {
     my ( $room_id, $start_time, $end_time ) = @_;
@@ -104,11 +118,27 @@ sub is_open_during_booking_time {
 
     # Now we have to use Time::Piece to check if the $start_time's time portion is equal or
     # greater than the $start_hour and if the $end_time's time portion is equal or less than
-    # the $end_hour.
-    return Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms >=
-        Time::Piece->strptime( $start_hour, '%H:%M:%S' )->hms
-        && Time::Piece->strptime( $end_time, '%Y-%m-%dT%H:%M' )->hms <=
-        Time::Piece->strptime( $end_hour, '%H:%M:%S' )->hms;
+    # the $end_hour. We normalize the date components to a fixed date for time comparison.
+    my $fixed_date    = "1970-01-01";
+    my $booking_start = Time::Piece->strptime(
+        "$fixed_date " . Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms,
+        "%Y-%m-%d %H:%M:%S"
+    );
+    my $booking_end = Time::Piece->strptime(
+        "$fixed_date " . Time::Piece->strptime( $end_time, '%Y-%m-%dT%H:%M' )->hms,
+        "%Y-%m-%d %H:%M:%S"
+    );
+    my $branch_open = Time::Piece->strptime(
+        "$fixed_date " . Time::Piece->strptime( $start_hour, '%H:%M:%S' )->hms,
+        "%Y-%m-%d %H:%M:%S"
+    );
+    my $branch_close = Time::Piece->strptime(
+        "$fixed_date " . Time::Piece->strptime( $end_hour, '%H:%M:%S' )->hms,
+        "%Y-%m-%d %H:%M:%S"
+    );
+
+    return $booking_start->epoch >= $branch_open->epoch
+        && $booking_end->epoch <= $branch_close->epoch;
 }
 
 sub has_conflicting_booking {

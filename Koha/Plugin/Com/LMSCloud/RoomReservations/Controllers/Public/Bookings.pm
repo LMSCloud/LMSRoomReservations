@@ -12,7 +12,7 @@ use SQL::Abstract;
 use Time::Piece;
 use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
+use POSIX            qw(setlocale);
 use Encode;
 
 use C4::Context;
@@ -24,6 +24,7 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Checks qw(
     is_open_during_booking_time
     has_conflicting_booking
     has_reached_reservation_limit
+    has_passed
 );
 use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Actions qw( send_email_confirmation );
 
@@ -82,6 +83,9 @@ sub add {
 sub _check_and_save_booking {
     my ( $body, $c, $booking_id ) = @_;
 
+    local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+    local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
     my $dbh = C4::Context->dbh;
     $dbh->begin_work;          # start transaction
     $dbh->{AutoCommit} = 0;    # disable autocommit
@@ -96,8 +100,16 @@ sub _check_and_save_booking {
         );
     }
 
+    if ( has_passed( $body->{'start'} ) ) {
+        $dbh->rollback;
+        return $c->render(
+            status  => 400,
+            openapi => { error => __('A booking cannot be scheduled for a past date.') }
+        );
+    }
+
     if ( !is_bookable_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
-        $dbh->rollback;        # rollback transaction
+        $dbh->rollback;    # rollback transaction
         return $c->render(
             status  => 400,
             openapi => { error => __('The booking exceeds the maximum allowed time for the room.') }
@@ -105,7 +117,7 @@ sub _check_and_save_booking {
     }
 
     if ( !is_open_during_booking_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
-        $dbh->rollback;        # rollback transaction
+        $dbh->rollback;    # rollback transaction
         return $c->render(
             status  => 400,
             openapi => { error => __('The institution is closed during the selected time frame.') }
@@ -113,7 +125,7 @@ sub _check_and_save_booking {
     }
 
     if ( has_conflicting_booking( $body->{'roomid'}, $body->{'start'}, $body->{'end'}, $booking_id ) ) {
-        $dbh->rollback;        # rollback transaction
+        $dbh->rollback;    # rollback transaction
         return $c->render(
             status  => 400,
             openapi => { error => __('There is a conflicting booking.') }
@@ -123,7 +135,7 @@ sub _check_and_save_booking {
     my ( $has_reached_reservation_limit, $message ) =
         has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
     if ($has_reached_reservation_limit) {
-        $dbh->rollback;        # rollback transaction
+        $dbh->rollback;    # rollback transaction
         return $c->render(
             status  => 400,
             openapi => { error => __('You have reached the ') . $message . __(' limit of reservations.') }
