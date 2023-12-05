@@ -95,6 +95,10 @@ msgstr ""
 msgid "Sunday"
 msgstr ""
 
+#: src/dynamically_added_strings.ts:28
+msgid "Validation failed"
+msgstr ""
+
 #: src/components/LMSConfirmationModal.ts:45 src/components/LMSTable.ts:638
 #: src/components/custom/LMSEquipmentItem.ts:170
 #: src/components/custom/LMSRoom.ts:182
@@ -109,15 +113,15 @@ msgstr ""
 msgid "Table Controls"
 msgstr ""
 
-#: src/components/LMSModal.ts:244
+#: src/components/LMSModal.ts:255
 msgid "Add"
 msgstr ""
 
-#: src/components/LMSModal.ts:275
+#: src/components/LMSModal.ts:285
 msgid "Close"
 msgstr ""
 
-#: src/components/LMSModal.ts:281
+#: src/components/LMSModal.ts:291
 msgid "Create"
 msgstr ""
 
@@ -160,7 +164,7 @@ msgstr ""
 msgid "Are you sure you want to delete this entry?"
 msgstr ""
 
-#: src/components/LMSTable.ts:336
+#: src/components/LMSTable.ts:336 src/components/custom/ZodErrorElement.ts:52
 msgid "Path"
 msgstr ""
 
@@ -516,7 +520,7 @@ msgstr ""
 msgid "Book this room"
 msgstr ""
 
-#: src/views/StaffBookingsView.ts:102
+#: src/views/StaffBookingsView.ts:116
 msgid "You can add a new booking by clicking on the + button below"
 msgstr ""
 
@@ -648,6 +652,29 @@ msgstr ""
 msgid "Id"
 msgstr ""
 
+#: src/components/custom/ZodErrorElement.ts:49
+msgid "Code"
+msgstr ""
+
+#: src/components/custom/ZodErrorElement.ts:50
+msgid "Expected"
+msgstr ""
+
+#: src/components/custom/ZodErrorElement.ts:51
+msgid "Received"
+msgstr ""
+
+#: src/components/custom/ZodErrorElement.ts:53
+msgid "Message"
+msgstr ""
+
+#: src/components/custom/ZodErrorElement.ts:66
+#: src/lib/converters/InputConverter/InputConverter.ts:238
+#: src/lib/converters/InputConverter/inputs/modal/ModalChecklist.ts:72
+#: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:44
+msgid "Error"
+msgstr ""
+
 #: src/lib/converters/datetimeConverters.ts:29
 msgid "Error: Invalid date"
 msgstr ""
@@ -672,46 +699,40 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-#: src/lib/converters/InputConverter/InputConverter.ts:238
-#: src/lib/converters/InputConverter/inputs/modal/ModalChecklist.ts:72
-#: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:44
-msgid "Error"
-msgstr ""
-
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:34
 msgid "Please select an option"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:223
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/OpenHours.pm:165
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:214
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/OpenHours.pm:161
 msgid "End time must be after start time"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:232
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:224
 msgid "The patron is not allowed to book rooms."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:240
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:115
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:233
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:116
 msgid "The booking exceeds the maximum allowed time for the room."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:248
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:123
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:241
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:124
 msgid "The institution is closed during the selected time frame."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:256
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:131
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:249
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:132
 msgid "There is a conflicting booking."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:267
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:261
 msgid "The borrower has reached the "
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:267
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:141
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:261
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:142
 msgid " limit of reservations."
 msgstr ""
 
@@ -779,76 +800,76 @@ msgstr ""
 msgid "daily"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:133
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:128
 msgid "The given value is not defined."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:199
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:269
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:329
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:374
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:412
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:195
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:268
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:331
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:379
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:421
 msgid "The given value for "
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:200
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:270
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:330
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:375
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:413
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:196
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:269
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:332
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:380
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:422
 msgid "The given value: "
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:201
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:197
 msgid " is not alphanumeric."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:203
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:272
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:199
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:271
 msgid " has not the given length."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:205
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:201
 msgid " exceeds the maximum length."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:271
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:270
 msgid " is not a number."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:274
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:273
 msgid " is not positive."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:275
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:274
 msgid " exceeds the maximum value."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:277
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:276
 msgid " is not in the given range."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:331
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:333
 msgid " is not a valid datetime value."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:333
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:335
 msgid " is not after the current localtime."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:335
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:337
 msgid " is not before the given datetime."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:378
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:384
 msgid " is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0)."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:414
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:423
 msgid " is not a time in the format HH:mm."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:73
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:69
 msgid "You need to login first to book rooms."
 msgstr ""
 
@@ -856,11 +877,11 @@ msgstr ""
 msgid "You are not allowed to book rooms"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:107
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:108
 msgid "A booking cannot be scheduled for a past date."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:141
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:142
 msgid "You have reached the "
 msgstr ""
 
