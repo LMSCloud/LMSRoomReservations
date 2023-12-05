@@ -143,7 +143,7 @@ If want to add translations for new modules or fix the spelling in the source lo
 
 ```sql
 INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
-    'members', 'ROOM_RESERVATION', q{}, 'Raumreservierungsbenachrichtigung', 1, 'Reservierung eines Raumes', 'email', 'default',
+    'members', 'ROOM_RESERVATION', '', 'Raumreservierungsbenachrichtigung', 1, 'Reservierung eines Raumes', 'email', 'default',
 '<html>
   <head>
     <style>
@@ -216,7 +216,7 @@ INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, mess
 
 ```sql
 INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
-    'members', 'ROOM_CANCELLATION', q{}, 'Raumreservierungsstornierungsbenachrichtigung', 1, 'Stornierung der Reservierung eines Raumes', 'email', 'default',
+    'members', 'ROOM_CANCELLATION', '', 'Raumreservierungsstornierungsbenachrichtigung', 1, 'Stornierung der Reservierung eines Raumes', 'email', 'default',
 '<html>
   <head>
     <style>
