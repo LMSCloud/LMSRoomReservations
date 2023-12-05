@@ -88,7 +88,7 @@ sub _check_and_save_booking {
 
     my $dbh = C4::Context->dbh;
     $dbh->begin_work;          # start transaction
-    $dbh->{AutoCommit} = 0;    # disable autocommit
+    $dbh->{'AutoCommit'} = 0;    # disable autocommit
 
     my $sql = SQL::Abstract->new;
 
@@ -184,7 +184,7 @@ sub _check_and_save_booking {
         );
     } catch {
         $dbh->rollback;
-        $dbh->{AutoCommit} = 1;
+        $dbh->{'AutoCommit'} = 1;
         $c->unhandled_exception($_);
     };
 
