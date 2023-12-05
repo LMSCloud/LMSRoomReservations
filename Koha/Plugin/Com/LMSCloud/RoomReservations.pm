@@ -31,7 +31,7 @@ use Try::Tiny;
 use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper;
 
 ## Here we set our plugin version
-our $VERSION         = "4.3.1";
+our $VERSION         = "4.4.0";
 our $MINIMUM_VERSION = '21.05';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -39,7 +39,7 @@ our $metadata = {
     name            => 'LMSRoomReservations',
     author          => 'Paul Derscheid @ LMSCloud GmbH',
     date_authored   => '2009-01-27',
-    date_updated    => "2023-11-24",
+    date_updated    => "2023-12-05",
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
