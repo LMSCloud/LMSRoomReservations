@@ -3,10 +3,18 @@ import { customElement, state } from "lit/decorators.js";
 import { requestHandler } from "../lib/RequestHandler";
 import { normalizeForInput } from "../lib/converters/datetimeConverters";
 import { __ } from "../lib/translate";
+import { LMSBookingsModal, LMSBookingsTable } from "../main";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
 import { Column } from "../types/common";
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "lms-bookings-modal": LMSBookingsModal;
+        "lms-bookings-table": LMSBookingsTable;
+    }
+}
 
 @customElement("lms-staff-bookings-view")
 export default class StaffBookingsView extends LitElement {
@@ -14,15 +22,13 @@ export default class StaffBookingsView extends LitElement {
 
     private isEmpty = false;
 
-    // private hasNoResults = false;
+    private borrowers?: any[];
 
-    private borrowers: Record<string, any> = {};
+    private rooms?: Column[];
 
-    private rooms: Column[] = [];
+    private bookings?: Column[];
 
-    private bookings: Column[] = [];
-
-    private equipment: Column[] = [];
+    private equipment?: Column[];
 
     static override styles = [tailwindStyles, skeletonStyles, cardDeckStylesStaff];
 
@@ -52,9 +58,7 @@ export default class StaffBookingsView extends LitElement {
 
                 return Array.from(new Set(bookings.map((booking: any) => booking.borrowernumber)));
             })
-            .then((borrowernumbers) => {
-                return fetch(`/api/v1/patrons?q={"borrowernumber":[${borrowernumbers}]}`);
-            })
+            .then((borrowernumbers) => fetch(`/api/v1/patrons?q={"borrowernumber":[${borrowernumbers}]}`))
             .then((response) => response.json())
             .then((borrowers: any[]) => {
                 this.borrowers = borrowers.reduce(
@@ -70,12 +74,12 @@ export default class StaffBookingsView extends LitElement {
     }
 
     private hasData() {
-        return this.bookings.length > 0;
+        return this.bookings?.length ?? -1 > 0;
     }
 
     async fetchUpdate() {
-        const response = await requestHandler.get("bookings");
-        const bookings = await response.json();
+        const bookingsResponse = await requestHandler.get("bookings");
+        const bookings = await bookingsResponse.json();
         this.bookings = bookings.map((booking: any) => {
             return {
                 ...booking,
@@ -84,9 +88,19 @@ export default class StaffBookingsView extends LitElement {
                 equipment: [booking["roomid"], booking["equipment"]],
             };
         });
-        const isEmptyOrNoResults = this.bookings.length === 0;
-        this.isEmpty = isEmptyOrNoResults;
-        // this.hasNoResults = isEmptyOrNoResults;
+
+        const borrowernumbers = Array.from(new Set(bookings.map((booking: any) => booking.borrowernumber)));
+        const borrowersResponse = await fetch(`/api/v1/patrons?q={"borrowernumber":[${borrowernumbers}]}`);
+        const borrowers: any[] = await borrowersResponse.json();
+        this.borrowers = borrowers.reduce(
+            (acc, borrower) => ({
+                ...acc,
+                [borrower.patron_id]: borrower,
+            }),
+            {},
+        );
+
+        this.isEmpty = this.bookings?.length === 0;
         this.requestUpdate();
     }
 
@@ -102,23 +116,23 @@ export default class StaffBookingsView extends LitElement {
                     ${__("You can add a new booking by clicking on the + button below")}.
                 </h1>
                 <lms-bookings-modal
-                    .rooms=${this.rooms}
-                    .equipment=${this.equipment}
+                    .rooms=${this.rooms ?? []}
+                    .equipment=${this.equipment ?? []}
                     @created=${this.fetchUpdate}
                 ></lms-bookings-modal>`;
         }
 
         return html`
             <lms-bookings-table
-                .bookings=${this.bookings}
-                .rooms=${this.rooms}
-                .borrowers=${this.borrowers}
-                .equipment=${this.equipment}
+                .bookings=${this.bookings ?? []}
+                .rooms=${this.rooms ?? []}
+                .borrowers=${this.borrowers ?? []}
+                .equipment=${this.equipment ?? []}
                 @deleted=${this.fetchUpdate}
             ></lms-bookings-table>
             <lms-bookings-modal
-                .rooms=${this.rooms}
-                .equipment=${this.equipment}
+                .rooms=${this.rooms ?? []}
+                .equipment=${this.equipment ?? []}
                 @created=${this.fetchUpdate}
             ></lms-bookings-modal>
         `;
