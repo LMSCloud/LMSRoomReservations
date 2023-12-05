@@ -273,7 +273,7 @@ export default class LMSBookie extends LitElement {
                                                     <label class="label" for=${equipmentid}>
                                                         <input
                                                             type="checkbox"
-                                                            class="equipment-item checkbox"
+                                                            class="equipment-item checkbox mr-2"
                                                             id=${equipmentid}
                                                             ?disabled=${!this.borrowernumber}
                                                         />
@@ -296,7 +296,7 @@ export default class LMSBookie extends LitElement {
                                                 value="1"
                                                 id="confirmation-email"
                                                 name="confirmation-email"
-                                                class="checkbox"
+                                                class="checkbox mr-2"
                                                 ?disabled=${!this.borrowernumber}
                                                 checked
                                             />
