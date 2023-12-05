@@ -139,7 +139,7 @@ export default class LMSBookie extends LitElement {
     }
 
     private shouldDisplayEquipment() {
-        return this.equipment.some((item: any) => item.roomid === this.selectedRoom?.roomid);
+        return this.equipment.some((item: any) => item.roomid && item.roomid === this.selectedRoom?.roomid);
     }
 
     private getPreselectedRoomid() {
