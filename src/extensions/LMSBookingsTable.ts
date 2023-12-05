@@ -5,6 +5,7 @@ import { requestHandler } from "../lib/RequestHandler";
 import { Input } from "../types/common";
 
 type EquipmentSelection = [number, any[]];
+
 @customElement("lms-bookings-table")
 export default class LMSBookingsTable extends LMSTable {
     @property({ type: Array }) bookings: any[] = [];
@@ -24,23 +25,23 @@ export default class LMSBookingsTable extends LMSTable {
     override async handleSave(e: Event) {
         const target = e.target as HTMLElement;
 
-        let parent = target.parentElement;
-        while (parent && parent.tagName !== "TR") {
-            parent = parent.parentElement;
-        }
+        const parent = target.closest("tr");
+        let key: string | undefined,
+            borrowernumber: string | undefined,
+            inputs: NodeListOf<HTMLInputElement | HTMLSelectElement> | undefined,
+            equipmentCheckboxInputs: HTMLInputElement[] | undefined,
+            checkboxInputs: HTMLInputElement[] | undefined;
 
-        let key,
-            borrowernumber,
-            inputs,
-            equipmentCheckboxInputs,
-            checkboxInputs = undefined;
         if (parent) {
-            const children = Array.from(parent.children);
-            key = children[0]?.textContent?.trim();
-            borrowernumber = children[1]?.textContent?.replace(/\D/g, "").trim();
+            const cells = Array.from(parent.cells);
+
+            key = cells[0]?.textContent?.trim();
+            borrowernumber = cells[1]?.querySelector("span")?.textContent?.replace(/\D/g, "").trim();
+
             inputs = parent.querySelectorAll('input:not([type="checkbox"]), select') as NodeListOf<
                 HTMLInputElement | HTMLSelectElement
             >;
+
             const checkboxInputsArray = parent.querySelectorAll(
                 'input[type="checkbox"]',
             ) as NodeListOf<HTMLInputElement>;
@@ -98,10 +99,7 @@ export default class LMSBookingsTable extends LMSTable {
             target = e.target as HTMLElement;
         }
 
-        let parent = target.parentElement;
-        while (parent && parent.tagName !== "TR") {
-            parent = parent.parentElement;
-        }
+        let parent = target.closest("tr");
 
         let id = undefined;
         if (parent) {
