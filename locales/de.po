@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-16 20:18+0100\n"
-"PO-Revision-Date: 2023-12-01 18:07+0100\n"
+"PO-Revision-Date: 2023-12-05 11:58+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -736,14 +736,17 @@ msgid "The patron is not allowed to book rooms."
 msgstr "Benutzer*in hat keine Berechtigung, Räume zu buchen."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:240
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:115
 msgid "The booking exceeds the maximum allowed time for the room."
 msgstr "Die Buchung überschreitet die maximale Buchungsdauer für diesen Raum."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:248
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:123
 msgid "The institution is closed during the selected time frame."
 msgstr "Die Institution ist während des gewählten Zeitraums geschlossen."
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:256
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:131
 msgid "There is a conflicting booking."
 msgstr "Es gibt einen Konflikt mit einer anderen Buchung."
 
@@ -752,6 +755,7 @@ msgid "The borrower has reached the "
 msgstr "Benutzer*in hat das "
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:267
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:141
 msgid " limit of reservations."
 msgstr " Reservierungslimit erreicht."
 
@@ -818,11 +822,11 @@ msgstr ""
 msgid "A number of days, e.g. 14"
 msgstr "Eine Anzahl Tage, bspw. 14"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:166
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:196
 msgid "absolute"
 msgstr "absolute"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:188
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:218
 msgid "daily"
 msgstr "tägliche"
 
@@ -899,6 +903,22 @@ msgstr ""
 msgid " is not a time in the format HH:mm."
 msgstr " ist keine Uhrzeit im Format HH:mm."
 
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:73
+msgid "You need to login first to book rooms."
+msgstr "Bitte loggen Sie sich ein, um Räume zu buchen."
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:99
+msgid "You are not allowed to book rooms"
+msgstr "Sie haben keine Berechtigung, Räume zu buchen"
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:107
+msgid "A booking cannot be scheduled for a past date."
+msgstr "Sie können keine Termine in der Vergangenheit buchen."
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:141
+msgid "You have reached the "
+msgstr "Sie haben das "
+
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/views/opac/calendar.tt:24
 msgid "Home"
 msgstr "Start"
@@ -943,12 +963,6 @@ msgstr "Raumbuchungen"
 
 #~ msgid "Room Number"
 #~ msgstr "Bezeichnung"
-
-#~ msgid "You are not allowed to book rooms"
-#~ msgstr "Sie haben keine Berechtigung, Räume zu buchen"
-
-#~ msgid "You have reached the "
-#~ msgstr "Sie haben das "
 
 #~ msgid " is not a datetime in the format YYYY-MM-DDTHH:mm."
 #~ msgstr " ist kein DateTime im Format YYYY-MM-DDTHH:mm."

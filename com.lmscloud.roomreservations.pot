@@ -692,14 +692,17 @@ msgid "The patron is not allowed to book rooms."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:240
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:115
 msgid "The booking exceeds the maximum allowed time for the room."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:248
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:123
 msgid "The institution is closed during the selected time frame."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:256
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:131
 msgid "There is a conflicting booking."
 msgstr ""
 
@@ -708,6 +711,7 @@ msgid "The borrower has reached the "
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:267
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:141
 msgid " limit of reservations."
 msgstr ""
 
@@ -767,11 +771,11 @@ msgstr ""
 msgid "A number of days, e.g. 14"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:166
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:196
 msgid "absolute"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:188
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:218
 msgid "daily"
 msgstr ""
 
@@ -842,6 +846,22 @@ msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Validator.pm:414
 msgid " is not a time in the format HH:mm."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:73
+msgid "You need to login first to book rooms."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:99
+msgid "You are not allowed to book rooms"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:107
+msgid "A booking cannot be scheduled for a past date."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:141
+msgid "You have reached the "
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/views/opac/calendar.tt:24

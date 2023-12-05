@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-16 20:18+0100\n"
-"PO-Revision-Date: 2023-11-23 21:19+0100\n"
+"PO-Revision-Date: 2023-12-01 18:07+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -476,7 +476,7 @@ msgid "Rooms"
 msgstr "Räume"
 
 #: src/extensions/LMSRoomReservationsMenu.ts:42
-#: src/components/custom/LMSBookie.ts:266
+#: src/components/custom/LMSBookie.ts:265
 msgid "Equipment"
 msgstr "Gegenstände"
 
@@ -488,31 +488,43 @@ msgstr "Buchungen"
 msgid "Open Hours"
 msgstr "Öffnungszeiten"
 
-#: src/opac/PatronsBookingsTable.ts:36
+#: src/opac/PatronsBookingsTable.ts:40
+msgid ""
+"You haven't made any room reservations yet. Future reservations will show up "
+"right here in your user profile."
+msgstr ""
+"Sie haben bisher keine Buchungen vorgenommen. Zukünftige Buchungen werden "
+"hier angezeigt."
+
+#: src/opac/PatronsBookingsTable.ts:50
+msgid "This table shows your current room reservations"
+msgstr "Diese Tabelle zeigt Ihre derzeitigen und vergangenen Buchungen an"
+
+#: src/opac/PatronsBookingsTable.ts:54 src/components/custom/LMSBookie.ts:210
+msgid "Room"
+msgstr "Raum"
+
+#: src/opac/PatronsBookingsTable.ts:55
+msgid "Start"
+msgstr "Von"
+
+#: src/opac/PatronsBookingsTable.ts:56
+msgid "End"
+msgstr "Bis"
+
+#: src/opac/PatronsBookingsTable.ts:77
 msgid "There has been a technical error. Please inform the staff."
 msgstr ""
 "Es ist ein technisches Problem aufgetreten. Bitte informieren Sie das "
 "Personal."
 
-#: src/opac/PatronsBookingsTable.ts:40
+#: src/opac/PatronsBookingsTable.ts:81
 msgid "Your bookings"
 msgstr "Ihre Buchungen"
 
-#: src/opac/PatronsBookingsTable.ts:41
-msgid "This table shows your current room reservations"
-msgstr "Diese Tabelle zeigt Ihre derzeitigen und vergangenen Buchungen an."
-
-#: src/opac/PatronsBookingsTable.ts:45 src/components/custom/LMSBookie.ts:211
-msgid "Room"
-msgstr "Raum"
-
-#: src/opac/PatronsBookingsTable.ts:46
-msgid "Start"
-msgstr "Von"
-
-#: src/opac/PatronsBookingsTable.ts:47
-msgid "End"
-msgstr "Bis"
+#: src/opac/PatronsBookingsTable.ts:83
+msgid "Make a reservation"
+msgstr "Zum Reservierungs-Kalender"
 
 #: src/views/RoomReservationsView.ts:120
 msgid "Blocked"
@@ -588,79 +600,79 @@ msgstr "Sorry"
 msgid "Something went wrong"
 msgstr "Es ist ein Fehler aufgetreten"
 
-#: src/components/custom/LMSBookie.ts:162
+#: src/components/custom/LMSBookie.ts:161
 msgid "Please log in to book rooms"
 msgstr "Bitte loggen Sie sich ein, um Räume zu buchen"
 
-#: src/components/custom/LMSBookie.ts:164
+#: src/components/custom/LMSBookie.ts:163
 msgid "Log in"
 msgstr "Einloggen"
 
-#: src/components/custom/LMSBookie.ts:185
+#: src/components/custom/LMSBookie.ts:184
 msgid "Book a room"
 msgstr "Einen Raum buchen"
 
-#: src/components/custom/LMSBookie.ts:222
+#: src/components/custom/LMSBookie.ts:221
 msgid "Please select a room"
 msgstr "Bitte wählen Sie einen Raum"
 
-#: src/components/custom/LMSBookie.ts:234
+#: src/components/custom/LMSBookie.ts:233
 msgid "Date & Time"
 msgstr "Datum & Uhrzeit"
 
-#: src/components/custom/LMSBookie.ts:248
+#: src/components/custom/LMSBookie.ts:247
 msgid "Duration"
 msgstr "Dauer"
 
-#: src/components/custom/LMSBookie.ts:257
+#: src/components/custom/LMSBookie.ts:256
 msgid "In minutes, e.g. 60"
 msgstr "In Minuten, bspw. 60"
 
-#: src/components/custom/LMSBookie.ts:291
+#: src/components/custom/LMSBookie.ts:290
 msgid "Confirmation Email"
 msgstr "Bestätigungsmail"
 
-#: src/components/custom/LMSBookie.ts:305
+#: src/components/custom/LMSBookie.ts:304
 msgid "Should we send you a confirmation email"
 msgstr "Möchten Sie eine Bestätigungsmail erhalten"
 
-#: src/components/custom/LMSBookie.ts:313
+#: src/components/custom/LMSBookie.ts:312
 msgid "We would use"
 msgstr "Ihre Email-Adresse"
 
-#: src/components/custom/LMSBookie.ts:322
+#: src/components/custom/LMSBookie.ts:321
 msgid "Pick a room, a date, a time"
 msgstr "Wählen Sie einen Raum, ein Datum, eine Uhrzeit"
 
-#: src/components/custom/LMSBookie.ts:324
+#: src/components/custom/LMSBookie.ts:323
 msgid "items you'd like to use"
 msgstr "Gegenstände, die Sie nutzen möchten"
 
-#: src/components/custom/LMSBookie.ts:326
+#: src/components/custom/LMSBookie.ts:325
 msgid "and the duration of your reservation"
 msgstr "und die Dauer Ihrer Buchung"
 
-#: src/components/custom/LMSBookie.ts:331
+#: src/components/custom/LMSBookie.ts:330
 msgid "Submit"
 msgstr "Abschicken"
 
-#: src/components/custom/LMSBookie.ts:358
+#: src/components/custom/LMSBookie.ts:357
 msgid "Open hours"
 msgstr "Öffnungszeiten"
 
-#: src/components/custom/LMSBookie.ts:364
+#: src/components/custom/LMSBookie.ts:363
 msgid "Day"
 msgstr "Tag"
 
-#: src/components/custom/LMSBookie.ts:365
+#: src/components/custom/LMSBookie.ts:364
 msgid "Open from"
 msgstr "Von"
 
-#: src/components/custom/LMSBookie.ts:366
+#: src/components/custom/LMSBookie.ts:365
 msgid "Closed after"
 msgstr "Bis"
 
-#: src/components/custom/LMSBookie.ts:382
+#: src/components/custom/LMSBookie.ts:381
 msgid "Closed"
 msgstr "Geschlossen"
 
@@ -806,11 +818,11 @@ msgstr ""
 msgid "A number of days, e.g. 14"
 msgstr "Eine Anzahl Tage, bspw. 14"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:166
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:196
 msgid "absolute"
 msgstr "absolute"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:188
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/lib/Checks.pm:218
 msgid "daily"
 msgstr "tägliche"
 
