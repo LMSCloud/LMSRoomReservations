@@ -6,6 +6,7 @@ import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
+import ZodErrorElement from "../components/custom/ZodErrorElement";
 import { InputsSnapshot } from "../lib/InputsSnapshot";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { requestHandler } from "../lib/RequestHandler";
@@ -14,6 +15,12 @@ import { TranslateDirective, __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
 import { CreateOpts, KohaAPIError, ModalField, TaggedData } from "../types/common";
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "zod-error-element": ZodErrorElement;
+    }
+}
 
 export type Alert = {
     active: boolean;
@@ -100,6 +107,14 @@ export default class LMSModal extends LitElement {
 
         if (!response.ok) {
             const result = await response.json();
+
+            if (result.type === "zod") {
+                this.alert = {
+                    active: true,
+                    message: html`<zod-error-element .errors=${result}></zod-error-element>`,
+                };
+                return;
+            }
 
             if (result.error) {
                 this.alert = {
@@ -234,11 +249,7 @@ export default class LMSModal extends LitElement {
                     method="dialog"
                     class="modal-box bg-base-100"
                 >
-                    <button
-                        for="lms-modal"
-                        class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-                        @click=${this.toggleModal}
-                    >
+                    <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2" @click=${this.toggleModal}>
                         &times;
                     </button>
                     <h5 class="text-lg font-bold" id="lms-modal-title">${this.modalTitle ?? `${__("Add")}`}</h5>
@@ -253,7 +264,6 @@ export default class LMSModal extends LitElement {
                             })}
                             <span>${this.alert.message}</span>
                             <button
-                                for="lms-modal"
                                 class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
                                 @click=${this.dismissAlert}
                             >

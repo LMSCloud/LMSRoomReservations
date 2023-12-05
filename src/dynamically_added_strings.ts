@@ -25,3 +25,4 @@ __("Thursday");
 __("Friday");
 __("Saturday");
 __("Sunday");
+__("Validation failed");

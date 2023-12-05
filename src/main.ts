@@ -7,6 +7,7 @@ import LMSBookie from "./components/custom/LMSBookie";
 import LMSEquipmentItem from "./components/custom/LMSEquipmentItem";
 import LMSPatronSearch from "./components/custom/LMSPatronSearch";
 import LMSRoom from "./components/custom/LMSRoom";
+import ZodErrorElement from "./components/custom/ZodErrorElement";
 import LMSBookingsModal from "./extensions/LMSBookingsModal";
 import LMSBookingsTable from "./extensions/LMSBookingsTable";
 import LMSEquipmentModal from "./extensions/LMSEquipmentModal";
@@ -47,4 +48,5 @@ export {
     StaffOpenHoursView,
     StaffRoomsView,
     StaffSettingsView,
+    ZodErrorElement,
 };

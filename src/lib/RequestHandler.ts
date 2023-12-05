@@ -78,7 +78,6 @@ class RequestHandler {
             throw new Error(`Endpoint not found: ${endpoint}`);
         }
 
-        // Validate and coerce the body using SchemaValidator
         if (body) {
             try {
                 const schemaType = endpoint;
@@ -94,7 +93,17 @@ class RequestHandler {
                     throw new Error("Unknown error");
                 }
 
-                throw new Error(`Request body validation error: ${error.message}`);
+                const errorResponse = {
+                    type: "zod",
+                    status: 400,
+                    message: "Validation failed",
+                    details: error.message,
+                };
+
+                return new Response(JSON.stringify(errorResponse), {
+                    status: 400, // Bad Request status code
+                    headers: { "Content-Type": "application/json" },
+                });
             }
         }
 
