@@ -43,6 +43,7 @@ Alias /plugin "/var/lib/koha/INSTANCE/plugins"
 
 - There is one component in the src/components dir that is a git submodule: **LMSCalendar**. Changes to this submodule must be staged and committed seperately.
 
+<!--
 ### Translating
 
 To generate the pot file we use `xgettext` and include all dirs, perl or JavaScript where translated strings show up.
@@ -133,6 +134,8 @@ If want to add translations for new modules or fix the spelling in the source lo
 
   you **likely** didn't request the endpoint, you think you did.
 - Check your AJAX or whatever you use for the requests to hit the endpoint/method you intended.
+
+-->
 
 ## Message Templates
 
