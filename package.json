@@ -84,7 +84,7 @@
     "lint": "eslint \"src/**/*.{js,ts}\"",
     "package-kpz:build": "cd package-kpz && cargo build --release && cd ../ && ln -s ./package-kpz/target/release/package-kpz ./p-kpz",
     "test": "mocha \"test/**/*.test.mjs\"",
-    "translate:extract": "./tools/extract_translations.sh --output com.lmscloud.roomreservations.pot --source \"src/*.ts\" --source \"src/**/*.ts\" --source \"src/components/**/*.ts\" --source \"src/lib/**/*.ts\" --source \"src/lib/**/**/*.ts\" --source \"src/lib/**/**/**/*.ts\" --source \"src/lib/**/**/**/**/*.ts\" --source \"Koha/Plugin/Com/LMSCloud/RoomReservations/**/*.pm\" --template \"Koha/Plugin/Com/LMSCloud/RoomReservations/views/**/*.tt\"",
+    "translate:extract": "./tools/extract_translations.sh --output com.lmscloud.roomreservations.pot --source \"src/*.ts\" --source \"src/**/*.ts\" --source \"src/components/**/*.ts\" --source \"src/lib/**/*.ts\" --source \"src/lib/**/**/*.ts\" --source \"src/lib/**/**/**/*.ts\" --source \"src/lib/**/**/**/**/*.ts\" --source \"Koha/Plugin/Com/LMSCloud/RoomReservations/**/*.pm\" --source \"Koha/Plugin/Com/LMSCloud/RoomReservations/**/**/*.pm\" --template \"Koha/Plugin/Com/LMSCloud/RoomReservations/views/**/*.tt\"",
     "translate:instantiate": "[[ -z \"$LOCALE\" ]] && echo \"LOCALE not set\" || (if [ ! -f locales/$LOCALE.po ]; then msginit --input=com.lmscloud.roomreservations.pot --locale=$LOCALE --output-file=locales/$LOCALE.po; else msgmerge --update locales/$LOCALE.po com.lmscloud.roomreservations.pot; fi)",
     "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
   },
