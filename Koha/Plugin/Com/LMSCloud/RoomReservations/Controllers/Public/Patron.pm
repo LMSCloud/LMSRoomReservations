@@ -9,7 +9,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use Try::Tiny;
 use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX            qw(setlocale);
+use POSIX qw(setlocale);
 use Encode;
 
 use Koha::Patrons;

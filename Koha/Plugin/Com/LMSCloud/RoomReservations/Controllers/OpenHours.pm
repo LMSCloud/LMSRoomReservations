@@ -16,7 +16,8 @@ use Locale::TextDomain ( 'com.lmscloud.roomreservations', ':all' );
 our $VERSION = '1.0.0';
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator;
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations qw( set_translation_environment with_language_context);
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations
+    qw( set_translation_environment with_language_context);
 
 my $self = set_translation_environment( Koha::Plugin::Com::LMSCloud::RoomReservations->new );
 
@@ -36,8 +37,7 @@ sub list {
         my $open_hours = $sth->fetchall_arrayref( {} );
 
         return $c->render( status => 200, openapi => $open_hours );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -61,8 +61,7 @@ sub add {
 
         return $c->render( status => 201, openapi => $body );
 
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -90,8 +89,7 @@ sub get {
         }
 
         return $c->render( status => 200, openapi => $open_hours );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     }
 }
@@ -132,12 +130,15 @@ sub update {
                         keys %{$new_open_hours}
                 };
                 my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
-                    {   schema => [
-                            {   type  => 'time',
+                    {
+                        schema => [
+                            {
+                                type  => 'time',
                                 key   => 'start',
                                 value => $new_open_hours->{'start'}
                             },
-                            {   type  => 'time',
+                            {
+                                type  => 'time',
                                 key   => 'end',
                                 value => $new_open_hours->{'end'}
                             },
@@ -152,14 +153,17 @@ sub update {
                     );
                 }
 
-                if ( Time::Piece->strptime( $new_open_hours->{'end'}, '%H:%M:%S' )->epoch < Time::Piece->strptime( $new_open_hours->{'start'}, '%H:%M:%S' )->epoch ) {
+                if ( Time::Piece->strptime( $new_open_hours->{'end'}, '%H:%M:%S' )->epoch <
+                    Time::Piece->strptime( $new_open_hours->{'start'}, '%H:%M:%S' )->epoch )
+                {
                     return $c->render(
                         status  => 400,
                         openapi => { error => __('End time must be after start time') }
                     );
                 }
 
-                ( $stmt, @bind ) = $sql->update( $OPEN_HOURS_TABLE, $new_open_hours, { branch => $branch, day => $day } );
+                ( $stmt, @bind ) =
+                    $sql->update( $OPEN_HOURS_TABLE, $new_open_hours, { branch => $branch, day => $day } );
                 $sth = $dbh->prepare($stmt);
                 $sth->execute(@bind);
 
@@ -169,8 +173,7 @@ sub update {
                 );
             }
         );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     };
 }
@@ -189,8 +192,7 @@ sub delete {
         $sth->execute(@bind);
 
         return $c->render( status => 204, openapi => {} );
-    }
-    catch {
+    } catch {
         $c->unhandled_exception($_);
     }
 }

@@ -10,7 +10,8 @@ use DateTime::Format::Strptime;
 use C4::Context;
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations;
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations qw( set_translation_environment with_language_context);
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations
+    qw( set_translation_environment with_language_context);
 
 our $VERSION = '1.0.0';
 use Exporter 'import';
@@ -104,7 +105,8 @@ sub validate {
         my $method = "is_valid_$task->{'type'}";
 
         my ( $is_valid, $_errors ) = $self->$method(
-            {   key   => $task->{'key'},
+            {
+                key   => $task->{'key'},
                 value => $task->{'value'},
                 %{ $task->{'options'} // {} }
             }
@@ -137,7 +139,8 @@ sub is_valid_string {
         $self->lang,
         sub {
             my ( $is_valid, $errors ) = $self->is_valid($args);
-            if (!$is_valid
+            if (
+                !$is_valid
                 || (   $is_valid
                     && defined $errors
                     && ref($errors) eq 'ARRAY'
@@ -153,8 +156,7 @@ sub is_valid_string {
 
             if ($skip_is_alphanumeric) {
                 $is_alphanumeric = 1;
-            }
-            else {
+            } else {
                 my $alphanumeric_regex = '^[[:alnum:]';
                 my $allow_chars        = $args->{'is_alphanumeric'}->{'allow_chars'} // [];
                 if ($allow_chars) {
@@ -176,12 +178,10 @@ sub is_valid_string {
             my $exceeds_max_length = 0;
             if ( $args->{'exceeds_max_length'}->{'TEXT'} ) {
                 $exceeds_max_length = length $args->{'value'} >= $MAX_LENGTH_TEXT;
-            }
-            elsif ( $args->{'exceeds_max_length'}->{'length'} ) {
+            } elsif ( $args->{'exceeds_max_length'}->{'length'} ) {
                 $exceeds_max_length =
                     length $args->{'value'} >= $args->{'exceeds_max_length'}->{'length'};
-            }
-            else {
+            } else {
                 $exceeds_max_length = length $args->{'value'} >= $MAX_LENGTH_VARCHAR;
             }
 
@@ -214,7 +214,8 @@ sub is_valid_number {
         $self->lang,
         sub {
             my ( $is_valid, $errors ) = $self->is_valid($args);
-            if (!$is_valid
+            if (
+                !$is_valid
                 || (   $is_valid
                     && defined $errors
                     && ref($errors) eq 'ARRAY'
@@ -288,7 +289,8 @@ sub is_valid_datetime {
         $self,
         sub {
             my ( $is_valid, $errors ) = $self->is_valid($args);
-            if (!$is_valid
+            if (
+                !$is_valid
                 || (   $is_valid
                     && defined $errors
                     && ref($errors) eq 'ARRAY'
@@ -348,7 +350,8 @@ sub is_valid_color {
         $self->lang,
         sub {
             my ( $is_valid, $errors ) = $self->is_valid($args);
-            if (!$is_valid
+            if (
+                !$is_valid
                 || (   $is_valid
                     && defined $errors
                     && ref($errors) eq 'ARRAY'
@@ -362,7 +365,8 @@ sub is_valid_color {
             # #RRGGBB or
             # rgb([0-9]{3}, [0-9]{3}, [0-9]{3}) or
             # rgba([0-9]{3}, [0-9]{3}, [0-9]{3}, (0(\.\d+)?|1(\.0+)?)).
-            my $is_valid_color = $args->{'value'} =~ m/^#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx;
+            my $is_valid_color = $args->{'value'} =~
+                m/^#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx;
 
             # Check if all options specified in args are true.
             if ($is_valid_color) {
@@ -374,8 +378,11 @@ sub is_valid_color {
                 defined $args->{'key'}
                 ? __('The given value for ') . $args->{'key'}
                 : __('The given value: ') . $args->{'value'};
-            push @{$errors}, $given_argument . __(' is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0).')
-                if !$is_valid_color;
+            push @{$errors},
+                $given_argument
+                . __(
+                ' is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0).'
+                ) if !$is_valid_color;
 
             return ( 0, $errors );
         }
@@ -389,7 +396,8 @@ sub is_valid_time {
         $self->lang,
         sub {
             my ( $is_valid, $errors ) = $self->is_valid($args);
-            if (!$is_valid
+            if (
+                !$is_valid
                 || (   $is_valid
                     && defined $errors
                     && ref($errors) eq 'ARRAY'
