@@ -43,6 +43,11 @@ Alias /plugin "/var/lib/koha/INSTANCE/plugins"
 
 - There is one component in the src/components dir that is a git submodule: **LMSCalendar**. Changes to this submodule must be staged and committed seperately.
 
+## Build
+
+- To use the build scripts in `package.json` you'll need and [package-kpz](https://github.com/LMSCloudPaulD/package-kpz) in your **PATH**.
+
+
 <!--
 ### Translating
 
