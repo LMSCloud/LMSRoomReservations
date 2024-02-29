@@ -77,7 +77,7 @@ export class InputConverter {
                 const { firstname, surname, cardnumber } = borrower;
                 return html`
                     <a
-                        class="link-primary link"
+                        class="link-primary link whitespace-nowrap"
                         href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${borrowernumber}"
                         >${firstname}&nbsp;${surname}</a
                     >
@@ -97,7 +97,8 @@ export class InputConverter {
                     </div>
                 `;
             },
-            created: (value) => html`${formatDatetimeByLocale(value as string, localeFull)}`,
+            created: (value) =>
+                html`<span class="whitespace-nowrap">${formatDatetimeByLocale(value as string, localeFull)}</span>`,
             equipment: (value, data) => {
                 const [roomid, equipmentItems] = value as [number, any[]];
                 if (!equipmentItems) {
@@ -155,7 +156,9 @@ export class InputConverter {
                 /^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/.test(value as string)
                     ? new TimeInput("start", value).render()
                     : new DatetimeLocalInput("start", value).render(),
-            updated_at: (value) => html`${formatDatetimeByLocale(value as string, localeFull)}`,
+            updated_at: (value) =>
+                html`<span class="whitespace-nowrap">${formatDatetimeByLocale(value as string, localeFull)}</span>`,
+            purpose_of_use: (value) => html`<span class="whitespace-nowrap">${value}</span>`,
             value: (value, data) => {
                 const [name, _value] = value as [string, any];
                 const datum = data?.find((datum) => datum.setting === name);
