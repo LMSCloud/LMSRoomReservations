@@ -10,7 +10,7 @@ use Try::Tiny qw( catch try );
 use JSON qw( from_json );
 use SQL::Abstract ();
 use Time::Piece   ();
-use Locale::TextDomain qw( __ );
+use Locale::TextDomain 'com.lmscloud.roomreservations', ':all';
 
 use C4::Context   ();
 use C4::Letters   ();
@@ -23,9 +23,13 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Checks qw(
     has_reached_reservation_limit
     has_passed
 );
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Actions qw( send_email_confirmation );
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations
-    qw( set_translation_environment with_language_context);
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Actions qw(
+    send_email_confirmation
+);
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations qw(
+    set_translation_environment
+    with_language_context
+);
 
 our $VERSION = '1.0.0';
 
