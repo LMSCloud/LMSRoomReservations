@@ -719,10 +719,6 @@ msgstr "Nachricht"
 msgid "Error"
 msgstr "Fehler"
 
-#: src/components/custom/ZodErrorElement.ts:66
-msgid "errorData.message"
-msgstr ""
-
 #: src/lib/converters/datetimeConverters.ts:29
 msgid "Error: Invalid date"
 msgstr "Fehler: Ungültiges Datum"
