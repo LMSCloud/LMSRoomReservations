@@ -4,10 +4,17 @@ import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
 import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
+import { LMSRoom } from "../main";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
 import { Column } from "../types/common";
+
+declare global {
+    interface HTMLTagNameMap {
+        "lms-room": LMSRoom;
+    }
+}
 
 @customElement("lms-staff-rooms-view")
 export default class StaffRoomsView extends LitElement {
@@ -21,19 +28,22 @@ export default class StaffRoomsView extends LitElement {
 
     private rooms: Column[] = [];
 
+    private openHours: Column[] = [];
+
     static override styles = [tailwindStyles, skeletonStyles, cardDeckStylesStaff];
 
     override connectedCallback() {
         super.connectedCallback();
 
-        Promise.all([fetch("/api/v1/libraries"), requestHandler.get("rooms")])
+        Promise.all([fetch("/api/v1/libraries"), requestHandler.get("rooms"), requestHandler.get("openHours")])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
-            .then(([libraries, rooms]) => {
-                (this.libraries = libraries.map((library: any) => ({
+            .then(([libraries, rooms, openHours]) => {
+                this.libraries = libraries.map((library: any) => ({
                     id: library.library_id,
                     name: library.name,
-                }))),
-                    (this.rooms = rooms);
+                }));
+                this.rooms = rooms;
+                this.openHours = openHours;
             })
             .then(() => {
                 this.isEmpty = !this.hasData();
@@ -54,6 +64,18 @@ export default class StaffRoomsView extends LitElement {
         this.requestUpdate();
     }
 
+    private filterLibrariesWithOpenHours() {
+        const librariesWithOpenHours = this.openHours.reduce((accumulator: Set<string>, openHour: any) => {
+            if (!accumulator.has(openHour.branch)) {
+                accumulator.add(openHour.branch);
+            }
+
+            return accumulator;
+        }, new Set());
+
+        return this.libraries.filter((library) => librariesWithOpenHours.has(library["id"]!.toString()));
+    }
+
     override render() {
         if (!this.hasLoaded) {
             return html` <div class="mx-8">
@@ -65,7 +87,10 @@ export default class StaffRoomsView extends LitElement {
 
         if (this.hasLoaded && this.isEmpty) {
             return html`<h1 class="text-center">${__("You can add a new room by clicking on the + button below")}.</h1>
-                <lms-room-modal .libraries=${this.libraries} @created=${this.fetchUpdate}></lms-room-modal>`;
+                <lms-room-modal
+                    .libraries=${this.filterLibrariesWithOpenHours()}
+                    @created=${this.fetchUpdate}
+                ></lms-room-modal>`;
         }
 
         return html`
@@ -81,6 +106,7 @@ export default class StaffRoomsView extends LitElement {
                                 .description=${room["description"]}
                                 .image=${room["image"]}
                                 .libraries=${this.libraries}
+                                .openHours=${this.openHours}
                                 .maxbookabletime=${room["maxbookabletime"]}
                                 .maxcapacity=${room["maxcapacity"]}
                                 .roomid=${room["roomid"]}
@@ -93,7 +119,10 @@ export default class StaffRoomsView extends LitElement {
                     )}
                 </div>
             </div>
-            <lms-room-modal .libraries=${this.libraries} @created=${this.fetchUpdate}></lms-room-modal>
+            <lms-room-modal
+                .libraries=${this.filterLibrariesWithOpenHours()}
+                @created=${this.fetchUpdate}
+            ></lms-room-modal>
         `;
     }
 }

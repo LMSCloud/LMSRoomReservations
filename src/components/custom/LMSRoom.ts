@@ -24,6 +24,8 @@ export default class LMSRoom extends LitElement {
 
     @property({ type: Array }) libraries: any[] = [];
 
+    @property({ type: Array }) openHours: any[] = [];
+
     @property({ type: String }) maxbookabletime: string = "";
 
     @property({ type: String }) maxcapacity: string = "";
@@ -129,6 +131,23 @@ export default class LMSRoom extends LitElement {
         this[propertyName] = value as this[keyof this];
     }
 
+    private renderBranchOptions() {
+        const librariesWithOpenHours = this.openHours.reduce((accumulator: Set<string>, openHour: any) => {
+            if (!accumulator.has(openHour.branch)) {
+                accumulator.add(openHour.branch);
+            }
+
+            return accumulator;
+        }, new Set());
+
+        return this.libraries
+            .filter((library) => librariesWithOpenHours.has(library.id))
+            .map(
+                (library) =>
+                    html`<option value=${library.id} ?selected=${this.branch === library.id}>${library.name}</option>`,
+            );
+    }
+
     override render() {
         return html`
             <div class="card my-1 bg-base-100 shadow-xl">
@@ -168,12 +187,7 @@ export default class LMSRoom extends LitElement {
                     <div class="form-control">
                         <label class="label" for="branch"><span class="label-text">${__("Branch")}</span></label>
                         <select class="select select-bordered w-full" name="branch" disabled>
-                            ${this.libraries?.map(
-                                (library) =>
-                                    html`<option value=${library.id} ?selected=${this.branch === library.id}>
-                                        ${library.name}
-                                    </option>`,
-                            )}
+                            ${this.renderBranchOptions()}
                         </select>
                     </div>
                     <div class="form-control">
