@@ -111,7 +111,16 @@ export default class LMSRoom extends LitElement {
         const target = e.target as HTMLInputElement;
         const { value, name } = target;
         if (
-            !["roomnumber", "maxcapacity", "description", "color", "image", "roomid", "maxbookabletime"].includes(name)
+            ![
+                "roomnumber",
+                "maxcapacity",
+                "description",
+                "color",
+                "image",
+                "roomid",
+                "maxbookabletime",
+                "branch",
+            ].includes(name)
         ) {
             return;
         }
