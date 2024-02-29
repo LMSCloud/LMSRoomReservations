@@ -41,6 +41,8 @@ export default class LMSBookie extends LitElement {
 
     @query("#duration") durationInput!: HTMLInputElement;
 
+    @query("#purpose-of-use") purposeOfUseInput!: HTMLInputElement;
+
     @query("#confirmation-email") confirmationEmailInput!: HTMLInputElement;
 
     @queryAll(".equipment-item")
@@ -52,8 +54,14 @@ export default class LMSBookie extends LitElement {
 
     private async handleSubmit(e: SubmitEvent) {
         e.preventDefault();
-        const inputs = [this.roomSelect, this.startDatetimeInput, this.durationInput, this.confirmationEmailInput];
-        const [roomid, start, duration, confirmation] = inputs.map((input) => input.value);
+        const inputs = [
+            this.roomSelect,
+            this.startDatetimeInput,
+            this.durationInput,
+            this.purposeOfUseInput,
+            this.confirmationEmailInput,
+        ];
+        const [roomid, start, duration, purposeOfUse, confirmation] = inputs.map((input) => input.value);
 
         /** We filter for checked checkbox inputs here. */
         const equipment = Array.from(this.equipmentItemInputs).reduce((accumulator: string[], equipmentInput) => {
@@ -75,6 +83,7 @@ export default class LMSBookie extends LitElement {
             equipment,
             send_confirmation: confirmation || 0,
             letter_code: "ROOM_RESERVATION",
+            purpose_of_use: purposeOfUse || null,
         });
 
         if (response.ok) {
@@ -284,6 +293,19 @@ export default class LMSBookie extends LitElement {
                                         },
                                     )}
                                     <div class="divider"></div>
+                                </div>
+                                <div class="form-control">
+                                    <label class="label" for="purpose-of-use">
+                                        <span class="label-text"> ${__("Purpose of Use")} </span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="purpose-of-use"
+                                        name="purpose-of-use"
+                                        class="input input-bordered w-full"
+                                        ?disabled=${!this.borrowernumber}
+                                        placeholder=${attr__("Would you like to communicate something to the staff?")}
+                                    />
                                 </div>
                                 <div class="form-control">
                                     <label class="label" for="confirmation">

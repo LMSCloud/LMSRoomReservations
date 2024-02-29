@@ -6,15 +6,15 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use Try::Tiny;
-use JSON;
-use SQL::Abstract;
-use Time::Piece;
-use Locale::TextDomain 'com.lmscloud.roomreservations', ':all';
+use Try::Tiny qw( catch try );
+use JSON qw( from_json );
+use SQL::Abstract ();
+use Time::Piece   ();
+use Locale::TextDomain qw( __ );
 
-use C4::Context;
-use C4::Letters;
-use Koha::Patrons;
+use C4::Context   ();
+use C4::Letters   ();
+use Koha::Patrons ();
 use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Checks qw(
     is_allowed_to_book
     is_bookable_time
@@ -150,6 +150,10 @@ sub _check_and_save_booking {
                     end            => $body->{'end'},
                     blackedout     => 0
                 };
+
+                if ( $body->{'purpose_of_use'} ) {
+                    $booking->{'purpose_of_use'} = $body->{'purpose_of_use'};
+                }
 
                 my ( $stmt, @bind ) =
                     defined $booking_id

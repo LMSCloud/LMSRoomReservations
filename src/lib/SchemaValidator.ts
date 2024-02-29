@@ -26,6 +26,7 @@ export class SchemaValidator {
                 equipment: z.array(z.coerce.string()).nullable(),
                 send_confirmation: z.coerce.number(),
                 letter_code: z.string(),
+                purpose_of_use: z.string().nullable(),
             }),
             bookings: z.object({
                 borrowernumber: z.coerce.number(),

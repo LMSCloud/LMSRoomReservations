@@ -41,7 +41,7 @@ sub list {
 
         # We get all bookings associated with the supplied borrowernumber
         my ( $stmt, @bind ) = $sql->select(
-            $BOOKINGS_TABLE, [ 'roomid', 'start', 'end' ],
+            $BOOKINGS_TABLE, [ 'bookingid', 'roomid', 'start', 'end', 'purpose_of_use' ],
             { borrowernumber => $borrower->borrowernumber }
         );
         my $sth = $dbh->prepare($stmt);

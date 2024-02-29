@@ -79,6 +79,12 @@
                 },
                 "updated_at": {
                   "type": "string"
+                },
+                "purpose_of_use": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
@@ -419,6 +425,12 @@
               },
               "updated_at": {
                 "type": "string"
+              },
+              "purpose_of_use": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "type": "object"
@@ -2214,6 +2226,12 @@
               },
               "start": {
                 "type": "string"
+              },
+              "purpose_of_use": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "required": [

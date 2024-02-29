@@ -128,6 +128,7 @@ export default class LMSBookingsTable extends LMSTable {
             "roomid",
             "start",
             "end",
+            "purpose_of_use",
             "equipment",
             "blackedout",
             "created",
