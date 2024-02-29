@@ -36,7 +36,7 @@ export default class LMSBookingsTable extends LMSTable {
             const cells = Array.from(parent.cells);
 
             key = cells[0]?.textContent?.trim();
-            borrowernumber = cells[1]?.querySelector("span")?.textContent?.replace(/\D/g, "").trim();
+            borrowernumber = cells[1]?.querySelector(".badge.borrowernumber")?.textContent?.replace(/\D/g, "").trim();
 
             inputs = parent.querySelectorAll('input:not([type="checkbox"]), select') as NodeListOf<
                 HTMLInputElement | HTMLSelectElement

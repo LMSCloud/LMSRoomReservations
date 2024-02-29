@@ -82,7 +82,7 @@ export class InputConverter {
                         >${firstname}&nbsp;${surname}</a
                     >
                     &nbsp;
-                    <div class="badge">
+                    <div class="borrowernumber badge">
                         ${litFontawesome(faHashtag, {
                             className: "inline-block w-4 h-4",
                         })}&nbsp;
