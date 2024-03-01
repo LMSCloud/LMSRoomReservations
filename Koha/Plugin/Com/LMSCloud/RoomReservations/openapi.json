@@ -2987,6 +2987,9 @@
           "schema": {
             "items": {
               "properties": {
+                "bookingid": {
+                  "type": "integer"
+                },
                 "end": {
                   "type": "string"
                 },
@@ -3081,6 +3084,113 @@
         "bookings"
       ],
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Patron::Bookings#list"
+    }
+  },
+  "/public/patron/bookings/{id}": {
+    "delete": {
+      "operationId": "deletePatronBookingPublic",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "description": "The id of the booking to delete",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "204": {
+          "description": "The booking was deleted"
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "Get room bookings for an authenticated patron",
+      "tags": [
+        "patron",
+        "bookings"
+      ],
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Patron::Bookings#delete"
     }
   },
   "/public/rooms": {

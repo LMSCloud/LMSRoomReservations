@@ -1,6 +1,7 @@
 import { LitElement, PropertyValueMap, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { map } from "lit/directives/map.js";
+import { repeat } from "lit/directives/repeat.js";
+import { requestHandler } from "../lib/RequestHandler";
 import { formatDatetimeByLocale } from "../lib/converters/datetimeConverters";
 import { __, locale } from "../lib/translate";
 
@@ -31,6 +32,42 @@ export default class PatronsBookingsTable extends LitElement {
         }
     }
 
+    private handleConfirmation(e: Event) {
+        const target = e.target as HTMLElement;
+        const button = target.closest("button");
+        if (!button) {
+            return;
+        }
+
+        const initiateSpan = button.querySelector(".initiate-delete");
+        const confirmSpan = button.querySelector(".confirm-delete");
+
+        if (!initiateSpan || !confirmSpan) {
+            return;
+        }
+
+        initiateSpan.classList.toggle("d-none");
+        confirmSpan.classList.toggle("d-none");
+
+        if (confirmSpan.classList.contains("d-none")) {
+            const { id } = button.dataset;
+            if (id) {
+                this.handleCancellation(id);
+            }
+        }
+    }
+
+    private handleCancellation(id: string) {
+        requestHandler.delete("patronBookingsPublic", undefined, [id]).then((response) => {
+            if (response.ok) {
+                requestHandler
+                    .get("patronBookingsPublic")
+                    .then((response) => response.json())
+                    .then((patronsBookings) => (this.patronsBookings = patronsBookings));
+            }
+        });
+    }
+
     private renderInfoMaybe() {
         return this.patronsBookings.length
             ? nothing
@@ -54,19 +91,36 @@ export default class PatronsBookingsTable extends LitElement {
                               <th>${__("Room")}</th>
                               <th>${__("Start")}</th>
                               <th>${__("End")}</th>
+                              <th>${__("Purpose of Use")}</th>
+                              <th>${__("actions")}</th>
                           </tr>
                       </thead>
                       <tbody>
-                          ${map(this.patronsBookings, (booking) => {
-                              const { roomid, start, end } = booking;
-                              return html`
-                                  <tr>
-                                      <td>${this.rooms.find((room) => room.roomid == roomid).roomnumber}</td>
-                                      <td>${formatDatetimeByLocale(start, locale)}</td>
-                                      <td>${formatDatetimeByLocale(end, locale)}</td>
-                                  </tr>
-                              `;
-                          })}
+                          ${repeat(
+                              this.patronsBookings,
+                              (booking) => booking.bookingid,
+                              (booking) => {
+                                  const { bookingid, roomid, start, end, purpose_of_use } = booking;
+                                  return html`
+                                      <tr>
+                                          <td>${this.rooms.find((room) => room.roomid == roomid).roomnumber}</td>
+                                          <td>${formatDatetimeByLocale(start, locale)}</td>
+                                          <td>${formatDatetimeByLocale(end, locale)}</td>
+                                          <td>${purpose_of_use}</td>
+                                          <td>
+                                              <button
+                                                  class="btn"
+                                                  data-id=${bookingid}
+                                                  @click=${this.handleConfirmation}
+                                              >
+                                                  <span class="initiate-delete">${__("Delete")}</span>
+                                                  <span class="confirm-delete d-none">${__("Confirm")}</span>
+                                              </button>
+                                          </td>
+                                      </tr>
+                                  `;
+                              },
+                          )}
                       </tbody>
                   </table>
               `;

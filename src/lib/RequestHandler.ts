@@ -429,6 +429,13 @@ const endpoints: ApiEndpoints = {
                 lang: locale,
             },
         },
+        patronBookingsPublic: {
+            url: `${BASE_URL}/public/patron/bookings`,
+            cache: false,
+            queryParams: {
+                lang: locale,
+            },
+        },
         bookings: {
             url: `${BASE_URL}/bookings`,
             cache: false,
