@@ -113,8 +113,8 @@ export default class RoomReservationsView extends LitElement {
                     },
                 },
                 time: {
-                    start: { hours: s.getHours(), minutes: s.getMinutes() },
-                    end: { hours: e.getHours(), minutes: e.getMinutes() },
+                    start: { hour: s.getHours(), minute: s.getMinutes() },
+                    end: { hour: e.getHours(), minute: e.getMinutes() },
                 },
                 heading,
                 content: blackedout ? __("Blocked") : __("Booked"),
