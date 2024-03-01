@@ -1,18 +1,18 @@
-package Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper;
+package Koha::Plugin::Com::LMSCloud::MigrationHelper;
 
 use Modern::Perl;
 use utf8;
 use 5.032;
 
-use Carp;
-use English qw( -no_match_vars );
-use File::Spec;
-use File::Basename;
+use Carp           qw( carp croak );
+use English        qw( -no_match_vars );
+use File::Spec     ();
+use File::Basename qw( fileparse );
 use Moose;
-use Readonly;
-use Try::Tiny;
+use Readonly  ();
+use Try::Tiny qw( catch try );
 
-use C4::Context;
+use C4::Context ();
 
 our $VERSION = '1.0.0';
 
@@ -63,11 +63,13 @@ sub install() {
         }
 
         # Store the last migration
-        $args->{plugin}->store_data( { $CURRENT_MIGRATION_KEY => $last_migration } )
-            if defined $last_migration;
+        if ( defined $last_migration ) {
+            $args->{plugin}->store_data( { $CURRENT_MIGRATION_KEY => $last_migration } );
+        }
 
         return 1;
-    } catch {
+    }
+    catch {
         my $error = $_;
         carp "INSTALLATION ERROR: $error";
 
@@ -126,10 +128,12 @@ sub upgrade() {
 
         return $is_success;
 
-    } catch {
+    }
+    catch {
         my $error = $_;
-        $self->dbh->rollback
-            if $self->dbh->in_transaction;    # Rollback transaction if inside transaction block
+        if ( $self->dbh->in_transaction ) {
+            $self->dbh->rollback;    # Rollback transaction if inside transaction block
+        }
         carp "UPGRADE ERROR: $error";
         return 0;
     };
@@ -158,8 +162,7 @@ sub _apply_migration {
     return try {
         local $INPUT_RECORD_SEPARATOR = undef;    # Enable slurp mode
 
-        open my $fh, '<:encoding(UTF-8)', $file
-            or croak "Can't open $file: $OS_ERROR";
+        open my $fh, '<:encoding(UTF-8)', $file or croak "Can't open $file: $OS_ERROR";
         my $sql = <$fh>;
         close $fh or croak "Can't close $file: $OS_ERROR";
 
@@ -178,15 +181,14 @@ sub _apply_migration {
         my $statements = [ split /;\s*\n/smx, $sql ];
         for my $statement ( @{$statements} ) {
             my $sth = $self->dbh->prepare($statement);
-            croak "Failed to prepare statement: $statement. DBI error: " . $self->dbh->errstr
-                if !defined $sth;
+            croak "Failed to prepare statement: $statement. DBI error: " . $self->dbh->errstr if !defined $sth;
 
             my $rows_affected = $sth->execute;
-            croak "Failed to execute statement: $statement. DBI error: " . $sth->errstr
-                if not defined $rows_affected;
+            croak "Failed to execute statement: $statement. DBI error: " . $sth->errstr if not defined $rows_affected;
         }
         return 1;
-    } catch {
+    }
+    catch {
         my $error = $_;
         carp "MIGRATION ERROR for $file: $error";
 

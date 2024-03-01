@@ -1,16 +1,15 @@
-package Koha::Plugin::Com::LMSCloud::RoomReservations::lib::State;
+package Koha::Plugin::Com::LMSCloud::RoomReservations::State;
 
 use Modern::Perl;
 use utf8;
 use 5.010;
 
-use Try::Tiny;
+use C4::Context ();
 
-use C4::Context;
-use SQL::Abstract;
+use Exporter 'import';
+use SQL::Abstract ();
 
 our $VERSION = '1.0.0';
-use Exporter 'import';
 
 BEGIN {
     our @EXPORT_OK = qw( get_patron_categories get_restricted_patron_categories );

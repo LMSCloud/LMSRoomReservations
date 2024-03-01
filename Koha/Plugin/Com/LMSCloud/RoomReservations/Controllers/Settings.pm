@@ -6,18 +6,24 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context        ();
-use Try::Tiny          qw( catch try );
-use JSON               qw( from_json );
-use SQL::Abstract      ();
-use Locale::TextDomain qw( __ );
-use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
-use POSIX              qw( setlocale );
-use Encode             ();
+use C4::Context ();
+
+use JSON          qw( from_json );
+use SQL::Abstract ();
+use Try::Tiny     qw( catch try );
+
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
+);
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 
 our $VERSION = '1.0.0';
 
-my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
+
 setlocale Locale::Messages::LC_MESSAGES(), q{};
 textdomain 'com.lmscloud.roomreservations';
 bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
@@ -34,65 +40,56 @@ sub list {
         my $patron_categories            = _get_patron_categories();
 
         my $settings = [
-            {
-                setting     => 'default_max_booking_time',
+            {   setting     => 'default_max_booking_time',
                 value       => $self->retrieve_data('default_max_booking_time'),
                 description => __('Default maximum bookable time for all rooms'),
                 type        => 'number',
                 placeholder => __('A duration in minutes, e.g. 60 for an hour'),
             },
-            {
-                setting     => 'absolute_reservation_limit',
+            {   setting     => 'absolute_reservation_limit',
                 value       => $self->retrieve_data('absolute_reservation_limit'),
                 description => __('Absolute reservation limit per patron'),
                 type        => 'number',
                 placeholder => __('A number, e.g. 5 for five reservations'),
             },
-            {
-                setting     => 'daily_reservation_limit',
+            {   setting     => 'daily_reservation_limit',
                 value       => $self->retrieve_data('daily_reservation_limit'),
                 description => __('Daily reservation limit per patron'),
                 type        => 'number',
                 placeholder => __('A number, e.g. 3 for three reservations'),
             },
-            {
-                setting     => 'restricted_patron_categories',
+            {   setting     => 'restricted_patron_categories',
                 value       => $restricted_patron_categories,
                 description => __('Restricted patron categories which are not allowed to book rooms'),
                 type        => 'array',
             },
-            {
-                setting => 'patron_categories',
+            {   setting => 'patron_categories',
                 value   => sub {
                     my $params    = shift;
                     my %cmp_table = map { $_->{'categorycode'} => 1 } @{ $params->{'cmp_with'} };
                     return [ grep { not exists $cmp_table{ $_->{'categorycode'} } } @{ $params->{'cmp_on'} } ];
                 }
                     ->(
-                    {
-                        cmp_with => $restricted_patron_categories,
+                    {   cmp_with => $restricted_patron_categories,
                         cmp_on   => $patron_categories
                     }
                     ),
                 description => __('Existing patron categories'),
                 type        => 'array',
             },
-            {
-                setting     => 'restrict_message',
+            {   setting     => 'restrict_message',
                 value       => $self->retrieve_data('restrict_message'),
                 description => __('Message that is shown to restricted patron categories trying to book rooms'),
                 type        => 'text',
                 placeholder => __(q{A message, e.g. 'You are not allowed to book rooms'}),
             },
-            {
-                setting     => 'reply_to_address',
+            {   setting     => 'reply_to_address',
                 value       => $self->retrieve_data('reply_to_address'),
                 description => __('Email address to which confirmation emails for patrons are mirrored'),
                 type        => 'email',
                 placeholder => __('An email address, e.g. contact@institution.com'),
             },
-            {
-                setting     => 'remove_past_reservations_after',
+            {   setting     => 'remove_past_reservations_after',
                 value       => $self->retrieve_data('remove_past_reservations_after'),
                 description => __('Days after which past reservations are removed from the system'),
                 type        => 'number',
@@ -101,7 +98,8 @@ sub list {
         ];
 
         return $c->render( status => 200, openapi => $settings );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -119,7 +117,8 @@ sub add {
 
         return $c->render( status => 201, openapi => $body );
 
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -135,7 +134,8 @@ sub get {
             status  => 200,
             openapi => { setting => $setting, value => $value }
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     }
 }
@@ -149,7 +149,8 @@ sub update {
 
         $self->store_data( { $setting => $body->{'value'} } );
         return $c->render( status => 201, openapi => $body );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -166,8 +167,7 @@ sub delete {
         my ( $stmt, @bind ) = $sql->select(
             'plugin_data',
             q{*},
-            {
-                plugin_class => 'Koha::Plugin::Com::LMSCloud::RoomReservations',
+            {   plugin_class => 'Koha::Plugin::Com::LMSCloud::RoomReservations',
                 plugin_key   => $setting
             }
         );
@@ -184,8 +184,7 @@ sub delete {
 
         ( $stmt, @bind ) = $sql->delete(
             'plugin_data',
-            {
-                plugin_class => 'Koha::Plugin::Com::LMSCloud::RoomReservations',
+            {   plugin_class => 'Koha::Plugin::Com::LMSCloud::RoomReservations',
                 plugin_key   => $setting
             }
         );
@@ -193,7 +192,8 @@ sub delete {
         $sth->execute(@bind);
 
         return $c->render( status => 204, openapi => q{} );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }

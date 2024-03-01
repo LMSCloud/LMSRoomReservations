@@ -1,25 +1,25 @@
-package Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Checks;
+package Koha::Plugin::Com::LMSCloud::RoomReservations::Checks;
 
 use Modern::Perl;
 use utf8;
 use 5.010;
 
-use SQL::Abstract;
-use Try::Tiny;
-use Time::Piece;
-use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
-use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
-use Encode;
+use C4::Context ();
 
-use C4::Context;
-use Koha::Patrons;
+use Koha::Patrons ();
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::State
-    qw( get_patron_categories get_restricted_patron_categories );
+use Exporter 'import';
+use Readonly         qw( Readonly );
+use SQL::Abstract    ();
+use Time::Piece      qw( localtime );
+use Locale::Messages qw( LC_TIME setlocale );
+
+use Koha::Plugin::Com::LMSCloud::RoomReservations;
+use Koha::Plugin::Com::LMSCloud::RoomReservations::State qw(
+    get_restricted_patron_categories
+);
 
 our $VERSION = '1.0.0';
-use Exporter 'import';
 
 BEGIN {
     our @EXPORT_OK = qw(
@@ -32,15 +32,12 @@ BEGIN {
     );
 }
 
-my $self   = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
-my $locale = C4::Context->preference('language');
-local $ENV{LANGUAGE}       = length $locale > 2 ? substr( $locale, 0, 2 ) : $locale;
-local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+Readonly my $CONSTANTS => {
+    INDEX_SUNDAY_TIME_PIECE_WDAY => -1,
+    INDEX_SUNDAY_SCHEMA          => 6,
+};
 
-setlocale Locale::Messages::LC_MESSAGES(), q{};
-textdomain 'com.lmscloud.roomreservations';
-bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
-bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
 my $BOOKINGS_TABLE   = $self ? $self->get_qualified_table_name('bookings')   : undef;
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
@@ -103,7 +100,7 @@ sub is_open_during_booking_time {
     # returns index 0 as Sunday so we have to subtract 1 from the _wday result and set
     # the value to 6 if it is -1.
     my $start_wday = ( Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->_wday - 1 );
-    $start_wday = $start_wday == -1 ? 6 : $start_wday;
+    $start_wday = $start_wday == $CONSTANTS->{'INDEX_SUNDAY_TIME_PIECE_WDAY'} ? $CONSTANTS->{'INDEX_SUNDAY_SCHEMA'} : $start_wday;
     ( $stmt, @bind ) = $sql->select( $OPEN_HOURS_TABLE, [ 'start', 'end' ], { branch => $branch, day => $start_wday } );
     $sth = $dbh->prepare($stmt);
     $sth->execute(@bind);
@@ -119,23 +116,11 @@ sub is_open_during_booking_time {
     # Now we have to use Time::Piece to check if the $start_time's time portion is equal or
     # greater than the $start_hour and if the $end_time's time portion is equal or less than
     # the $end_hour. We normalize the date components to a fixed date for time comparison.
-    my $fixed_date    = "1970-01-01";
-    my $booking_start = Time::Piece->strptime(
-        "$fixed_date " . Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms,
-        "%Y-%m-%d %H:%M:%S"
-    );
-    my $booking_end = Time::Piece->strptime(
-        "$fixed_date " . Time::Piece->strptime( $end_time, '%Y-%m-%dT%H:%M' )->hms,
-        "%Y-%m-%d %H:%M:%S"
-    );
-    my $branch_open = Time::Piece->strptime(
-        "$fixed_date " . Time::Piece->strptime( $start_hour, '%H:%M:%S' )->hms,
-        "%Y-%m-%d %H:%M:%S"
-    );
-    my $branch_close = Time::Piece->strptime(
-        "$fixed_date " . Time::Piece->strptime( $end_hour, '%H:%M:%S' )->hms,
-        "%Y-%m-%d %H:%M:%S"
-    );
+    my $fixed_date    = '1970-01-01';
+    my $booking_start = Time::Piece->strptime( "$fixed_date " . Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms, '%Y-%m-%d %H:%M:%S' );
+    my $booking_end   = Time::Piece->strptime( "$fixed_date " . Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' )->hms, '%Y-%m-%d %H:%M:%S' );
+    my $branch_open   = Time::Piece->strptime( "$fixed_date " . Time::Piece->strptime( $start_hour, '%H:%M:%S' )->hms,       '%Y-%m-%d %H:%M:%S' );
+    my $branch_close  = Time::Piece->strptime( "$fixed_date " . Time::Piece->strptime( $end_hour,   '%H:%M:%S' )->hms,       '%Y-%m-%d %H:%M:%S' );
 
     return $booking_start->epoch >= $branch_open->epoch
         && $booking_end->epoch <= $branch_close->epoch;
@@ -151,15 +136,18 @@ sub has_conflicting_booking {
     # any other booking but if it starts on the same minute another booking ends
     # we have to allow it.
     my ( $where, @bind ) = $sql->where(
-        {
-            roomid => $room_id,
+        {   roomid => $room_id,
             -and   => [
                 start => { '<' => $end_time },
                 end   => { '>' => $start_time },
             ]
         }
     );
-    $where .= ' AND bookingid != ?' and push @bind, $booking_id if $booking_id;
+
+    if ($booking_id) {
+        $where .= ' AND bookingid != ?' and push @bind, $booking_id;
+    }
+
     my $check_query = "SELECT COUNT(*) FROM $BOOKINGS_TABLE $where";
     my $check_sth   = $dbh->prepare($check_query);
     $check_sth->execute(@bind);
@@ -182,8 +170,7 @@ sub has_reached_reservation_limit {
         my ( $stmt, @bind ) = $sql->select(
             $BOOKINGS_TABLE,
             ['COUNT(*)'],
-            {
-                borrowernumber => $borrowernumber,
+            {   borrowernumber => $borrowernumber,
                 start          => { '>=', Time::Piece->new->strftime('%Y-%m-%d') . q{ 00:00:00} }
             }
         );
@@ -205,9 +192,8 @@ sub has_reached_reservation_limit {
         my ( $stmt, @bind ) = $sql->select(
             $BOOKINGS_TABLE,
             ['COUNT(*)'],
-            {
-                borrowernumber => $borrowernumber,
-                start => { 'like' => Time::Piece->strptime( $start, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d') . q{%} }
+            {   borrowernumber => $borrowernumber,
+                start          => { 'like' => Time::Piece->strptime( $start, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d') . q{%} }
             }
         );
         my $sth = $dbh->prepare($stmt);

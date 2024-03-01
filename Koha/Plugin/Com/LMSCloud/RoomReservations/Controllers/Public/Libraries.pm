@@ -18,10 +18,10 @@ package Koha::Plugin::Com::LMSCloud::RoomReservations::Controllers::Public::Libr
 use Modern::Perl;
 
 use Mojo::Base 'Mojolicious::Controller';
-use Koha::Libraries;
+use Koha::Libraries ();
 
 use Try::Tiny qw( catch try );
-use Readonly;
+use Readonly  ();
 
 Readonly::Array my @ALLOWED_PROPERTIES => qw(
     address1
@@ -65,13 +65,16 @@ sub list {
         foreach my $library_ref ( @{$libraries} ) {
             my $filtered_library = {};
             foreach my $property (@ALLOWED_PROPERTIES) {
-                $filtered_library->{$property} = $library_ref->{$property} if exists $library_ref->{$property};
+                if ( exists $library_ref->{$property} ) {
+                    $filtered_library->{$property} = $library_ref->{$property};
+                }
             }
             push @{$libraries_filtered_properties}, $filtered_library;
         }
 
         return $c->render( status => 200, openapi => $libraries_filtered_properties );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }

@@ -6,17 +6,33 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context   ();
-use Try::Tiny     qw( catch try );
+use C4::Context ();
+
+use Readonly      qw( Readonly );
+use Scalar::Util  qw( looks_like_number );
 use SQL::Abstract ();
+use Try::Tiny     qw( catch try );
+
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
+);
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 
 our $VERSION = '1.0.0';
 
-my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+Readonly my $MAX_LENGTH_ROOMNUMBER => 20;
+
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
+
+setlocale Locale::Messages::LC_MESSAGES(), q{};
+textdomain 'com.lmscloud.roomreservations';
+bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 
 my $ROOMS_TABLE = $self ? $self->get_qualified_table_name('rooms') : undef;
-
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -29,7 +45,8 @@ sub list {
 
         my $rooms = $sth->fetchall_arrayref( {} );
         return $c->render( status => 200, openapi => $rooms );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -54,7 +71,8 @@ sub get {
         }
 
         return $c->render( status => 200, openapi => $room );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     }
 }
@@ -63,43 +81,35 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $room      = $c->param('body');
-        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
-            {
-                schema => [
-                    {
-                        key   => 'maxcapacity',
-                        value => $room->{'maxcapacity'},
-                        type  => 'number'
-                    },
-                    {
-                        key   => 'color',
-                        value => $room->{'color'},
-                        type  => 'color'
-                    },
-                    {
-                        key     => 'maxbookabletime',
-                        value   => $room->{'maxbookabletime'},
-                        type    => 'number',
-                        options => { nullable => 1 }
-                    },
-                    {
-                        key     => 'roomnumber',
-                        value   => $room->{'roomnumber'},
-                        type    => 'string',
-                        options => { length => 20, alphanumeric => 0 }
-                    },
-                ]
-            }
-        );
-        my ( $is_valid, $errors ) = $validator->validate();
-        if ( !$is_valid ) {
+        my $room = $c->param('body');
+
+        my $errors = [];
+        if ( !looks_like_number( $room->{'maxcapacity'} ) ) {
+            push @{$errors}, __('Please enter a number for') . q{ } . __('maxcapacity');
+        }
+
+        if ( !( $room->{'color'} =~ m/^#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx ) ) {
+            push @{$errors}, __('Please enter a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0) for') . q{ } . __('color');
+        }
+
+        if ( $room->{'maxbookabletime'} and !looks_like_number( $room->{'maxbookabletime'} ) ) {
+            push @{$errors}, __('Please enter a number for') . q{ } . __('maxbookabletime');
+        }
+
+        if ( length $room->{'roomnumber'} > $MAX_LENGTH_ROOMNUMBER ) {
+            push @{$errors}, __('The maximum length for') . q{ } . __('roomnumber') . q{ } . __('is 20 characters');
+        }
+
+        if ( @{$errors} ) {
             return $c->render(
                 status  => 400,
-                openapi => { error => join q{ & }, @{$errors} }
+                openapi => { error => join qq{ \n }, @{$errors} }
             );
         }
 
@@ -111,7 +121,8 @@ sub add {
             status  => 201,
             openapi => $room
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -120,6 +131,9 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
@@ -142,39 +156,28 @@ sub update {
         # To do this we assign a new hashref back to $new_room and check for each key if the value is nullish, e.g. undef or empty string.
         $new_room =
             { map { $_ => $new_room->{$_} || undef } keys %{$new_room} };
-        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
-            {
-                schema => [
-                    {
-                        key   => 'maxcapacity',
-                        value => $new_room->{'maxcapacity'},
-                        type  => 'number'
-                    },
-                    {
-                        key   => 'color',
-                        value => $new_room->{'color'},
-                        type  => 'color'
-                    },
-                    {
-                        key     => 'maxbookabletime',
-                        value   => $new_room->{'maxbookabletime'},
-                        type    => 'number',
-                        options => { nullable => 1 }
-                    },
-                    {
-                        key     => 'roomnumber',
-                        value   => $new_room->{'roomnumber'},
-                        type    => 'string',
-                        options => { length => 20, alphanumeric => 0 }
-                    },
-                ]
-            }
-        );
-        my ( $is_valid, $errors ) = $validator->validate();
-        if ( !$is_valid ) {
+
+        my $errors = [];
+        if ( !looks_like_number( $new_room->{'maxcapacity'} ) ) {
+            push @{$errors}, __('Please enter a number for') . q{ } . __('maxcapacity');
+        }
+
+        if ( !( $new_room->{'color'} =~ m/^#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx ) ) {
+            push @{$errors}, __('Please enter a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0) for') . q{ } . __('color');
+        }
+
+        if ( $room->{'maxbookabletime'} and !looks_like_number( $room->{'maxbookabletime'} ) ) {
+            push @{$errors}, __('Please enter a number for') . q{ } . __('maxbookabletime');
+        }
+
+        if ( length $new_room->{'roomnumber'} > $MAX_LENGTH_ROOMNUMBER ) {
+            push @{$errors}, __('The maximum length for') . q{ } . __('roomnumber') . q{ } . __('is 20 characters');
+        }
+
+        if ( @{$errors} ) {
             return $c->render(
                 status  => 400,
-                openapi => { error => join q{ & }, @{$errors} }
+                openapi => { error => join qq{ \n }, @{$errors} }
             );
         }
 
@@ -187,7 +190,8 @@ sub update {
             status  => 200,
             openapi => { %{$new_room}, roomid => $roomid }
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -222,7 +226,8 @@ sub delete {
             status  => 204,
             openapi => q{}
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }

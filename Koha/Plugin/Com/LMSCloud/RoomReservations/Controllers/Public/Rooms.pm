@@ -6,13 +6,13 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
-use Try::Tiny;
-use SQL::Abstract;
+use C4::Context ();
+
+use Try::Tiny qw( catch try );
 
 our $VERSION = '1.0.0';
 
-my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
 my $ROOMS_TABLE = $self ? $self->get_qualified_table_name('rooms') : undef;
 
@@ -27,7 +27,8 @@ sub list {
 
         my $rooms = $sth->fetchall_arrayref( {} );
         return $c->render( status => 200, openapi => $rooms );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }

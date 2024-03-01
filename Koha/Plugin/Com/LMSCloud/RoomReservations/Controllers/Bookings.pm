@@ -6,35 +6,47 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context                ();
-use Try::Tiny                  qw( catch try );
-use JSON                       qw( from_json );
-use SQL::Abstract              ();
-use Time::Piece                ();
-use Time::Seconds              qw( ONE_DAY );
-use Locale::TextDomain         qw( __ );
-use DateTime::Format::Strptime ();
+use C4::Context ();
 
-use C4::Letters                                                ();
-use Koha::Patrons                                              ();
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Checks qw(
+use JSON          qw( from_json );
+use Readonly      qw( Readonly );
+use SQL::Abstract ();
+use Time::Piece   ();
+use Time::Seconds qw( ONE_DAY );
+use Try::Tiny     qw( catch try );
+
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
     is_allowed_to_book
     is_bookable_time
     is_open_during_booking_time
     has_conflicting_booking
     has_reached_reservation_limit
 );
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Actions qw(
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
     send_email_confirmation
 );
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations qw(
-    set_translation_environment
-    with_language_context
+
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
 );
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 
 our $VERSION = '1.0.0';
 
-my $self = set_translation_environment( Koha::Plugin::Com::LMSCloud::RoomReservations->new );
+Readonly my $CONSTANTS => {
+    HTTP_OK      => 200,
+    HTTP_CREATED => 201,
+};
+
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
+
+setlocale Locale::Messages::LC_MESSAGES(), q{};
+textdomain 'com.lmscloud.roomreservations';
+bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 
 my $BOOKINGS_TABLE           = $self ? $self->get_qualified_table_name('bookings')           : undef;
 my $BOOKINGS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('bookings_equipment') : undef;
@@ -78,10 +90,7 @@ sub list {
 
         # Then we have to get the equipment that's referenced in the bookings
         # and the bookings_equipment table and add it to the bookings.
-        ( $stmt, @bind ) = $sql->select(
-            $EQUIPMENT_TABLE, q{*},
-            { equipmentid => { -in => [ map { $_->{'equipmentid'} } @{$bookings_equipment} ] } }
-        );
+        ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => { -in => [ map { $_->{'equipmentid'} } @{$bookings_equipment} ] } } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
@@ -99,7 +108,8 @@ sub list {
         }
 
         return $c->render( status => 200, openapi => $bookings );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -112,7 +122,8 @@ sub add {
         my $body = from_json($json);
 
         return _check_and_save_booking( $body, $c );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -137,7 +148,8 @@ sub get {
         }
 
         return $c->render( status => 200, openapi => $booking );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -152,7 +164,8 @@ sub update {
         my $body = from_json($json);
 
         return _check_and_save_booking( $body, $c, $booking_id );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -188,7 +201,8 @@ sub delete {
             status  => 204,
             openapi => q{},
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -200,126 +214,113 @@ sub _check_and_save_booking {
     $dbh->begin_work;    # start transaction
 
     return try {
-        with_language_context(
-            $c->param('lang'),
-            sub {
-                my $sql = SQL::Abstract->new;
+        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
-                if (
-                    !(
-                        Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->epoch <
-                        Time::Piece->strptime( $body->{'end'},   '%Y-%m-%dT%H:%M' )->epoch
-                    )
-                    )
-                {
-                    $dbh->rollback;    # rollback transaction
-                    return $c->render(
-                        status  => 400,
-                        openapi => { error => __('End time must be after start time') }
-                    );
-                }
+        my $sql = SQL::Abstract->new;
 
-                if ( !is_allowed_to_book( $body->{'borrowernumber'} ) ) {
-                    $dbh->rollback;    # rollback transaction
-                    return $c->render(
-                        status  => 400,
-                        openapi => {
-                            error => $self->retrieve_data('restrict_message')
-                                || __('The patron is not allowed to book rooms.')
-                        }
-                    );
-                }
+        if ( !( Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->epoch < Time::Piece->strptime( $body->{'end'}, '%Y-%m-%dT%H:%M' )->epoch ) ) {
+            $dbh->rollback;    # rollback transaction
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('End time must be after start time') }
+            );
+        }
 
-                if ( !is_bookable_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
-                    $dbh->rollback;    # rollback transaction
-                    return $c->render(
-                        status  => 400,
-                        openapi => { error => __('The booking exceeds the maximum allowed time for the room.') }
-                    );
-                }
+        if ( !is_allowed_to_book( $body->{'borrowernumber'} ) ) {
+            $dbh->rollback;    # rollback transaction
+            return $c->render(
+                status  => 400,
+                openapi => { error => $self->retrieve_data('restrict_message') || __('The patron is not allowed to book rooms.') }
+            );
+        }
 
-                if ( !is_open_during_booking_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
-                    $dbh->rollback;    # rollback transaction
-                    return $c->render(
-                        status  => 400,
-                        openapi => { error => __('The institution is closed during the selected time frame.') }
-                    );
-                }
+        if ( !is_bookable_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
+            $dbh->rollback;    # rollback transaction
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('The booking exceeds the maximum allowed time for the room.') }
+            );
+        }
 
-                if ( has_conflicting_booking( $body->{'roomid'}, $body->{'start'}, $body->{'end'}, $booking_id ) ) {
-                    $dbh->rollback;    # rollback transaction
-                    return $c->render(
-                        status  => 400,
-                        openapi => { error => __('There is a conflicting booking.') }
-                    );
-                }
+        if ( !is_open_during_booking_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
+            $dbh->rollback;    # rollback transaction
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('The institution is closed during the selected time frame.') }
+            );
+        }
 
-                if ( !$booking_id ) {
-                    my ( $has_reached_reservation_limit, $message ) =
-                        has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
-                    if ($has_reached_reservation_limit) {
-                        $dbh->rollback;    # rollback transaction
-                        return $c->render(
-                            status  => 400,
-                            openapi => {
-                                error => __('The borrower has reached the ') . $message . __(' limit of reservations.')
-                            }
-                        );
-                    }
-                }
+        if ( has_conflicting_booking( $body->{'roomid'}, $body->{'start'}, $body->{'end'}, $booking_id ) ) {
+            $dbh->rollback;    # rollback transaction
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('There is a conflicting booking.') }
+            );
+        }
 
-                my $booking = {
-                    borrowernumber => $body->{'borrowernumber'},
-                    roomid         => $body->{'roomid'},
-                    start          => $body->{'start'},
-                    end            => $body->{'end'},
-                    blackedout     => $body->{'blackedout'} || 0
-                };
-
-                my $is_update = defined $booking_id;
-                my ( $stmt, @bind ) =
-                      $is_update
-                    ? $sql->update( $BOOKINGS_TABLE, $booking, { bookingid => $booking_id } )
-                    : $sql->insert( $BOOKINGS_TABLE, $booking );
-                my $sth = $dbh->prepare($stmt);
-                $sth->execute(@bind);
-
-                my $new_booking_id = $sth->last_insert_id();
-                if ($is_update) {
-
-                    # Clear existing equipment associations
-                    ( $stmt, @bind ) = $sql->delete( $BOOKINGS_EQUIPMENT_TABLE, { bookingid => $booking_id } );
-                    $sth = $dbh->prepare($stmt);
-                    $sth->execute(@bind);
-                    $new_booking_id = $booking_id;
-                }
-
-                if ( defined $body->{'equipment'} && scalar @{ $body->{'equipment'} } > 0 ) {
-                    foreach my $item ( @{ $body->{'equipment'} } ) {
-                        ( $stmt, @bind ) = $sql->insert(
-                            $BOOKINGS_EQUIPMENT_TABLE,
-                            {
-                                bookingid   => $new_booking_id,
-                                equipmentid => $item,
-                            }
-                        );
-                        $sth = $dbh->prepare($stmt);
-                        $sth->execute(@bind);
-                    }
-                }
-
-                $dbh->commit;    # commit transaction
-
-                # If all went well, we send an email to the associated borrower
-                my $is_sent = send_email_confirmation($body);
-
+        if ( !$booking_id ) {
+            my ( $has_reached_reservation_limit, $message ) =
+                has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
+            if ($has_reached_reservation_limit) {
+                $dbh->rollback;    # rollback transaction
                 return $c->render(
-                    status  => defined $booking_id ? 200 : 201,
-                    openapi => $body
+                    status  => 400,
+                    openapi => { error => __('The borrower has reached the ') . $message . __(' limit of reservations.') }
                 );
             }
+        }
+
+        my $booking = {
+            borrowernumber => $body->{'borrowernumber'},
+            roomid         => $body->{'roomid'},
+            start          => $body->{'start'},
+            end            => $body->{'end'},
+            blackedout     => $body->{'blackedout'} || 0
+        };
+
+        my $is_update = defined $booking_id;
+        my ( $stmt, @bind ) =
+              $is_update
+            ? $sql->update( $BOOKINGS_TABLE, $booking, { bookingid => $booking_id } )
+            : $sql->insert( $BOOKINGS_TABLE, $booking );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $new_booking_id = $sth->last_insert_id();
+        if ($is_update) {
+
+            # Clear existing equipment associations
+            ( $stmt, @bind ) = $sql->delete( $BOOKINGS_EQUIPMENT_TABLE, { bookingid => $booking_id } );
+            $sth = $dbh->prepare($stmt);
+            $sth->execute(@bind);
+            $new_booking_id = $booking_id;
+        }
+
+        if ( defined $body->{'equipment'} && scalar @{ $body->{'equipment'} } > 0 ) {
+            foreach my $item ( @{ $body->{'equipment'} } ) {
+                ( $stmt, @bind ) = $sql->insert(
+                    $BOOKINGS_EQUIPMENT_TABLE,
+                    {   bookingid   => $new_booking_id,
+                        equipmentid => $item,
+                    }
+                );
+                $sth = $dbh->prepare($stmt);
+                $sth->execute(@bind);
+            }
+        }
+
+        $dbh->commit;    # commit transaction
+
+        # If all went well, we send an email to the associated borrower
+        my $is_sent = send_email_confirmation($body);
+
+        return $c->render(
+            status  => defined $booking_id ? $CONSTANTS->{'HTTP_OK'} : $CONSTANTS->{'HTTP_CREATED'},
+            openapi => $body
         );
-    } catch {
+    }
+    catch {
         $dbh->rollback;
         $c->unhandled_exception($_);
     };

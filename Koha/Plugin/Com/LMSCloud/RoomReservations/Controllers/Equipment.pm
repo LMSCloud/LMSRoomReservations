@@ -6,18 +6,33 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context   ();
-use Try::Tiny     qw( catch try );
+use C4::Context ();
+
+use Readonly      qw( Readonly );
 use SQL::Abstract ();
+use Try::Tiny     qw( catch try );
+
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
+);
+use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
 
 our $VERSION = '1.0.0';
 
-my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+Readonly my $MAX_LENGTH_EQUIPMENTNAME => 20;
+
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
+
+setlocale Locale::Messages::LC_MESSAGES(), q{};
+textdomain 'com.lmscloud.roomreservations';
+bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
+bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 
 my $EQUIPMENT_TABLE       = $self ? $self->get_qualified_table_name('equipment')       : undef;
 my $ROOMS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('rooms_equipment') : undef;
-
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -76,7 +91,8 @@ sub get {
             ? { %{$equipment}, roomid => $roomid }
             : $equipment
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     }
 }
@@ -85,33 +101,27 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
         my $equipment = $c->param('body');
-        my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
-            {
-                schema => [
-                    {
-                        key     => 'equipmentname',
-                        value   => $equipment->{'equipmentname'},
-                        type    => 'string',
-                        options => { length => 20, alphanumeric => 0 }
-                    },
-                    {
-                        key     => 'maxbookabletime',
-                        value   => $equipment->{'maxbookabletime'},
-                        type    => 'number',
-                        options => { nullable => 1 }
-                    },
-                ]
-            }
-        );
-        my ( $is_valid, $errors ) = $validator->validate();
-        if ( !$is_valid ) {
+
+        my $errors = [];
+        if ( length $equipment->{'equipmentname'} > $MAX_LENGTH_EQUIPMENTNAME ) {
+            push @{$errors}, __('The maximum length for') . q{ } . __('equipmentname') . q{ } . __('is 20 characters');
+        }
+
+        if ( $equipment->{'maxbookabletime'} and !looks_like_number( $equipment->{'maxbookabletime'} ) ) {
+            push @{$errors}, __('Please enter a number for') . q{ } . __('maxbookabletime');
+        }
+
+        if ( @{$errors} ) {
             return $c->render(
                 status  => 400,
-                openapi => { error => join q{ & }, @{$errors} }
+                openapi => { error => join qq{ \n }, @{$errors} }
             );
         }
 
@@ -123,7 +133,8 @@ sub add {
             status  => 201,
             openapi => $equipment
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -132,6 +143,9 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
         my $dbh = C4::Context->dbh;
         my $sql = SQL::Abstract->new;
 
@@ -150,29 +164,19 @@ sub update {
                 map { $_ => $new_equipment->{$_} || undef }
                     keys %{$new_equipment}
             };
-            my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
-                {
-                    schema => [
-                        {
-                            key     => 'equipmentname',
-                            value   => $new_equipment->{'equipmentname'},
-                            type    => 'string',
-                            options => { length => 20, alphanumeric => 0 }
-                        },
-                        {
-                            key     => 'maxbookabletime',
-                            value   => $new_equipment->{'maxbookabletime'},
-                            type    => 'number',
-                            options => { nullable => 1 }
-                        },
-                    ]
-                }
-            );
-            my ( $is_valid, $errors ) = $validator->validate();
-            if ( !$is_valid ) {
+            my $errors = [];
+            if ( length $new_equipment->{'equipmentname'} > $MAX_LENGTH_EQUIPMENTNAME ) {
+                push @{$errors}, __('The maximum length for') . q{ } . __('equipmentname') . q{ } . __('is 20 characters');
+            }
+
+            if ( $new_equipment->{'maxbookabletime'} and !looks_like_number( $new_equipment->{'maxbookabletime'} ) ) {
+                push @{$errors}, __('Please enter a number for') . q{ } . __('maxbookabletime');
+            }
+
+            if ( @{$errors} ) {
                 return $c->render(
                     status  => 400,
-                    openapi => { error => join q{ & }, @{$errors} }
+                    openapi => { error => join qq{ \n }, @{$errors} }
                 );
             }
 
@@ -213,8 +217,7 @@ sub update {
             return $c->render(
                 status  => 200,
                 openapi => $roomid
-                ? {
-                    %{$new_equipment},
+                ? { %{$new_equipment},
                     equipmentid => $equipmentid,
                     roomid      => $roomid
                     }
@@ -226,7 +229,8 @@ sub update {
             status  => 404,
             openapi => { error => 'Item not found' }
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }
@@ -261,7 +265,8 @@ sub delete {
             status  => 204,
             openapi => q{}
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }

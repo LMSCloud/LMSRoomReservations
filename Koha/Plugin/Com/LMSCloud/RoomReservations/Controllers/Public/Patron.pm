@@ -6,13 +6,7 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use Try::Tiny;
-use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
-use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
-use Encode;
-
-use Koha::Patrons;
+use Try::Tiny qw( catch try );
 
 our $VERSION = '1.0.0';
 
@@ -33,7 +27,8 @@ sub get {
         my $details = { email => $patron->email };
 
         return $c->render( status => 200, openapi => $details );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     };
 }

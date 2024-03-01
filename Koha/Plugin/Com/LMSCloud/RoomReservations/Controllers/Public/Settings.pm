@@ -6,14 +6,11 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context   ();
-use Try::Tiny     qw( catch try );
-use JSON          ();
-use SQL::Abstract ();
+use Try::Tiny qw( catch try );
 
 our $VERSION = '1.0.0';
 
-my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new();
+my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
 sub get {
     my $c = shift->openapi->valid_input or return;
@@ -37,7 +34,8 @@ sub get {
             status  => 200,
             openapi => { setting => $setting, value => $value }
         );
-    } catch {
+    }
+    catch {
         $c->unhandled_exception($_);
     }
 }
