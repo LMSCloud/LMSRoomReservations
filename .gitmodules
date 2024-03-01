@@ -1,0 +1,3 @@
+[submodule "src/components/custom/LMSCalendar"]
+	path = src/components/custom/LMSCalendar
+	url = https://github.com/LMSCloudPaulD/LMSCalendar
