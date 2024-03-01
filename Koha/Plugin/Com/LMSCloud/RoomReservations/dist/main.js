@@ -247,7 +247,7 @@ const La=t=>(e,r)=>{void 0!==r?r.addInitializer((()=>{customElements.define(t,e)
                             --entry-background-color: whitesmoke;
                             --entry-color: black;
                         }
-                    `,entry:{heading:`[ ${e} ]`}}))))}_getGridSlotByTime({start:t,end:e}){const r=60*t.hour+(t.minute+1);return`${r}/${r+(60*e.hour+e.minute-r)}`}_getWidthByGroupSize({grading:t,index:e}){return 100/t.filter((r=>r.group===t[e].group)).length}_getOffsetByDepth({grading:t,index:e}){return t[e]?0===t[e].depth?0:t[e].depth*(100/t.filter((r=>r.group===t[e].group)).length):0}_getDaysRange(t){const{start:e,end:r}=t,i=new Date(e.year,e.month-1,e.day),o=new Date(r.year,r.month-1,r.day);return[i,o,(o.getTime()-i.getTime())/864e5+1]}};yh.styles=qn`
+                    `,entry:{heading:`[ ${e} ]`}}))))}_getGridSlotByTime({start:t,end:e}){const r=60*t.hour+(t.minute+1),i=r+(60*e.hour+e.minute-r);return r===i?`${r}/${i+1}`:`${r}/${i}`}_getWidthByGroupSize({grading:t,index:e}){return 100/t.filter((r=>r.group===t[e].group)).length}_getOffsetByDepth({grading:t,index:e}){return t[e]?0===t[e].depth?0:t[e].depth*(100/t.filter((r=>r.group===t[e].group)).length):0}_getDaysRange(t){const{start:e,end:r}=t,i=new Date(e.year,e.month-1,e.day),o=new Date(r.year,r.month-1,r.day);return[i,o,(o.getTime()-i.getTime())/864e5+1]}};yh.styles=qn`
         :host {
             --shadow-sm: rgba(0, 0, 0, 0.18) 0px 2px 4px;
             --shadow-md: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
