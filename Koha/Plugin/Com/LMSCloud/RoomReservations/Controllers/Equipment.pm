@@ -9,6 +9,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use C4::Context ();
 
 use Readonly      qw( Readonly );
+use Scalar::Util  qw( looks_like_number );
 use SQL::Abstract ();
 use Try::Tiny     qw( catch try );
 
