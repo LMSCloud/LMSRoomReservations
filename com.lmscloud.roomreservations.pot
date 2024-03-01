@@ -111,6 +111,7 @@ msgid "Abort"
 msgstr ""
 
 #: src/components/LMSConfirmationModal.ts:46
+#: src/opac/PatronsBookingsTable.ts:117
 msgid "Confirm"
 msgstr ""
 
@@ -185,7 +186,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: src/components/LMSTable.ts:600
+#: src/components/LMSTable.ts:600 src/opac/PatronsBookingsTable.ts:95
 msgid "actions"
 msgstr ""
 
@@ -203,6 +204,7 @@ msgid "Save"
 msgstr ""
 
 #: src/components/LMSTable.ts:659 src/components/LMSTable.ts:664
+#: src/opac/PatronsBookingsTable.ts:116
 #: src/components/custom/LMSEquipmentItem.ts:186
 #: src/components/custom/LMSRoom.ts:221
 msgid "Delete"
@@ -468,35 +470,39 @@ msgstr ""
 msgid "Open Hours"
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:40
+#: src/opac/PatronsBookingsTable.ts:77
 msgid "You haven't made any room reservations yet. Future reservations will show up right here in your user profile."
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:50
+#: src/opac/PatronsBookingsTable.ts:87
 msgid "This table shows your current room reservations"
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:54 src/components/custom/LMSBookie.ts:219
+#: src/opac/PatronsBookingsTable.ts:91 src/components/custom/LMSBookie.ts:219
 msgid "Room"
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:55
+#: src/opac/PatronsBookingsTable.ts:92
 msgid "Start"
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:56
+#: src/opac/PatronsBookingsTable.ts:93
 msgid "End"
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:77
+#: src/opac/PatronsBookingsTable.ts:94 src/components/custom/LMSBookie.ts:299
+msgid "Purpose of Use"
+msgstr ""
+
+#: src/opac/PatronsBookingsTable.ts:131
 msgid "There has been a technical error. Please inform the staff."
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:81
+#: src/opac/PatronsBookingsTable.ts:135
 msgid "Your bookings"
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:83
+#: src/opac/PatronsBookingsTable.ts:137
 msgid "Make a reservation"
 msgstr ""
 
@@ -588,10 +594,6 @@ msgstr ""
 
 #: src/components/custom/LMSBookie.ts:265
 msgid "In minutes, e.g. 60"
-msgstr ""
-
-#: src/components/custom/LMSBookie.ts:299
-msgid "Purpose of Use"
 msgstr ""
 
 #: src/components/custom/LMSBookie.ts:307
@@ -792,7 +794,7 @@ msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:98
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:166
-msgid "Please enter a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0) for"
+msgid "Please enter a color in the format #RRGGBB for"
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:98

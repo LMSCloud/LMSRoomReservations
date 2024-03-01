@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-16 20:18+0100\n"
-"PO-Revision-Date: 2024-03-01 16:00+0100\n"
+"PO-Revision-Date: 2024-03-01 19:54+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -115,8 +115,9 @@ msgid "Abort"
 msgstr "Abbrechen"
 
 #: src/components/LMSConfirmationModal.ts:46
+#: src/opac/PatronsBookingsTable.ts:117
 msgid "Confirm"
-msgstr "Bestäigen"
+msgstr "Bestätigen"
 
 #: src/components/LMSDataNavbar.ts:91
 msgid "Table Controls"
@@ -189,7 +190,7 @@ msgstr "Versuchen Sie, Ihre Suche zu verfeineren."
 msgid "Help"
 msgstr "Hilfe"
 
-#: src/components/LMSTable.ts:600
+#: src/components/LMSTable.ts:600 src/opac/PatronsBookingsTable.ts:95
 msgid "actions"
 msgstr "Aktionen"
 
@@ -207,6 +208,7 @@ msgid "Save"
 msgstr "Speichern"
 
 #: src/components/LMSTable.ts:659 src/components/LMSTable.ts:664
+#: src/opac/PatronsBookingsTable.ts:116
 #: src/components/custom/LMSEquipmentItem.ts:186
 #: src/components/custom/LMSRoom.ts:221
 msgid "Delete"
@@ -498,7 +500,7 @@ msgstr "Buchungen"
 msgid "Open Hours"
 msgstr "Öffnungszeiten"
 
-#: src/opac/PatronsBookingsTable.ts:40
+#: src/opac/PatronsBookingsTable.ts:77
 msgid ""
 "You haven't made any room reservations yet. Future reservations will show up "
 "right here in your user profile."
@@ -506,33 +508,37 @@ msgstr ""
 "Sie haben bisher keine Buchungen vorgenommen. Zukünftige Buchungen werden "
 "hier angezeigt."
 
-#: src/opac/PatronsBookingsTable.ts:50
+#: src/opac/PatronsBookingsTable.ts:87
 msgid "This table shows your current room reservations"
 msgstr "Diese Tabelle zeigt Ihre derzeitigen und vergangenen Buchungen an"
 
-#: src/opac/PatronsBookingsTable.ts:54 src/components/custom/LMSBookie.ts:219
+#: src/opac/PatronsBookingsTable.ts:91 src/components/custom/LMSBookie.ts:219
 msgid "Room"
 msgstr "Raum"
 
-#: src/opac/PatronsBookingsTable.ts:55
+#: src/opac/PatronsBookingsTable.ts:92
 msgid "Start"
 msgstr "Von"
 
-#: src/opac/PatronsBookingsTable.ts:56
+#: src/opac/PatronsBookingsTable.ts:93
 msgid "End"
 msgstr "Bis"
 
-#: src/opac/PatronsBookingsTable.ts:77
+#: src/opac/PatronsBookingsTable.ts:94 src/components/custom/LMSBookie.ts:299
+msgid "Purpose of Use"
+msgstr "Verwendungszweck"
+
+#: src/opac/PatronsBookingsTable.ts:131
 msgid "There has been a technical error. Please inform the staff."
 msgstr ""
 "Es ist ein technisches Problem aufgetreten. Bitte informieren Sie das "
 "Personal."
 
-#: src/opac/PatronsBookingsTable.ts:81
+#: src/opac/PatronsBookingsTable.ts:135
 msgid "Your bookings"
 msgstr "Ihre Buchungen"
 
-#: src/opac/PatronsBookingsTable.ts:83
+#: src/opac/PatronsBookingsTable.ts:137
 msgid "Make a reservation"
 msgstr "Zum Reservierungs-Kalender"
 
@@ -631,10 +637,6 @@ msgstr "Dauer"
 #: src/components/custom/LMSBookie.ts:265
 msgid "In minutes, e.g. 60"
 msgstr "In Minuten, bspw. 60"
-
-#: src/components/custom/LMSBookie.ts:299
-msgid "Purpose of Use"
-msgstr "Verwendungszweck"
 
 #: src/components/custom/LMSBookie.ts:307
 msgid "Would you like to communicate something to the staff?"
@@ -835,12 +837,8 @@ msgstr "Maximalkapazität"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:98
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:166
-msgid ""
-"Please enter a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or "
-"rgba(0-255, 0-255, 0-255, 0.0-1.0) for"
-msgstr ""
-"Bitte nutzen Sie eine Farbe im Format #RRGGBB oder rgb(0-255, 0-255, 0-255) "
-"oder rgba(0-255, 0-255, 0-255, 0.0-1.0)."
+msgid "Please enter a color in the format #RRGGBB for"
+msgstr "Bitte geben Sie eine Farbe im Format #RRGGBB für"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:98
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:166
@@ -939,6 +937,13 @@ msgstr "Start"
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/views/opac/calendar.tt:33
 msgid "Room Reservations"
 msgstr "Raumbuchungen"
+
+#~ msgid ""
+#~ "Please enter a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or "
+#~ "rgba(0-255, 0-255, 0-255, 0.0-1.0) for"
+#~ msgstr ""
+#~ "Bitte nutzen Sie eine Farbe im Format #RRGGBB oder rgb(0-255, 0-255, "
+#~ "0-255) oder rgba(0-255, 0-255, 0-255, 0.0-1.0)."
 
 #~ msgid "absolute"
 #~ msgstr "absolute"
