@@ -18,7 +18,7 @@ use English    qw( -no_match_vars );
 use Mojo::JSON qw( decode_json );
 use Try::Tiny  qw( catch try );
 
-use Koha::Plugin::Com::LMSCloud::MigrationHelper ();
+use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
 
 ## Here we set our plugin version
 our $VERSION         = "4.6.0";
@@ -146,7 +146,7 @@ sub install() {
     my $bundle_path = $bundle_dir;
 
     return try {
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
             {   table_name_mappings => {
                     rooms                  => $self->get_qualified_table_name('rooms'),
                     rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
@@ -204,7 +204,7 @@ sub upgrade {
     my $bundle_path = $bundle_dir;
 
     return try {
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
             {   table_name_mappings => {
                     rooms                  => $self->get_qualified_table_name('rooms'),
                     rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
