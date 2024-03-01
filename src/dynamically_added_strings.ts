@@ -13,6 +13,7 @@ __("borrowernumber");
 __("roomid");
 __("start");
 __("end");
+__("purpose_of_use");
 __("blackedout");
 __("equipment");
 __("created");
