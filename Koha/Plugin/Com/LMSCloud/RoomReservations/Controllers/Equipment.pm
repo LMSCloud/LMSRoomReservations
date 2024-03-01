@@ -108,7 +108,7 @@ sub add {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $equipment = $c->param('body');
+        my $equipment = $c->req->json;
 
         my $errors = [];
         if ( length $equipment->{'equipmentname'} > $MAX_LENGTH_EQUIPMENTNAME ) {
@@ -157,7 +157,7 @@ sub update {
         my $equipment = $sth->fetchrow_hashref();
 
         if ($equipment) {
-            my $new_equipment = $c->param('body');
+            my $new_equipment = $c->req->json;
 
             # We have to convert all nullish values to NULL in our new_equipment to undef before passing them to SQL::Abstract.
             # To do this we assign a new hashref back to $new_equipment and check for each key if the value is nullish, e.g. undef or empty string.

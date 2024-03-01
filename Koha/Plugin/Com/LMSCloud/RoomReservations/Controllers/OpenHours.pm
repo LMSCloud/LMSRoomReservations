@@ -9,7 +9,6 @@ use Mojo::Base 'Mojolicious::Controller';
 use C4::Context ();
 
 use DateTime::Format::Strptime ();
-use JSON                       qw( from_json );
 use List::Util                 qw( all );
 use Readonly                   qw( Readonly );
 use SQL::Abstract              ();
@@ -63,8 +62,7 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $json = $c->req->body;
-        my $body = from_json($json);
+        my $body = $c->req->json;
 
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
@@ -138,7 +136,7 @@ sub update {
             );
         }
 
-        my $new_open_hours = $c->param('body');
+        my $new_open_hours = $c->req->json;
 
         # We have to strip of the seconds of start and end time
         # that's needlessly supplied by firefox's time picker.

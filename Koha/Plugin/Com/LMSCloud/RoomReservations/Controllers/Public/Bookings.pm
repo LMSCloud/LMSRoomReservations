@@ -9,7 +9,6 @@ use Mojo::Base 'Mojolicious::Controller';
 use C4::Context ();
 
 use Try::Tiny     qw( catch try );
-use JSON          qw( from_json );
 use SQL::Abstract ();
 use Readonly      qw( Readonly );
 
@@ -77,8 +76,7 @@ sub add {
         with_language_context(
             $c->param('lang'),
             sub {
-                my $json = $c->req->body;
-                my $body = from_json($json);
+                my $body = $c->req->json;
 
                 if ( $body->{'borrowernumber'} eq q{} ) {
                     return $c->render(

@@ -87,7 +87,7 @@ sub add {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $room = $c->param('body');
+        my $room = $c->req->json;
 
         my $errors = [];
         if ( !looks_like_number( $room->{'maxcapacity'} ) ) {
@@ -150,7 +150,7 @@ sub update {
             );
         }
 
-        my $new_room = $c->param('body');
+        my $new_room = $c->req->json;
 
         # We have to convert all nullish values to NULL in our new_room to undef before passing them to SQL::Abstract.
         # To do this we assign a new hashref back to $new_room and check for each key if the value is nullish, e.g. undef or empty string.

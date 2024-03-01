@@ -8,7 +8,6 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context ();
 
-use JSON          qw( from_json );
 use Readonly      qw( Readonly );
 use SQL::Abstract ();
 use Time::Piece   ();
@@ -118,8 +117,7 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $json = $c->req->body;
-        my $body = from_json($json);
+        my $body = $c->req->json;
 
         return _check_and_save_booking( $body, $c );
     }
@@ -160,8 +158,7 @@ sub update {
     return try {
         my $booking_id = $c->param('booking_id');
 
-        my $json = $c->req->body;
-        my $body = from_json($json);
+        my $body = $c->req->json;
 
         return _check_and_save_booking( $body, $c, $booking_id );
     }

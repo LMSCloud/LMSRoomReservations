@@ -108,8 +108,7 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $json = $c->req->body;
-        my $body = from_json($json);
+        my $body = $c->req->json;
 
         for my $setting ( $body->@* ) {
             $self->store_data( { $setting->{'setting'} => $setting->{'value'} } );
@@ -145,7 +144,7 @@ sub update {
 
     return try {
         my $setting = $c->param('setting');
-        my $body    = $c->param('body');
+        my $body    = $c->req->json;
 
         $self->store_data( { $setting => $body->{'value'} } );
         return $c->render( status => 201, openapi => $body );
