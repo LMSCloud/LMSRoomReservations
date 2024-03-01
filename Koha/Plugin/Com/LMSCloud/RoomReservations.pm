@@ -3,32 +3,22 @@ package Koha::Plugin::Com::LMSCloud::RoomReservations;
 ## It's good practice to use Modern::Perl
 use Modern::Perl;
 use utf8;
-use English qw( -no_match_vars );
 use 5.032;
-use Carp;
 
 ## Required for all plugins
 use base qw(Koha::Plugins::Base);
 
 ## We will also need to include any Koha libraries we want to access
-use C4::Auth;
-use C4::Context;
+use C4::Context ();
 
-use Koha::Account::Lines;
-use Koha::Account;
-use Koha::DateUtils qw(dt_from_string);
-use Koha::Libraries;
-use Koha::Patron::Categories;
-use Koha::Patron;
+use Koha::DateUtils qw( dt_from_string );
 
-use Cwd qw(abs_path);
-use LWP::UserAgent;
-use MARC::Record;
-use Mojo::JSON qw(decode_json);
-use URI::Escape qw(uri_unescape);
-use Try::Tiny;
+use Carp       qw( carp croak );
+use English    qw( -no_match_vars );
+use Mojo::JSON qw( decode_json );
+use Try::Tiny  qw( catch try );
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper;
+use Koha::Plugin::Com::LMSCloud::MigrationHelper ();
 
 ## Here we set our plugin version
 our $VERSION         = "4.6.0";
@@ -135,7 +125,9 @@ sub configure {
         },
     };
 
-    $operations->{$op}->() if exists $operations->{$op};
+    if ( exists $operations->{$op} ) {
+        $operations->{$op}->();
+    }
 
     return $self->output_html( $template->output() );
 }
@@ -155,8 +147,7 @@ sub install() {
 
     return try {
         my $migration_helper = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper->new(
-            {
-                table_name_mappings => {
+            {   table_name_mappings => {
                     rooms                  => $self->get_qualified_table_name('rooms'),
                     rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
                     bookings               => $self->get_qualified_table_name('bookings'),
@@ -175,8 +166,7 @@ sub install() {
         );
 
         $self->store_data(
-            {
-                plugin_version                 => $VERSION,
+            {   plugin_version                 => $VERSION,
                 default_max_booking_time       => q{},
                 absolute_reservation_limit     => q{},
                 daily_reservation_limit        => q{},
@@ -192,7 +182,8 @@ sub install() {
         }
 
         return 1;
-    } catch {
+    }
+    catch {
         my $error = $_;
         carp "INSTALL ERROR: $error";
 
@@ -214,8 +205,7 @@ sub upgrade {
 
     return try {
         my $migration_helper = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::MigrationHelper->new(
-            {
-                table_name_mappings => {
+            {   table_name_mappings => {
                     rooms                  => $self->get_qualified_table_name('rooms'),
                     rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
                     bookings               => $self->get_qualified_table_name('bookings'),
@@ -242,7 +232,8 @@ sub upgrade {
         $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
 
         return 1;
-    } catch {
+    }
+    catch {
         my $error = $_;
         carp "UPGRADE ERROR: $error";
 
