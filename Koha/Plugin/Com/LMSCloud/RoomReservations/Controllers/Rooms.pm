@@ -94,8 +94,8 @@ sub add {
             push @{$errors}, __('Please enter a number for') . q{ } . __('maxcapacity');
         }
 
-        if ( !( $room->{'color'} =~ m/^#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx ) ) {
-            push @{$errors}, __('Please enter a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0) for') . q{ } . __('color');
+        if ( !( $room->{'color'} =~ m/^#[0-9a-fA-F]{3,6}$/smx ) ) {
+            push @{$errors}, __('Please enter a color in the format #RRGGBB for') . q{ } . __('color');
         }
 
         if ( $room->{'maxbookabletime'} and !looks_like_number( $room->{'maxbookabletime'} ) ) {
@@ -162,8 +162,8 @@ sub update {
             push @{$errors}, __('Please enter a number for') . q{ } . __('maxcapacity');
         }
 
-        if ( !( $new_room->{'color'} =~ m/^#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx ) ) {
-            push @{$errors}, __('Please enter a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0) for') . q{ } . __('color');
+        if ( !( $new_room->{'color'} =~ m/^#[0-9a-fA-F]{3,6}$/smx ) ) {
+            push @{$errors}, __('Please enter a color in the format #RRGGBB for') . q{ } . __('color');
         }
 
         if ( $room->{'maxbookabletime'} and !looks_like_number( $room->{'maxbookabletime'} ) ) {
