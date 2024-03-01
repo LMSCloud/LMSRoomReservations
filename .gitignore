@@ -9,7 +9,8 @@ p-kpz
 kpt
 TO-DO.md
 script.log
-.prettier.cache
+.prettier.cache.json
+.perltidy.cache.json
 
 .DS_Store
 .vscode/
