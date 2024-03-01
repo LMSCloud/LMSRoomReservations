@@ -6,10 +6,10 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
-use Try::Tiny;
-use JSON;
-use SQL::Abstract;
+use C4::Context   ();
+use Try::Tiny     qw( catch try );
+use JSON          ();
+use SQL::Abstract ();
 
 our $VERSION = '1.0.0';
 
@@ -19,7 +19,7 @@ sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $setting = $c->validation->param('setting');
+        my $setting = $c->param('setting');
 
         if ( $setting ne 'default_max_booking_time' ) {
             return $c->render(

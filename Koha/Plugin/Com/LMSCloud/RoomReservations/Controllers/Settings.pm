@@ -6,14 +6,14 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
-use Try::Tiny;
-use JSON;
-use SQL::Abstract;
-use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
-use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
-use Encode;
+use C4::Context        ();
+use Try::Tiny          qw( catch try );
+use JSON               qw( from_json );
+use SQL::Abstract      ();
+use Locale::TextDomain qw( __ );
+use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
+use POSIX              qw( setlocale );
+use Encode             ();
 
 our $VERSION = '1.0.0';
 
@@ -27,7 +27,7 @@ sub list {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
         my $restricted_patron_categories = _get_restricted_patron_categories();
@@ -128,7 +128,7 @@ sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $setting = $c->validation->param('setting');
+        my $setting = $c->param('setting');
         my $value   = $self->retrieve_data($setting);
 
         return $c->render(
@@ -144,8 +144,8 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $setting = $c->validation->param('setting');
-        my $body    = $c->validation->param('body');
+        my $setting = $c->param('setting');
+        my $body    = $c->param('body');
 
         $self->store_data( { $setting => $body->{'value'} } );
         return $c->render( status => 201, openapi => $body );
@@ -158,7 +158,7 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $setting = $c->validation->param('setting');
+        my $setting = $c->param('setting');
 
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;

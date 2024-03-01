@@ -6,12 +6,12 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
-use Try::Tiny;
-use JSON;
-use SQL::Abstract;
-use Time::Piece;
-use Locale::TextDomain ( 'com.lmscloud.roomreservations', ':all' );
+use C4::Context        ();
+use Try::Tiny          qw( catch try );
+use JSON               qw( from_json );
+use SQL::Abstract      ();
+use Time::Piece        ();
+use Locale::TextDomain qw( __ );
 
 our $VERSION = '1.0.0';
 
@@ -70,8 +70,8 @@ sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $branch = $c->validation->param('branch');
-        my $day    = $c->validation->param('day');
+        my $branch = $c->param('branch');
+        my $day    = $c->param('day');
 
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
@@ -99,10 +99,10 @@ sub update {
 
     return try {
         with_language_context(
-            $c->validation->param('lang'),
+            $c->param('lang'),
             sub {
-                my $branch = $c->validation->param('branch');
-                my $day    = $c->validation->param('day');
+                my $branch = $c->param('branch');
+                my $day    = $c->param('day');
 
                 my $sql = SQL::Abstract->new;
                 my $dbh = C4::Context->dbh;
@@ -119,7 +119,7 @@ sub update {
                     );
                 }
 
-                my $new_open_hours = $c->validation->param('body');
+                my $new_open_hours = $c->param('body');
 
                 # We have to strip of the seconds of start and end time
                 # that's needlessly supplied by firefox's time picker.
@@ -182,7 +182,7 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $branch = $c->validation->param('branch');
+        my $branch = $c->param('branch');
 
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;

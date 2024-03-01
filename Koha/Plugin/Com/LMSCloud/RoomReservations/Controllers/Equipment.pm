@@ -6,9 +6,9 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
-use Try::Tiny;
-use SQL::Abstract;
+use C4::Context   ();
+use Try::Tiny     qw( catch try );
+use SQL::Abstract ();
 
 our $VERSION = '1.0.0';
 
@@ -51,7 +51,7 @@ sub get {
         my $dbh = C4::Context->dbh;
         my $sql = SQL::Abstract->new;
 
-        my $equipmentid = $c->validation->param('equipmentid');
+        my $equipmentid = $c->param('equipmentid');
         my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
@@ -88,7 +88,7 @@ sub add {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $equipment = $c->validation->param('body');
+        my $equipment = $c->param('body');
         my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
             {
                 schema => [
@@ -135,14 +135,14 @@ sub update {
         my $dbh = C4::Context->dbh;
         my $sql = SQL::Abstract->new;
 
-        my $equipmentid = $c->validation->param('equipmentid');
+        my $equipmentid = $c->param('equipmentid');
         my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
         my $equipment = $sth->fetchrow_hashref();
 
         if ($equipment) {
-            my $new_equipment = $c->validation->param('body');
+            my $new_equipment = $c->param('body');
 
             # We have to convert all nullish values to NULL in our new_equipment to undef before passing them to SQL::Abstract.
             # To do this we assign a new hashref back to $new_equipment and check for each key if the value is nullish, e.g. undef or empty string.
@@ -231,56 +231,11 @@ sub update {
     };
 }
 
-# sub update {
-#     my $c = shift->openapi->valid_input or return;
-
-#     my $dbh = C4::Context->dbh;
-#     my $sql = SQL::Abstract->new;
-
-#     my $equipmentid = $c->validation->param('equipmentid');
-#     my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, '*', { equipmentid => $equipmentid } );
-#     my $sth = $dbh->prepare($stmt);
-#     $sth->execute(@bind);
-#     my $equipment = $sth->fetchrow_hashref();
-
-#     if (!$equipment) {
-#         return $c->render(
-#             status  => 404,
-#             openapi => { error => 'Item not found' }
-#         );
-#     }
-
-#     my $new_equipment = $c->validation->param('body');
-
-#     if ( exists $new_equipment->{'roomid'} && $new_equipment->{'roomid'} ) {
-#         my $roomid = delete $new_equipment->{'roomid'};
-
-#         ( $stmt, @bind ) = $sql->insert( $ROOMS_EQUIPMENT_TABLE, { roomid => $roomid, equipmentid => $equipmentid } );
-#         $sth = $dbh->prepare($stmt);
-#         $sth->execute(@bind);
-#     } elsif ( exists $new_equipment->{'roomid'} && !$new_equipment->{'roomid'} ) {
-#         delete $new_equipment->{'roomid'};
-
-#         ( $stmt, @bind ) = $sql->delete( $ROOMS_EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
-#         $sth = $dbh->prepare($stmt);
-#         $sth->execute(@bind);
-#     }
-
-#     ( $stmt, @bind ) = $sql->update( $EQUIPMENT_TABLE, $new_equipment, { equipmentid => $equipmentid } );
-#     $sth = $dbh->prepare($stmt);
-#     $sth->execute(@bind);
-
-#     return $c->render(
-#         status  => 200,
-#         openapi => { $new_equipment->%*, equipmentid => $equipmentid }
-#     );
-# }
-
 sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $equipmentid = $c->validation->param('equipmentid');
+        my $equipmentid = $c->param('equipmentid');
 
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;

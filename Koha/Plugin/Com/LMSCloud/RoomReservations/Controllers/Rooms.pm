@@ -6,9 +6,9 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
-use Try::Tiny;
-use SQL::Abstract;
+use C4::Context   ();
+use Try::Tiny     qw( catch try );
+use SQL::Abstract ();
 
 our $VERSION = '1.0.0';
 
@@ -40,7 +40,7 @@ sub get {
     return try {
         my $dbh = C4::Context->dbh;
 
-        my $roomid = $c->validation->param('roomid');
+        my $roomid = $c->param('roomid');
         my $query  = "SELECT * FROM $ROOMS_TABLE WHERE roomid = ?";
         my $sth    = $dbh->prepare($query);
         $sth->execute($roomid);
@@ -66,7 +66,7 @@ sub add {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $room      = $c->validation->param('body');
+        my $room      = $c->param('body');
         my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Validator->new(
             {
                 schema => [
@@ -123,7 +123,7 @@ sub update {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my $roomid = $c->validation->param('roomid');
+        my $roomid = $c->param('roomid');
         my $query  = "SELECT * FROM $ROOMS_TABLE WHERE roomid = ?";
         my $sth    = $dbh->prepare($query);
         $sth->execute($roomid);
@@ -136,7 +136,7 @@ sub update {
             );
         }
 
-        my $new_room = $c->validation->param('body');
+        my $new_room = $c->param('body');
 
         # We have to convert all nullish values to NULL in our new_room to undef before passing them to SQL::Abstract.
         # To do this we assign a new hashref back to $new_room and check for each key if the value is nullish, e.g. undef or empty string.
@@ -196,7 +196,7 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $roomid = $c->validation->param('roomid');
+        my $roomid = $c->param('roomid');
 
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;

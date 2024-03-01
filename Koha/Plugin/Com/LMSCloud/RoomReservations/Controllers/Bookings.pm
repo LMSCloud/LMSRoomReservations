@@ -6,17 +6,17 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
-use Try::Tiny;
-use JSON;
-use SQL::Abstract;
-use Time::Piece;
-use Time::Seconds;
-use Locale::TextDomain 'com.lmscloud.roomreservations', ':all';
-use DateTime::Format::Strptime;
+use C4::Context                ();
+use Try::Tiny                  qw( catch try );
+use JSON                       qw( from_json );
+use SQL::Abstract              ();
+use Time::Piece                ();
+use Time::Seconds              qw( ONE_DAY );
+use Locale::TextDomain         qw( __ );
+use DateTime::Format::Strptime ();
 
-use C4::Letters;
-use Koha::Patrons;
+use C4::Letters                                                ();
+use Koha::Patrons                                              ();
 use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Checks qw(
     is_allowed_to_book
     is_bookable_time
@@ -24,9 +24,13 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Checks qw(
     has_conflicting_booking
     has_reached_reservation_limit
 );
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Actions qw( send_email_confirmation );
-use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations
-    qw( set_translation_environment with_language_context);
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Actions qw(
+    send_email_confirmation
+);
+use Koha::Plugin::Com::LMSCloud::RoomReservations::lib::Translations qw(
+    set_translation_environment
+    with_language_context
+);
 
 our $VERSION = '1.0.0';
 
@@ -119,7 +123,7 @@ sub get {
     return try {
         my $dbh = C4::Context->dbh;
 
-        my $booking_id = $c->validation->param('booking_id');
+        my $booking_id = $c->param('booking_id');
         my $query      = "SELECT * FROM $BOOKINGS_TABLE WHERE bookingid = ?";
         my $sth        = $dbh->prepare($query);
         $sth->execute($booking_id);
@@ -142,7 +146,7 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $booking_id = $c->validation->param('booking_id');
+        my $booking_id = $c->param('booking_id');
 
         my $json = $c->req->body;
         my $body = from_json($json);
@@ -157,7 +161,7 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $booking_id = $c->validation->param('booking_id');
+        my $booking_id = $c->param('booking_id');
 
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
@@ -197,7 +201,7 @@ sub _check_and_save_booking {
 
     return try {
         with_language_context(
-            $c->validation->param('lang'),
+            $c->param('lang'),
             sub {
                 my $sql = SQL::Abstract->new;
 
