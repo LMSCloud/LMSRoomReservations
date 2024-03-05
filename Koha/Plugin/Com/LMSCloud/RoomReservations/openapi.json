@@ -1749,10 +1749,7 @@
       ],
       "responses": {
         "204": {
-          "description": "Successful response",
-          "schema": {
-            "type": "object"
-          }
+          "description": "Successful response"
         },
         "400": {
           "description": "Bad request",
@@ -4584,15 +4581,7 @@
       ],
       "responses": {
         "204": {
-          "description": "Setting deleted",
-          "schema": {
-            "properties": {
-              "value": {
-                "type": "string"
-              }
-            },
-            "type": "object"
-          }
+          "description": "Setting deleted"
         },
         "400": {
           "description": "Bad request",
