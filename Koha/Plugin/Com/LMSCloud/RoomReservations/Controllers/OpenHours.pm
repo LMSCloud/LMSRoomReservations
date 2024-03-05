@@ -9,30 +9,21 @@ use Mojo::Base 'Mojolicious::Controller';
 use C4::Context ();
 
 use DateTime::Format::Strptime ();
+use File::Basename             qw( dirname );
 use List::Util                 qw( all );
 use Readonly                   qw( Readonly );
 use SQL::Abstract              ();
 use Time::Piece                ();
 use Try::Tiny                  qw( catch try );
 
-use Locale::Messages qw(
-    bind_textdomain_filter
-    bindtextdomain
-    setlocale
-    textdomain
-);
-use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
+use Koha::Plugin::Com::LMSCloud::Util::I18N qw( __ );
 
 our $VERSION = '1.0.0';
 
 Readonly my $DATETIME_POS_SECONDS => 5;
 
+my $i18n = Koha::Plugin::Com::LMSCloud::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../locales/' );
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
-
-setlocale Locale::Messages::LC_MESSAGES(), q{};
-textdomain 'com.lmscloud.roomreservations';
-bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
-bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
 
@@ -115,8 +106,7 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
-        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+        local $ENV{HTTP_ACCEPT_LANGUAGE} = $c->param('lang');
 
         my $branch = $c->param('branch');
         my $day    = $c->param('day');

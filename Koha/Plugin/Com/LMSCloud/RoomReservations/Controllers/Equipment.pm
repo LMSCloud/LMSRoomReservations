@@ -8,29 +8,20 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context ();
 
-use Readonly      qw( Readonly );
-use Scalar::Util  qw( looks_like_number );
-use SQL::Abstract ();
-use Try::Tiny     qw( catch try );
+use File::Basename qw( dirname );
+use Readonly       qw( Readonly );
+use Scalar::Util   qw( looks_like_number );
+use SQL::Abstract  ();
+use Try::Tiny      qw( catch try );
 
-use Locale::Messages qw(
-    bind_textdomain_filter
-    bindtextdomain
-    setlocale
-    textdomain
-);
-use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
+use Koha::Plugin::Com::LMSCloud::Util::I18N qw( __ );
 
 our $VERSION = '1.0.0';
 
 Readonly my $MAX_LENGTH_EQUIPMENTNAME => 20;
 
+my $i18n = Koha::Plugin::Com::LMSCloud::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../locales/' );
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
-
-setlocale Locale::Messages::LC_MESSAGES(), q{};
-textdomain 'com.lmscloud.roomreservations';
-bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
-bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 
 my $EQUIPMENT_TABLE       = $self ? $self->get_qualified_table_name('equipment')       : undef;
 my $ROOMS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('rooms_equipment') : undef;
@@ -102,8 +93,7 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
-        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+        local $ENV{HTTP_ACCEPT_LANGUAGE} = $c->param('lang');
 
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
@@ -144,8 +134,7 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
-        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+        local $ENV{HTTP_ACCEPT_LANGUAGE} = $c->param('lang');
 
         my $dbh = C4::Context->dbh;
         my $sql = SQL::Abstract->new;

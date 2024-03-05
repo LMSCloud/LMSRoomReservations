@@ -8,9 +8,10 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context ();
 
-use Try::Tiny     qw( catch try );
-use SQL::Abstract ();
-use Readonly      qw( Readonly );
+use File::Basename qw( dirname );
+use Readonly       qw( Readonly );
+use SQL::Abstract  ();
+use Try::Tiny      qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
     is_allowed_to_book
@@ -23,14 +24,7 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
     send_email_confirmation
 );
-
-use Locale::Messages qw(
-    bind_textdomain_filter
-    bindtextdomain
-    setlocale
-    textdomain
-);
-use Locale::TextDomain ( 'com.lmscloud.roomreservations', undef );
+use Koha::Plugin::Com::LMSCloud::Util::I18N qw( __ );
 
 our $VERSION = '1.0.0';
 
@@ -39,12 +33,8 @@ Readonly my $CONSTANTS => {
     HTTP_CREATED => 201,
 };
 
+my $i18n = Koha::Plugin::Com::LMSCloud::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../../locales/' );
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
-
-setlocale Locale::Messages::LC_MESSAGES(), q{};
-textdomain 'com.lmscloud.roomreservations';
-bind_textdomain_filter 'com.lmscloud.roomreservations', \&Encode::decode_utf8;
-bindtextdomain 'com.lmscloud.roomreservations' => $self->bundle_path . '/locales/';
 
 my $BOOKINGS_TABLE           = $self ? $self->get_qualified_table_name('bookings')           : undef;
 my $BOOKINGS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('bookings_equipment') : undef;
@@ -73,22 +63,16 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        with_language_context(
-            $c->param('lang'),
-            sub {
-                my $body = $c->req->json;
+        my $body = $c->req->json;
 
-                if ( $body->{'borrowernumber'} eq q{} ) {
-                    return $c->render(
-                        status  => 400,
-                        openapi => { error => __('You need to login first to book rooms.') }
-                    );
-                }
+        if ( $body->{'borrowernumber'} eq q{} ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('You need to login first to book rooms.') }
+            );
+        }
 
-                return _check_and_save_booking( $body, $c );
-
-            }
-        );
+        return _check_and_save_booking( $body, $c );
     }
     catch {
         $c->unhandled_exception($_);
@@ -99,16 +83,13 @@ sub _check_and_save_booking {
     my ( $body, $c, $booking_id ) = @_;
 
     my $dbh = C4::Context->dbh;
-    $dbh->begin_work;    # start transaction
 
     return try {
-        local $ENV{LANGUAGE}       = $c->param('lang') || 'en';
-        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+        local $ENV{HTTP_ACCEPT_LANGUAGE} = $c->param('lang');
 
         my $sql = SQL::Abstract->new;
 
         if ( !is_allowed_to_book( $body->{'borrowernumber'} ) ) {
-            $dbh->rollback;    # rollback transaction
             return $c->render(
                 status  => 400,
                 openapi => { error => $self->retrieve_data('restrict_message') || __('You are not allowed to book rooms') }
@@ -116,7 +97,6 @@ sub _check_and_save_booking {
         }
 
         if ( has_passed( $body->{'start'} ) ) {
-            $dbh->rollback;
             return $c->render(
                 status  => 400,
                 openapi => { error => __('A booking cannot be scheduled for a past date.') }
@@ -124,7 +104,6 @@ sub _check_and_save_booking {
         }
 
         if ( !is_bookable_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
-            $dbh->rollback;    # rollback transaction
             return $c->render(
                 status  => 400,
                 openapi => { error => __('The booking exceeds the maximum allowed time for the room.') }
@@ -132,7 +111,6 @@ sub _check_and_save_booking {
         }
 
         if ( !is_open_during_booking_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
-            $dbh->rollback;    # rollback transaction
             return $c->render(
                 status  => 400,
                 openapi => { error => __('The institution is closed during the selected time frame.') }
@@ -140,7 +118,6 @@ sub _check_and_save_booking {
         }
 
         if ( has_conflicting_booking( $body->{'roomid'}, $body->{'start'}, $body->{'end'}, $booking_id ) ) {
-            $dbh->rollback;    # rollback transaction
             return $c->render(
                 status  => 400,
                 openapi => { error => __('There is a conflicting booking.') }
@@ -150,7 +127,6 @@ sub _check_and_save_booking {
         my ( $has_reached_reservation_limit, $message ) =
             has_reached_reservation_limit( $body->{'borrowernumber'}, $body->{'roomid'}, $body->{'start'} );
         if ($has_reached_reservation_limit) {
-            $dbh->rollback;    # rollback transaction
             return $c->render(
                 status  => 400,
                 openapi => { error => __('You have reached the ') . $message . __(' limit of reservations.') }
@@ -190,8 +166,6 @@ sub _check_and_save_booking {
             }
         }
 
-        $dbh->commit;    # commit transaction
-
         # If all went well, we send an email to the associated borrower
         my $is_sent = send_email_confirmation($body);
 
@@ -202,7 +176,6 @@ sub _check_and_save_booking {
 
     }
     catch {
-        $dbh->rollback;
         $c->unhandled_exception($_);
     };
 
