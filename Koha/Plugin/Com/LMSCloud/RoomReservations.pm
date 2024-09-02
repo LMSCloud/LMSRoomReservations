@@ -21,7 +21,7 @@ use Try::Tiny  qw( catch try );
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
 
 ## Here we set our plugin version
-our $VERSION         = "4.8.2";
+our $VERSION         = "4.8.3";
 our $MINIMUM_VERSION = '21.05';
 
 ## Here is our metadata, some keys are required, some are optional
