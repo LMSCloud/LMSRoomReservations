@@ -1,7 +1,7 @@
 {
   "/bookings": {
     "get": {
-      "operationId": "getBookings",
+      "operationId": "getRoomBookings",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -177,7 +177,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#list"
     },
     "post": {
-      "operationId": "addBookings",
+      "operationId": "addRoomBookings",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -330,7 +330,7 @@
   },
   "/bookings/{booking_id}": {
     "delete": {
-      "operationId": "deleteBooking",
+      "operationId": "deleteRoomBooking",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -378,7 +378,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#delete"
     },
     "get": {
-      "operationId": "getBooking",
+      "operationId": "getRoomBooking",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -521,7 +521,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#get"
     },
     "put": {
-      "operationId": "updateBooking",
+      "operationId": "updateRoomBooking",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -677,7 +677,7 @@
   },
   "/equipment": {
     "get": {
-      "operationId": "listEquipment",
+      "operationId": "listRoomEquipment",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -812,7 +812,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#list"
     },
     "post": {
-      "operationId": "addEquipment",
+      "operationId": "addRoomEquipment",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -1015,7 +1015,7 @@
   },
   "/equipment/{equipmentid}": {
     "delete": {
-      "operationId": "deleteEquipment",
+      "operationId": "deleteRoomEquipment",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -1123,7 +1123,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#delete"
     },
     "get": {
-      "operationId": "getEquipment",
+      "operationId": "getRoomEquipment",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -1261,7 +1261,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#get"
     },
     "put": {
-      "operationId": "updateEquipment",
+      "operationId": "updateRoomEquipment",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -1444,7 +1444,7 @@
   },
   "/open_hours": {
     "get": {
-      "operationId": "getOpenHours",
+      "operationId": "getRoomOpenHours",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -1569,7 +1569,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#list"
     },
     "post": {
-      "operationId": "addOpenHours",
+      "operationId": "addRoomOpenHours",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -1728,7 +1728,7 @@
   },
   "/open_hours/{branch}": {
     "delete": {
-      "operationId": "deleteOpenHoursByDay",
+      "operationId": "deleteRoomOpenHoursByDay",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -1838,7 +1838,7 @@
   },
   "/open_hours/{branch}/{day}": {
     "get": {
-      "operationId": "getOpenHoursByDay",
+      "operationId": "getRoomOpenHoursByDay",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -1972,7 +1972,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#get"
     },
     "put": {
-      "operationId": "updateOpenHours",
+      "operationId": "updateRoomOpenHours",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -2067,7 +2067,7 @@
   },
   "/public/bookings": {
     "get": {
-      "operationId": "getBookingsPublic",
+      "operationId": "getRoomBookingsPublic",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -2184,7 +2184,7 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Bookings#list"
     },
     "post": {
-      "operationId": "addBookingsPublic",
+      "operationId": "addRoomBookingsPublic",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -2348,7 +2348,7 @@
   },
   "/public/equipment": {
     "get": {
-      "operationId": "listEquipmentPublic",
+      "operationId": "listRoomEquipmentPublic",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -2747,7 +2747,7 @@
   },
   "/public/open_hours": {
     "get": {
-      "operationId": "getOpenHoursPublic",
+      "operationId": "getRoomOpenHoursPublic",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -2866,7 +2866,7 @@
   },
   "/public/patron": {
     "get": {
-      "operationId": "getPatronPublic",
+      "operationId": "getRoomPatronPublic",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -2965,7 +2965,7 @@
   },
   "/public/patron/bookings": {
     "get": {
-      "operationId": "getPatronBookingsPublic",
+      "operationId": "getRoomPatronBookingsPublic",
       "parameters": [
         {
           "description": "ISO 639-1",
@@ -3085,7 +3085,7 @@
   },
   "/public/patron/bookings/{id}": {
     "delete": {
-      "operationId": "deletePatronBookingPublic",
+      "operationId": "deleteRoomPatronBookingPublic",
       "parameters": [
         {
           "description": "ISO 639-1",
