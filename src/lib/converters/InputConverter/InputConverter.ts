@@ -1,6 +1,7 @@
 import { faHashtag, faIdCard } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { TemplateResult, html } from "lit";
+import LMSPatronSearch from "../../../components/custom/LMSPatronSearch";
 import { InputType, InputTypeValue, ModalField, SelectOption, TaggedData } from "../../../types/common";
 import { dayMapping } from "../../../views/StaffOpenHoursView";
 import { __, localeFull } from "../../translate";
@@ -22,7 +23,6 @@ import ModalInfo from "./inputs/modal/ModalInfo";
 import ModalNumberInput from "./inputs/modal/ModalNumberInputs";
 import ModalSelect from "./inputs/modal/ModalSelect";
 import ModalTextInput from "./inputs/modal/ModalTextInput";
-import LMSPatronSearch from "../../../components/custom/LMSPatronSearch";
 
 declare global {
     interface HTMLTagNameMap {

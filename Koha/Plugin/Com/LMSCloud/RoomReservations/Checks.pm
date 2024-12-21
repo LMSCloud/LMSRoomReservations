@@ -34,7 +34,7 @@ BEGIN {
 
 Readonly my $CONSTANTS => {
     INDEX_SUNDAY_TIME_PIECE_WDAY => -1,
-    INDEX_SUNDAY_SCHEMA          => 6,
+    INDEX_SUNDAY_SCHEMA          =>  6,
 };
 
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
