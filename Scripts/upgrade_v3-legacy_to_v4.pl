@@ -5,7 +5,6 @@
 
 use Modern::Perl;
 use utf8;
-use 5.032;
 use English qw( -no_match_vars );
 use Carp;
 use Array::Utils qw(array_minus);

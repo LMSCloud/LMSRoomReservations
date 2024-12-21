@@ -3,7 +3,6 @@ package Koha::Plugin::Com::LMSCloud::RoomReservations;
 ## It's good practice to use Modern::Perl
 use Modern::Perl;
 use utf8;
-use 5.032;
 
 ## Required for all plugins
 use base qw(Koha::Plugins::Base);

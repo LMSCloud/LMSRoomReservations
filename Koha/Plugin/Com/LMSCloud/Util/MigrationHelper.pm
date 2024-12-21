@@ -2,7 +2,6 @@ package Koha::Plugin::Com::LMSCloud::Util::MigrationHelper;
 
 use Modern::Perl;
 use utf8;
-use 5.032;
 
 use Carp           qw( carp croak );
 use English        qw( -no_match_vars );
