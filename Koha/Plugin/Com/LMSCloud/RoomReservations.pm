@@ -20,7 +20,7 @@ use Try::Tiny  qw( catch try );
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
 
 ## Here we set our plugin version
-our $VERSION         = "4.8.3";
+our $VERSION         = "4.8.5";
 our $MINIMUM_VERSION = '21.05';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -28,7 +28,7 @@ our $metadata = {
     name            => 'LMSRoomReservations',
     author          => 'LMSCloud GmbH',
     date_authored   => '2009-01-27',
-    date_updated    => "2024-03-05",
+    date_updated    => "2024-12-21",
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
