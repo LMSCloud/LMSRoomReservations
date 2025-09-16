@@ -41,7 +41,7 @@ CREATE TABLE { { bookings } } (
     -- date on which a booking has been updated
     PRIMARY KEY (bookingid),
     CONSTRAINT lmsr_v4_calendar_icfk FOREIGN KEY (roomid) REFERENCES { { rooms } }(roomid),
-    CONSTRAINT lmsr_v4_calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
+    CONSTRAINT lmsr_v4_calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
 CREATE INDEX { { bookings_idx } } ON { { bookings } }(borrowernumber, roomid);
 CREATE TABLE { { open_hours } } (

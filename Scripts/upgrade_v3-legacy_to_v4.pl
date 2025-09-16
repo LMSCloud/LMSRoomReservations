@@ -99,7 +99,7 @@ my @create_sql = (
               `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- date on which a booking has been updated
               PRIMARY KEY (bookingid),
               CONSTRAINT lmsr_v4_calendar_icfk FOREIGN KEY (roomid) REFERENCES $ROOMS(roomid),
-              CONSTRAINT lmsr_v4_calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber)
+              CONSTRAINT lmsr_v4_calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber) ON DELETE CASCADE ON UPDATE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         EOF
     qq{CREATE INDEX $BOOKINGS_IDX ON $BOOKINGS(borrowernumber, roomid);},
