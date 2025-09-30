@@ -76,8 +76,8 @@
   },
   "scripts": {
     "archive": "./tools/archive.mjs",
-    "build": "npm run format && ./tools/generate_tw_css_result.mjs -o src && npx rollup -c && p-kpz -r \"lms-room-reservations\" -p \"Koha/Plugin/Com/LMSCloud/RoomReservations.pm\"",
-    "build:no-fmt": "./tools/generate_tw_css_result.mjs -o src && npx rollup -c && p-kpz -r \"lms-room-reservations\" -p \"Koha/Plugin/Com/LMSCloud/RoomReservations.pm\"",
+    "build": "npm run format && css:build && npx rollup -c && just package",
+    "build:no-fmt": "./tools/generate_tw_css_result.mjs -o src && npx rollup -c && just package",
     "css:build": "./tools/generate_tw_css_result.mjs -o src",
     "docs:package": "./tools/generate_docs.mjs",
     "format": "npm run format:ts && npm run format:pl",

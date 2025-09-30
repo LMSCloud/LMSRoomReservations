@@ -1,5 +1,7 @@
-node_modules/
 img/
+local/
+node_modules/
+templates/Koha/Plugin/
 
 archive
 package-lock.json
