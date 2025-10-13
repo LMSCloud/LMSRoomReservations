@@ -39,3 +39,7 @@ ktd container="kohadev-koha-1" binary="docker":
 update-meta:
   ./scripts/update-meta.sh
 
+# Seeds test fixtures (rooms, equipment, open hours) into the KTD database for testing
+seed container="kohadev-koha-1" binary="docker":
+  CONTAINER_NAME={{container}} DOCKER_BINARY={{binary}} ./testing/seed-fixtures.pl
+

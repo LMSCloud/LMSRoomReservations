@@ -65,6 +65,24 @@ This configuration is no longer necessary and can be removed.
 
 - To use the build scripts in `package.json` you'll need [package-kpz](https://github.com/LMSCloudPaulD/package-kpz) in your **PATH**.
 
+## Testing
+
+### Seeding Test Data
+
+For development and testing, you can seed the database with sample rooms, equipment, and open hours:
+
+```bash
+just seed
+```
+
+This will create:
+- 5 sample rooms (Room 101, Room 202, Study Room A/B, Auditorium)
+- 5 equipment items (Projector, Whiteboard, Video Conference, Laptop, Microphone)
+- Equipment assignments for each room
+- Open hours (Monday-Friday, 9am-5pm)
+
+**Note**: This is for testing only and should not be used in production. The fixtures are located in `testing/fixtures/` and are not included in the production build.
+
 
 <!--
 ### Translating
