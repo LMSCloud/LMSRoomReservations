@@ -18,7 +18,7 @@ use Mojo::JSON qw( decode_json );
 use Try::Tiny  qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
-use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page );
+use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists );
 
 ## Here we set our plugin version
 our $VERSION         = "4.8.5";
@@ -240,6 +240,22 @@ sub upgrade {
         my $is_success = $migration_helper->upgrade( { plugin => $self } );
         if ( !$is_success ) {
             croak 'Migration failed';
+        }
+
+        # Create OPAC page for room reservations if it doesn't exist
+        if ( !page_exists( { code => 'lmscloud-roomreservations', lang => 'default' } ) ) {
+            my $page_content = $self->mbf_read('roomreservations.html');
+            my $page_id      = create_opac_page(
+                {   code    => 'lmscloud-roomreservations',
+                    title   => 'Room Reservations',
+                    content => $page_content,
+                    lang    => 'default',
+                }
+            );
+
+            if ( !$page_id ) {
+                carp 'Failed to create OPAC page for room reservations during upgrade';
+            }
         }
 
         my $dt = dt_from_string();
