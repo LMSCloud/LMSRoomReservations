@@ -6,7 +6,8 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use Try::Tiny qw( catch try );
+use List::Util qw( any );
+use Try::Tiny  qw( catch try );
 
 our $VERSION = '1.0.0';
 
@@ -18,7 +19,8 @@ sub get {
     return try {
         my $setting = $c->param('setting');
 
-        if ( $setting ne 'default_max_booking_time' ) {
+        my $allowed_settings = [qw( default_max_booking_time enforce_email_notification )];
+        if ( !any { $_ eq $setting } @{$allowed_settings} ) {
             return $c->render(
                 status  => 401,
                 openapi => {

@@ -35,6 +35,8 @@ export default class LMSBookie extends LitElement {
 
     @state() alert?: Alert;
 
+    @state() enforceEmailNotification: boolean = false;
+
     @query("#room") roomSelect!: HTMLSelectElement;
 
     @query("#start-datetime") startDatetimeInput!: HTMLInputElement;
@@ -51,6 +53,19 @@ export default class LMSBookie extends LitElement {
     private preselectedRoom?: any;
 
     static override styles = [tailwindStyles];
+
+    override async connectedCallback() {
+        super.connectedCallback();
+        await this.fetchEnforceEmailNotificationSetting();
+    }
+
+    private async fetchEnforceEmailNotificationSetting() {
+        const response = await requestHandler.get("settingsPublic", undefined, ["enforce_email_notification"]);
+        if (response.ok) {
+            const data = await response.json();
+            this.enforceEmailNotification = data.value === "1" || data.value === 1;
+        }
+    }
 
     private async handleSubmit(e: SubmitEvent) {
         e.preventDefault();
@@ -81,7 +96,7 @@ export default class LMSBookie extends LitElement {
             end,
             blackedout: 0,
             equipment,
-            send_confirmation: confirmation || 0,
+            send_confirmation: this.enforceEmailNotification ? 1 : (confirmation || 0),
             letter_code: "ROOM_RESERVATION",
             purpose_of_use: purposeOfUse || null,
         });
@@ -319,8 +334,8 @@ export default class LMSBookie extends LitElement {
                                                 id="confirmation-email"
                                                 name="confirmation-email"
                                                 class="checkbox mr-2"
-                                                ?disabled=${!this.borrowernumber}
-                                                checked
+                                                ?disabled=${!this.borrowernumber || this.enforceEmailNotification}
+                                                ?checked=${this.enforceEmailNotification || true}
                                             />
                                             <span class="label-text">
                                                 ${__("Should we send you a confirmation email")}?

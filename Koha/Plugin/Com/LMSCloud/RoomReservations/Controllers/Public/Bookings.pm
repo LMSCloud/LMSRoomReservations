@@ -167,6 +167,12 @@ sub _check_and_save_booking {
         }
 
         # If all went well, we send an email to the associated borrower
+        # or force email confirmation if setting is the enforce_email_notification
+        # is enabled.
+        my $enforce_email = $self->retrieve_data('enforce_email_notification');
+        if ($enforce_email) {
+            $body->{'send_confirmation'} = 1;
+        }
         my $is_sent = send_email_confirmation($body);
 
         return $c->render(

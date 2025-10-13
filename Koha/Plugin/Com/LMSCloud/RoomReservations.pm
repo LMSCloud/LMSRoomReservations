@@ -132,6 +132,32 @@ sub configure {
     return $self->output_html( $template->output() );
 }
 
+## Helper method to ensure all expected settings exist with defaults
+## This is called during both install and upgrade to handle new settings
+sub _ensure_settings_exist {
+    my ($self) = @_;
+
+    my $default_settings = {
+        plugin_version                 => $VERSION,
+        default_max_booking_time       => q{},
+        absolute_reservation_limit     => q{},
+        daily_reservation_limit        => q{},
+        restrict_message               => q{},
+        reply_to_address               => q{},
+        remove_past_reservations_after => q{},
+        enforce_email_notification     => q{},
+    };
+
+    for my $setting_key ( keys %{$default_settings} ) {
+        my $existing_value = $self->retrieve_data($setting_key);
+        if ( !defined $existing_value ) {
+            $self->store_data( { $setting_key => $default_settings->{$setting_key} } );
+        }
+    }
+
+    return 1;
+}
+
 ## This is the 'install' method. Any database tables or other setup that should
 ## be done when the plugin if first installed should be executed in this method.
 ## The installation method should always return true if the installation succeeded
@@ -165,16 +191,7 @@ sub install() {
             }
         );
 
-        $self->store_data(
-            {   plugin_version                 => $VERSION,
-                default_max_booking_time       => q{},
-                absolute_reservation_limit     => q{},
-                daily_reservation_limit        => q{},
-                restrict_message               => q{},
-                reply_to_address               => q{},
-                remove_past_reservations_after => q{},
-            }
-        );
+        $self->_ensure_settings_exist();
 
         my $is_success = $migration_helper->install( { plugin => $self } );
         if ( !$is_success ) {
@@ -241,6 +258,9 @@ sub upgrade {
         if ( !$is_success ) {
             croak 'Migration failed';
         }
+
+        # Ensure all settings exist with defaults for upgrades
+        $self->_ensure_settings_exist();
 
         # Create OPAC page for room reservations if it doesn't exist
         if ( !page_exists( { code => 'lmscloud-roomreservations', lang => 'default' } ) ) {

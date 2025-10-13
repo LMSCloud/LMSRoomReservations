@@ -83,6 +83,11 @@ sub list {
                 description => __('Days after which past reservations are removed from the system'),
                 type        => 'number',
                 placeholder => __('A number of days, e.g. 14'),
+            },
+            {   setting     => 'enforce_email_notification',
+                value       => $self->retrieve_data('enforce_email_notification'),
+                description => __('Enforce email notifications for all OPAC reservations'),
+                type        => 'checkbox',
             }
         ];
 

@@ -180,6 +180,9 @@ export class InputConverter {
                     case "email": {
                         return new EmailInput("value", _value, placeholder).render();
                     }
+                    case "checkbox": {
+                        return new Checkbox("value", _value).render();
+                    }
                     case "array": {
                         const mappedValue = _value.map((item: Record<string, string>) => {
                             const [name, value] = Object.values(item);

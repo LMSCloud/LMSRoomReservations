@@ -42,6 +42,8 @@ export type Image = {
 export type Input = {
     name: string;
     value: string;
+    type?: string;
+    checked?: boolean;
 };
 
 export type InputElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | LitElement;

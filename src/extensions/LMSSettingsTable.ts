@@ -77,7 +77,12 @@ export default class LMSSettingsTable extends LMSTable {
                     "settings",
                     {
                         ...Array.from(inputs).reduce((acc: { [key: string]: string }, input: Input) => {
-                            acc[input.name] = input.value;
+                            // For checkboxes, use checked state instead of value
+                            if (input.type === "checkbox") {
+                                acc[input.name] = input.checked ? "1" : "0";
+                            } else {
+                                acc[input.name] = input.value;
+                            }
                             return acc;
                         }, {}),
                     },
