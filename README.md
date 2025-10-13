@@ -1,32 +1,46 @@
 # LMSRoomReservations
 
-## Notes
+## OPAC Access
 
-- All scripts that are accessed via apache2 ScriptAlias need exec permissions. Added to calendar.pl already.
+The plugin automatically creates a Koha Page during installation that provides the room reservation interface.
 
-### kohadev.conf (instance.conf)
+### Access URL
 
-The ScriptAlias points the configured path to the entry point of our frontend, in this case `calendar.pl`.
-The Alias makes the plugins directory accessible to the OPAC.
+After installation, the room reservations page is available at:
 
-```conf
-ScriptAlias /roomreservations "/var/lib/koha/kohadev/plugins/Koha/Plugin/Com/LMSCloud/RoomReservations/Opac/calendar.pl"
-Alias /plugin "/var/lib/koha/kohadev/plugins"
+```
+/cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations
 ```
 
-### apache2.conf
+### Koha Page System
 
-Here we grant access to the plugins directory to get around circumvent problems.
+The plugin uses Koha's built-in Pages feature (Additional Contents) to create an OPAC-accessible page. This approach:
 
-```conf
-<Directory /var/lib/koha/kohadev/plugins/>
-    Options FollowSymLinks
-    AllowOverride None
-    Require all granted
-</Directory>
-```
+- **No Apache configuration required** - Works immediately after plugin installation
+- **Integrated with Koha** - Full access to Koha's OPAC theme, navigation, and authentication
+- **Easy to maintain** - Page content is managed via the plugin's install/uninstall hooks
 
-### Or just in INSTANCE.conf
+### Adding Navigation Links
+
+To make the room reservations page easily discoverable, you can add a link to it in various ways:
+
+1. **OpacNav System Preference**: Add this HTML to the OpacNav system preference:
+   ```html
+   <li><a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations">Room Reservations</a></li>
+   ```
+
+2. **OpacMainUserBlock**: Add a prominent link on the OPAC home page
+
+3. **Custom OPAC template**: Modify your OPAC theme to include a navigation link
+
+### Legacy Apache Configuration (Deprecated)
+
+**Note**: The following Apache configuration is no longer required as of version 4.8.5. It is kept here for reference only.
+
+<details>
+<summary>Click to expand deprecated Apache configuration</summary>
+
+The old approach used Apache ScriptAlias to directly access calendar.pl:
 
 ```conf
 ScriptAlias /roomreservations "/var/lib/koha/INSTANCE/plugins/Koha/Plugin/Com/LMSCloud/RoomReservations/Opac/calendar.pl"
@@ -38,6 +52,10 @@ Alias /plugin "/var/lib/koha/INSTANCE/plugins"
     Require all granted
 </Directory>
 ```
+
+This configuration is no longer necessary and can be removed.
+
+</details>
 
 ### Components
 

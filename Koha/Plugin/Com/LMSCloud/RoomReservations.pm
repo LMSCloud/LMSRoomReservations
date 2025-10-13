@@ -18,6 +18,7 @@ use Mojo::JSON qw( decode_json );
 use Try::Tiny  qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
+use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page );
 
 ## Here we set our plugin version
 our $VERSION         = "4.8.5";
@@ -180,6 +181,20 @@ sub install() {
             croak 'Migration failed';
         }
 
+        # Create OPAC page for room reservations
+        my $page_content = $self->mbf_read('roomreservations.html');
+        my $page_id      = create_opac_page(
+            {   code    => 'lmscloud-roomreservations',
+                title   => 'Room Reservations',
+                content => $page_content,
+                lang    => 'default',
+            }
+        );
+
+        if ( !$page_id ) {
+            carp 'Failed to create OPAC page for room reservations';
+        }
+
         return 1;
     }
     catch {
@@ -266,6 +281,13 @@ sub uninstall() {
         my $sth = C4::Context->dbh->prepare($_);
         $sth->execute or croak C4::Context->dbh->errstr;
     }
+
+    # Remove OPAC page for room reservations
+    delete_opac_page(
+        {   code => 'lmscloud-roomreservations',
+            lang => 'default',
+        }
+    );
 
     return 1;
 }

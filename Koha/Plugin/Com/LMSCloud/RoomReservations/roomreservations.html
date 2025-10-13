@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="/api/v1/contrib/roomreservations/static/dist/main.css">
+<script type="text/javascript" src="/api/v1/contrib/roomreservations/static/dist/main.js"></script>
+
+<div id="lmsr">
+    <lms-room-reservations-view></lms-room-reservations-view>
+</div>
+
+<script>
+(function() {
+    // Extract borrowernumber from Koha's logged-in user element
+    const loggedInUser = document.querySelector('.loggedinusername');
+    const borrowernumber = loggedInUser ? loggedInUser.getAttribute('data-borrowernumber') : null;
+
+    // Set the borrowernumber attribute on the component
+    const component = document.querySelector('lms-room-reservations-view');
+    if (component && borrowernumber) {
+        component.setAttribute('borrowernumber', borrowernumber);
+    }
+})();
+</script>
