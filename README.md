@@ -8,7 +8,7 @@ The plugin automatically creates a Koha Page during installation that provides t
 
 After installation, the room reservations page is available at:
 
-```
+```plain
 /cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations
 ```
 
@@ -25,8 +25,13 @@ The plugin uses Koha's built-in Pages feature (Additional Contents) to create an
 To make the room reservations page easily discoverable, you can add a link to it in various ways:
 
 1. **OpacNav System Preference**: Add this HTML to the OpacNav system preference:
+
    ```html
-   <li><a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations">Room Reservations</a></li>
+   <li>
+     <a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations"
+       >Room Reservations</a
+     >
+   </li>
    ```
 
 2. **OpacMainUserBlock**: Add a prominent link on the OPAC home page
@@ -65,6 +70,7 @@ This project uses Git submodules to share code across LMSCloud plugins:
 - **`src/components/custom/LMSCalendar/`** - Shared calendar component
 
 **Important**: After cloning this repository, initialize submodules with:
+
 ```bash
 git submodule update --init --recursive
 ```
@@ -86,13 +92,13 @@ just seed
 ```
 
 This will create:
+
 - 5 sample rooms (Room 101, Room 202, Study Room A/B, Auditorium)
 - 5 equipment items (Projector, Whiteboard, Video Conference, Laptop, Microphone)
 - Equipment assignments for each room
 - Open hours (Monday-Friday, 9am-5pm)
 
 **Note**: This is for testing only and should not be used in production. The fixtures are located in `testing/fixtures/` and are not included in the production build.
-
 
 <!--
 ### Translating
@@ -190,7 +196,7 @@ If want to add translations for new modules or fix the spelling in the source lo
 
 ## Message Templates
 
-**ROOM_RESERVATION**
+### ROOM_RESERVATION
 
 ```sql
 INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
@@ -263,7 +269,7 @@ INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, mess
 );
 ```
 
-**ROOM_CANCELLATION**
+### ROOM_CANCELLATION
 
 ```sql
 INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, message_transport_type, lang, content ) VALUES (
@@ -320,9 +326,9 @@ INSERT IGNORE INTO letter ( module, code, branchcode, name, is_html, title, mess
         <h3>Ihre Angaben</h3>
         <span>Raum: [% room %]</span><br>
         <span>Von: [% from %]</span><br>
+      <div class="footer">
         <span>Bis: [% to %]</span>
       </div>
-      <div class="footer">
         Mit freundlichen Grüßen,<br>
         Ihre Bibliothek
       </div>

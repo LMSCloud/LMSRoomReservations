@@ -11,7 +11,7 @@ Git submodules allow you to keep a Git repository as a subdirectory of another G
 This plugin uses the following submodules:
 
 - **`Koha/Plugin/Com/LMSCloud/Util/`** - Shared utility modules
-  - Repository: https://github.com/lmscloudpauld/koha-plugin-lmscloud-util
+  - Repository: <https://github.com/lmscloudpauld/koha-plugin-lmscloud-util>
   - Contains: Pages.pm, MigrationHelper.pm, I18N.pm
 
 - **`src/components/custom/LMSCalendar/`** - Calendar component
@@ -107,6 +107,7 @@ git status
 ### Issue: Submodule directory is empty
 
 **Solution**: Initialize and update submodules
+
 ```bash
 git submodule update --init --recursive
 ```
@@ -124,6 +125,7 @@ git checkout main  # or whatever branch you want to work on
 ### Issue: Submodule changes not showing up after pull
 
 **Solution**: Update submodules after pulling
+
 ```bash
 git pull
 git submodule update --recursive
