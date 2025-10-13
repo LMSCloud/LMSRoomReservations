@@ -28,9 +28,9 @@ increment type='patch' times='1':
 package:
   ./scripts/package.sh "${PLUGIN_NAME}" "${PLUGIN_RELEASE_FILENAME}" "${PLUGIN_VERSION}"
 
-# Updates the staticapi.json file within the plugin to expose all files within the `static` directory. 
+# Updates the staticapi.json file within the plugin to expose all files within static directories.
 staticapi:
-  ./scripts/staticapi.sh "${PLUGIN_NAME}" "${PLUGIN_STATIC_DIR_NAME}"
+  ./scripts/staticapi.sh "${PLUGIN_NAME}" ${PLUGIN_STATIC_DIRS}
 
 ktd container="kohadev-koha-1" binary="docker":
   ./scripts/ktd.sh {{container}} {{binary}}
