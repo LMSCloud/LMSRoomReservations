@@ -57,9 +57,19 @@ This configuration is no longer necessary and can be removed.
 
 </details>
 
-### Components
+## Submodules
 
-- There is one component in the src/components dir that is a git submodule: **LMSCalendar**. Changes to this submodule must be staged and committed seperately.
+This project uses Git submodules to share code across LMSCloud plugins:
+
+- **`Koha/Plugin/Com/LMSCloud/Util/`** - Shared utility modules (Pages, MigrationHelper, I18N)
+- **`src/components/custom/LMSCalendar/`** - Shared calendar component
+
+**Important**: After cloning this repository, initialize submodules with:
+```bash
+git submodule update --init --recursive
+```
+
+For detailed information on working with submodules, see [SUBMODULES.md](./SUBMODULES.md).
 
 ## Build
 
