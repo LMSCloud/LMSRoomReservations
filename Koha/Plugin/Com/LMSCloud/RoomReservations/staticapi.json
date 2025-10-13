@@ -1,5 +1,5 @@
 {
-  "/locales/de/LC_MESSAGES/de.json": {
+  "/dist/main.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -10,18 +10,6 @@
           "description": "File found",
           "schema": {
             "type": "file"
-          }
-        },
-        "400": {
-          "description": "Bad request",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
           }
         },
         "404": {
@@ -36,256 +24,8 @@
             }
           }
         },
-        "500": {
-          "description": "Internal server error",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "/assets/lmscloud.webp": {
-    "get": {
-      "x-mojo-to": "Static#get",
-      "tags": [
-        "pluginStatic"
-      ],
-      "responses": {
-        "200": {
-          "description": "File found",
-          "schema": {
-            "type": "file"
-          }
-        },
         "400": {
           "description": "Bad request",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "404": {
-          "description": "File not found",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "500": {
-          "description": "Internal server error",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "/assets/patronsBookings.js": {
-    "get": {
-      "x-mojo-to": "Static#get",
-      "tags": [
-        "pluginStatic"
-      ],
-      "responses": {
-        "200": {
-          "description": "File found",
-          "schema": {
-            "type": "file"
-          }
-        },
-        "400": {
-          "description": "Bad request",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "404": {
-          "description": "File not found",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "500": {
-          "description": "Internal server error",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "/dist/PatronsBookingsTable.js": {
-    "get": {
-      "x-mojo-to": "Static#get",
-      "tags": [
-        "pluginStatic"
-      ],
-      "responses": {
-        "200": {
-          "description": "File found",
-          "schema": {
-            "type": "file"
-          }
-        },
-        "400": {
-          "description": "Bad request",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "404": {
-          "description": "File not found",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "500": {
-          "description": "Internal server error",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "/dist/PatronsBookingsTable.js.map": {
-    "get": {
-      "x-mojo-to": "Static#get",
-      "tags": [
-        "pluginStatic"
-      ],
-      "responses": {
-        "200": {
-          "description": "File found",
-          "schema": {
-            "type": "file"
-          }
-        },
-        "400": {
-          "description": "Bad request",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "404": {
-          "description": "File not found",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "500": {
-          "description": "Internal server error",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "/dist/main.css": {
-    "get": {
-      "x-mojo-to": "Static#get",
-      "tags": [
-        "pluginStatic"
-      ],
-      "responses": {
-        "200": {
-          "description": "File found",
-          "schema": {
-            "type": "file"
-          }
-        },
-        "400": {
-          "description": "Bad request",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "error": {
-                "description": "An explanation for the error",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "404": {
-          "description": "File not found",
           "schema": {
             "type": "object",
             "properties": {
@@ -324,6 +64,18 @@
             "type": "file"
           }
         },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
         "400": {
           "description": "Bad request",
           "schema": {
@@ -336,8 +88,308 @@
             }
           }
         },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/PatronsBookingsTable.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
         "404": {
           "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/staff.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/PatronsBookingsTable.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/main.css": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/staff.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/opac.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
           "schema": {
             "type": "object",
             "properties": {
@@ -376,8 +428,8 @@
             "type": "file"
           }
         },
-        "400": {
-          "description": "Bad request",
+        "404": {
+          "description": "File not found",
           "schema": {
             "type": "object",
             "properties": {
@@ -388,8 +440,8 @@
             }
           }
         },
-        "404": {
-          "description": "File not found",
+        "400": {
+          "description": "Bad request",
           "schema": {
             "type": "object",
             "properties": {
@@ -415,7 +467,7 @@
       }
     }
   },
-  "/dist/main.js.map": {
+  "/dist/opac.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -426,6 +478,18 @@
           "description": "File found",
           "schema": {
             "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
           }
         },
         "400": {
@@ -440,8 +504,204 @@
             }
           }
         },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/assets/lmscloud.webp": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
         "404": {
           "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/assets/patronsBookings.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/locales/de/LC_MESSAGES/com.lmscloud.roomreservations.mo": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/locales/de/LC_MESSAGES/de.json": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
           "schema": {
             "type": "object",
             "properties": {
