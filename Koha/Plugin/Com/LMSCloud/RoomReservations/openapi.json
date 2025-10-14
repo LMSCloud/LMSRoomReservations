@@ -2065,6 +2065,674 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#update"
     }
   },
+  "/open_hours_deviations": {
+    "get": {
+      "operationId": "getOpenHoursDeviations",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "items": {
+              "properties": {
+                "deviationid": {
+                  "type": ["integer", "null"]
+                },
+                "isblackout": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                },
+                "recurrencetype": {
+                  "type": "string",
+                  "enum": ["none", "daily", "weekdays", "weekly", "monthly"]
+                },
+                "recurrencedays": {
+                  "type": ["string", "null"],
+                  "description": "Comma-separated day numbers for weekly recurrence (0=Mon, 6=Sun)"
+                },
+                "recurrenceuntil": {
+                  "type": ["string", "null"]
+                },
+                "rrule": {
+                  "type": ["string", "null"],
+                  "description": "Future: RFC 5545 iCalendar RRule for complex patterns"
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "created": {
+                  "type": ["string", "null"]
+                },
+                "branches": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "rooms": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "is_koha_holiday": {
+                  "type": ["integer", "null"]
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "Get all open hours deviations",
+      "tags": [
+        "open_hours_deviations"
+      ],
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      },
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#list"
+    },
+    "post": {
+      "operationId": "addOpenHoursDeviation",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "description": "A JSON object representing the deviation to add",
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "properties": {
+              "isblackout": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "recurrencetype": {
+                "type": "string",
+                "enum": ["none", "daily", "weekdays", "weekly", "monthly"]
+              },
+              "recurrencedays": {
+                "type": ["string", "null"]
+              },
+              "recurrenceuntil": {
+                "type": ["string", "null"]
+              },
+              "rrule": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rooms": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            },
+            "required": [
+              "isblackout",
+              "start",
+              "end"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "201": {
+          "description": "Successful response",
+          "schema": {
+            "properties": {
+              "deviationid": {
+                "type": "integer"
+              },
+              "isblackout": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "recurrencetype": {
+                "type": "string"
+              },
+              "recurrencedays": {
+                "type": ["string", "null"]
+              },
+              "recurrenceuntil": {
+                "type": ["string", "null"]
+              },
+              "rrule": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rooms": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            },
+            "type": "object"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "Add a new open hours deviation",
+      "tags": [
+        "open_hours_deviations"
+      ],
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      },
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#add"
+    }
+  },
+  "/open_hours_deviations/{deviationid}": {
+    "get": {
+      "operationId": "getOpenHoursDeviation",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "name": "deviationid",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "properties": {
+              "deviationid": {
+                "type": "integer"
+              },
+              "isblackout": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "recurrencetype": {
+                "type": "string"
+              },
+              "recurrencedays": {
+                "type": ["string", "null"]
+              },
+              "recurrenceuntil": {
+                "type": ["string", "null"]
+              },
+              "rrule": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "created": {
+                "type": "string"
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rooms": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            },
+            "type": "object"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "Get a specific open hours deviation",
+      "tags": [
+        "open_hours_deviations"
+      ],
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      },
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#get"
+    },
+    "put": {
+      "operationId": "updateOpenHoursDeviation",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "name": "deviationid",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "description": "A JSON object with updated deviation data",
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "properties": {
+              "isblackout": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "recurrencetype": {
+                "type": "string",
+                "enum": ["none", "daily", "weekdays", "weekly", "monthly"]
+              },
+              "recurrencedays": {
+                "type": ["string", "null"]
+              },
+              "recurrenceuntil": {
+                "type": ["string", "null"]
+              },
+              "rrule": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rooms": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            },
+            "type": "object"
+          }
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "properties": {
+              "deviationid": {
+                "type": "integer"
+              },
+              "isblackout": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "recurrencetype": {
+                "type": "string"
+              },
+              "recurrencedays": {
+                "type": ["string", "null"]
+              },
+              "recurrenceuntil": {
+                "type": ["string", "null"]
+              },
+              "rrule": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rooms": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            },
+            "type": "object"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "Update an open hours deviation",
+      "tags": [
+        "open_hours_deviations"
+      ],
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      },
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#update"
+    },
+    "delete": {
+      "operationId": "deleteOpenHoursDeviation",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "name": "deviationid",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "204": {
+          "description": "Successful deletion"
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "Delete an open hours deviation",
+      "tags": [
+        "open_hours_deviations"
+      ],
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "1"
+        }
+      },
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#delete"
+    }
+  },
   "/public/bookings": {
     "get": {
       "operationId": "getRoomBookingsPublic",

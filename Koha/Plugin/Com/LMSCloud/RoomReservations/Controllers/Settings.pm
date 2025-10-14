@@ -88,6 +88,11 @@ sub list {
                 value       => $self->retrieve_data('enforce_email_notification'),
                 description => __('Enforce email notifications for all OPAC reservations'),
                 type        => 'checkbox',
+            },
+            {   setting     => 'use_koha_calendar',
+                value       => $self->retrieve_data('use_koha_calendar'),
+                description => __('Use Koha calendar to restrict bookings on holidays'),
+                type        => 'checkbox',
             }
         ];
 

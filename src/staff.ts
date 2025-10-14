@@ -6,6 +6,7 @@ import LMSModal from "./components/LMSModal";
 import LMSSearch from "./components/LMSSearch";
 import LMSTable from "./components/LMSTable";
 import LMSToast from "./components/LMSToast";
+import LMSDeviationForm from "./components/custom/LMSDeviationForm";
 import LMSEquipmentItem from "./components/custom/LMSEquipmentItem";
 import LMSPatronSearch from "./components/custom/LMSPatronSearch";
 import LMSRoom from "./components/custom/LMSRoom";
@@ -13,6 +14,7 @@ import ZodErrorElement from "./components/custom/ZodErrorElement";
 import LMSBookingsModal from "./extensions/LMSBookingsModal";
 import LMSBookingsTable from "./extensions/LMSBookingsTable";
 import LMSEquipmentModal from "./extensions/LMSEquipmentModal";
+import LMSOpenHoursDeviationsTable from "./extensions/LMSOpenHoursDeviationsTable";
 import LMSOpenHoursTable from "./extensions/LMSOpenHoursTable";
 import LMSRoomModal from "./extensions/LMSRoomModal";
 import LMSRoomReservationsMenu from "./extensions/LMSRoomReservationsMenu";
@@ -27,9 +29,11 @@ export {
     LMSBookingsModal,
     LMSBookingsTable,
     LMSConfirmationModal,
+    LMSDeviationForm,
     LMSEquipmentItem,
     LMSEquipmentModal,
     LMSModal,
+    LMSOpenHoursDeviationsTable,
     LMSOpenHoursTable,
     LMSPatronSearch,
     LMSRoom,

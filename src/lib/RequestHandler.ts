@@ -82,7 +82,7 @@ class RequestHandler {
             try {
                 const schemaType = endpoint;
                 if (
-                    !["rooms", "bookingsPublic", "bookings", "openHours", "equipment", "settings"].includes(schemaType)
+                    !["rooms", "bookingsPublic", "bookings", "openHours", "openHoursDeviations", "equipment", "settings"].includes(schemaType)
                 ) {
                     throw new Error("No schema type defined for endpoint");
                 }
@@ -285,6 +285,13 @@ const endpoints: ApiEndpoints = {
                 lang: locale,
             },
         },
+        openHoursDeviations: {
+            url: `${BASE_URL}/open_hours_deviations`,
+            cache: false,
+            queryParams: {
+                lang: locale,
+            },
+        },
         bookingsPublic: {
             url: `${BASE_URL}/public/bookings`,
             cache: false,
@@ -343,6 +350,13 @@ const endpoints: ApiEndpoints = {
         },
         openHours: {
             url: `${BASE_URL}/open_hours`,
+            cache: false,
+            queryParams: {
+                lang: locale,
+            },
+        },
+        openHoursDeviations: {
+            url: `${BASE_URL}/open_hours_deviations`,
             cache: false,
             queryParams: {
                 lang: locale,
@@ -424,6 +438,13 @@ const endpoints: ApiEndpoints = {
         },
         openHours: {
             url: `${BASE_URL}/open_hours`,
+            cache: false,
+            queryParams: {
+                lang: locale,
+            },
+        },
+        openHoursDeviations: {
+            url: `${BASE_URL}/open_hours_deviations`,
             cache: false,
             queryParams: {
                 lang: locale,

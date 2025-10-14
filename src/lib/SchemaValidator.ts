@@ -1,7 +1,7 @@
 import { ZodObject, ZodTypeAny, ZodUnion, z } from "zod";
 import { convertToSimpleDatetime } from "./converters/datetimeConverters";
 
-export type Table = "rooms" | "bookingsPublic" | "bookings" | "openHours" | "equipment" | "settings";
+export type Table = "rooms" | "bookingsPublic" | "bookings" | "openHours" | "openHoursDeviations" | "equipment" | "settings";
 
 export type ValidationSchema = Record<Table, ZodObject<Record<string, any>> | ZodUnion<[ZodTypeAny, ...ZodTypeAny[]]>>;
 export class SchemaValidator {
@@ -50,6 +50,18 @@ export class SchemaValidator {
                     }),
                 ),
             ]),
+            openHoursDeviations: z.object({
+                isblackout: z.coerce.number(),
+                start: z.coerce.string(), // DATETIME
+                end: z.coerce.string(), // DATETIME
+                recurrencetype: z.enum(["none", "daily", "weekdays", "weekly", "monthly"]),
+                recurrencedays: z.coerce.string().nullable(), // Comma-separated day numbers (0=Mon, 6=Sun)
+                recurrenceuntil: z.coerce.string().nullable(),
+                rrule: z.coerce.string().nullable(), // Future: RFC 5545 RRule
+                description: z.coerce.string().nullable(),
+                branches: z.array(z.coerce.string()),
+                rooms: z.array(z.coerce.number()),
+            }),
             equipment: z.object({
                 equipmentname: z.coerce.string(),
                 description: z.coerce.string().nullable(),

@@ -146,6 +146,7 @@ sub _ensure_settings_exist {
         reply_to_address               => q{},
         remove_past_reservations_after => q{},
         enforce_email_notification     => q{},
+        use_koha_calendar              => q{},
     };
 
     for my $setting_key ( keys %{$default_settings} ) {
@@ -174,18 +175,24 @@ sub install() {
     return try {
         my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
             {   table_name_mappings => {
-                    rooms                  => $self->get_qualified_table_name('rooms'),
-                    rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
-                    bookings               => $self->get_qualified_table_name('bookings'),
-                    bookings_idx           => $self->get_qualified_table_name('bookings_idx'),
-                    equipment              => $self->get_qualified_table_name('equipment'),
-                    equipment_idx          => $self->get_qualified_table_name('equipment_idx'),
-                    rooms_equipment        => $self->get_qualified_table_name('rooms_equipment'),
-                    rooms_equipment_idx    => $self->get_qualified_table_name('rooms_equipment_idx'),
-                    open_hours             => $self->get_qualified_table_name('open_hours'),
-                    open_hours_idx         => $self->get_qualified_table_name('open_hours_idx'),
-                    bookings_equipment     => $self->get_qualified_table_name('bookings_equipment'),
-                    bookings_equipment_idx => $self->get_qualified_table_name('bookings_equipment_idx'),
+                    rooms                     => $self->get_qualified_table_name('rooms'),
+                    rooms_idx                 => $self->get_qualified_table_name('rooms_idx'),
+                    bookings                  => $self->get_qualified_table_name('bookings'),
+                    bookings_idx              => $self->get_qualified_table_name('bookings_idx'),
+                    equipment                 => $self->get_qualified_table_name('equipment'),
+                    equipment_idx             => $self->get_qualified_table_name('equipment_idx'),
+                    rooms_equipment           => $self->get_qualified_table_name('rooms_equipment'),
+                    rooms_equipment_idx       => $self->get_qualified_table_name('rooms_equipment_idx'),
+                    open_hours                => $self->get_qualified_table_name('open_hours'),
+                    open_hours_idx            => $self->get_qualified_table_name('open_hours_idx'),
+                    bookings_equipment        => $self->get_qualified_table_name('bookings_equipment'),
+                    bookings_equipment_idx    => $self->get_qualified_table_name('bookings_equipment_idx'),
+                    open_hours_deviations     => $self->get_qualified_table_name('open_hours_deviations'),
+                    deviations_idx            => $self->get_qualified_table_name('deviations_idx'),
+                    deviation_branches        => $self->get_qualified_table_name('deviation_branches'),
+                    deviation_branches_idx    => $self->get_qualified_table_name('deviation_branches_idx'),
+                    deviation_rooms           => $self->get_qualified_table_name('deviation_rooms'),
+                    deviation_rooms_idx       => $self->get_qualified_table_name('deviation_rooms_idx'),
                 },
                 bundle_path => $bundle_path,
             }
@@ -237,18 +244,24 @@ sub upgrade {
     return try {
         my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
             {   table_name_mappings => {
-                    rooms                  => $self->get_qualified_table_name('rooms'),
-                    rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
-                    bookings               => $self->get_qualified_table_name('bookings'),
-                    bookings_idx           => $self->get_qualified_table_name('bookings_idx'),
-                    equipment              => $self->get_qualified_table_name('equipment'),
-                    equipment_idx          => $self->get_qualified_table_name('equipment_idx'),
-                    rooms_equipment        => $self->get_qualified_table_name('rooms_equipment'),
-                    rooms_equipment_idx    => $self->get_qualified_table_name('rooms_equipment_idx'),
-                    open_hours             => $self->get_qualified_table_name('open_hours'),
-                    open_hours_idx         => $self->get_qualified_table_name('open_hours_idx'),
-                    bookings_equipment     => $self->get_qualified_table_name('bookings_equipment'),
-                    bookings_equipment_idx => $self->get_qualified_table_name('bookings_equipment_idx'),
+                    rooms                     => $self->get_qualified_table_name('rooms'),
+                    rooms_idx                 => $self->get_qualified_table_name('rooms_idx'),
+                    bookings                  => $self->get_qualified_table_name('bookings'),
+                    bookings_idx              => $self->get_qualified_table_name('bookings_idx'),
+                    equipment                 => $self->get_qualified_table_name('equipment'),
+                    equipment_idx             => $self->get_qualified_table_name('equipment_idx'),
+                    rooms_equipment           => $self->get_qualified_table_name('rooms_equipment'),
+                    rooms_equipment_idx       => $self->get_qualified_table_name('rooms_equipment_idx'),
+                    open_hours                => $self->get_qualified_table_name('open_hours'),
+                    open_hours_idx            => $self->get_qualified_table_name('open_hours_idx'),
+                    bookings_equipment        => $self->get_qualified_table_name('bookings_equipment'),
+                    bookings_equipment_idx    => $self->get_qualified_table_name('bookings_equipment_idx'),
+                    open_hours_deviations     => $self->get_qualified_table_name('open_hours_deviations'),
+                    deviations_idx            => $self->get_qualified_table_name('deviations_idx'),
+                    deviation_branches        => $self->get_qualified_table_name('deviation_branches'),
+                    deviation_branches_idx    => $self->get_qualified_table_name('deviation_branches_idx'),
+                    deviation_rooms           => $self->get_qualified_table_name('deviation_rooms'),
+                    deviation_rooms_idx       => $self->get_qualified_table_name('deviation_rooms_idx'),
                 },
                 bundle_path => $bundle_path,
             }
@@ -297,15 +310,21 @@ sub upgrade {
 sub uninstall() {
     my ( $self, $args ) = @_;
 
-    my $ROOMS              = $self->get_qualified_table_name('rooms');
-    my $BOOKINGS           = $self->get_qualified_table_name('bookings');
-    my $EQUIPMENT          = $self->get_qualified_table_name('equipment');
-    my $ROOMS_EQUIPMENT    = $self->get_qualified_table_name('rooms_equipment');
-    my $OPEN_HOURS         = $self->get_qualified_table_name('open_hours');
-    my $BOOKINGS_EQUIPMENT = $self->get_qualified_table_name('bookings_equipment');
+    my $ROOMS                  = $self->get_qualified_table_name('rooms');
+    my $BOOKINGS               = $self->get_qualified_table_name('bookings');
+    my $EQUIPMENT              = $self->get_qualified_table_name('equipment');
+    my $ROOMS_EQUIPMENT        = $self->get_qualified_table_name('rooms_equipment');
+    my $OPEN_HOURS             = $self->get_qualified_table_name('open_hours');
+    my $BOOKINGS_EQUIPMENT     = $self->get_qualified_table_name('bookings_equipment');
+    my $OPEN_HOURS_DEVIATIONS  = $self->get_qualified_table_name('open_hours_deviations');
+    my $DEVIATION_BRANCHES     = $self->get_qualified_table_name('deviation_branches');
+    my $DEVIATION_ROOMS        = $self->get_qualified_table_name('deviation_rooms');
 
     my @uninstaller_statements = (
         qq{DROP TABLE IF EXISTS $BOOKINGS_EQUIPMENT;},
+        qq{DROP TABLE IF EXISTS $DEVIATION_ROOMS;},
+        qq{DROP TABLE IF EXISTS $DEVIATION_BRANCHES;},
+        qq{DROP TABLE IF EXISTS $OPEN_HOURS_DEVIATIONS;},
         qq{DROP TABLE IF EXISTS $ROOMS_EQUIPMENT;},
         qq{DROP TABLE IF EXISTS $EQUIPMENT;},
         qq{DROP TABLE IF EXISTS $OPEN_HOURS;},

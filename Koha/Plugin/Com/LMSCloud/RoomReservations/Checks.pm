@@ -6,7 +6,9 @@ use 5.010;
 
 use C4::Context ();
 
-use Koha::Patrons ();
+use Koha::Calendar ();
+use Koha::Patrons  ();
+use DateTime       ();
 
 use Exporter 'import';
 use Readonly         qw( Readonly );
@@ -29,19 +31,40 @@ BEGIN {
         has_conflicting_booking
         has_reached_reservation_limit
         has_passed
+        is_koha_calendar_open
+        has_open_hours_deviation
     );
 }
 
 Readonly my $CONSTANTS => {
     INDEX_SUNDAY_TIME_PIECE_WDAY => -1,
-    INDEX_SUNDAY_SCHEMA          =>  6,
+    INDEX_SUNDAY_SCHEMA          => 6,
+    DATETIME_YEAR_START          => 0,
+    DATETIME_YEAR_LENGTH         => 4,
+    DATETIME_MONTH_START         => 5,
+    DATETIME_MONTH_LENGTH        => 2,
+    DATETIME_DAY_START           => 8,
+    DATETIME_DAY_LENGTH          => 2,
+    DATETIME_HOUR_START          => 11,
+    DATETIME_HOUR_LENGTH         => 2,
+    DATETIME_MINUTE_START        => 14,
+    DATETIME_MINUTE_LENGTH       => 2,
+    DOW_MONDAY                   => 1,
+    DOW_FRIDAY                   => 5,
+    DOW_SUNDAY                   => 7,
+    RECURRENCE_MAX_INSTANCES     => 730,    # 2 years of daily occurrences
+    RECURRENCE_END_OF_DAY_HOUR   => 23,
+    RECURRENCE_END_OF_DAY_MINUTE => 59,
 };
 
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
-my $BOOKINGS_TABLE   = $self ? $self->get_qualified_table_name('bookings')   : undef;
-my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
-my $ROOMS_TABLE      = $self ? $self->get_qualified_table_name('rooms')      : undef;
+my $BOOKINGS_TABLE     = $self ? $self->get_qualified_table_name('bookings')              : undef;
+my $OPEN_HOURS_TABLE   = $self ? $self->get_qualified_table_name('open_hours')            : undef;
+my $ROOMS_TABLE        = $self ? $self->get_qualified_table_name('rooms')                 : undef;
+my $DEVIATIONS_TABLE   = $self ? $self->get_qualified_table_name('open_hours_deviations') : undef;
+my $DEV_BRANCHES_TABLE = $self ? $self->get_qualified_table_name('deviation_branches')    : undef;
+my $DEV_ROOMS_TABLE    = $self ? $self->get_qualified_table_name('deviation_rooms')       : undef;
 
 sub has_passed {
     my ($start_time) = @_;
@@ -94,6 +117,18 @@ sub is_open_during_booking_time {
     my $sth = $dbh->prepare($stmt);
     $sth->execute(@bind);
     my ($branch) = $sth->fetchrow_array;
+
+    # Check Koha's calendar first - if the library is closed on this day, booking is not allowed
+    # Only check if the setting is enabled (opt-in for backward compatibility)
+    my $use_koha_calendar = $self->retrieve_data('use_koha_calendar');
+    if ( $use_koha_calendar && !is_koha_calendar_open( $branch, $start_time, $end_time ) ) {
+        return 0;
+    }
+
+    # Check for open hours deviations (blackouts or special hours)
+    if ( has_open_hours_deviation( $branch, $roomid, $start_time, $end_time ) ) {
+        return 0;
+    }
 
     # Then we have to find the open hours for the branch on the day of the booking.
     # The wday with index 0 is Monday in the $OPEN_HOURS_TABLE and the _wday method
@@ -230,6 +265,247 @@ sub is_allowed_to_book {
     }
 
     return $is_allowed;
+}
+
+# Helper function to parse ISO 8601 datetime string (YYYY-MM-DDTHH:MM) into DateTime object
+sub _parse_datetime {
+    my ($datetime_str) = @_;
+
+    return DateTime->new(
+        year   => substr( $datetime_str, $CONSTANTS->{'DATETIME_YEAR_START'},   $CONSTANTS->{'DATETIME_YEAR_LENGTH'} ),
+        month  => substr( $datetime_str, $CONSTANTS->{'DATETIME_MONTH_START'},  $CONSTANTS->{'DATETIME_MONTH_LENGTH'} ),
+        day    => substr( $datetime_str, $CONSTANTS->{'DATETIME_DAY_START'},    $CONSTANTS->{'DATETIME_DAY_LENGTH'} ),
+        hour   => substr( $datetime_str, $CONSTANTS->{'DATETIME_HOUR_START'},   $CONSTANTS->{'DATETIME_HOUR_LENGTH'} ),
+        minute => substr( $datetime_str, $CONSTANTS->{'DATETIME_MINUTE_START'}, $CONSTANTS->{'DATETIME_MINUTE_LENGTH'} ),
+    );
+}
+
+sub is_koha_calendar_open {
+    my ( $branch, $start_time, $end_time ) = @_;
+
+    # Initialize Koha::Calendar for the branch
+    my $calendar = Koha::Calendar->new( branchcode => $branch, days_mode => 'Calendar' );
+
+    # Convert start and end times to DateTime objects
+    my $start_dt = _parse_datetime($start_time);
+    my $end_dt   = _parse_datetime($end_time);
+
+    # Check if the start date is a holiday
+    if ( $calendar->is_holiday($start_dt) ) {
+        return 0;
+    }
+
+    # Check if the end date is a holiday (if booking spans multiple days)
+    if ( $start_dt->ymd ne $end_dt->ymd && $calendar->is_holiday($end_dt) ) {
+        return 0;
+    }
+
+    return 1;
+}
+
+sub has_open_hours_deviation {
+    my ( $branch, $roomid, $start_time, $end_time ) = @_;
+
+    my $sql = SQL::Abstract->new;
+    my $dbh = C4::Context->dbh;
+
+    # Convert times to DateTime for comparison
+    my $start_dt = _parse_datetime($start_time);
+    my $end_dt   = _parse_datetime($end_time);
+
+    # Query to find all deviations (including recurring ones)
+    my $query = <<~"SQL";
+        SELECT d.deviationid, d.isblackout, d.start, d.end,
+               d.recurrencetype, d.recurrencedays, d.recurrenceuntil
+        FROM $DEVIATIONS_TABLE d
+    SQL
+
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    while ( my $deviation = $sth->fetchrow_hashref ) {
+
+        # Check if this deviation applies to our branch/room
+        my $applies_to_branch = _deviation_applies_to_branch( $deviation->{'deviationid'}, $branch );
+        my $applies_to_room   = _deviation_applies_to_room( $deviation->{'deviationid'}, $roomid );
+
+        # Skip if deviation doesn't apply to this branch/room
+        if ( !$applies_to_branch || !$applies_to_room ) {
+            next;
+        }
+
+        # Get all instances of this deviation (expanded if recurring)
+        my @instances = _expand_deviation_instances( $deviation, $start_dt, $end_dt );
+
+        # Check each instance for overlap with booking time
+        for my $instance (@instances) {
+            my $deviation_start_dt = $instance->{start};
+            my $deviation_end_dt   = $instance->{end};
+
+            # Check if this instance overlaps with the booking
+            # A deviation overlaps if: deviation_start < booking_end AND deviation_end > booking_start
+            if ( DateTime->compare( $deviation_start_dt, $end_dt ) < 0 && DateTime->compare( $deviation_end_dt, $start_dt ) > 0 ) {
+
+                # If it's a blackout, booking is not allowed
+                if ( $deviation->{'isblackout'} ) {
+                    return 1;    # Has blocking deviation
+                }
+
+                # If it's special hours (not blackout), validate booking fits within the special hours
+                # Check if booking start is before the special hours start or booking end is after the special hours end
+                if ( DateTime->compare( $start_dt, $deviation_start_dt ) < 0 || DateTime->compare( $end_dt, $deviation_end_dt ) > 0 ) {
+                    return 1;    # Booking is outside the special hours
+                }
+            }
+        }
+    }
+
+    return 0;    # No blocking deviations found
+}
+
+# Expand a deviation into all its instances within the given time range
+# Returns array of hashrefs with {start => DateTime, end => DateTime}
+sub _expand_deviation_instances {
+    my ( $deviation, $booking_start_dt, $booking_end_dt ) = @_;
+
+    my $recurrence_type = $deviation->{recurrencetype} || 'none';
+
+    # Parse deviation times using the existing datetime parser
+    # Convert MySQL DATETIME (YYYY-MM-DD HH:MM:SS) to parser format (YYYY-MM-DDTHH:MM)
+    my $dev_start_str = $deviation->{start};
+    $dev_start_str =~ s/ /T/sm;         # Convert space to T
+    $dev_start_str =~ s/:\d\d$//smx;    # Remove seconds
+    my $dev_start_dt = _parse_datetime($dev_start_str);
+
+    my $dev_end_str = $deviation->{end};
+    $dev_end_str =~ s/ /T/sm;
+    $dev_end_str =~ s/:\d\d$//smx;
+    my $dev_end_dt = _parse_datetime($dev_end_str);
+
+    # Calculate duration
+    my $duration = $dev_end_dt->subtract_datetime($dev_start_dt);
+
+    # Parse recurrenceuntil if present
+    my $recurrence_until_dt;
+    if ( $deviation->{recurrenceuntil} ) {
+        my $until_str = join q{}, $deviation->{recurrenceuntil}, sprintf 'T%02d:%02d', $CONSTANTS->{'RECURRENCE_END_OF_DAY_HOUR'}, $CONSTANTS->{'RECURRENCE_END_OF_DAY_MINUTE'};
+        $recurrence_until_dt = _parse_datetime($until_str);
+    }
+
+    # Non-recurring deviation - return early
+    if ( $recurrence_type eq 'none' ) {
+        return { start => $dev_start_dt->clone, end => $dev_end_dt->clone };
+    }
+
+    # Dispatch table for recurrence pattern matching
+    my $pattern_matchers = {
+        daily => sub {
+            return 1;    # Every day matches
+        },
+        weekdays => sub {
+            my ($current_dt) = @_;
+            my $dow = $current_dt->day_of_week;             # 1=Monday, 7=Sunday
+            return $dow >= $CONSTANTS->{DOW_MONDAY} && $dow <= $CONSTANTS->{DOW_FRIDAY};
+        },
+        weekly => sub {
+            my ($current_dt) = @_;
+            my $dow = $current_dt->day_of_week - 1;             # Convert to 0=Monday, 6=Sunday
+
+            if ( $deviation->{recurrencedays} ) {
+                my @allowed_days = split /,/smx, $deviation->{recurrencedays};
+                return grep { $_ == $dow } @allowed_days;
+            }
+
+            # If no days specified, repeat on same day of week as original
+            my $orig_dow = $dev_start_dt->day_of_week - 1;
+            return $dow == $orig_dow;
+        },
+        monthly => sub {
+            my ($current_dt) = @_;
+            return $current_dt->day == $dev_start_dt->day;
+        },
+    };
+
+    # Get the matcher for this recurrence type
+    my $matcher = $pattern_matchers->{$recurrence_type};
+    if ( !$matcher ) {
+        return ();
+    }
+
+    # Generate recurring instances
+    my @instances;
+    my $current_dt     = $dev_start_dt->clone;
+    my $max_instances  = $CONSTANTS->{'RECURRENCE_MAX_INSTANCES'};
+    my $instance_count = 0;
+
+    while ( $instance_count < $max_instances ) {
+
+        # Stop if we've passed the recurrence end date
+        last if $recurrence_until_dt && DateTime->compare( $current_dt, $recurrence_until_dt ) > 0;
+
+        # Stop if we're past the booking end date (optimization)
+        last if $instance_count > 0 && DateTime->compare( $current_dt, $booking_end_dt ) > 0;
+
+        # Check if this date matches the recurrence pattern
+        if ( $matcher->($current_dt) ) {
+            my $instance_end_dt = $current_dt->clone->add_duration($duration);
+            push @instances, { start => $current_dt->clone, end => $instance_end_dt };
+        }
+
+        # Move to next day
+        $current_dt->add( days => 1 );
+        $instance_count++;
+    }
+
+    return @instances;
+}
+
+sub _deviation_applies_to_branch {
+    my ( $deviation_id, $branch ) = @_;
+
+    my $sql = SQL::Abstract->new;
+    my $dbh = C4::Context->dbh;
+
+    # Check if there are any branch associations for this deviation
+    my ( $stmt, @bind ) = $sql->select( $DEV_BRANCHES_TABLE, ['COUNT(*)'], { deviationid => $deviation_id } );
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    my ($count) = $sth->fetchrow_array;
+
+    # If no branch associations, deviation applies to all branches
+    return 1 if $count == 0;
+
+    # Check if this specific branch is in the associations
+    ( $stmt, @bind ) = $sql->select( $DEV_BRANCHES_TABLE, ['COUNT(*)'], { deviationid => $deviation_id, branch => $branch } );
+    $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    ($count) = $sth->fetchrow_array;
+
+    return $count > 0;
+}
+
+sub _deviation_applies_to_room {
+    my ( $deviation_id, $roomid ) = @_;
+
+    my $sql = SQL::Abstract->new;
+    my $dbh = C4::Context->dbh;
+
+    # Check if there are any room associations for this deviation
+    my ( $stmt, @bind ) = $sql->select( $DEV_ROOMS_TABLE, ['COUNT(*)'], { deviationid => $deviation_id } );
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    my ($count) = $sth->fetchrow_array;
+
+    # If no room associations, deviation applies to all rooms
+    return 1 if $count == 0;
+
+    # Check if this specific room is in the associations
+    ( $stmt, @bind ) = $sql->select( $DEV_ROOMS_TABLE, ['COUNT(*)'], { deviationid => $deviation_id, roomid => $roomid } );
+    $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    ($count) = $sth->fetchrow_array;
+
+    return $count > 0;
 }
 
 1;
