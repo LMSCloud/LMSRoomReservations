@@ -598,6 +598,24 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  File-Slurp-9999.32
+    pathname: C/CA/CAPOEIRAB/File-Slurp-9999.32.tar.gz
+    provides:
+      File::Slurp 9999.32
+    requirements:
+      B 0
+      Carp 0
+      Errno 0
+      Exporter 5.57
+      ExtUtils::MakeMaker 0
+      Fcntl 0
+      File::Basename 0
+      File::Spec 3.01
+      File::Temp 0
+      IO::Handle 0
+      POSIX 0
+      strict 0
+      warnings 0
   JSON-4.10
     pathname: I/IS/ISHIGAKI/JSON-4.10.tar.gz
     provides:
@@ -606,6 +624,38 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
+  Locale-PO-0.27
+    pathname: C/CO/COSIMO/Locale-PO-0.27.tar.gz
+    provides:
+      Locale::PO 0.27
+    requirements:
+      ExtUtils::MakeMaker 0
+      File::Slurp 0
+      Test::More 0
+  Locale-XGettext-0.8
+    pathname: G/GU/GUIDO/Locale-XGettext-0.8.tar.gz
+    provides:
+      Locale::XGettext 0.8
+      Locale::XGettext::Text 0.8
+      Locale::XGettext::Util::Flag 0.8
+      Locale::XGettext::Util::Keyword 0.8
+      Locale::XGettext::Util::POEntries 0.8
+    requirements:
+      Carp 0
+      Encode 0
+      ExtUtils::MakeMaker 0
+      File::Spec 0
+      Getopt::Long 2.36
+      Locale::Messages 0
+      Locale::PO 0.27
+      Locale::Recode 0
+      Locale::TextDomain 1.20
+      Module::Build 0.28
+      Scalar::Util 0
+      base 0
+      perl 5.008
+      strict 0
+      utf8 0
   Log-Message-0.08
     pathname: B/BI/BINGOS/Log-Message-0.08.tar.gz
     provides:
@@ -935,6 +985,27 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Scalar::Util 0
       perl 5.006
+  Template-Plugin-Gettext-1.0
+    pathname: G/GU/GUIDO/Template-Plugin-Gettext-1.0.tar.gz
+    provides:
+      Locale::XGettext::TT2 1.0
+      Locale::XGettext::TT2::Parser 1.0
+      Template::Plugin::Gettext 1.0
+    requirements:
+      Cwd 0
+      Encode 0
+      ExtUtils::MakeMaker 0
+      Getopt::Long 0
+      Locale::Messages 0
+      Locale::TextDomain 1.30
+      Locale::Util 0
+      Locale::XGettext 0.7
+      Module::Build 0.28
+      Template 0
+      Template::Parser 0
+      Template::Plugin 0
+      base 0
+      strict 0
   Template-Toolkit-3.102
     pathname: T/TO/TODDR/Template-Toolkit-3.102.tar.gz
     provides:
@@ -1159,6 +1230,164 @@ DISTRIBUTIONS
       perl 5.008001
       strict 0
       warnings 0
+  libintl-perl-1.35
+    pathname: G/GU/GUIDO/libintl-perl-1.35.tar.gz
+    provides:
+      Locale::Messages 1.35
+      Locale::Recode undef
+      Locale::Recode::_Aliases undef
+      Locale::Recode::_Conversions undef
+      Locale::RecodeData undef
+      Locale::RecodeData::ASMO_449 undef
+      Locale::RecodeData::ATARI_ST undef
+      Locale::RecodeData::ATARI_ST_EURO undef
+      Locale::RecodeData::CP10007 undef
+      Locale::RecodeData::CP1250 undef
+      Locale::RecodeData::CP1251 undef
+      Locale::RecodeData::CP1252 undef
+      Locale::RecodeData::CP1253 undef
+      Locale::RecodeData::CP1254 undef
+      Locale::RecodeData::CP1256 undef
+      Locale::RecodeData::CP1257 undef
+      Locale::RecodeData::CSN_369103 undef
+      Locale::RecodeData::CWI undef
+      Locale::RecodeData::DEC_MCS undef
+      Locale::RecodeData::EBCDIC_AT_DE undef
+      Locale::RecodeData::EBCDIC_AT_DE_A undef
+      Locale::RecodeData::EBCDIC_CA_FR undef
+      Locale::RecodeData::EBCDIC_DK_NO undef
+      Locale::RecodeData::EBCDIC_DK_NO_A undef
+      Locale::RecodeData::EBCDIC_ES undef
+      Locale::RecodeData::EBCDIC_ES_A undef
+      Locale::RecodeData::EBCDIC_ES_S undef
+      Locale::RecodeData::EBCDIC_FI_SE undef
+      Locale::RecodeData::EBCDIC_FI_SE_A undef
+      Locale::RecodeData::EBCDIC_FR undef
+      Locale::RecodeData::EBCDIC_IS_FRISS undef
+      Locale::RecodeData::EBCDIC_IT undef
+      Locale::RecodeData::EBCDIC_PT undef
+      Locale::RecodeData::EBCDIC_UK undef
+      Locale::RecodeData::EBCDIC_US undef
+      Locale::RecodeData::ECMA_CYRILLIC undef
+      Locale::RecodeData::GEORGIAN_ACADEMY undef
+      Locale::RecodeData::GEORGIAN_PS undef
+      Locale::RecodeData::GOST_19768_74 undef
+      Locale::RecodeData::GREEK7 undef
+      Locale::RecodeData::GREEK7_OLD undef
+      Locale::RecodeData::GREEK_CCITT undef
+      Locale::RecodeData::HP_ROMAN8 undef
+      Locale::RecodeData::IBM037 undef
+      Locale::RecodeData::IBM038 undef
+      Locale::RecodeData::IBM1004 undef
+      Locale::RecodeData::IBM1026 undef
+      Locale::RecodeData::IBM1047 undef
+      Locale::RecodeData::IBM256 undef
+      Locale::RecodeData::IBM273 undef
+      Locale::RecodeData::IBM274 undef
+      Locale::RecodeData::IBM275 undef
+      Locale::RecodeData::IBM277 undef
+      Locale::RecodeData::IBM278 undef
+      Locale::RecodeData::IBM280 undef
+      Locale::RecodeData::IBM281 undef
+      Locale::RecodeData::IBM284 undef
+      Locale::RecodeData::IBM285 undef
+      Locale::RecodeData::IBM290 undef
+      Locale::RecodeData::IBM297 undef
+      Locale::RecodeData::IBM420 undef
+      Locale::RecodeData::IBM423 undef
+      Locale::RecodeData::IBM424 undef
+      Locale::RecodeData::IBM437 undef
+      Locale::RecodeData::IBM500 undef
+      Locale::RecodeData::IBM850 undef
+      Locale::RecodeData::IBM851 undef
+      Locale::RecodeData::IBM852 undef
+      Locale::RecodeData::IBM855 undef
+      Locale::RecodeData::IBM857 undef
+      Locale::RecodeData::IBM860 undef
+      Locale::RecodeData::IBM861 undef
+      Locale::RecodeData::IBM862 undef
+      Locale::RecodeData::IBM863 undef
+      Locale::RecodeData::IBM864 undef
+      Locale::RecodeData::IBM865 undef
+      Locale::RecodeData::IBM866 undef
+      Locale::RecodeData::IBM868 undef
+      Locale::RecodeData::IBM869 undef
+      Locale::RecodeData::IBM870 undef
+      Locale::RecodeData::IBM871 undef
+      Locale::RecodeData::IBM874 undef
+      Locale::RecodeData::IBM875 undef
+      Locale::RecodeData::IBM880 undef
+      Locale::RecodeData::IBM891 undef
+      Locale::RecodeData::IBM903 undef
+      Locale::RecodeData::IBM904 undef
+      Locale::RecodeData::IBM905 undef
+      Locale::RecodeData::IBM918 undef
+      Locale::RecodeData::IEC_P27_1 undef
+      Locale::RecodeData::INIS undef
+      Locale::RecodeData::INIS_8 undef
+      Locale::RecodeData::INIS_CYRILLIC undef
+      Locale::RecodeData::ISO_10367_BOX undef
+      Locale::RecodeData::ISO_2033_1983 undef
+      Locale::RecodeData::ISO_5427 undef
+      Locale::RecodeData::ISO_5427_EXT undef
+      Locale::RecodeData::ISO_5428 undef
+      Locale::RecodeData::ISO_8859_1 undef
+      Locale::RecodeData::ISO_8859_10 undef
+      Locale::RecodeData::ISO_8859_11 undef
+      Locale::RecodeData::ISO_8859_13 undef
+      Locale::RecodeData::ISO_8859_14 undef
+      Locale::RecodeData::ISO_8859_15 undef
+      Locale::RecodeData::ISO_8859_16 undef
+      Locale::RecodeData::ISO_8859_2 undef
+      Locale::RecodeData::ISO_8859_3 undef
+      Locale::RecodeData::ISO_8859_4 undef
+      Locale::RecodeData::ISO_8859_5 undef
+      Locale::RecodeData::ISO_8859_6 undef
+      Locale::RecodeData::ISO_8859_7 undef
+      Locale::RecodeData::ISO_8859_8 undef
+      Locale::RecodeData::ISO_8859_9 undef
+      Locale::RecodeData::KOI8_R undef
+      Locale::RecodeData::KOI8_RU undef
+      Locale::RecodeData::KOI8_T undef
+      Locale::RecodeData::KOI8_U undef
+      Locale::RecodeData::KOI_8 undef
+      Locale::RecodeData::LATIN_GREEK undef
+      Locale::RecodeData::LATIN_GREEK_1 undef
+      Locale::RecodeData::MACARABIC undef
+      Locale::RecodeData::MACCROATIAN undef
+      Locale::RecodeData::MACCYRILLIC undef
+      Locale::RecodeData::MACGREEK undef
+      Locale::RecodeData::MACHEBREW undef
+      Locale::RecodeData::MACICELAND undef
+      Locale::RecodeData::MACINTOSH undef
+      Locale::RecodeData::MACROMANIA undef
+      Locale::RecodeData::MACTHAI undef
+      Locale::RecodeData::MACTURKISH undef
+      Locale::RecodeData::MACUKRAINE undef
+      Locale::RecodeData::MAC_IS undef
+      Locale::RecodeData::MAC_SAMI undef
+      Locale::RecodeData::MAC_UK undef
+      Locale::RecodeData::NATS_DANO undef
+      Locale::RecodeData::NATS_SEFI undef
+      Locale::RecodeData::NEXTSTEP undef
+      Locale::RecodeData::SAMI_WS2 undef
+      Locale::RecodeData::TIS_620 undef
+      Locale::RecodeData::US_ASCII undef
+      Locale::RecodeData::UTF_8 undef
+      Locale::RecodeData::VISCII undef
+      Locale::RecodeData::_Encode undef
+      Locale::TextDomain 1.35
+      Locale::Util undef
+      Locale::gettext_dumb undef
+      Locale::gettext_pp undef
+      Locale::gettext_xs undef
+      MyInstall undef
+      SimpleCal undef
+      libintl::perl undef
+    requirements:
+      ExtUtils::MakeMaker 0
+      File::Spec 0
+      version 0.77
   namespace-autoclean-0.29
     pathname: E/ET/ETHER/namespace-autoclean-0.29.tar.gz
     provides:
