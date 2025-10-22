@@ -78,5 +78,5 @@
     "translate:instantiate": "[[ -z \"$LOCALE\" ]] && echo \"LOCALE not set\" || (if [ ! -f locales/$LOCALE.po ]; then msginit --input=com.lmscloud.roomreservations.pot --locale=$LOCALE --output-file=locales/$LOCALE.po; else msgmerge --update locales/$LOCALE.po com.lmscloud.roomreservations.pot; fi)",
     "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
   },
-  "version": "4.8.5"
+  "version": "5.2.0"
 }
