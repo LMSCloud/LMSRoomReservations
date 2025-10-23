@@ -1,5 +1,10 @@
 ## [unreleased]
 
+### ⚙️ Miscellaneous Tasks
+
+- Increment major, minor versions for new release
+## [5.2.0-beta.14] - 2025-10-21
+
 ### 🚀 Features
 
 - Migrate OPAC interface to Koha Pages
@@ -31,6 +36,7 @@
 - Add Template::Plugin::Gettext for string extraction via xgettext-tt2
 - Update german translations
 - Build new bundle
+- Add CHANGELOG.md
 ## [4.8.5-beta.13] - 2024-12-21
 
 ### 🐛 Bug Fixes
