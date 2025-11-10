@@ -108,7 +108,7 @@ import { css } from "lit";
 }
 
 /*
-! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.18 | MIT License | https://tailwindcss.com
 */
 
 /*
