@@ -72,34 +72,54 @@ msgid "day"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:22
-msgid "Monday"
+msgid "isblackout"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:23
-msgid "Tuesday"
+msgid "recurrencetype"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:24
-msgid "Wednesday"
+msgid "recurrencedays"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:25
-msgid "Thursday"
+msgid "recurrenceuntil"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:26
-msgid "Friday"
+msgid "rrule"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:27
-msgid "Saturday"
+msgid "Monday"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:28
-msgid "Sunday"
+msgid "Tuesday"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:29
+msgid "Wednesday"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:30
+msgid "Thursday"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:31
+msgid "Friday"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:32
+msgid "Saturday"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:33
+msgid "Sunday"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:34
 msgid "Validation failed"
 msgstr ""
 
@@ -435,69 +455,34 @@ msgstr ""
 msgid "You can assign this item to a room once its created."
 msgstr ""
 
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:94
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:91
 msgid "Koha Calendar"
 msgstr ""
 
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:97
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:94
 msgid "Plugin"
 msgstr ""
 
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:111
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:108
 msgid "All branches"
 msgstr ""
 
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:123
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:120
 msgid "All rooms"
 msgstr ""
 
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:127
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:124
 msgid "none"
 msgstr ""
 
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:141
-#: src/components/custom/LMSBookie.ts:418
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:139
+#: src/components/custom/LMSBookie.ts:691
 msgid "Closed"
 msgstr ""
 
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:143
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:141
 #: src/components/custom/LMSDeviationForm.ts:180
 msgid "Special Hours"
-msgstr ""
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:178
-#: src/components/custom/LMSDeviationForm.ts:276
-msgid "Mon"
-msgstr ""
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:178
-#: src/components/custom/LMSDeviationForm.ts:277
-msgid "Tue"
-msgstr ""
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:178
-#: src/components/custom/LMSDeviationForm.ts:278
-msgid "Wed"
-msgstr ""
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:178
-#: src/components/custom/LMSDeviationForm.ts:279
-msgid "Thu"
-msgstr ""
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:178
-#: src/components/custom/LMSDeviationForm.ts:280
-msgid "Fri"
-msgstr ""
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:178
-#: src/components/custom/LMSDeviationForm.ts:281
-msgid "Sat"
-msgstr ""
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:178
-#: src/components/custom/LMSDeviationForm.ts:282
-msgid "Sun"
 msgstr ""
 
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:194
@@ -558,7 +543,7 @@ msgid "Rooms"
 msgstr ""
 
 #: src/extensions/LMSRoomReservationsMenu.ts:42
-#: src/components/custom/LMSBookie.ts:289
+#: src/components/custom/LMSBookie.ts:554
 msgid "Equipment"
 msgstr ""
 
@@ -578,7 +563,7 @@ msgstr ""
 msgid "This table shows your current room reservations"
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:91 src/components/custom/LMSBookie.ts:234
+#: src/opac/PatronsBookingsTable.ts:91 src/components/custom/LMSBookie.ts:498
 msgid "Room"
 msgstr ""
 
@@ -590,7 +575,7 @@ msgstr ""
 msgid "End"
 msgstr ""
 
-#: src/opac/PatronsBookingsTable.ts:94 src/components/custom/LMSBookie.ts:314
+#: src/opac/PatronsBookingsTable.ts:94 src/components/custom/LMSBookie.ts:579
 msgid "Purpose of Use"
 msgstr ""
 
@@ -673,95 +658,99 @@ msgstr ""
 msgid "No settings found"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:112
+#: src/components/custom/LMSBookie.ts:129
 msgid "Success"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:113
+#: src/components/custom/LMSBookie.ts:130
 msgid "Your booking is set"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:125
+#: src/components/custom/LMSBookie.ts:142
 msgid "Sorry"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:126
+#: src/components/custom/LMSBookie.ts:143
 msgid "Something went wrong"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:185
+#: src/components/custom/LMSBookie.ts:449
 msgid "Please log in to book rooms"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:187
+#: src/components/custom/LMSBookie.ts:451
 msgid "Log in"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:208
+#: src/components/custom/LMSBookie.ts:472
 msgid "Book a room"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:245
+#: src/components/custom/LMSBookie.ts:509
 msgid "Please select a room"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:257
+#: src/components/custom/LMSBookie.ts:521
 msgid "Date & Time"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:271
+#: src/components/custom/LMSBookie.ts:536
 msgid "Duration"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:280
+#: src/components/custom/LMSBookie.ts:545
 msgid "In minutes, e.g. 60"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:322
+#: src/components/custom/LMSBookie.ts:587
 msgid "Would you like to communicate something to the staff?"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:327
+#: src/components/custom/LMSBookie.ts:592
 msgid "Confirmation Email"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:341
+#: src/components/custom/LMSBookie.ts:606
 msgid "Should we send you a confirmation email"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:349
+#: src/components/custom/LMSBookie.ts:614
 msgid "We would use"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:358
+#: src/components/custom/LMSBookie.ts:623
 msgid "Pick a room, a date, a time"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:360
+#: src/components/custom/LMSBookie.ts:625
 msgid "items you'd like to use"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:362
+#: src/components/custom/LMSBookie.ts:627
 msgid "and the duration of your reservation"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:367
+#: src/components/custom/LMSBookie.ts:632
 msgid "Submit"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:394
+#: src/components/custom/LMSBookie.ts:659
 msgid "Open hours"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:400
+#: src/components/custom/LMSBookie.ts:661
+msgid "Week of"
+msgstr ""
+
+#: src/components/custom/LMSBookie.ts:669
 msgid "Day"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:401
+#: src/components/custom/LMSBookie.ts:670
 msgid "Open from"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:402
+#: src/components/custom/LMSBookie.ts:671
 msgid "Closed after"
 msgstr ""
 
@@ -847,6 +836,34 @@ msgstr ""
 
 #: src/components/custom/LMSDeviationForm.ts:272
 msgid "Repeat On"
+msgstr ""
+
+#: src/components/custom/LMSDeviationForm.ts:276
+msgid "Mon"
+msgstr ""
+
+#: src/components/custom/LMSDeviationForm.ts:277
+msgid "Tue"
+msgstr ""
+
+#: src/components/custom/LMSDeviationForm.ts:278
+msgid "Wed"
+msgstr ""
+
+#: src/components/custom/LMSDeviationForm.ts:279
+msgid "Thu"
+msgstr ""
+
+#: src/components/custom/LMSDeviationForm.ts:280
+msgid "Fri"
+msgstr ""
+
+#: src/components/custom/LMSDeviationForm.ts:281
+msgid "Sat"
+msgstr ""
+
+#: src/components/custom/LMSDeviationForm.ts:282
+msgid "Sun"
 msgstr ""
 
 #: src/components/custom/LMSDeviationForm.ts:307
