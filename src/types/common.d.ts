@@ -141,3 +141,19 @@ export type URIComponents = {
 };
 
 /* Data: These interfaces represent the schema of the underlying database */
+
+type Deviation = {
+    deviationid: number;
+    isblackout: 0 | 1;
+    start: string; // MySQL DATETIME format
+    end: string; // MySQL DATETIME format
+    recurrencetype: "none" | "daily" | "weekdays" | "weekly" | "monthly";
+    recurrencedays: string | null;
+    recurrenceuntil: string | null;
+    rrule: string | null;
+    description: string | null;
+    created: string;
+    updated_at: string;
+    branches: string[];
+    rooms: number[];
+};

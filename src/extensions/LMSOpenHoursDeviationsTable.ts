@@ -35,15 +35,12 @@ export default class LMSOpenHoursDeviationsTable extends LMSTable {
             parent = parent.parentElement;
         }
 
-        console.log("Found parent TR", parent);
-
         if (!parent) {
             console.error("Could not find parent TR element");
             return;
         }
 
         const key = (parent as HTMLTableRowElement).dataset["deviationid"];
-        console.log("Deviation ID to delete:", key);
 
         if (!key) {
             console.error("No deviationid found on TR element");
@@ -128,8 +125,9 @@ export default class LMSOpenHoursDeviationsTable extends LMSTable {
             const recurrencetype = html`<span class="min-w-[5rem] whitespace-nowrap">${recurrencetypeText}</span>`;
 
             // Format recurrence days - keep short abbreviations together
-            const recurrencedaysText = deviation.recurrencedays ? this.formatWeekdays(deviation.recurrencedays) : "-";
-            const recurrencedays = html`<span class="whitespace-nowrap">${recurrencedaysText}</span>`;
+            const recurrencedays = deviation.recurrencedays
+                ? html`<span class="whitespace-nowrap">${this.formatWeekdays(deviation.recurrencedays)}</span>`
+                : html`<span class="whitespace-nowrap">-</span>`;
 
             // Format recurrence until date
             const recurrenceuntil = deviation.recurrenceuntil
@@ -174,11 +172,13 @@ export default class LMSOpenHoursDeviationsTable extends LMSTable {
         });
     }
 
-    private formatWeekdays(days: string): string {
-        const dayNames = [__("Mon"), __("Tue"), __("Wed"), __("Thu"), __("Fri"), __("Sat"), __("Sun")];
+    private formatWeekdays(days: string) {
+        const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
         const dayNumbers = days.split(",").map((d) => parseInt(d.trim(), 10));
-        return dayNumbers.map((num) => dayNames[num] || "").join(", ");
+        const dayList = dayNumbers.map((num) => dayNames[num]).filter(Boolean);
+
+        return html`${dayList.map((day, i) => html`${i > 0 ? html`, ` : nothing}${__(day!)}`)}`;
     }
 
     override updated(changedProperties: Map<string, never>) {

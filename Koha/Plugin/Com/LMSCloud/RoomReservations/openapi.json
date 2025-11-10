@@ -3532,6 +3532,165 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::OpenHours#list"
     }
   },
+  "/public/open_hours_deviations": {
+    "get": {
+      "operationId": "getRoomOpenHoursDeviationsPublic",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "items": {
+              "properties": {
+                "deviationid": {
+                  "type": ["integer", "null"]
+                },
+                "isblackout": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                },
+                "recurrencetype": {
+                  "type": "string",
+                  "enum": ["none", "daily", "weekdays", "weekly", "monthly"]
+                },
+                "recurrencedays": {
+                  "type": ["string", "null"],
+                  "description": "Comma-separated day numbers for weekly recurrence (0=Mon, 6=Sun)"
+                },
+                "recurrenceuntil": {
+                  "type": ["string", "null"]
+                },
+                "rrule": {
+                  "type": ["string", "null"],
+                  "description": "Future: RFC 5545 iCalendar RRule for complex patterns"
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "created": {
+                  "type": ["string", "null"]
+                },
+                "updated_at": {
+                  "type": ["string", "null"]
+                },
+                "branches": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "rooms": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "is_koha_holiday": {
+                  "type": ["boolean", "null"],
+                  "description": "Flag indicating if this is a Koha calendar holiday (read-only)"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "Get open hours deviations (blackouts and special hours)",
+      "tags": [
+        "open_hours_deviations"
+      ],
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::OpenHoursDeviations#list"
+    }
+  },
   "/public/patron": {
     "get": {
       "operationId": "getRoomPatronPublic",

@@ -292,6 +292,13 @@ const endpoints: ApiEndpoints = {
                 lang: locale,
             },
         },
+        openHoursDeviationsPublic: {
+            url: `${BASE_URL}/public/open_hours_deviations`,
+            cache: false,
+            queryParams: {
+                lang: locale,
+            },
+        },
         bookingsPublic: {
             url: `${BASE_URL}/public/bookings`,
             cache: false,

@@ -1,20 +1,33 @@
 import { faCheckCircle, faExclamationCircle, faInfoCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import dayjs from "dayjs";
-import { LitElement, PropertyValueMap, TemplateResult, html, nothing } from "lit";
+import { html, LitElement, nothing, PropertyValueMap, TemplateResult } from "lit";
 import { customElement, property, query, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
 import { requestHandler } from "../../lib/RequestHandler";
-import { __, attr__ } from "../../lib/translate";
+import { attr__, __ } from "../../lib/translate";
 import { tailwindStyles } from "../../tailwind.lit";
+import { Deviation } from "../../types/common";
 import { dayMapping } from "../../views/StaffOpenHoursView";
 
 type Alert = {
     active: boolean;
     type: "Success" | "Warning";
     message: string | TemplateResult;
+};
+
+type OpenHoursRow = {
+    day: number;
+    start: string;
+    end: string;
+    branch?: string;
+    isDeviation?: boolean;
+    isBlackout?: boolean;
+    isFirstRowForDay?: boolean;
+    originalStart?: string | null;
+    originalEnd?: string | null;
 };
 
 @customElement("lms-bookie")
@@ -36,6 +49,10 @@ export default class LMSBookie extends LitElement {
     @state() alert?: Alert;
 
     @state() enforceEmailNotification: boolean = false;
+
+    @state() selectedDate: dayjs.Dayjs = dayjs();
+
+    @state() weekDeviations: Deviation[] = [];
 
     @query("#room") roomSelect!: HTMLSelectElement;
 
@@ -96,7 +113,7 @@ export default class LMSBookie extends LitElement {
             end,
             blackedout: 0,
             equipment,
-            send_confirmation: this.enforceEmailNotification ? 1 : (confirmation || 0),
+            send_confirmation: this.enforceEmailNotification ? 1 : confirmation || 0,
             letter_code: "ROOM_RESERVATION",
             purpose_of_use: purposeOfUse || null,
         });
@@ -160,10 +177,257 @@ export default class LMSBookie extends LitElement {
         }
 
         this.selectedRoom = this.rooms.find((room) => room.roomid === parseInt(target.value, 10));
+        this.fetchWeekDeviations();
+    }
+
+    private handleDateChange(e: Event) {
+        const target = e.target as HTMLInputElement;
+        if (!target?.value) {
+            this.selectedDate = dayjs();
+            this.weekDeviations = [];
+            return;
+        }
+
+        this.selectedDate = dayjs(target.value);
+        this.fetchWeekDeviations();
+    }
+
+    private async fetchWeekDeviations() {
+        if (!this.selectedRoom) {
+            this.weekDeviations = [];
+            return;
+        }
+
+        try {
+            const response = await requestHandler.get("openHoursDeviationsPublic");
+            if (response.ok) {
+                const allDeviations: Deviation[] = await response.json();
+
+                const weekStart = this.selectedDate.startOf("week");
+                const weekEnd = this.selectedDate.endOf("week");
+
+                this.weekDeviations = allDeviations.filter((deviation) => {
+                    const appliesToBranch =
+                        deviation.branches.length === 0 || deviation.branches.includes(this.selectedRoom!.branch);
+
+                    const appliesToRoom =
+                        deviation.rooms.length === 0 || deviation.rooms.includes(this.selectedRoom!.roomid);
+
+                    if (!appliesToBranch || !appliesToRoom) {
+                        return false;
+                    }
+
+                    const deviationStart = dayjs(deviation.start);
+                    const deviationEnd = dayjs(deviation.end);
+
+                    return deviationStart.isBefore(weekEnd) && deviationEnd.isAfter(weekStart);
+                });
+            }
+        } catch (error) {
+            this.weekDeviations = [];
+        }
     }
 
     private shouldDisplayEquipment() {
         return this.equipment.some((item: any) => item.roomid && item.roomid === this.selectedRoom?.roomid);
+    }
+
+    private getOpenHoursWithDeviations(): OpenHoursRow[] {
+        if (!this.selectedRoom) {
+            return this.openHours.filter((day) => day.branch === this.selectedRoom?.branch);
+        }
+
+        const regularHours = this.openHours.filter((day) => day.branch === this.selectedRoom.branch);
+        const rowsByDay = new Map<number, OpenHoursRow[]>();
+
+        for (const hours of regularHours) {
+            rowsByDay.set(hours.day, [{ ...hours, isDeviation: false }]);
+        }
+
+        for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+            const dayDeviations = this.weekDeviations.filter((deviation) =>
+                this.deviationAppliesToDay(deviation, dayIndex),
+            );
+            this.applyDeviationsToDay(dayIndex, dayDeviations, rowsByDay);
+        }
+
+        return this.flattenRowsByDay(rowsByDay);
+    }
+
+    private deviationAppliesToDay(deviation: Deviation, dayIndex: number): boolean {
+        const recurrenceCheckers = {
+            none: () => {
+                const devStart = dayjs(deviation.start);
+                const devDayOfWeek = (devStart.day() + 6) % 7;
+                return devDayOfWeek === dayIndex;
+            },
+            weekly: () => {
+                if (deviation.recurrencedays) {
+                    const allowedDays = deviation.recurrencedays.split(",").map((d) => parseInt(d.trim(), 10));
+                    return allowedDays.includes(dayIndex);
+                }
+                const devStart = dayjs(deviation.start);
+                const devDayOfWeek = (devStart.day() + 6) % 7;
+                return devDayOfWeek === dayIndex;
+            },
+            daily: () => true,
+            weekdays: () => dayIndex >= 0 && dayIndex <= 4,
+            monthly: () => false,
+        };
+
+        const checker = recurrenceCheckers[deviation.recurrencetype];
+        return checker ? checker() : false;
+    }
+
+    private applyDeviationsToDay(dayIndex: number, dayDeviations: Deviation[], rowsByDay: Map<number, OpenHoursRow[]>) {
+        const existingRows = rowsByDay.get(dayIndex) || [];
+        if (!existingRows.length) {
+            return;
+        }
+
+        const [regularRow] = existingRows;
+        if (!regularRow) {
+            return;
+        }
+
+        if (dayDeviations.length === 0) {
+            regularRow.isFirstRowForDay = true;
+            return;
+        }
+
+        for (const deviation of dayDeviations) {
+            if (deviation.isblackout) {
+                this.applyBlackoutToDay(dayIndex, deviation, regularRow, rowsByDay);
+                break;
+            } else {
+                this.mergeSpecialHoursIntoDay(dayIndex, deviation, regularRow, rowsByDay);
+            }
+        }
+    }
+
+    private applyBlackoutToDay(
+        dayIndex: number,
+        deviation: Deviation,
+        regularRow: OpenHoursRow,
+        rowsByDay: Map<number, OpenHoursRow[]>,
+    ) {
+        if (!regularRow) return;
+
+        const devStart = dayjs(deviation.start);
+        const devEnd = dayjs(deviation.end);
+        const regStart = dayjs(`1970-01-01 ${regularRow.start}`);
+        const regEnd = dayjs(`1970-01-01 ${regularRow.end}`);
+        const blackoutStart = dayjs(`1970-01-01 ${devStart.format("HH:mm:ss")}`);
+        const blackoutEnd = dayjs(`1970-01-01 ${devEnd.format("HH:mm:ss")}`);
+
+        const isFullDayClosure =
+            (blackoutStart.isBefore(regStart) || blackoutStart.isSame(regStart)) &&
+            (blackoutEnd.isAfter(regEnd) || blackoutEnd.isSame(regEnd));
+
+        if (isFullDayClosure) {
+            rowsByDay.set(dayIndex, [this.createClosedRow(dayIndex)]);
+        } else {
+            const windows = this.createPartialClosureWindows(
+                dayIndex,
+                regularRow,
+                blackoutStart,
+                blackoutEnd,
+                regStart,
+                regEnd,
+                devStart,
+                devEnd,
+            );
+            rowsByDay.set(dayIndex, windows.length > 0 ? windows : [this.createClosedRow(dayIndex)]);
+        }
+    }
+
+    private createClosedRow(dayIndex: number): OpenHoursRow {
+        return {
+            day: dayIndex,
+            start: "00:00:00",
+            end: "00:00:00",
+            isDeviation: true,
+            isBlackout: true,
+            isFirstRowForDay: true,
+        };
+    }
+
+    private createPartialClosureWindows(
+        dayIndex: number,
+        regularRow: OpenHoursRow,
+        blackoutStart: dayjs.Dayjs,
+        blackoutEnd: dayjs.Dayjs,
+        regStart: dayjs.Dayjs,
+        regEnd: dayjs.Dayjs,
+        devStart: dayjs.Dayjs,
+        devEnd: dayjs.Dayjs,
+    ): OpenHoursRow[] {
+        const windows: OpenHoursRow[] = [];
+
+        if (blackoutStart.isAfter(regStart)) {
+            windows.push({
+                day: dayIndex,
+                start: regularRow.start,
+                end: devStart.format("HH:mm:ss"),
+                isDeviation: false,
+                isBlackout: false,
+                isFirstRowForDay: windows.length === 0,
+            });
+        }
+
+        if (blackoutEnd.isBefore(regEnd)) {
+            windows.push({
+                day: dayIndex,
+                start: devEnd.format("HH:mm:ss"),
+                end: regularRow.end,
+                isDeviation: false,
+                isBlackout: false,
+                isFirstRowForDay: windows.length === 0,
+            });
+        }
+
+        return windows;
+    }
+
+    private mergeSpecialHoursIntoDay(
+        dayIndex: number,
+        deviation: Deviation,
+        regularRow: OpenHoursRow,
+        rowsByDay: Map<number, OpenHoursRow[]>,
+    ) {
+        if (!regularRow) return;
+
+        const devStart = dayjs(deviation.start);
+        const devEnd = dayjs(deviation.end);
+        const regStart = dayjs(`1970-01-01 ${regularRow.start}`);
+        const regEnd = dayjs(`1970-01-01 ${regularRow.end}`);
+        const devStartTime = dayjs(`1970-01-01 ${devStart.format("HH:mm:ss")}`);
+        const devEndTime = dayjs(`1970-01-01 ${devEnd.format("HH:mm:ss")}`);
+
+        const mergedStart = devStartTime.isBefore(regStart) ? devStart.format("HH:mm:ss") : regularRow.start;
+        const mergedEnd = devEndTime.isAfter(regEnd) ? devEnd.format("HH:mm:ss") : regularRow.end;
+
+        rowsByDay.set(dayIndex, [
+            {
+                day: dayIndex,
+                start: mergedStart,
+                end: mergedEnd,
+                originalStart: mergedStart !== regularRow.start ? regularRow.start : null,
+                originalEnd: mergedEnd !== regularRow.end ? regularRow.end : null,
+                isDeviation: true,
+                isBlackout: false,
+                isFirstRowForDay: true,
+            },
+        ]);
+    }
+
+    private flattenRowsByDay(rowsByDay: Map<number, OpenHoursRow[]>): OpenHoursRow[] {
+        const allRows: OpenHoursRow[] = [];
+        for (let i = 0; i < 7; i++) {
+            const rows = rowsByDay.get(i) || [];
+            allRows.push(...rows);
+        }
+        return allRows;
     }
 
     private getPreselectedRoomid() {
@@ -263,6 +527,7 @@ export default class LMSBookie extends LitElement {
                                         class="input input-bordered w-full"
                                         aria-describedby="booking-help"
                                         ?disabled=${!this.borrowernumber}
+                                        @change=${this.handleDateChange}
                                         required
                                     />
                                 </div>
@@ -392,9 +657,13 @@ export default class LMSBookie extends LitElement {
                     </section>
                     <section class="${classMap({ hidden: !this.selectedRoom })} border-t-4 border-dotted pt-4">
                         <h5>${__("Open hours")}</h5>
+                        <p class="mb-2 text-sm text-base-content/70">
+                            ${__("Week of")} ${this.selectedDate.startOf("week").format("MMM D")} -
+                            ${this.selectedDate.endOf("week").format("MMM D, YYYY")}
+                        </p>
                         <div id="open-hours">
                             <div class="overflow-x-scroll">
-                                <table class="table table-zebra">
+                                <table class="table">
                                     <thead>
                                         <tr>
                                             <th>${__("Day")}</th>
@@ -403,30 +672,48 @@ export default class LMSBookie extends LitElement {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        ${map(
-                                            this.openHours.filter((day) => day.branch === this.selectedRoom?.branch),
-                                            ({ day, start, end }) => {
-                                                const stringifiedIndex = day.toString();
-                                                const dayString = dayMapping.get(stringifiedIndex);
-                                                if (!dayString) {
-                                                    return nothing;
-                                                }
+                                        ${map(this.getOpenHoursWithDeviations(), (row) => {
+                                            const stringifiedIndex = row.day.toString();
+                                            const dayString = dayMapping.get(stringifiedIndex);
+                                            if (!dayString) {
+                                                return nothing;
+                                            }
 
-                                                let startString = start.slice(0, -3);
-                                                let endString = end.slice(0, -3);
-                                                if ([startString, endString].every((string) => string === "00:00")) {
-                                                    startString = __("Closed");
-                                                    endString = html`&mdash;`;
-                                                }
-                                                return html`
-                                                    <tr>
-                                                        <td>${__(dayString)}</td>
-                                                        <td>${startString}</td>
-                                                        <td>${endString}</td>
-                                                    </tr>
-                                                `;
-                                            },
-                                        )}
+                                            let startString = row.start.slice(0, -3);
+                                            let endString = row.end.slice(0, -3);
+
+                                            const rowClass = classMap({
+                                                "bg-red-100": (row.isDeviation && row.isBlackout) ?? false,
+                                                "bg-base-200": !row.isBlackout && row.day % 2 === 0,
+                                            });
+
+                                            if ([startString, endString].every((string) => string === "00:00")) {
+                                                startString = `${__("Closed")}`;
+                                                endString = "&mdash";
+                                            }
+
+                                            const startDisplay = row.originalStart
+                                                ? html`${startString}
+                                                      <span class="ml-1 text-xs text-base-content/60 line-through"
+                                                          >${row.originalStart.slice(0, -3)}</span
+                                                      >`
+                                                : startString;
+
+                                            const endDisplay = row.originalEnd
+                                                ? html`${endString}
+                                                      <span class="ml-1 text-xs text-base-content/60 line-through"
+                                                          >${row.originalEnd.slice(0, -3)}</span
+                                                      >`
+                                                : endString;
+
+                                            return html`
+                                                <tr class="${rowClass}">
+                                                    <td>${row.isFirstRowForDay ? __(dayString) : nothing}</td>
+                                                    <td>${startDisplay}</td>
+                                                    <td>${endDisplay}</td>
+                                                </tr>
+                                            `;
+                                        })}
                                     </tbody>
                                 </table>
                             </div>
