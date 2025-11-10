@@ -126,9 +126,19 @@ sub is_open_during_booking_time {
     }
 
     # Check for open hours deviations (blackouts or special hours)
-    if ( has_open_hours_deviation( $branch, $roomid, $start_time, $end_time ) ) {
+    my $deviation_result = has_open_hours_deviation( $branch, $roomid, $start_time, $end_time );
+
+    # If blocked by blackout, deny the booking
+    if ( $deviation_result->{status} eq 'blocked' ) {
         return 0;
     }
+
+    # If explicitly allowed by special hours, allow immediately (bypass regular hours check)
+    if ( $deviation_result->{status} eq 'allowed' ) {
+        return 1;
+    }
+
+    # If neutral (no applicable deviation), continue to regular hours check below
 
     # Then we have to find the open hours for the branch on the day of the booking.
     # The wday with index 0 is Monday in the $OPEN_HOURS_TABLE and the _wday method
@@ -323,6 +333,9 @@ sub has_open_hours_deviation {
     my $sth = $dbh->prepare($query);
     $sth->execute();
 
+    # Track if we found a special hours window that allows this booking
+    my $allowed_by_special_hours = 0;
+
     while ( my $deviation = $sth->fetchrow_hashref ) {
 
         # Check if this deviation applies to our branch/room
@@ -346,21 +359,26 @@ sub has_open_hours_deviation {
             # A deviation overlaps if: deviation_start < booking_end AND deviation_end > booking_start
             if ( DateTime->compare( $deviation_start_dt, $end_dt ) < 0 && DateTime->compare( $deviation_end_dt, $start_dt ) > 0 ) {
 
-                # If it's a blackout, booking is not allowed
+                # If it's a blackout, booking is not allowed - return immediately
                 if ( $deviation->{'isblackout'} ) {
-                    return 1;    # Has blocking deviation
+                    return { status => 'blocked', reason => 'blackout' };
                 }
 
-                # If it's special hours (not blackout), validate booking fits within the special hours
-                # Check if booking start is before the special hours start or booking end is after the special hours end
-                if ( DateTime->compare( $start_dt, $deviation_start_dt ) < 0 || DateTime->compare( $end_dt, $deviation_end_dt ) > 0 ) {
-                    return 1;    # Booking is outside the special hours
+                # If it's special hours (not blackout), check if booking fits entirely within the special hours
+                # If booking fits within this special hours window, mark as allowed
+                if ( DateTime->compare( $start_dt, $deviation_start_dt ) >= 0 && DateTime->compare( $end_dt, $deviation_end_dt ) <= 0 ) {
+                    $allowed_by_special_hours = 1;
                 }
             }
         }
     }
 
-    return 0;    # No blocking deviations found
+    # Return values:
+    # { status => 'allowed', reason => 'special_hours' } - Explicitly allowed by special hours (bypass regular hours check)
+    # { status => 'neutral' } - No applicable deviation (continue to regular hours check)
+    return $allowed_by_special_hours
+        ? { status => 'allowed', reason => 'special_hours' }
+        : { status => 'neutral' };
 }
 
 # Expand a deviation into all its instances within the given time range
