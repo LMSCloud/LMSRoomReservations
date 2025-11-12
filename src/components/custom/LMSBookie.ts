@@ -679,32 +679,33 @@ export default class LMSBookie extends LitElement {
                                                 return nothing;
                                             }
 
-                                            let startString = row.start.slice(0, -3);
-                                            let endString = row.end.slice(0, -3);
+                                            const startString = row.start.slice(0, -3);
+                                            const endString = row.end.slice(0, -3);
 
                                             const rowClass = classMap({
                                                 "bg-red-100": (row.isDeviation && row.isBlackout) ?? false,
                                                 "bg-base-200": !row.isBlackout && row.day % 2 === 0,
                                             });
 
-                                            if ([startString, endString].every((string) => string === "00:00")) {
-                                                startString = `${__("Closed")}`;
-                                                endString = "&mdash";
-                                            }
+                                            const isClosed = [startString, endString].every((string) => string === "00:00");
 
-                                            const startDisplay = row.originalStart
-                                                ? html`${startString}
-                                                      <span class="ml-1 text-xs text-base-content/60 line-through"
-                                                          >${row.originalStart.slice(0, -3)}</span
-                                                      >`
-                                                : startString;
+                                            const startDisplay = isClosed
+                                                ? __("Closed")
+                                                : row.originalStart
+                                                  ? html`${startString}
+                                                        <span class="ml-1 text-xs text-base-content/60 line-through"
+                                                            >${row.originalStart.slice(0, -3)}</span
+                                                        >`
+                                                  : startString;
 
-                                            const endDisplay = row.originalEnd
-                                                ? html`${endString}
-                                                      <span class="ml-1 text-xs text-base-content/60 line-through"
-                                                          >${row.originalEnd.slice(0, -3)}</span
-                                                      >`
-                                                : endString;
+                                            const endDisplay = isClosed
+                                                ? html`&mdash;`
+                                                : row.originalEnd
+                                                  ? html`${endString}
+                                                        <span class="ml-1 text-xs text-base-content/60 line-through"
+                                                            >${row.originalEnd.slice(0, -3)}</span
+                                                        >`
+                                                  : endString;
 
                                             return html`
                                                 <tr class="${rowClass}">
