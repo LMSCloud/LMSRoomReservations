@@ -88,39 +88,68 @@ msgid "recurrenceuntil"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:26
-msgid "rrule"
+msgid "branches"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:27
-msgid "Monday"
+msgid "rooms"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:28
-msgid "Tuesday"
+msgid "rrule"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:29
-msgid "Wednesday"
+msgid "Monday"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:30
-msgid "Thursday"
+msgid "Tuesday"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:31
-msgid "Friday"
+msgid "Wednesday"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:32
-msgid "Saturday"
+msgid "Thursday"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:33
-msgid "Sunday"
+msgid "Friday"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:34
+msgid "Saturday"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:35
+msgid "Sunday"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:36
 msgid "Validation failed"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:37
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:124
+msgid "none"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:38
+msgid "daily"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:39
+msgid "weekdays"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:40
+msgid "weekly"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:41
+msgid "monthly"
 msgstr ""
 
 #: src/components/LMSConfirmationModal.ts:45 src/components/LMSTable.ts:638
@@ -469,10 +498,6 @@ msgstr ""
 
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:120
 msgid "All rooms"
-msgstr ""
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:124
-msgid "none"
 msgstr ""
 
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:139
