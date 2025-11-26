@@ -134,7 +134,7 @@ export default class PatronsBookingsTable extends LitElement {
         return html`
             <h1>${__("Your bookings")}</h1>
             ${this.renderInfoMaybe()}
-            <a class="py-2" href="/roomreservations">${__("Make a reservation")}</a>
+            <a class="py-2" href="/cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations">${__("Make a reservation")}</a>
             ${this.renderPatronsBookingsTableMaybe()}
         `;
     }
