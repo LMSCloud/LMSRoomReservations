@@ -50,7 +50,7 @@
   "license": "GPL-3.0",
   "minimum_koha_version": "21.05.14.000",
   "name": "lms-room-reservations",
-  "previous_version": "5.2.4",
+  "previous_version": "5.2.5",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LMSCloud/LMSRoomReservations.git"
@@ -70,5 +70,5 @@
     "translate:instantiate": "[[ -z \"$LOCALE\" ]] && echo \"LOCALE not set\" || (if [ ! -f locales/$LOCALE.po ]; then msginit --input=com.lmscloud.roomreservations.pot --locale=$LOCALE --output-file=locales/$LOCALE.po; else msgmerge --update locales/$LOCALE.po com.lmscloud.roomreservations.pot; fi)",
     "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
   },
-  "version": "5.2.5"
+  "version": "5.2.6"
 }

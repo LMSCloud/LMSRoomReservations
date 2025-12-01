@@ -21,7 +21,7 @@ use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
 use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists );
 
 ## Here we set our plugin version
-our $VERSION         = "5.2.5";
+our $VERSION         = "5.2.6";
 our $MINIMUM_VERSION = '22.11';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -29,7 +29,7 @@ our $metadata = {
     name            => 'LMSRoomReservations',
     author          => 'LMSCloud GmbH',
     date_authored   => '2009-01-27',
-    date_updated    => "2025-11-26",
+    date_updated    => "2025-12-01",
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
