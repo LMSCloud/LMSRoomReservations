@@ -219,6 +219,19 @@ sub install() {
             carp 'Failed to create OPAC page for room reservations';
         }
 
+        # Create German (de-DE) version of OPAC page
+        my $page_id_de = create_opac_page(
+            {   code    => 'lmscloud-roomreservations',
+                title   => 'Raumbuchungen',
+                content => $page_content,
+                lang    => 'de-DE',
+            }
+        );
+
+        if ( !$page_id_de ) {
+            carp 'Failed to create German OPAC page for room reservations';
+        }
+
         return 1;
     }
     catch {
@@ -276,9 +289,9 @@ sub upgrade {
         $self->_ensure_settings_exist();
 
         # Create OPAC page for room reservations if it doesn't exist
+        my $page_content = $self->mbf_read('roomreservations.html');
         if ( !page_exists( { code => 'lmscloud-roomreservations', lang => 'default' } ) ) {
-            my $page_content = $self->mbf_read('roomreservations.html');
-            my $page_id      = create_opac_page(
+            my $page_id = create_opac_page(
                 {   code    => 'lmscloud-roomreservations',
                     title   => 'Room Reservations',
                     content => $page_content,
@@ -288,6 +301,21 @@ sub upgrade {
 
             if ( !$page_id ) {
                 carp 'Failed to create OPAC page for room reservations during upgrade';
+            }
+        }
+
+        # Create German (de-DE) version of OPAC page if it doesn't exist
+        if ( !page_exists( { code => 'lmscloud-roomreservations', lang => 'de-DE' } ) ) {
+            my $page_id_de = create_opac_page(
+                {   code    => 'lmscloud-roomreservations',
+                    title   => 'Raumbuchungen',
+                    content => $page_content,
+                    lang    => 'de-DE',
+                }
+            );
+
+            if ( !$page_id_de ) {
+                carp 'Failed to create German OPAC page for room reservations during upgrade';
             }
         }
 
