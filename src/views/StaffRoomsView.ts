@@ -35,7 +35,7 @@ export default class StaffRoomsView extends LitElement {
     override connectedCallback() {
         super.connectedCallback();
 
-        Promise.all([fetch("/api/v1/libraries"), requestHandler.get("rooms"), requestHandler.get("openHours")])
+        Promise.all([fetch("/api/v1/libraries?_per_page=-1"), requestHandler.get("rooms"), requestHandler.get("openHours")])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
             .then(([libraries, rooms, openHours]) => {
                 this.libraries = libraries.map((library: any) => ({

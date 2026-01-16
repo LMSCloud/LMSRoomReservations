@@ -58,7 +58,7 @@ export default class StaffBookingsView extends LitElement {
 
                 return Array.from(new Set(bookings.map((booking: any) => booking.borrowernumber)));
             })
-            .then((borrowernumbers) => fetch(`/api/v1/patrons?q={"borrowernumber":[${borrowernumbers}]}`))
+            .then((borrowernumbers) => fetch(`/api/v1/patrons?_per_page=-1&q={"borrowernumber":[${borrowernumbers}]}`))
             .then((response) => response.json())
             .then((borrowers: any[]) => {
                 this.borrowers = borrowers.reduce(
@@ -90,7 +90,7 @@ export default class StaffBookingsView extends LitElement {
         });
 
         const borrowernumbers = Array.from(new Set(bookings.map((booking: any) => booking.borrowernumber)));
-        const borrowersResponse = await fetch(`/api/v1/patrons?q={"borrowernumber":[${borrowernumbers}]}`);
+        const borrowersResponse = await fetch(`/api/v1/patrons?_per_page=-1&q={"borrowernumber":[${borrowernumbers}]}`);
         const borrowers: any[] = await borrowersResponse.json();
         this.borrowers = borrowers.reduce(
             (acc, borrower) => ({
