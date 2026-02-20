@@ -6,11 +6,19 @@ The plugin automatically creates a Koha Page during installation that provides t
 
 ### Access URL
 
-After installation, the room reservations page is available at:
+The URL format depends on your Koha version:
 
-```plain
-/cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations
-```
+- **Koha <= 22.11**:
+  ```plain
+  /cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations
+  ```
+- **Koha >= 23.11**:
+  ```plain
+  /cgi-bin/koha/opac-page.pl?page_id=N
+  ```
+  where `N` is the numeric page id assigned during installation. The `?code=` parameter is no longer supported in Koha >= 23.11.
+
+The plugin resolves the correct URL automatically and injects it via `window.__LMS_ROOM_RESERVATIONS_PAGE_URL__` so that components like the patron bookings table link to the right place regardless of Koha version.
 
 ### Koha Page System
 
@@ -26,9 +34,19 @@ To make the room reservations page easily discoverable, you can add a link to it
 
 1. **OpacNav System Preference**: Add this HTML to the OpacNav system preference:
 
+   **Koha <= 22.11:**
    ```html
    <li>
      <a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations"
+       >Room Reservations</a
+     >
+   </li>
+   ```
+
+   **Koha >= 23.11:** Look up the page id in *Tools > Additional contents* and use:
+   ```html
+   <li>
+     <a href="/cgi-bin/koha/opac-page.pl?page_id=N"
        >Room Reservations</a
      >
    </li>
