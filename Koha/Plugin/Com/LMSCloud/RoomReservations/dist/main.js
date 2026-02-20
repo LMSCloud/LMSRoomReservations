@@ -279,9 +279,9 @@ let hd=e=>(t,n)=>{n===void 0?customElements.define(e,t):n.addInitializer((()=>{c
             --separator-mid: rgba(0, 0, 0, 0.4);
             --separator-dark: rgba(0, 0, 0, 0.7);
 
-            --system-ui:
-                system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            --system-ui: system-ui, 'Segoe UI', Roboto, Helvetica, Arial,
+                sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+                'Segoe UI Symbol';
 
             --border-radius-sm: 5px;
             --border-radius-md: 7px;
