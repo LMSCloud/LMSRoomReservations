@@ -18,10 +18,10 @@ use Mojo::JSON qw( decode_json );
 use Try::Tiny  qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
-use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists );
+use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists get_page_url );
 
 ## Here we set our plugin version
-our $VERSION         = "5.2.8";
+our $VERSION         = "5.2.9";
 our $MINIMUM_VERSION = '22.11';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -29,7 +29,7 @@ our $metadata = {
     name            => 'LMSRoomReservations',
     author          => 'LMSCloud GmbH',
     date_authored   => '2009-01-27',
-    date_updated    => "2026-01-29",
+    date_updated    => "2026-02-20",
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
@@ -83,7 +83,10 @@ sub tool {
 sub opac_js {
     my ($self) = @_;
 
-    return <<~'JS';
+    my $page_url = get_page_url( { code => 'lmscloud-roomreservations' } ) // q{};
+
+    return <<~"JS";
+        <script>window.__LMS_ROOM_RESERVATIONS_PAGE_URL__ = "$page_url";</script>
         <script src="/api/v1/contrib/roomreservations/static/assets/patronsBookings.js" defer></script>
     JS
 }

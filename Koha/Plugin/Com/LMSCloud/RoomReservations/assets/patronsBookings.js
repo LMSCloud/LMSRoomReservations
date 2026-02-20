@@ -40,6 +40,10 @@ if (userMenuUl) {
             JSON.stringify(patronsBookings),
           );
           lmsPatronsBookingsTable.setAttribute("rooms", JSON.stringify(rooms));
+          const pageUrl = window.__LMS_ROOM_RESERVATIONS_PAGE_URL__;
+          if (pageUrl) {
+            lmsPatronsBookingsTable.setAttribute("page-url", pageUrl);
+          }
         }
 
         mainContent.appendChild(lmsPatronsBookingsTable);

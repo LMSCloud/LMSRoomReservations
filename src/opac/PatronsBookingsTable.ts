@@ -13,6 +13,8 @@ export default class PatronsBookingsTable extends LitElement {
 
     @property({ type: String, attribute: "external-stylesheet-src" }) externalStylesSrc: string | undefined;
 
+    @property({ type: String, attribute: "page-url" }) pageUrl: string = "";
+
     @property({ type: String }) error: "CSS_NOT_FOUND" | undefined;
 
     constructor() {
@@ -134,7 +136,7 @@ export default class PatronsBookingsTable extends LitElement {
         return html`
             <h1>${__("Your bookings")}</h1>
             ${this.renderInfoMaybe()}
-            <a class="py-2" href="/cgi-bin/koha/opac-page.pl?code=lmscloud-roomreservations">${__("Make a reservation")}</a>
+            ${this.pageUrl ? html`<a class="py-2" href="${this.pageUrl}">${__("Make a reservation")}</a>` : nothing}
             ${this.renderPatronsBookingsTableMaybe()}
         `;
     }
