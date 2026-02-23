@@ -173,8 +173,8 @@ sub delete {
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        my $equipment = $sth->fetchrow_hashref();
-        if ( !$equipment ) {
+        my $booking = $sth->fetchrow_hashref();
+        if ( !$booking ) {
             return $c->render(
                 status  => 404,
                 openapi => { error => 'Object not found' }
@@ -185,6 +185,20 @@ sub delete {
             $sql->delete( $BOOKINGS_TABLE, { bookingid => $booking_id } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
+
+        my $start = substr( $booking->{'start'}, 0, 16 );
+        $start =~ s/ /T/;
+        my $end = substr( $booking->{'end'}, 0, 16 );
+        $end =~ s/ /T/;
+        send_email_confirmation(
+            {   borrowernumber    => $booking->{'borrowernumber'},
+                roomid            => $booking->{'roomid'},
+                start             => $start,
+                end               => $end,
+                letter_code       => 'ROOM_CANCELLATION',
+                send_confirmation => 1,
+            }
+        );
 
         return $c->render(
             status  => 204,

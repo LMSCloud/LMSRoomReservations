@@ -11,6 +11,10 @@ use C4::Context ();
 use Try::Tiny     qw( catch try );
 use SQL::Abstract ();
 
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
+    send_email_confirmation
+);
+
 our $VERSION = '1.0.0';
 
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
@@ -72,9 +76,35 @@ sub delete {
             );
         }
 
-        my ( $stmt, @bind ) = $sql->delete( $BOOKINGS_TABLE, { bookingid => $id } );
+        my ( $stmt, @bind ) = $sql->select( $BOOKINGS_TABLE, q{*}, { bookingid => $id } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
+
+        my $booking = $sth->fetchrow_hashref();
+        if ( !$booking ) {
+            return $c->render(
+                status  => 404,
+                openapi => { error => 'Object not found' }
+            );
+        }
+
+        ( $stmt, @bind ) = $sql->delete( $BOOKINGS_TABLE, { bookingid => $id } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $start = substr( $booking->{'start'}, 0, 16 );
+        $start =~ s/ /T/;
+        my $end = substr( $booking->{'end'}, 0, 16 );
+        $end =~ s/ /T/;
+        send_email_confirmation(
+            {   borrowernumber    => $booking->{'borrowernumber'},
+                roomid            => $booking->{'roomid'},
+                start             => $start,
+                end               => $end,
+                letter_code       => 'ROOM_CANCELLATION',
+                send_confirmation => 1,
+            }
+        );
 
         return $c->render( status => 204, openapi => q{} );
     }

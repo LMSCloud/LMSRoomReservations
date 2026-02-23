@@ -62,6 +62,8 @@ const validationSchemas = {
         end: z.coerce.string().transform(convertToSimpleDatetime), // DATETIME
         equipment: z.array(z.coerce.string()).nullable(),
         blackedout: z.coerce.number(),
+        send_confirmation: z.coerce.number(),
+        letter_code: z.string(),
     }),
     openHours: z.union([openHoursSimpleSchema, openHoursArraySchema]),
     openHoursDeviations: z.object({
