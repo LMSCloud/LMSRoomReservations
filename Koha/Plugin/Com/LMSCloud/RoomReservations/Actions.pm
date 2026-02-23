@@ -99,14 +99,17 @@ sub send_email_confirmation {
     }
 
     if ($reply_to_address) {
-        push @message_ids,
-            C4::Letters::EnqueueLetter(
-            {   letter                 => $letter,
-                to_address             => $reply_to_address,
-                branchcode             => $patron->branchcode,
-                message_transport_type => 'email',
-            }
-            );
+        my $addresses = [ grep { $_ } map { my $addr = $_; $addr =~ s/^\s+|\s+$//g; $addr } split /,/, $reply_to_address ];
+        for my $address ( @{$addresses} ) {
+            push @message_ids,
+                C4::Letters::EnqueueLetter(
+                {   letter                 => $letter,
+                    to_address             => $address,
+                    branchcode             => $patron->branchcode,
+                    message_transport_type => 'email',
+                }
+                );
+        }
     }
 
     for my $message_id (@message_ids) {
