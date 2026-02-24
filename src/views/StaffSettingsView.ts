@@ -18,30 +18,25 @@ export default class StaffSettingsView extends LitElement {
 
     override connectedCallback() {
         super.connectedCallback();
-        requestHandler
-            .get("settings")
-            .then((response) => response.json())
-            .then((settings) => {
-                this.settings = settings.map((setting: any) => {
-                    try {
-                        return {
-                            ...setting,
-                            plugin_value: JSON.parse(setting.plugin_value.toString()),
-                        };
-                    } catch {
-                        return setting;
-                    }
-                });
-                this.hasLoaded = true;
-            });
+        this.fetchUpdate().finally(() => {
+            this.hasLoaded = true;
+        });
     }
 
     async fetchUpdate() {
         const response = await requestHandler.get("settings");
-        this.settings = await response.json();
-        const isEmptyOrNoResults = this.settings.length === 0;
-        this.isEmpty = isEmptyOrNoResults;
-        // this.hasNoResults = isEmptyOrNoResults;
+        const settings = await response.json();
+        this.settings = settings.map((setting: any) => {
+            try {
+                return {
+                    ...setting,
+                    plugin_value: JSON.parse(setting.plugin_value?.toString()),
+                };
+            } catch {
+                return setting;
+            }
+        });
+        this.isEmpty = this.settings.length === 0;
         this.requestUpdate();
     }
 
