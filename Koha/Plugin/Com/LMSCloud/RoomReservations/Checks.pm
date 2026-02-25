@@ -130,6 +130,7 @@ sub is_open_during_booking_time {
     # Only check if the setting is enabled (opt-in for backward compatibility)
     my $use_koha_calendar = $self->retrieve_data('use_koha_calendar');
     if ( $use_koha_calendar && !is_koha_calendar_open( $branch, $start_time, $end_time ) ) {
+        setlocale( LC_TIME, $global_locale );
         return 0;
     }
 
@@ -138,11 +139,13 @@ sub is_open_during_booking_time {
 
     # If blocked by blackout, deny the booking
     if ( $deviation_result->{status} eq 'blocked' ) {
+        setlocale( LC_TIME, $global_locale );
         return 0;
     }
 
     # If explicitly allowed by special hours, allow immediately (bypass regular hours check)
     if ( $deviation_result->{status} eq 'allowed' ) {
+        setlocale( LC_TIME, $global_locale );
         return 1;
     }
 
@@ -161,7 +164,10 @@ sub is_open_during_booking_time {
 
     # If both the start and end hours are "00:00:00" then the branch is closed on that day
     # meaning that we return false.
-    return 0 if $start_hour eq '00:00:00' and $end_hour eq '00:00:00';
+    if ( $start_hour eq '00:00:00' and $end_hour eq '00:00:00' ) {
+        setlocale( LC_TIME, $global_locale );
+        return 0;
+    }
 
     # Reset the locale of Time::Piece to the original value
     setlocale( LC_TIME, $global_locale );
