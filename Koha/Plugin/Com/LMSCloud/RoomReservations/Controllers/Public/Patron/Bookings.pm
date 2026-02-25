@@ -88,6 +88,13 @@ sub delete {
             );
         }
 
+        if ( $booking->{'borrowernumber'} ne $borrower->borrowernumber ) {
+            return $c->render(
+                status  => 403,
+                openapi => { error => 'You are not allowed to delete this booking' }
+            );
+        }
+
         ( $stmt, @bind ) = $sql->delete( $BOOKINGS_TABLE, { bookingid => $id } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
