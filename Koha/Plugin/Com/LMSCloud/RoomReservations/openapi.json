@@ -2041,6 +2041,17 @@
             "type": "object"
           }
         },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
         "500": {
           "description": "Internal server error",
           "schema": {
