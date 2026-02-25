@@ -1212,9 +1212,9 @@ msgstr ""
 "Nutze den Koha-Kalender, um Buchungen an konfigurierten Schließtagen zu "
 "verhindern"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:71
-msgid "You need to login first to book rooms."
-msgstr "Bitte loggen Sie sich ein, um Räume zu buchen."
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:72
+msgid "Authentication required"
+msgstr "Anmeldung erforderlich"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:95
 msgid "You are not allowed to book rooms"
