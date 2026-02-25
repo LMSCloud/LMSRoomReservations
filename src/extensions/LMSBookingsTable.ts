@@ -202,12 +202,12 @@ export default class LMSBookingsTable extends LMSTable {
         super.updated(_changedProperties);
         if (_changedProperties.has("bookings")) {
             this.hydrate();
-        }
 
-        if (this.roomSelects) {
-            this.roomSelects.forEach((roomSelect) => {
-                roomSelect.addEventListener("change", this.boundUpdateEquipmentItemsOnRoomChange);
-            });
+            if (this.roomSelects) {
+                this.roomSelects.forEach((roomSelect) => {
+                    roomSelect.addEventListener("change", this.boundUpdateEquipmentItemsOnRoomChange);
+                });
+            }
         }
     }
 

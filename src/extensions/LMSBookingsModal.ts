@@ -104,8 +104,8 @@ export default class LMSBookingsModal extends LMSModal {
         this.renderInputs(newEquipmentItems);
     }
 
-    protected override updated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
-        super.updated(_changedProperties);
+    protected override firstUpdated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
+        super.firstUpdated(_changedProperties);
 
         if (this.roomSelect) {
             this.roomSelect.addEventListener("change", this.boundUpdateEquipmentItemsOnRoomChange);
