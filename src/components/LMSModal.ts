@@ -194,7 +194,7 @@ export default class LMSModal extends LitElement {
         this.intersectionObserverHandler?.destroy();
     }
 
-    override firstUpdated() {
+    protected override firstUpdated(_changedProperties?: any) {
         if (this.footer && this.buttonModal) {
             this.intersectionObserverHandler = new IntersectionObserverHandler({
                 intersecting: {
