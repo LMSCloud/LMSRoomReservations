@@ -89,6 +89,10 @@ export default class RoomReservationsView extends LitElement {
                 };
                 this.updateCalendar();
                 this.hasLoaded = true;
+            })
+            .catch((error) => {
+                console.error("Failed to load room reservations data:", error);
+                this.hasLoaded = true;
             });
     }
 
@@ -98,6 +102,7 @@ export default class RoomReservationsView extends LitElement {
             const [s, e] = [new Date(start), new Date(end)];
             const bookedRoomId = roomid;
             const room = this.rooms.find((room) => room.roomid == bookedRoomId);
+            if (!room) return null;
             const { roomnumber: heading, color } = room;
             return {
                 date: {
@@ -120,7 +125,7 @@ export default class RoomReservationsView extends LitElement {
                 content: blackedout ? __("Blocked") : __("Booked"),
                 color,
             };
-        });
+        }).filter(Boolean);
     }
 
     async fetchUpdate() {
@@ -182,7 +187,7 @@ export default class RoomReservationsView extends LitElement {
                                 <div class="space-y-2">
                                     <div class="flex items-center justify-between">
                                         <span class="font-semibold">${__("Branch")}</span>
-                                        <span>${library.name}</span>
+                                        <span>${library?.name ?? branch}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <span class="font-semibold">${__("Max Bookable Time")}</span>
