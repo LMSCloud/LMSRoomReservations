@@ -20,6 +20,7 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations;
 use Koha::Plugin::Com::LMSCloud::RoomReservations::State qw(
     get_restricted_patron_categories
 );
+use Koha::Plugin::Com::LMSCloud::Util::I18N qw( __ );
 
 our $VERSION = '1.0.0';
 
