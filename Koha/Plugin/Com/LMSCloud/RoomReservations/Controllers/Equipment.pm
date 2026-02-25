@@ -80,7 +80,7 @@ sub get {
         return $c->render(
             status  => 200,
             openapi => $roomid
-            ? { %{$equipment}, roomid => $roomid }
+            ? { %{$equipment}, roomid => $roomid->{roomid} }
             : $equipment
         );
     }
@@ -148,10 +148,9 @@ sub update {
         if ($equipment) {
             my $new_equipment = $c->req->json;
 
-            # We have to convert all nullish values to NULL in our new_equipment to undef before passing them to SQL::Abstract.
-            # To do this we assign a new hashref back to $new_equipment and check for each key if the value is nullish, e.g. undef or empty string.
+            # Convert empty strings to undef (SQL NULL) while preserving valid falsy values like 0.
             $new_equipment = {
-                map { $_ => $new_equipment->{$_} || undef }
+                map { $_ => ( defined $new_equipment->{$_} && $new_equipment->{$_} ne q{} ? $new_equipment->{$_} : undef ) }
                     keys %{$new_equipment}
             };
             my $errors = [];

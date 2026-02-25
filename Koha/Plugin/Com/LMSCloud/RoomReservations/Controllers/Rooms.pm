@@ -141,10 +141,9 @@ sub update {
 
         my $new_room = $c->req->json;
 
-        # We have to convert all nullish values to NULL in our new_room to undef before passing them to SQL::Abstract.
-        # To do this we assign a new hashref back to $new_room and check for each key if the value is nullish, e.g. undef or empty string.
+        # Convert empty strings to undef (SQL NULL) while preserving valid falsy values like 0.
         $new_room =
-            { map { $_ => $new_room->{$_} || undef } keys %{$new_room} };
+            { map { $_ => ( defined $new_room->{$_} && $new_room->{$_} ne q{} ? $new_room->{$_} : undef ) } keys %{$new_room} };
 
         my $errors = [];
         if ( !looks_like_number( $new_room->{'maxcapacity'} ) ) {
@@ -155,7 +154,7 @@ sub update {
             push @{$errors}, __('Please enter a color in the format #RRGGBB for') . q{ } . __('color');
         }
 
-        if ( $room->{'maxbookabletime'} and !looks_like_number( $room->{'maxbookabletime'} ) ) {
+        if ( $new_room->{'maxbookabletime'} and !looks_like_number( $new_room->{'maxbookabletime'} ) ) {
             push @{$errors}, __('Please enter a number for') . q{ } . __('maxbookabletime');
         }
 
