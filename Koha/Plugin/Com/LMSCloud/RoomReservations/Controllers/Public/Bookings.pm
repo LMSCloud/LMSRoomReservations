@@ -65,12 +65,15 @@ sub add {
     return try {
         my $body = $c->req->json;
 
-        if ( $body->{'borrowernumber'} eq q{} ) {
+        my $patron = $c->stash('koha.user');
+        if ( !$patron ) {
             return $c->render(
-                status  => 400,
+                status  => 403,
                 openapi => { error => __('You need to login first to book rooms.') }
             );
         }
+
+        $body->{'borrowernumber'} = $patron->borrowernumber;
 
         return _check_and_save_booking( $body, $c );
     }
