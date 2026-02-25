@@ -14,7 +14,7 @@ use Koha::DateUtils qw( dt_from_string );
 
 use Carp       qw( carp croak );
 use English    qw( -no_match_vars );
-use Mojo::JSON qw( decode_json );
+use Mojo::JSON qw( decode_json encode_json );
 use Try::Tiny  qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
@@ -83,10 +83,11 @@ sub tool {
 sub opac_js {
     my ($self) = @_;
 
-    my $page_url = get_page_url( { code => 'lmscloud-roomreservations' } ) // q{};
+    my $page_url      = get_page_url( { code => 'lmscloud-roomreservations' } ) // q{};
+    my $safe_page_url = encode_json($page_url);
 
     return <<~"JS";
-        <script>window.__LMS_ROOM_RESERVATIONS_PAGE_URL__ = "$page_url";</script>
+        <script>window.__LMS_ROOM_RESERVATIONS_PAGE_URL__ = $safe_page_url;</script>
         <script src="/api/v1/contrib/roomreservations/static/assets/patronsBookings.js" defer></script>
     JS
 }
