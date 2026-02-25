@@ -178,7 +178,10 @@ sub delete {
 
         my ( $stmt, @bind ) = $sql->delete( $OPEN_HOURS_TABLE, { branch => $branch } );
         my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        my $rows = $sth->execute(@bind);
+
+        return $c->render( status => 404, openapi => { error => "No open hours found for branch '$branch'" } )
+            unless $rows > 0;
 
         return $c->render( status => 204, openapi => {} );
     }
