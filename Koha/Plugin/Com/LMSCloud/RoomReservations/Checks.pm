@@ -92,11 +92,19 @@ sub is_bookable_time {
     $room_sth->execute(@bind);
     my ($max_bookable_time) = $room_sth->fetchrow_array;
 
-    # Check if the difference between start and end times exceeds the maxbookabletime
+    # Fall back to the global default if room-level limit is not set
+    $max_bookable_time //= $self->retrieve_data('default_max_booking_time');
+
+    # Reject if no limit is configured at either level
+    return 0 if !$max_bookable_time;
+
+    # Check if the difference between start and end times exceeds the limit
     my $_start_time = Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' );
     my $_end_time   = Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' );
-    my $duration    = ( $_end_time - $_start_time )->minutes
-        || $self->retrieve_data('default_max_booking_time');
+    my $duration    = ( $_end_time - $_start_time )->minutes;
+
+    # Reject zero or negative duration (end must be after start)
+    return 0 if $duration <= 0;
 
     return $duration <= $max_bookable_time;
 }
