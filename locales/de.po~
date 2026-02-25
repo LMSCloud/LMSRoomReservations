@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-16 20:18+0100\n"
-"PO-Revision-Date: 2025-11-12 13:29+0100\n"
+"PO-Revision-Date: 2025-11-12 13:32+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -134,6 +134,27 @@ msgstr "Sonntag"
 #: src/dynamically_added_strings.ts:36
 msgid "Validation failed"
 msgstr "Validierung fehlgeschlagen"
+
+#: src/dynamically_added_strings.ts:37
+#: src/extensions/LMSOpenHoursDeviationsTable.ts:124
+msgid "none"
+msgstr "Keine"
+
+#: src/dynamically_added_strings.ts:38
+msgid "daily"
+msgstr "Täglich"
+
+#: src/dynamically_added_strings.ts:39
+msgid "weekdays"
+msgstr "Wochentage"
+
+#: src/dynamically_added_strings.ts:40
+msgid "weekly"
+msgstr "Wöchentlich"
+
+#: src/dynamically_added_strings.ts:41
+msgid "monthly"
+msgstr "Monatlich"
 
 #: src/components/LMSConfirmationModal.ts:45 src/components/LMSTable.ts:638
 #: src/views/StaffOpenHoursView.ts:345
@@ -504,10 +525,6 @@ msgstr "Alle Zweigstellen"
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:120
 msgid "All rooms"
 msgstr "Alle Räume"
-
-#: src/extensions/LMSOpenHoursDeviationsTable.ts:124
-msgid "none"
-msgstr "keine"
 
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:139
 #: src/components/custom/LMSBookie.ts:691
@@ -1195,9 +1212,9 @@ msgstr ""
 "Nutze den Koha-Kalender, um Buchungen an konfigurierten Schließtagen zu "
 "verhindern"
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:71
-msgid "You need to login first to book rooms."
-msgstr "Bitte loggen Sie sich ein, um Räume zu buchen."
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:72
+msgid "Authentication required"
+msgstr "Anmeldung erforderlich"
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:95
 msgid "You are not allowed to book rooms"
