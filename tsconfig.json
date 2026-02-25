@@ -37,6 +37,6 @@
         }
       ]
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "test/**/*.ts"],
     "exclude": ["src/components/custom/LMSCalendar/**/*.ts"]
   }
