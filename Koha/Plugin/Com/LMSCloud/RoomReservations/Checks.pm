@@ -96,8 +96,8 @@ sub is_bookable_time {
     # Fall back to the global default if room-level limit is not set
     $max_bookable_time //= $self->retrieve_data('default_max_booking_time');
 
-    # Reject if no limit is configured at either level
-    return 0 if !$max_bookable_time;
+    # No limit configured at either level — allow any duration
+    return 1 if !$max_bookable_time;
 
     # Check if the difference between start and end times exceeds the limit
     my $_start_time = Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' );
