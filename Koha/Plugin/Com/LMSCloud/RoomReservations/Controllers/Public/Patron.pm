@@ -20,7 +20,7 @@ sub get {
         if ( !$patron ) {
             return $c->render(
                 status  => 403,
-                openapi => { error => 'Unauthorized' }
+                openapi => { error => 'Authentication required' }
             );
         }
 

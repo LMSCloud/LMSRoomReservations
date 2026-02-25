@@ -69,7 +69,7 @@ sub add {
         if ( !$patron ) {
             return $c->render(
                 status  => 403,
-                openapi => { error => __('You need to login first to book rooms.') }
+                openapi => { error => __('Authentication required') }
             );
         }
 

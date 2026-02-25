@@ -34,7 +34,7 @@ sub list {
         if ( !$borrower ) {
             return $c->render(
                 status  => 403,
-                openapi => { error => 'You are not allowed to view this page' }
+                openapi => { error => 'Authentication required' }
             );
         }
 
@@ -72,7 +72,7 @@ sub delete {
         if ( !$borrower ) {
             return $c->render(
                 status  => 403,
-                openapi => { error => 'You are not allowed to view this page' }
+                openapi => { error => 'Authentication required' }
             );
         }
 
