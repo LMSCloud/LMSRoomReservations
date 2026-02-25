@@ -84,7 +84,7 @@ sub add {
             push @{$errors}, __('Please enter a number for') . q{ } . __('maxcapacity');
         }
 
-        if ( !( $room->{'color'} =~ m/^#[0-9a-fA-F]{3,6}$/smx ) ) {
+        if ( !( $room->{'color'} =~ m/^\#[0-9a-fA-F]{3,6}$/smx ) ) {
             push @{$errors}, __('Please enter a color in the format #RRGGBB for') . q{ } . __('color');
         }
 
@@ -150,7 +150,7 @@ sub update {
             push @{$errors}, __('Please enter a number for') . q{ } . __('maxcapacity');
         }
 
-        if ( !( $new_room->{'color'} =~ m/^#[0-9a-fA-F]{3,6}$/smx ) ) {
+        if ( !( $new_room->{'color'} =~ m/^\#[0-9a-fA-F]{3,6}$/smx ) ) {
             push @{$errors}, __('Please enter a color in the format #RRGGBB for') . q{ } . __('color');
         }
 
