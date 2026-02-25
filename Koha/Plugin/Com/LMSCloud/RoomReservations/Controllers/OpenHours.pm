@@ -158,7 +158,7 @@ sub update {
         $sth->execute(@bind);
 
         return $c->render(
-            status  => 201,
+            status  => 200,
             openapi => { %{$new_open_hours}, day => $day, branch => $branch }
         );
     }
