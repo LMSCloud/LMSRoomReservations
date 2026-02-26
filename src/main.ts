@@ -8,6 +8,9 @@ import LMSEquipmentItem from "./components/custom/LMSEquipmentItem";
 import LMSPatronSearch from "./components/custom/LMSPatronSearch";
 import LMSRoom from "./components/custom/LMSRoom";
 import ZodErrorElement from "./components/custom/ZodErrorElement";
+import LMSSettingChecklist from "./components/settings/LMSSettingChecklist";
+import LMSSettingText from "./components/settings/LMSSettingText";
+import LMSSettingToggle from "./components/settings/LMSSettingToggle";
 import LMSBookingsModal from "./extensions/LMSBookingsModal";
 import LMSBookingsTable from "./extensions/LMSBookingsTable";
 import LMSEquipmentModal from "./extensions/LMSEquipmentModal";
@@ -39,6 +42,9 @@ export {
     LMSRoomModal,
     LMSRoomReservationsMenu,
     LMSSearch,
+    LMSSettingChecklist,
+    LMSSettingText,
+    LMSSettingToggle,
     LMSSettingsTable,
     LMSTable,
     LMSToast,

@@ -3088,21 +3088,6 @@ details.collapse summary::-webkit-details-marker {
         0 0 0 2px var(--tglbg) inset;
 }
 
-.toggle-primary:focus-visible {
-  outline-color: hsl(var(--p) / 1);
-}
-
-.toggle-primary:checked,
-    .toggle-primary[checked="true"],
-    .toggle-primary[aria-checked="true"] {
-  border-color: hsl(var(--p) / var(--tw-border-opacity));
-  --tw-border-opacity: 0.1;
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--p) / var(--tw-bg-opacity));
-  --tw-text-opacity: 1;
-  color: hsl(var(--pc) / var(--tw-text-opacity));
-}
-
 .toggle:disabled {
   cursor: not-allowed;
   --tw-border-opacity: 1;

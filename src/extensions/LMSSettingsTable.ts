@@ -35,10 +35,6 @@ type SettingSection = {
 export default class LMSSettingsTable extends LitElement {
     @property({ type: Array }) settings: Setting[] = [];
 
-    @state() private draftValues: Record<string, string | boolean> = {};
-
-    @state() private restrictedCategorySelection: string[] = [];
-
     @state() private savingBySetting: Record<string, boolean> = {};
 
     @state() private activeSectionId = "";
@@ -60,67 +56,6 @@ export default class LMSSettingsTable extends LitElement {
                 gap: 1.25rem;
             }
 
-            .setting-card {
-                border-radius: 0.9rem;
-                border: 1px solid rgb(226 232 240);
-                background: rgb(255 255 255);
-                box-shadow: 0 6px 20px -20px rgb(15 23 42 / 0.65);
-            }
-
-            .setting-card__inner {
-                padding: 0.95rem 1rem;
-                display: grid;
-                gap: 0.65rem;
-            }
-
-            .setting-card__header {
-                display: grid;
-                gap: 0.15rem;
-            }
-
-            .setting-card__name {
-                font-size: 0.95rem;
-                font-weight: 700;
-                line-height: 1.2;
-            }
-
-            .setting-card__description {
-                font-size: 0.85rem;
-                color: rgb(71 85 105);
-                line-height: 1.3;
-            }
-
-            .setting-card__actions {
-                display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-            }
-
-            .setting-card__checkbox {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .setting-card__checklist {
-                display: grid;
-                gap: 0.4rem;
-                max-height: 16rem;
-                overflow: auto;
-                border-radius: 0.75rem;
-                border: 1px solid rgb(226 232 240);
-                background: rgb(255 255 255);
-                padding: 0.6rem 0.8rem;
-            }
-
-            .setting-card__checkitem {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                min-height: 2rem;
-            }
-
             .settings-sidebar {
                 display: none;
             }
@@ -131,14 +66,20 @@ export default class LMSSettingsTable extends LitElement {
             }
 
             .settings-section {
+                scroll-margin-top: 1rem;
                 border-radius: 1rem;
                 border: 1px solid rgb(226 232 240);
-                background: rgb(248 250 252 / 0.45);
+                background: rgb(255 255 255);
                 padding: 1rem;
+                overflow: hidden;
             }
 
             .settings-section__header {
-                margin-bottom: 0.9rem;
+                padding: 1rem;
+                margin: -1rem -1rem 0;
+                border-bottom: 1px solid rgb(226 232 240);
+                background: rgb(248 250 252);
+                border-radius: 1rem 1rem 0 0;
             }
 
             .settings-section__title {
@@ -150,12 +91,21 @@ export default class LMSSettingsTable extends LitElement {
             .settings-section__description {
                 margin-top: 0.25rem;
                 font-size: 0.85rem;
-                color: rgb(71 85 105);
+                color: rgb(100 116 139);
             }
 
-            .settings-section__grid {
+            .settings-rows {
                 display: grid;
-                gap: 1rem;
+                margin: 0 -1rem -1rem;
+            }
+
+            .settings-rows > * {
+                padding: 0 1rem;
+                border-bottom: 1px solid rgb(241 245 249);
+            }
+
+            .settings-rows > :last-child {
+                border-bottom: none;
             }
 
             @media (min-width: 1100px) {
@@ -164,7 +114,7 @@ export default class LMSSettingsTable extends LitElement {
                 }
 
                 .settings-layout {
-                    grid-template-columns: 17rem minmax(0, 1fr);
+                    grid-template-columns: 25rem minmax(0, 1fr);
                     align-items: start;
                 }
 
@@ -189,29 +139,6 @@ export default class LMSSettingsTable extends LitElement {
             }
         `,
     ];
-
-    override willUpdate(changedProperties: Map<string, unknown>) {
-        if (!changedProperties.has("settings")) {
-            return;
-        }
-
-        this.draftValues = this.settings.reduce<Record<string, string | boolean>>((acc, setting) => {
-            if (setting.type === "checkbox") {
-                acc[setting.setting] = this.toBool(setting.value);
-                return acc;
-            }
-
-            if (setting.type === "array") {
-                return acc;
-            }
-
-            acc[setting.setting] = setting.value == null ? "" : String(setting.value);
-            return acc;
-        }, {});
-
-        const restricted = this.getSetting("restricted_patron_categories");
-        this.restrictedCategorySelection = this.getPatronCategories(restricted?.value).map((category) => category.categorycode);
-    }
 
     override updated(changedProperties: Map<string, unknown>) {
         if (changedProperties.has("settings")) {
@@ -405,52 +332,11 @@ export default class LMSSettingsTable extends LitElement {
         this.dispatchEvent(new CustomEvent("updated", { detail: setting }));
     }
 
-    private handleTextLikeInput(setting: Setting, e: Event) {
-        const target = e.target as HTMLInputElement;
-        this.draftValues = {
-            ...this.draftValues,
-            [setting.setting]: target.value,
-        };
-    }
-
-    private handleCheckboxInput(setting: Setting, e: Event) {
-        const target = e.target as HTMLInputElement;
-        this.draftValues = {
-            ...this.draftValues,
-            [setting.setting]: target.checked,
-        };
-    }
-
-    private resetDraft(setting: Setting) {
-        const value = setting.type === "checkbox" ? this.toBool(setting.value) : String(setting.value ?? "");
-        this.draftValues = {
-            ...this.draftValues,
-            [setting.setting]: value,
-        };
-    }
-
-    private hasDraftChanged(setting: Setting) {
-        const draft = this.draftValues[setting.setting];
-
-        if (setting.type === "checkbox") {
-            return Boolean(draft) !== this.toBool(setting.value);
-        }
-
-        return String(draft ?? "") !== String(setting.value ?? "");
-    }
-
-    private async saveSetting(setting: Setting) {
-        if (setting.type === "array" && setting.setting === "restricted_patron_categories") {
-            await this.saveRestrictedPatronCategories();
-            return;
-        }
-
-        const key = setting.setting;
-        const draft = this.draftValues[key];
+    private async handleSettingSave(e: CustomEvent) {
+        const { key, value } = e.detail;
 
         this.setSaving(key, true);
 
-        const value = setting.type === "checkbox" ? (Boolean(draft) ? "1" : "0") : String(draft ?? "");
         const response = await requestHandler.put("settings", { value }, undefined, [key]);
 
         this.setSaving(key, false);
@@ -463,59 +349,14 @@ export default class LMSSettingsTable extends LitElement {
         this.dispatchUpdated(key);
     }
 
-    private handleRestrictedPatronCategoryToggle(e: Event) {
-        const target = e.target as HTMLInputElement;
-        const code = target.name;
+    private async handleChecklistSave(e: CustomEvent) {
+        const { key, added, removed } = e.detail as { key: string; added: string[]; removed: string[] };
 
-        if (!code) {
-            return;
-        }
-
-        const selected = new Set(this.restrictedCategorySelection);
-        if (target.checked) {
-            selected.add(code);
-        } else {
-            selected.delete(code);
-        }
-
-        this.restrictedCategorySelection = Array.from(selected);
-    }
-
-    private resetRestrictedPatronCategories() {
-        const restricted = this.getPatronCategories(this.getSetting("restricted_patron_categories")?.value);
-        this.restrictedCategorySelection = restricted.map((category) => category.categorycode);
-    }
-
-    private hasRestrictedPatronCategoriesChanged() {
-        const initial = new Set(this.getPatronCategories(this.getSetting("restricted_patron_categories")?.value).map((c) => c.categorycode));
-        const current = new Set(this.restrictedCategorySelection);
-
-        if (initial.size !== current.size) {
-            return true;
-        }
-
-        for (const code of initial) {
-            if (!current.has(code)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private async saveRestrictedPatronCategories() {
-        const key = "restricted_patron_categories";
         this.setSaving(key, true);
 
-        const initial = new Set(this.getPatronCategories(this.getSetting(key)?.value).map((category) => category.categorycode));
-        const current = new Set(this.restrictedCategorySelection);
-
-        const toAdd = [...current].filter((code) => !initial.has(code));
-        const toRemove = [...initial].filter((code) => !current.has(code));
-
         const responses = await Promise.all([
-            ...toAdd.map((code) => requestHandler.post("settings", [{ setting: `rcat_${code}`, value: code }])),
-            ...toRemove.map((code) => requestHandler.delete("settings", undefined, [`rcat_${code}`])),
+            ...added.map((code: string) => requestHandler.post("settings", [{ setting: `rcat_${code}`, value: code }])),
+            ...removed.map((code: string) => requestHandler.delete("settings", undefined, [`rcat_${code}`])),
         ]);
 
         this.setSaving(key, false);
@@ -529,93 +370,50 @@ export default class LMSSettingsTable extends LitElement {
         this.dispatchUpdated(key);
     }
 
-    private renderSettingInput(setting: Setting) {
+    private renderSettingRow(setting: Setting) {
         const key = setting.setting;
+        const isSaving = Boolean(this.savingBySetting[key]);
 
         if (setting.type === "checkbox") {
-            const isEnabled = Boolean(this.draftValues[key]);
             return html`
-                <div class="setting-card__checkbox">
-                    <span class="text-sm font-medium">${__("Enabled")} - ${isEnabled ? __("On") : __("Off")}</span>
-                    <input
-                        class="toggle toggle-primary"
-                        type="checkbox"
-                        name=${key}
-                        .checked=${isEnabled}
-                        @change=${(e: Event) => this.handleCheckboxInput(setting, e)}
-                    />
-                </div>
+                <lms-setting-toggle
+                    .name=${key}
+                    .description=${setting.description ?? ""}
+                    .value=${this.toBool(setting.value)}
+                    .saving=${isSaving}
+                    @setting-save=${this.handleSettingSave}
+                ></lms-setting-toggle>
             `;
         }
 
         if (setting.type === "array" && key === "restricted_patron_categories") {
             const categories = this.getAllPatronCategories();
-            const selected = new Set(this.restrictedCategorySelection);
+            const items = categories.map((c) => ({ code: c.categorycode, label: c.description || c.categorycode }));
+            const selected = this.getPatronCategories(setting.value).map((c) => c.categorycode);
 
             return html`
-                <div class="setting-card__checklist">
-                    ${repeat(
-                        categories,
-                        (category) => category.categorycode,
-                        (category) => html`
-                            <label class="setting-card__checkitem" for=${`category_${category.categorycode}`}>
-                                <input
-                                    id=${`category_${category.categorycode}`}
-                                    class="checkbox"
-                                    type="checkbox"
-                                    name=${category.categorycode}
-                                    .checked=${selected.has(category.categorycode)}
-                                    @change=${this.handleRestrictedPatronCategoryToggle}
-                                />
-                                <span class="text-sm">${category.description || category.categorycode}</span>
-                            </label>
-                        `,
-                    )}
-                </div>
+                <lms-setting-checklist
+                    .name=${key}
+                    .description=${setting.description ?? ""}
+                    .items=${items}
+                    .selected=${selected}
+                    .saving=${isSaving}
+                    @setting-save=${this.handleChecklistSave}
+                ></lms-setting-checklist>
             `;
         }
 
+        const inputType = setting.type === "email" ? "email" : setting.type === "number" ? "number" : "text";
         return html`
-            <input
-                class="input input-bordered w-full"
-                type=${setting.type === "email" ? "email" : setting.type === "number" ? "text" : "text"}
-                inputmode=${setting.type === "number" ? "numeric" : "text"}
-                pattern=${setting.type === "number" ? "[0-9]*" : ".*"}
-                name=${key}
-                placeholder=${setting.placeholder ?? ""}
-                .value=${String(this.draftValues[key] ?? "")}
-                @input=${(e: Event) => this.handleTextLikeInput(setting, e)}
-            />
-        `;
-    }
-
-    private renderActions(setting: Setting) {
-        const key = setting.setting;
-        const isSaving = Boolean(this.savingBySetting[key]);
-
-        const hasChanges =
-            setting.type === "array" && key === "restricted_patron_categories"
-                ? this.hasRestrictedPatronCategoriesChanged()
-                : this.hasDraftChanged(setting);
-
-        const handleReset = () => {
-            if (setting.type === "array" && key === "restricted_patron_categories") {
-                this.resetRestrictedPatronCategories();
-                return;
-            }
-
-            this.resetDraft(setting);
-        };
-
-        return html`
-            <div class="setting-card__actions">
-                <button class="btn btn-primary btn-sm" ?disabled=${isSaving || !hasChanges} @click=${() => this.saveSetting(setting)}>
-                    ${__("Save")}
-                </button>
-                <button class="btn btn-ghost btn-sm" ?disabled=${isSaving || !hasChanges} @click=${handleReset}>
-                    ${__("Abort")}
-                </button>
-            </div>
+            <lms-setting-text
+                .name=${key}
+                .description=${setting.description ?? ""}
+                .value=${setting.value == null ? "" : String(setting.value)}
+                .inputType=${inputType}
+                .placeholder=${setting.placeholder ?? ""}
+                .saving=${isSaving}
+                @setting-save=${this.handleSettingSave}
+            ></lms-setting-text>
         `;
     }
 
@@ -667,23 +465,11 @@ export default class LMSSettingsTable extends LitElement {
                                         <h2 class="settings-section__title">${section.title}</h2>
                                         <p class="settings-section__description">${section.description}</p>
                                     </header>
-                                    <div class="settings-section__grid">
+                                    <div class="settings-rows">
                                         ${repeat(
                                             section.settings,
                                             (setting) => setting.setting,
-                                            (setting) => html`
-                                                <article class="setting-card">
-                                                    <div class="setting-card__inner">
-                                                        <header class="setting-card__header">
-                                                            <h3 class="setting-card__name">${__(setting.setting)}</h3>
-                                                            ${setting.description
-                                                                ? html`<p class="setting-card__description">${setting.description}</p>`
-                                                                : null}
-                                                        </header>
-                                                        ${this.renderSettingInput(setting)} ${this.renderActions(setting)}
-                                                    </div>
-                                                </article>
-                                            `,
+                                            (setting) => this.renderSettingRow(setting),
                                         )}
                                     </div>
                                 </section>
