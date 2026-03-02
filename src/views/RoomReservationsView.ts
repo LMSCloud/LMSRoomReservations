@@ -49,6 +49,73 @@ export default class RoomReservationsView extends LitElement {
             lms-calendar {
                 height: 90vh;
                 width: 100%;
+
+                /* kalendus "default" theme tokens */
+                --background-color: white;
+                --primary-color: #3b82f6;
+                --system-ui: system-ui, 'Segoe UI', Roboto, Helvetica, Arial,
+                    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+                    'Segoe UI Symbol';
+                --monospace-ui: 'SF Mono', Monaco, 'Cascadia Code',
+                    'Roboto Mono', Consolas, 'Courier New', monospace;
+                --header-text-color: rgba(0, 0, 0, 0.6);
+                --indicator-color: var(--primary-color);
+                --indicator-font-weight: 600;
+                --day-label-font-weight: 500;
+                --day-label-number-font-weight: 600;
+                --menu-item-font-weight: 500;
+                --menu-title-font-weight: 500;
+                --border-radius-sm: 5px;
+                --border-radius-md: 7px;
+                --border-radius-lg: 12px;
+                --entry-border-radius: var(--border-radius-sm);
+                --month-indicator-border-radius: 1em;
+                --year-day-cell-border-radius: 50%;
+                --float-text-border-radius: 3px;
+                --shadow-sm: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+                --shadow-md: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+                --shadow-lg: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+                --shadow-hv: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+                --active-indicator-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+                --float-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                --transition-speed: 0.15s;
+                --hover-bg: var(--separator-light, rgba(0, 0, 0, 0.1));
+                --focus-bg: var(--separator-light, rgba(0, 0, 0, 0.1));
+                --peek-active-bg: var(--separator-mid, rgba(0, 0, 0, 0.12));
+                --current-day-hover-opacity: 0.85;
+                --export-hover-opacity: 0.7;
+                --entry-background-color: var(--background-color);
+                --entry-color: var(--primary-color);
+                --entry-highlight-color: var(--separator-light);
+                --entry-title-weight: 500;
+                --entry-time-opacity: 0.8;
+                --title-column-weight: 500;
+                --context-bg: var(
+                    --separator-light,
+                    rgba(0, 0, 0, 0.06)
+                );
+                --active-indicator-bg: var(--background-color, white);
+                --indicator-backdrop-filter: blur(10px);
+                --multi-day-separator: 3px solid rgba(255, 255, 255, 0.4);
+                --month-label-font-weight: 600;
+                --year-weekday-font-weight: 500;
+                --year-month-label-hover-color: var(
+                    --primary-color,
+                    #3b82f6
+                );
+                --cw-hover-color: var(--primary-color, #3b82f6);
+                --cw-hover-bg: var(
+                    --separator-light,
+                    rgba(0, 0, 0, 0.06)
+                );
+                --current-day-bg: var(--primary-color, #3b82f6);
+                --current-day-color: white;
+                --current-day-font-weight: 600;
+                --current-dot-bg: rgba(255, 255, 255, 0.9);
+                --year-heatmap-4-text: white;
+                --float-text-bg: rgba(255, 255, 255, 0.95);
+                --menu-transform-origin: scale(0.95);
+                --menu-transform-active: scale(1);
             }
 
             @media (min-width: 1024px) {
@@ -123,10 +190,11 @@ export default class RoomReservationsView extends LitElement {
                     end: { hour: e.getHours(), minute: e.getMinutes() },
                 },
                 heading,
-                content: blackedout ? __("Blocked") : __("Booked"),
+                content: (blackedout ? __("Blocked") : __("Booked")) as unknown as string,
                 color,
+                isContinuation: false,
             };
-        }).filter(Boolean);
+        }).filter((entry): entry is NonNullable<typeof entry> => entry != null);
     }
 
     async fetchUpdate() {
@@ -155,7 +223,7 @@ export default class RoomReservationsView extends LitElement {
                     class="order-2 w-full lg:order-1 lg:w-1/4"
                     @updated=${this.fetchUpdate}
                 ></lms-bookie>
-                <lms-calendar class="order-1 min-w-0 overflow-hidden w-full lg:order-2 lg:w-3/4"></lms-calendar>
+                <lms-calendar year-drill-target="day" year-density-mode="heatmap" class="order-1 min-w-0 overflow-hidden w-full lg:order-2 lg:w-3/4"></lms-calendar>
             </div>
             <div class="mt-4 flex flex-row gap-4 overflow-x-auto lg:px-4">
                 ${map(this.rooms, (room) => {
