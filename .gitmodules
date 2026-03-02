@@ -1,6 +1,3 @@
-[submodule "src/components/custom/LMSCalendar"]
-	path = src/components/custom/LMSCalendar
-	url = https://github.com/LMSCloudPaulD/LMSCalendar
 [submodule "Koha/Plugin/Com/LMSCloud/Util"]
 	path = Koha/Plugin/Com/LMSCloud/Util
 	url = https://github.com/lmscloudpauld/koha-plugin-lmscloud-util
