@@ -4212,6 +4212,10 @@ details.collapse summary::-webkit-details-marker {
   min-width: min-content;
 }
 
+.max-w-48 {
+  max-width: 12rem;
+}
+
 .max-w-min {
   max-width: -moz-min-content;
   max-width: min-content;
@@ -4332,6 +4336,10 @@ details.collapse summary::-webkit-details-marker {
 
 .overflow-y-scroll {
   overflow-y: scroll;
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis;
 }
 
 .whitespace-nowrap {
