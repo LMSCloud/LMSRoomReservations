@@ -37,6 +37,14 @@ export default class RoomReservationsView extends LitElement {
 
     private defaultMaxBookingtime: number = 0;
 
+    private calendarDefaultView = "";
+
+    private calendarYearDrillTarget = "";
+
+    private calendarYearDensityMode = "";
+
+    private calendarPrimaryColor = "";
+
     private currentDate = new Date();
 
     @query("lms-calendar") lmsCalendar!: LMSCalendar;
@@ -52,7 +60,6 @@ export default class RoomReservationsView extends LitElement {
 
                 /* kalendus "default" theme tokens */
                 --background-color: white;
-                --primary-color: #3b82f6;
                 --system-ui: system-ui, 'Segoe UI', Roboto, Helvetica, Arial,
                     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
                     'Segoe UI Symbol';
@@ -138,9 +145,13 @@ export default class RoomReservationsView extends LitElement {
             requestHandler.get("settingsPublic", undefined, ["default_max_booking_time"]),
             requestHandler.get("bookingsPublic"),
             requestHandler.get("patronPublic"),
+            requestHandler.get("settingsPublic", undefined, ["calendar_default_view"]),
+            requestHandler.get("settingsPublic", undefined, ["calendar_year_drill_target"]),
+            requestHandler.get("settingsPublic", undefined, ["calendar_year_density_mode"]),
+            requestHandler.get("settingsPublic", undefined, ["calendar_primary_color"]),
         ])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
-            .then(([libraries, openHours, rooms, equipment, default_max_booking_time, bookings, patron]) => {
+            .then(([libraries, openHours, rooms, equipment, default_max_booking_time, bookings, patron, calDefaultView, calYearDrill, calYearDensity, calPrimaryColor]) => {
                 this.libraries = libraries;
                 this.openHours = openHours;
                 this.rooms = rooms;
@@ -148,6 +159,10 @@ export default class RoomReservationsView extends LitElement {
                 this.defaultMaxBookingtime = default_max_booking_time.value;
                 this.bookings = bookings;
                 this.patron = patron;
+                this.calendarDefaultView = calDefaultView.value || "";
+                this.calendarYearDrillTarget = calYearDrill.value || "";
+                this.calendarYearDensityMode = calYearDensity.value || "";
+                this.calendarPrimaryColor = calPrimaryColor.value || "";
             })
             .then(() => {
                 this.lmsCalendar.activeDate = {
@@ -155,6 +170,14 @@ export default class RoomReservationsView extends LitElement {
                     month: this.currentDate.getMonth() + 1,
                     year: this.currentDate.getFullYear(),
                 };
+
+                if (this.calendarDefaultView && ["day", "week", "month", "year"].includes(this.calendarDefaultView)) {
+                    const viewState = (this.lmsCalendar as any)?._viewState;
+                    if (viewState?.setViewMode) {
+                        viewState.setViewMode(this.calendarDefaultView);
+                    }
+                }
+
                 this.updateCalendar();
                 this.hasLoaded = true;
             })
@@ -223,7 +246,13 @@ export default class RoomReservationsView extends LitElement {
                     class="order-2 w-full lg:order-1 lg:w-1/4"
                     @updated=${this.fetchUpdate}
                 ></lms-bookie>
-                <lms-calendar year-drill-target="day" year-density-mode="heatmap" class="order-1 min-w-0 overflow-hidden w-full lg:order-2 lg:w-3/4"></lms-calendar>
+                <lms-calendar
+                    .yearDrillTarget=${this.calendarYearDrillTarget || "day"}
+                    .yearDensityMode=${this.calendarYearDensityMode || "heatmap"}
+                    .color=${this.calendarPrimaryColor || "#3b82f6"}
+                    style=${styleMap({ "--primary-color": this.calendarPrimaryColor || "#3b82f6" })}
+                    class="order-1 min-w-0 overflow-hidden w-full lg:order-2 lg:w-3/4"
+                ></lms-calendar>
             </div>
             <div class="mt-4 flex flex-row gap-4 overflow-x-auto lg:px-4">
                 ${map(this.rooms, (room) => {

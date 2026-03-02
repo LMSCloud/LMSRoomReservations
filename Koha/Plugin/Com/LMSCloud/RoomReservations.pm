@@ -151,6 +151,10 @@ sub _ensure_settings_exist {
         remove_past_reservations_after => q{},
         enforce_email_notification     => q{},
         use_koha_calendar              => q{},
+        calendar_default_view          => q{},
+        calendar_year_drill_target     => q{},
+        calendar_year_density_mode     => q{},
+        calendar_primary_color         => q{},
     };
 
     for my $setting_key ( keys %{$default_settings} ) {

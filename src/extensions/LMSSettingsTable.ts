@@ -6,12 +6,18 @@ import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
 import { tailwindStyles } from "../tailwind.lit";
 
+type SelectOption = {
+    value: string;
+    label: string;
+};
+
 type Setting = {
     setting: string;
     value: unknown;
     description?: string;
-    type?: "text" | "number" | "email" | "checkbox" | "array" | string;
+    type?: "text" | "number" | "email" | "checkbox" | "array" | "select" | "color" | string;
     placeholder?: string;
+    options?: SelectOption[];
 };
 
 type PatronCategory = {
@@ -178,6 +184,10 @@ export default class LMSSettingsTable extends LitElement {
             return "integrations";
         }
 
+        if (["calendar_default_view", "calendar_year_drill_target", "calendar_year_density_mode", "calendar_primary_color"].includes(settingName)) {
+            return "calendar";
+        }
+
         return "general";
     }
 
@@ -212,6 +222,11 @@ export default class LMSSettingsTable extends LitElement {
                 id: "integrations",
                 title: __("Integrations"),
                 description: __("Enable optional integrations with Koha features."),
+            },
+            {
+                id: "calendar",
+                title: __("Calendar Appearance"),
+                description: __("Customize the OPAC calendar look and behavior."),
             },
         ];
 
@@ -400,6 +415,31 @@ export default class LMSSettingsTable extends LitElement {
                     .saving=${isSaving}
                     @setting-save=${this.handleChecklistSave}
                 ></lms-setting-checklist>
+            `;
+        }
+
+        if (setting.type === "select") {
+            return html`
+                <lms-setting-select
+                    .name=${key}
+                    .description=${setting.description ?? ""}
+                    .value=${setting.value == null ? "" : String(setting.value)}
+                    .options=${setting.options ?? []}
+                    .saving=${isSaving}
+                    @setting-save=${this.handleSettingSave}
+                ></lms-setting-select>
+            `;
+        }
+
+        if (setting.type === "color") {
+            return html`
+                <lms-setting-color
+                    .name=${key}
+                    .description=${setting.description ?? ""}
+                    .value=${setting.value == null ? "" : String(setting.value)}
+                    .saving=${isSaving}
+                    @setting-save=${this.handleSettingSave}
+                ></lms-setting-color>
             `;
         }
 

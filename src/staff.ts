@@ -12,6 +12,8 @@ import LMSPatronSearch from "./components/custom/LMSPatronSearch";
 import LMSRoom from "./components/custom/LMSRoom";
 import ZodErrorElement from "./components/custom/ZodErrorElement";
 import LMSSettingChecklist from "./components/settings/LMSSettingChecklist";
+import LMSSettingColor from "./components/settings/LMSSettingColor";
+import LMSSettingSelect from "./components/settings/LMSSettingSelect";
 import LMSSettingText from "./components/settings/LMSSettingText";
 import LMSSettingToggle from "./components/settings/LMSSettingToggle";
 import LMSBookingsModal from "./extensions/LMSBookingsModal";
@@ -44,6 +46,8 @@ export {
     LMSRoomReservationsMenu,
     LMSSearch,
     LMSSettingChecklist,
+    LMSSettingColor,
+    LMSSettingSelect,
     LMSSettingText,
     LMSSettingToggle,
     LMSSettingsTable,

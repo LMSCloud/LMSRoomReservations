@@ -19,7 +19,7 @@ sub get {
     return try {
         my $setting = $c->param('setting');
 
-        my $allowed_settings = [qw( default_max_booking_time enforce_email_notification )];
+        my $allowed_settings = [qw( default_max_booking_time enforce_email_notification calendar_default_view calendar_year_drill_target calendar_year_density_mode calendar_primary_color )];
         if ( !any { $_ eq $setting } @{$allowed_settings} ) {
             return $c->render(
                 status  => 401,
