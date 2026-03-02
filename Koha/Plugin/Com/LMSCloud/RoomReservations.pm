@@ -419,7 +419,7 @@ Plugin hook running code from a cron job
 sub cronjob_nightly {
     my ($self) = @_;
 
-    return print "Remember to clean the kitchen\n";
+    return q{};
 }
 
 1;
