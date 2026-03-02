@@ -48,11 +48,12 @@ export default class RoomReservationsView extends LitElement {
         css`
             lms-calendar {
                 height: 90vh;
+                width: 100%;
             }
 
             @media (min-width: 1024px) {
                 lms-calendar {
-                    height: unset;
+                    height: 700px;
                 }
             }
         `,
@@ -142,7 +143,7 @@ export default class RoomReservationsView extends LitElement {
     }
 
     override render() {
-        return html` <div class="flex w-full flex-col gap-4 lg:mx-4 lg:flex-row">
+        return html` <div class="flex w-full flex-col gap-4 lg:flex-row lg:px-4">
                 <lms-bookie
                     .borrowernumber=${this.borrowernumber}
                     .patron=${this.patron}
@@ -154,15 +155,15 @@ export default class RoomReservationsView extends LitElement {
                     class="order-2 w-full lg:order-1 lg:w-1/4"
                     @updated=${this.fetchUpdate}
                 ></lms-bookie>
-                <lms-calendar class="order-1 w-full lg:order-2 lg:max-h-screen lg:w-3/4"></lms-calendar>
+                <lms-calendar class="order-1 min-w-0 overflow-hidden w-full lg:order-2 lg:w-3/4"></lms-calendar>
             </div>
-            <div class="mt-4 flex flex-row gap-4 overflow-x-scroll lg:mx-4">
+            <div class="mt-4 flex flex-row gap-4 overflow-x-auto lg:px-4">
                 ${map(this.rooms, (room) => {
                     const { branch, color, description, image, maxbookabletime, maxcapacity, roomnumber } = room;
                     const library = this.libraries.find((library) => library.library_id === branch);
 
                     return html`
-                        <div class="card min-w-full border bg-base-100 sm:w-96 sm:min-w-0">
+                        <div class="card w-72 shrink-0 border bg-base-100 sm:w-80">
                             <figure>
                                 <img
                                     class="w-full object-cover"
