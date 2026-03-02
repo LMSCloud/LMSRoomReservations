@@ -80,8 +80,6 @@ export function formatDatetimeByLocale(datetime: string | Date | null, locale: s
         return html`<span>${__("There's been an error")}..</span>`;
     }
 
-    const formattedDatetime = dayjs(datetime).locale(locale).format(
-        "LLLL", // Use the appropriate format for the desired localized datetime representation
-    );
+    const formattedDatetime = dayjs(datetime).locale(locale).format("L LT");
     return html`<span>${formattedDatetime}</span>`;
 }

@@ -83,24 +83,24 @@ export class InputConverter {
 
                 const { firstname, surname, cardnumber } = borrower;
                 return html`
-                    <a
-                        class="link-primary link whitespace-nowrap"
-                        href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${borrowernumber}"
-                        >${firstname}&nbsp;${surname}</a
-                    >
-                    &nbsp;
-                    <div class="borrowernumber badge">
-                        ${litFontawesome(faHashtag, {
-                            className: "inline-block w-4 h-4",
-                        })}&nbsp;
-                        ${value}
-                    </div>
-                    &nbsp;
-                    <div class="badge">
-                        ${litFontawesome(faIdCard, {
-                            className: "inline-block w-4 h-4",
-                        })}&nbsp;
-                        ${cardnumber}
+                    <div class="flex items-center gap-1 whitespace-nowrap">
+                        <a
+                            class="link-primary link"
+                            href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${borrowernumber}"
+                            >${firstname}&nbsp;${surname}</a
+                        >
+                        <div class="borrowernumber badge">
+                            ${litFontawesome(faHashtag, {
+                                className: "inline-block w-4 h-4",
+                            })}&nbsp;
+                            ${value}
+                        </div>
+                        <div class="badge">
+                            ${litFontawesome(faIdCard, {
+                                className: "inline-block w-4 h-4",
+                            })}&nbsp;
+                            ${cardnumber}
+                        </div>
                     </div>
                 `;
             },
@@ -165,7 +165,8 @@ export class InputConverter {
                     : new DatetimeLocalInput("start", value).render(),
             updated_at: (value) =>
                 html`<span class="whitespace-nowrap">${formatDatetimeByLocale(value as string, localeFull)}</span>`,
-            purpose_of_use: (value) => html`<span class="whitespace-nowrap">${value}</span>`,
+            purpose_of_use: (value) =>
+                html`<span class="block max-w-48 overflow-hidden text-ellipsis whitespace-nowrap">${value}</span>`,
             value: (value, data) => {
                 const [name, _value] = value as [string, any];
                 const datum = data?.find((datum) => datum.setting === name);
