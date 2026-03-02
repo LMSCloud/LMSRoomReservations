@@ -16,6 +16,7 @@ script.log
 .DS_Store
 .vscode/
 .idea/
+*.po~
 
 # Ignore .d.ts and .map files in the "dist" directory
 Koha/Plugin/Com/LMSCloud/RoomReservations/dist/**/*.d.ts
