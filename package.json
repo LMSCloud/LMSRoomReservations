@@ -76,5 +76,5 @@
     "translate:instantiate": "./tools/instantiate_translation.sh com.lmscloud.roomreservations.pot",
     "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
   },
-  "version": "5.5.0"
+  "version": "5.5.1"
 }
