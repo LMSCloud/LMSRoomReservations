@@ -6,8 +6,10 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@granite-elements/granite-lit-bootstrap": "4.6.0-0",
+    "@jpahd/kalendus": "^0.7.0",
     "@juggle/resize-observer": "^3.4.0",
     "@types/bidirectional-map": "^1.0.4",
+    "@types/luxon": "^3.7.1",
     "@weavedev/lit-fontawesome": "^0.3.2",
     "bidirectional-map": "^1.1.1",
     "country-to-currency": "^2.0.2",
@@ -16,6 +18,7 @@
     "gettext.js": "^2.0.3",
     "lit": "^3.3.1",
     "lit-element-state": "^1.7.0",
+    "luxon": "^3.7.2",
     "node-datetime": "^2.1.2"
   },
   "description": "Koha Room Reservations Plugin",

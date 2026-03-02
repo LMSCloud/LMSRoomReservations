@@ -25,8 +25,7 @@ import StaffOpenHoursView from "./views/StaffOpenHoursView";
 import StaffRoomsView from "./views/StaffRoomsView";
 import StaffSettingsView from "./views/StaffSettingsView";
 
-// @ts-ignore
-import LMSCalendar from "./components/custom/LMSCalendar/build/lms-calendar.bundled.js";
+import LMSCalendar from "@jpahd/kalendus";
 export {
     LMSBookie,
     LMSBookingsModal,

@@ -4,7 +4,6 @@
 import LMSBookie from "./components/custom/LMSBookie";
 import RoomReservationsView from "./views/RoomReservationsView";
 
-// @ts-ignore
-import LMSCalendar from "./components/custom/LMSCalendar/build/lms-calendar.bundled.js";
+import LMSCalendar from "@jpahd/kalendus";
 
 export { LMSBookie, LMSCalendar, RoomReservationsView };

@@ -14,12 +14,18 @@ importers:
       '@granite-elements/granite-lit-bootstrap':
         specifier: 4.6.0-0
         version: 4.6.0-0
+      '@jpahd/kalendus':
+        specifier: ^0.7.0
+        version: 0.7.0(lit@3.3.1)(luxon@3.7.2)
       '@juggle/resize-observer':
         specifier: ^3.4.0
         version: 3.4.0
       '@types/bidirectional-map':
         specifier: ^1.0.4
         version: 1.0.4
+      '@types/luxon':
+        specifier: ^3.7.1
+        version: 3.7.1
       '@weavedev/lit-fontawesome':
         specifier: ^0.3.2
         version: 0.3.2
@@ -44,6 +50,9 @@ importers:
       lit-element-state:
         specifier: ^1.7.0
         version: 1.7.0(lit-element@4.2.1)
+      luxon:
+        specifier: ^3.7.2
+        version: 3.7.2
       node-datetime:
         specifier: ^2.1.2
         version: 2.1.2
@@ -478,6 +487,12 @@ packages:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
 
+  '@jpahd/kalendus@0.7.0':
+    resolution: {integrity: sha512-KdjV8rB6X+h0nW0BE27eZG8oUGelQx5oZ9dC+rDOZIadl9Pb3++Wcq8/kx5R1F2R4S+0kPUzM9r0HR3GsUYhDA==}
+    peerDependencies:
+      lit: ^3.0.0
+      luxon: ^3.0.0
+
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
 
@@ -496,6 +511,9 @@ packages:
 
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
+
+  '@lit-labs/observers@2.1.0':
+    resolution: {integrity: sha512-oeQ2tvi/ygq7S+VgnXIInMKHHFPFqvIV9j2zBzpCwl33cWviT2ltuxNpbd11etwtUVsM8woKQzfVnrc80PKhKA==}
 
   '@lit-labs/ssr-dom-shim@1.4.0':
     resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==}
@@ -798,6 +816,9 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@types/luxon@3.7.1':
+    resolution: {integrity: sha512-H3iskjFIAn5SlJU7OuxUmTEpebK6TKB8rxZShDslBMZJ5u9S//KM1sbdAisiSrqwLQncVjnpi2OK2J51h+4lsg==}
 
   '@types/node@24.10.0':
     resolution: {integrity: sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A==}
@@ -1567,6 +1588,10 @@ packages:
   lru-cache@11.2.6:
     resolution: {integrity: sha512-ESL2CrkS/2wTPfuend7Zhkzo2u0daGJ/A2VucJOgQ/C48S/zB8MMeMHSGKYpXhIjbPxfuezITkaBH1wqv00DDQ==}
     engines: {node: 20 || >=22}
+
+  luxon@3.7.2:
+    resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
+    engines: {node: '>=12'}
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -2591,6 +2616,12 @@ snapshots:
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
+  '@jpahd/kalendus@0.7.0(lit@3.3.1)(luxon@3.7.2)':
+    dependencies:
+      '@lit-labs/observers': 2.1.0
+      lit: 3.3.1
+      luxon: 3.7.2
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -2611,6 +2642,10 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   '@juggle/resize-observer@3.4.0': {}
+
+  '@lit-labs/observers@2.1.0':
+    dependencies:
+      '@lit/reactive-element': 2.1.1
 
   '@lit-labs/ssr-dom-shim@1.4.0': {}
 
@@ -2821,6 +2856,8 @@ snapshots:
   '@types/gettext.js@2.0.0': {}
 
   '@types/json-schema@7.0.15': {}
+
+  '@types/luxon@3.7.1': {}
 
   '@types/node@24.10.0':
     dependencies:
@@ -3652,6 +3689,8 @@ snapshots:
   lru-cache@10.4.3: {}
 
   lru-cache@11.2.6: {}
+
+  luxon@3.7.2: {}
 
   magic-string@0.30.21:
     dependencies:
