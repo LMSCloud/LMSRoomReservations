@@ -21,7 +21,7 @@ use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
 use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists get_page_url );
 
 ## Here we set our plugin version
-our $VERSION         = "5.4.0";
+our $VERSION         = "5.5.0";
 our $MINIMUM_VERSION = '22.11';
 
 ## Here is our metadata, some keys are required, some are optional
