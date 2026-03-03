@@ -4,7 +4,7 @@ import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { requestHandler } from "../lib/RequestHandler";
 import { formatMinutesHumanReadable } from "../lib/converters/timeConverter";
-import { __, attr__, t, onTranslationsReady } from "../lib/translate";
+import { __, attr__, t, onTranslationsReady, locale } from "../lib/translate";
 import { LMSBookie, LMSCalendar } from "../main";
 import { tailwindStyles } from "../tailwind.lit";
 
@@ -248,6 +248,7 @@ export default class RoomReservationsView extends LitElement {
                     @updated=${this.fetchUpdate}
                 ></lms-bookie>
                 <lms-calendar
+                    .locale=${locale}
                     .yearDrillTarget=${this.calendarYearDrillTarget || "day"}
                     .yearDensityMode=${this.calendarYearDensityMode || "heatmap"}
                     .color=${this.calendarPrimaryColor || "#3b82f6"}
