@@ -48,7 +48,7 @@ export default class LMSBookie extends LitElement {
 
     @state() alert?: Alert;
 
-    @state() enforceEmailNotification: boolean = false;
+    @property({ type: Boolean }) enforceEmailNotification: boolean = false;
 
     @state() selectedDate: dayjs.Dayjs = dayjs();
 
@@ -70,19 +70,6 @@ export default class LMSBookie extends LitElement {
     private preselectedRoom?: any;
 
     static override styles = [tailwindStyles];
-
-    override async connectedCallback() {
-        super.connectedCallback();
-        await this.fetchEnforceEmailNotificationSetting();
-    }
-
-    private async fetchEnforceEmailNotificationSetting() {
-        const response = await requestHandler.get("settingsPublic", undefined, ["enforce_email_notification"]);
-        if (response.ok) {
-            const data = await response.json();
-            this.enforceEmailNotification = data.value === "1" || data.value === 1;
-        }
-    }
 
     private async handleSubmit(e: SubmitEvent) {
         e.preventDefault();

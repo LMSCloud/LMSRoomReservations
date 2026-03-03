@@ -13,14 +13,37 @@ our $VERSION = '1.0.0';
 
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
+my @ALLOWED_SETTINGS = qw(
+    default_max_booking_time
+    enforce_email_notification
+    calendar_default_view
+    calendar_year_drill_target
+    calendar_year_density_mode
+    calendar_primary_color
+);
+
+sub list {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my @settings;
+        for my $key (@ALLOWED_SETTINGS) {
+            push @settings, { setting => $key, value => $self->retrieve_data($key) };
+        }
+        return $c->render( status => 200, openapi => \@settings );
+    }
+    catch {
+        $c->unhandled_exception($_);
+    };
+}
+
 sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
         my $setting = $c->param('setting');
 
-        my $allowed_settings = [qw( default_max_booking_time enforce_email_notification calendar_default_view calendar_year_drill_target calendar_year_density_mode calendar_primary_color )];
-        if ( !any { $_ eq $setting } @{$allowed_settings} ) {
+        if ( !any { $_ eq $setting } @ALLOWED_SETTINGS ) {
             return $c->render(
                 status  => 401,
                 openapi => {

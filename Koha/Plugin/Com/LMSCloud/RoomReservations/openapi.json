@@ -4176,6 +4176,59 @@
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Rooms#list"
     }
   },
+  "/public/settings": {
+    "get": {
+      "operationId": "listRoomReservationsSettingsPublic",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "schema": {
+            "items": {
+              "properties": {
+                "setting": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "summary": "List all public settings",
+      "tags": [
+        "settings"
+      ],
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Settings#list"
+    }
+  },
   "/public/settings/{setting}": {
     "get": {
       "operationId": "getRoomReservationsSettingPublic",

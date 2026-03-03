@@ -47,6 +47,8 @@ export default class RoomReservationsView extends LitElement {
 
     private calendarPrimaryColor = "";
 
+    private enforceEmailNotification = false;
+
     private currentDate = new Date();
 
     @query("lms-calendar") lmsCalendar!: LMSCalendar;
@@ -144,27 +146,29 @@ export default class RoomReservationsView extends LitElement {
             requestHandler.get("openHoursPublic"),
             requestHandler.get("roomsPublic"),
             requestHandler.get("equipmentPublic"),
-            requestHandler.get("settingsPublic", undefined, ["default_max_booking_time"]),
+            requestHandler.get("settingsPublic"),
             requestHandler.get("bookingsPublic"),
             requestHandler.get("patronPublic"),
-            requestHandler.get("settingsPublic", undefined, ["calendar_default_view"]),
-            requestHandler.get("settingsPublic", undefined, ["calendar_year_drill_target"]),
-            requestHandler.get("settingsPublic", undefined, ["calendar_year_density_mode"]),
-            requestHandler.get("settingsPublic", undefined, ["calendar_primary_color"]),
         ])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
-            .then(([libraries, openHours, rooms, equipment, default_max_booking_time, bookings, patron, calDefaultView, calYearDrill, calYearDensity, calPrimaryColor]) => {
+            .then(([libraries, openHours, rooms, equipment, settings, bookings, patron]) => {
                 this.libraries = libraries;
                 this.openHours = openHours;
                 this.rooms = rooms;
                 this.equipment = equipment;
-                this.defaultMaxBookingtime = default_max_booking_time.value;
                 this.bookings = bookings;
                 this.patron = patron;
-                this.calendarDefaultView = calDefaultView.value || "";
-                this.calendarYearDrillTarget = calYearDrill.value || "";
-                this.calendarYearDensityMode = calYearDensity.value || "";
-                this.calendarPrimaryColor = calPrimaryColor.value || "";
+
+                const settingsMap = new Map<string, string>(
+                    settings.map((s: { setting: string; value: string }) => [s.setting, s.value]),
+                );
+                this.defaultMaxBookingtime = Number(settingsMap.get("default_max_booking_time")) || 0;
+                this.calendarDefaultView = settingsMap.get("calendar_default_view") ?? "";
+                this.calendarYearDrillTarget = settingsMap.get("calendar_year_drill_target") ?? "";
+                this.calendarYearDensityMode = settingsMap.get("calendar_year_density_mode") ?? "";
+                this.calendarPrimaryColor = settingsMap.get("calendar_primary_color") ?? "";
+
+                this.enforceEmailNotification = settingsMap.get("enforce_email_notification") === "1";
             })
             .then(() => {
                 this.hasLoaded = true;
@@ -288,6 +292,7 @@ export default class RoomReservationsView extends LitElement {
                     .rooms=${this.rooms}
                     .equipment=${this.equipment}
                     .defaultMaxBookingTime=${this.defaultMaxBookingtime}
+                    .enforceEmailNotification=${this.enforceEmailNotification}
                     .selectedRoom=${this.selectedRoom}
                     class="order-2 w-full lg:order-1 lg:w-1/4"
                     @updated=${this.fetchUpdate}
