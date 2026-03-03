@@ -1,7 +1,7 @@
 import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { requestHandler } from "../../lib/RequestHandler";
-import { attr__, __ } from "../../lib/translate";
+import { __, attr__ } from "../../lib/translate";
 import { tailwindStyles } from "../../tailwind.lit";
 
 interface DeviationFormData {

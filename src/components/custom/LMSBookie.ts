@@ -1,13 +1,13 @@
 import { faCheckCircle, faExclamationCircle, faInfoCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import dayjs from "dayjs";
-import { html, LitElement, nothing, PropertyValueMap, TemplateResult } from "lit";
+import { LitElement, PropertyValueMap, TemplateResult, html, nothing } from "lit";
 import { customElement, property, query, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
 import { requestHandler } from "../../lib/RequestHandler";
-import { attr__, __ } from "../../lib/translate";
+import { __, attr__ } from "../../lib/translate";
 import { tailwindStyles } from "../../tailwind.lit";
 import { Deviation } from "../../types/common";
 import { dayMapping } from "../../views/StaffOpenHoursView";
@@ -674,7 +674,9 @@ export default class LMSBookie extends LitElement {
                                                 "bg-base-200": !row.isBlackout && row.day % 2 === 0,
                                             });
 
-                                            const isClosed = [startString, endString].every((string) => string === "00:00");
+                                            const isClosed = [startString, endString].every(
+                                                (string) => string === "00:00",
+                                            );
 
                                             const startDisplay = isClosed
                                                 ? __("Closed")

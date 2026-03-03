@@ -3,9 +3,9 @@ import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
 import LMSTable from "../components/LMSTable";
-import { formatDatetimeByLocale } from "../lib/converters/datetimeConverters";
 import { requestHandler } from "../lib/RequestHandler";
-import { localeFull, __ } from "../lib/translate";
+import { formatDatetimeByLocale } from "../lib/converters/datetimeConverters";
+import { __, localeFull } from "../lib/translate";
 
 @customElement("lms-open-hours-deviations-table")
 export default class LMSOpenHoursDeviationsTable extends LMSTable {

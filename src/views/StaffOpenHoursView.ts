@@ -10,7 +10,7 @@ import LMSDeviationForm from "../components/custom/LMSDeviationForm";
 import LMSOpenHoursDeviationsTable from "../extensions/LMSOpenHoursDeviationsTable";
 import LMSOpenHoursTable from "../extensions/LMSOpenHoursTable";
 import { requestHandler } from "../lib/RequestHandler";
-import { attr__, __ } from "../lib/translate";
+import { __, attr__ } from "../lib/translate";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
@@ -308,7 +308,7 @@ export default class StaffOpenHoursView extends LitElement {
                             (library) => library["id"],
                             (library) => html`
                                 <div
-                                    class="inline-flex items-center justify-between border-r border-base-200 p-2 last:border-r-0 sm:border-b sm:border-r-0  sm:p-4 sm:last:border-b-0"
+                                    class="inline-flex items-center justify-between border-r border-base-200 p-2 last:border-r-0 sm:border-b sm:border-r-0 sm:p-4 sm:last:border-b-0"
                                 >
                                     <div class="form-control">
                                         <label class="label cursor-pointer">

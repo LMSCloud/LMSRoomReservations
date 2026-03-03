@@ -115,12 +115,7 @@ export default class LMSSettingColor extends LitElement {
                 </div>
                 <div class="setting-row__inline">
                     <div class="setting-row__color-group">
-                        <input
-                            type="color"
-                            name=${this.name}
-                            .value=${this.draft}
-                            @input=${this.handleInput}
-                        />
+                        <input type="color" name=${this.name} .value=${this.draft} @input=${this.handleInput} />
                         <span class="setting-row__color-hex">${this.draft}</span>
                     </div>
                     <button class="btn btn-primary" ?disabled=${this.saving || !this.dirty} @click=${this.save}>

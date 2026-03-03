@@ -4,7 +4,7 @@ import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { requestHandler } from "../lib/RequestHandler";
 import { formatMinutesHumanReadable } from "../lib/converters/timeConverter";
-import { __, attr__, t, onTranslationsReady, locale } from "../lib/translate";
+import { __, attr__, locale, onTranslationsReady, t } from "../lib/translate";
 import { LMSBookie, LMSCalendar } from "../main";
 import { tailwindStyles } from "../tailwind.lit";
 
@@ -64,11 +64,10 @@ export default class RoomReservationsView extends LitElement {
 
                 /* kalendus "default" theme tokens */
                 --background-color: white;
-                --system-ui: system-ui, 'Segoe UI', Roboto, Helvetica, Arial,
-                    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-                    'Segoe UI Symbol';
-                --monospace-ui: 'SF Mono', Monaco, 'Cascadia Code',
-                    'Roboto Mono', Consolas, 'Courier New', monospace;
+                --system-ui:
+                    system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+                    "Segoe UI Symbol";
+                --monospace-ui: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
                 --header-text-color: rgba(0, 0, 0, 0.6);
                 --indicator-color: var(--primary-color);
                 --indicator-font-weight: 600;
@@ -101,24 +100,15 @@ export default class RoomReservationsView extends LitElement {
                 --entry-title-weight: 500;
                 --entry-time-opacity: 0.8;
                 --title-column-weight: 500;
-                --context-bg: var(
-                    --separator-light,
-                    rgba(0, 0, 0, 0.06)
-                );
+                --context-bg: var(--separator-light, rgba(0, 0, 0, 0.06));
                 --active-indicator-bg: var(--background-color, white);
                 --indicator-backdrop-filter: blur(10px);
                 --multi-day-separator: 3px solid rgba(255, 255, 255, 0.4);
                 --month-label-font-weight: 600;
                 --year-weekday-font-weight: 500;
-                --year-month-label-hover-color: var(
-                    --primary-color,
-                    #3b82f6
-                );
+                --year-month-label-hover-color: var(--primary-color, #3b82f6);
                 --cw-hover-color: var(--primary-color, #3b82f6);
-                --cw-hover-bg: var(
-                    --separator-light,
-                    rgba(0, 0, 0, 0.06)
-                );
+                --cw-hover-bg: var(--separator-light, rgba(0, 0, 0, 0.06));
                 --current-day-bg: var(--primary-color, #3b82f6);
                 --current-day-color: white;
                 --current-day-font-weight: 600;
@@ -238,36 +228,38 @@ export default class RoomReservationsView extends LitElement {
 
     private updateCalendar() {
         if (!this.lmsCalendar) return;
-        this.lmsCalendar.entries = this.bookings.map((booking) => {
-            const { roomid, start, end, blackedout } = booking;
-            const [s, e] = [new Date(start), new Date(end)];
-            const bookedRoomId = roomid;
-            const room = this.rooms.find((room) => room.roomid == bookedRoomId);
-            if (!room) return null;
-            const { roomnumber: heading, color } = room;
-            return {
-                date: {
-                    start: {
-                        day: s.getDate(),
-                        month: s.getMonth() + 1,
-                        year: s.getFullYear(),
+        this.lmsCalendar.entries = this.bookings
+            .map((booking) => {
+                const { roomid, start, end, blackedout } = booking;
+                const [s, e] = [new Date(start), new Date(end)];
+                const bookedRoomId = roomid;
+                const room = this.rooms.find((room) => room.roomid == bookedRoomId);
+                if (!room) return null;
+                const { roomnumber: heading, color } = room;
+                return {
+                    date: {
+                        start: {
+                            day: s.getDate(),
+                            month: s.getMonth() + 1,
+                            year: s.getFullYear(),
+                        },
+                        end: {
+                            day: e.getDate(),
+                            month: e.getMonth() + 1,
+                            year: e.getFullYear(),
+                        },
                     },
-                    end: {
-                        day: e.getDate(),
-                        month: e.getMonth() + 1,
-                        year: e.getFullYear(),
+                    time: {
+                        start: { hour: s.getHours(), minute: s.getMinutes() },
+                        end: { hour: e.getHours(), minute: e.getMinutes() },
                     },
-                },
-                time: {
-                    start: { hour: s.getHours(), minute: s.getMinutes() },
-                    end: { hour: e.getHours(), minute: e.getMinutes() },
-                },
-                heading,
-                content: blackedout ? t("Blocked") : t("Booked"),
-                color,
-                isContinuation: false,
-            };
-        }).filter((entry): entry is NonNullable<typeof entry> => entry != null);
+                    heading,
+                    content: blackedout ? t("Blocked") : t("Booked"),
+                    color,
+                    isContinuation: false,
+                };
+            })
+            .filter((entry): entry is NonNullable<typeof entry> => entry != null);
     }
 
     async fetchUpdate() {
@@ -308,9 +300,9 @@ export default class RoomReservationsView extends LitElement {
                               opacity: this.calendarVisible ? "1" : "0",
                               transition: "opacity 0.15s ease-in",
                           })}
-                          class="order-1 min-w-0 overflow-hidden w-full lg:order-2 lg:w-3/4"
+                          class="order-1 w-full min-w-0 overflow-hidden lg:order-2 lg:w-3/4"
                       ></lms-calendar>`
-                    : html`<div class="order-1 min-w-0 w-full lg:order-2 lg:w-3/4"></div>`}
+                    : html`<div class="order-1 w-full min-w-0 lg:order-2 lg:w-3/4"></div>`}
             </div>
             <div class="mt-4 flex flex-row gap-4 overflow-x-auto lg:px-4">
                 ${map(this.rooms, (room) => {

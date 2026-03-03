@@ -111,7 +111,10 @@ export default class LMSSettingSelect extends LitElement {
                         <option value="">${__("Default")}</option>
                         ${map(
                             this.options,
-                            (opt) => html`<option value=${opt.value} ?selected=${this.draft === opt.value}>${opt.label}</option>`,
+                            (opt) =>
+                                html`<option value=${opt.value} ?selected=${this.draft === opt.value}>
+                                    ${opt.label}
+                                </option>`,
                         )}
                     </select>
                     <button class="btn btn-primary" ?disabled=${this.saving || !this.dirty} @click=${this.save}>

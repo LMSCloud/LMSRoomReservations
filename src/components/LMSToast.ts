@@ -36,8 +36,7 @@ export default class LMSToast extends LitElement {
                     </div>
 
                     <div
-                        class="inline-block h-full min-h-[1em] w-0.5 
-                        self-stretch bg-current opacity-100 dark:opacity-50"
+                        class="inline-block h-full min-h-[1em] w-0.5 self-stretch bg-current opacity-100 dark:opacity-50"
                     ></div>
 
                     <div id="message">
@@ -45,8 +44,7 @@ export default class LMSToast extends LitElement {
                     </div>
 
                     <div
-                        class="inline-block h-full min-h-[1em] w-0.5 
-                        self-stretch  bg-current opacity-100 dark:opacity-50"
+                        class="inline-block h-full min-h-[1em] w-0.5 self-stretch bg-current opacity-100 dark:opacity-50"
                     ></div>
 
                     <div id="controls" class="flex items-center justify-center">

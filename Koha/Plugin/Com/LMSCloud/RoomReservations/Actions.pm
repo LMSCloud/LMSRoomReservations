@@ -99,7 +99,7 @@ sub send_email_confirmation {
     }
 
     if ($reply_to_address) {
-        my $addresses = [ grep { $_ } map { my $addr = $_; $addr =~ s/^\s+|\s+$//g; $addr } split /,/, $reply_to_address ];
+        my $addresses = [ grep {$_} map { my $addr = $_; $addr =~ s/^\s+|\s+$//g; $addr } split /,/, $reply_to_address ];
         for my $address ( @{$addresses} ) {
             push @message_ids,
                 C4::Letters::EnqueueLetter(

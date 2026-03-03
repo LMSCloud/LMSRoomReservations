@@ -164,7 +164,9 @@ export default class LMSSettingsTable extends LitElement {
     }
 
     private getSectionIdForSetting(settingName: string) {
-        if (["default_max_booking_time", "absolute_reservation_limit", "daily_reservation_limit"].includes(settingName)) {
+        if (
+            ["default_max_booking_time", "absolute_reservation_limit", "daily_reservation_limit"].includes(settingName)
+        ) {
             return "limits";
         }
 
@@ -184,7 +186,14 @@ export default class LMSSettingsTable extends LitElement {
             return "integrations";
         }
 
-        if (["calendar_default_view", "calendar_year_drill_target", "calendar_year_density_mode", "calendar_primary_color"].includes(settingName)) {
+        if (
+            [
+                "calendar_default_view",
+                "calendar_year_drill_target",
+                "calendar_year_density_mode",
+                "calendar_primary_color",
+            ].includes(settingName)
+        ) {
             return "calendar";
         }
 
@@ -306,7 +315,9 @@ export default class LMSSettingsTable extends LitElement {
         }
 
         return value
-            .filter((item): item is PatronCategory => Boolean(item) && typeof item === "object" && "categorycode" in item)
+            .filter(
+                (item): item is PatronCategory => Boolean(item) && typeof item === "object" && "categorycode" in item,
+            )
             .map((item) => ({
                 categorycode: String(item.categorycode),
                 description: typeof item.description === "string" ? item.description : "",

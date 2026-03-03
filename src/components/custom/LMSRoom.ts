@@ -196,7 +196,7 @@ export default class LMSRoom extends LitElement {
                         </label>
                         ${new NumberInput("maxbookabletime", this.maxbookabletime).render()}
                     </div>
-                    <div class="card-actions  my-4 w-full justify-end">
+                    <div class="card-actions my-4 w-full justify-end">
                         <button class="btn btn-secondary btn-outline" @click=${this.toggleEdit}>
                             ${this.editable
                                 ? html` ${litFontawesome(faTimes, {

@@ -82,7 +82,15 @@ class RequestHandler {
             try {
                 const schemaType = endpoint;
                 if (
-                    !["rooms", "bookingsPublic", "bookings", "openHours", "openHoursDeviations", "equipment", "settings"].includes(schemaType)
+                    ![
+                        "rooms",
+                        "bookingsPublic",
+                        "bookings",
+                        "openHours",
+                        "openHoursDeviations",
+                        "equipment",
+                        "settings",
+                    ].includes(schemaType)
                 ) {
                     throw new Error("No schema type defined for endpoint");
                 }

@@ -177,7 +177,7 @@ sub delete {
         my $dbh = C4::Context->dbh;
 
         my ( $stmt, @bind ) = $sql->delete( $OPEN_HOURS_TABLE, { branch => $branch } );
-        my $sth = $dbh->prepare($stmt);
+        my $sth  = $dbh->prepare($stmt);
         my $rows = $sth->execute(@bind);
 
         return $c->render( status => 404, openapi => { error => "No open hours found for branch '$branch'" } )
