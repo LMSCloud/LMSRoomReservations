@@ -21,7 +21,7 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::Util::MigrationHelper ();
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Util::Pages           qw( create_opac_page delete_opac_page page_exists get_page_url );
 
 ## Here we set our plugin version
-our $VERSION         = "5.7.4";
+our $VERSION         = "5.9.1";
 our $MINIMUM_VERSION = '22.11';
 
 ## Here is our metadata, some keys are required, some are optional
