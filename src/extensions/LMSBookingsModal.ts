@@ -66,6 +66,7 @@ export default class LMSBookingsModal extends LMSModal {
                 name: "send_confirmation",
                 type: "checkbox",
                 desc: __("Send confirmation to patron"),
+                value: 0,
             },
             {
                 name: "letter_code",
