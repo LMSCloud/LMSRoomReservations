@@ -61,18 +61,20 @@ sub list {
 sub add {
     my $c = shift->openapi->valid_input or return;
 
+    my $dbh       = C4::Context->dbh;
+    my $needs_txn = $dbh->{AutoCommit};
+
     return try {
         my $body = $c->req->json;
 
-        my $dbh = C4::Context->dbh;
         my $sql = SQL::Abstract->new;
 
         # Extract branches and rooms arrays
         my $branches = delete $body->{'branches'} // [];
         my $rooms    = delete $body->{'rooms'}    // [];
 
-        # Begin transaction
-        $dbh->begin_work;
+        # Begin transaction (skip if already inside one, e.g. test harness)
+        $dbh->begin_work if $needs_txn;
 
         # Insert main deviation record
         my ( $stmt, @bind ) = $sql->insert( $DEVIATIONS_TABLE, $body );
@@ -95,7 +97,7 @@ sub add {
             $sth->execute(@bind);
         }
 
-        $dbh->commit;
+        $dbh->commit if $needs_txn;
 
         # Fetch the created deviation with associations
         my $created_deviation = { %{$body}, deviationid => $deviation_id, branches => $branches, rooms => $rooms };
@@ -104,8 +106,7 @@ sub add {
     }
     catch {
         my $error = $_;
-        my $dbh   = C4::Context->dbh;
-        $dbh->rollback if $dbh;
+        $dbh->rollback if $needs_txn && $dbh;
         $c->unhandled_exception($error);
     };
 }
@@ -145,11 +146,13 @@ sub get {
 sub update {
     my $c = shift->openapi->valid_input or return;
 
+    my $dbh       = C4::Context->dbh;
+    my $needs_txn = $dbh->{AutoCommit};
+
     return try {
         my $deviation_id = $c->param('deviationid');
 
         my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
 
         # Check if deviation exists
         my ( $stmt, @bind ) = $sql->select( $DEVIATIONS_TABLE, q{*}, { deviationid => $deviation_id } );
@@ -170,8 +173,8 @@ sub update {
         my $branches = delete $body->{'branches'};
         my $rooms    = delete $body->{'rooms'};
 
-        # Begin transaction
-        $dbh->begin_work;
+        # Begin transaction (skip if already inside one, e.g. test harness)
+        $dbh->begin_work if $needs_txn;
 
         # Update main deviation record
         ( $stmt, @bind ) = $sql->update( $DEVIATIONS_TABLE, $body, { deviationid => $deviation_id } );
@@ -210,7 +213,7 @@ sub update {
             }
         }
 
-        $dbh->commit;
+        $dbh->commit if $needs_txn;
 
         # Fetch updated deviation with associations
         ( $stmt, @bind ) = $sql->select( $DEVIATIONS_TABLE, q{*}, { deviationid => $deviation_id } );
@@ -225,8 +228,7 @@ sub update {
     }
     catch {
         my $error = $_;
-        my $dbh   = C4::Context->dbh;
-        $dbh->rollback if $dbh;
+        $dbh->rollback if $needs_txn && $dbh;
         $c->unhandled_exception($error);
     };
 }
