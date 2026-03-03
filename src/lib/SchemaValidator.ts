@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { convertToSimpleDatetime } from "./converters/datetimeConverters";
 
+const nullableNumber = z.preprocess(
+    (val) => (val === undefined || val === "" ? null : val),
+    z.coerce.number().nullable(),
+);
+
 export type Table =
     | "rooms"
     | "bookingsPublic"
@@ -43,7 +48,7 @@ const validationSchemas = {
         color: z.coerce.string().nullable(),
         image: z.coerce.string().nullable(),
         branch: z.coerce.string().nullable(),
-        maxbookabletime: z.coerce.number().nullable(),
+        maxbookabletime: nullableNumber,
     }),
     bookingsPublic: z.object({
         borrowernumber: z.coerce.number(),
@@ -62,8 +67,8 @@ const validationSchemas = {
         end: z.coerce.string().transform(convertToSimpleDatetime), // DATETIME
         equipment: z.array(z.coerce.string()).nullable(),
         blackedout: z.coerce.number(),
-        send_confirmation: z.coerce.number(),
-        letter_code: z.string(),
+        send_confirmation: z.coerce.number().optional().default(0),
+        letter_code: z.string().optional().default("ROOM_RESERVATION"),
     }),
     openHours: z.union([openHoursSimpleSchema, openHoursArraySchema]),
     openHoursDeviations: z.object({
@@ -82,7 +87,7 @@ const validationSchemas = {
         equipmentname: z.coerce.string(),
         description: z.coerce.string().nullable(),
         image: z.coerce.string().nullable(),
-        maxbookabletime: z.coerce.number().nullable(),
+        maxbookabletime: nullableNumber,
         roomid: z.union([z.coerce.number(), z.undefined()]),
     }),
     settings: z.union([settingsSingleSchema, settingsArraySchema]),
