@@ -63,8 +63,8 @@
   "scripts": {
     "archive": "./tools/archive.mjs",
     "util:sync": "./tools/sync_util.sh",
-    "build": "npm run util:sync && npm run format && npm run css:build && rolldown -c && just package",
-    "build:no-fmt": "./tools/sync_util.sh && ./tools/generate_tw_css_result.mjs -o src && rolldown -c && just package",
+    "build": "npm run util:sync && npm run format && npm run css:build && rolldown -c && just staticapi && just package",
+    "build:no-fmt": "./tools/sync_util.sh && ./tools/generate_tw_css_result.mjs -o src && rolldown -c && just staticapi && just package",
     "css:build": "./tools/generate_tw_css_result.mjs -o src",
     "docs:package": "./tools/generate_docs.mjs",
     "format": "npm run format:ts && npm run format:pl",
