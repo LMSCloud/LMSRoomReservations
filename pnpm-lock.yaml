@@ -15,8 +15,8 @@ importers:
         specifier: 4.6.0-0
         version: 4.6.0-0
       '@jpahd/kalendus':
-        specifier: ^0.7.0
-        version: 0.7.0(lit@3.3.1)(luxon@3.7.2)
+        specifier: ^0.9.0
+        version: 0.9.0(lit@3.3.1)(luxon@3.7.2)
       '@juggle/resize-observer':
         specifier: ^3.4.0
         version: 3.4.0
@@ -487,8 +487,8 @@ packages:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
 
-  '@jpahd/kalendus@0.7.0':
-    resolution: {integrity: sha512-KdjV8rB6X+h0nW0BE27eZG8oUGelQx5oZ9dC+rDOZIadl9Pb3++Wcq8/kx5R1F2R4S+0kPUzM9r0HR3GsUYhDA==}
+  '@jpahd/kalendus@0.9.0':
+    resolution: {integrity: sha512-t0kEeR85QvlCAvOD+Y3NjET5t176Tfvb16Lb9HnG377aBYFr7bQZRlCfGOryUCMBR1xpvbqUSfFQjg0GzaivmQ==}
     peerDependencies:
       lit: ^3.0.0
       luxon: ^3.0.0
@@ -511,9 +511,6 @@ packages:
 
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
-
-  '@lit-labs/observers@2.1.0':
-    resolution: {integrity: sha512-oeQ2tvi/ygq7S+VgnXIInMKHHFPFqvIV9j2zBzpCwl33cWviT2ltuxNpbd11etwtUVsM8woKQzfVnrc80PKhKA==}
 
   '@lit-labs/ssr-dom-shim@1.4.0':
     resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==}
@@ -2616,9 +2613,8 @@ snapshots:
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
-  '@jpahd/kalendus@0.7.0(lit@3.3.1)(luxon@3.7.2)':
+  '@jpahd/kalendus@0.9.0(lit@3.3.1)(luxon@3.7.2)':
     dependencies:
-      '@lit-labs/observers': 2.1.0
       lit: 3.3.1
       luxon: 3.7.2
 
@@ -2642,10 +2638,6 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   '@juggle/resize-observer@3.4.0': {}
-
-  '@lit-labs/observers@2.1.0':
-    dependencies:
-      '@lit/reactive-element': 2.1.1
 
   '@lit-labs/ssr-dom-shim@1.4.0': {}
 

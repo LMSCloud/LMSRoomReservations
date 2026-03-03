@@ -6,7 +6,7 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@granite-elements/granite-lit-bootstrap": "4.6.0-0",
-    "@jpahd/kalendus": "^0.7.0",
+    "@jpahd/kalendus": "^0.9.0",
     "@juggle/resize-observer": "^3.4.0",
     "@types/bidirectional-map": "^1.0.4",
     "@types/luxon": "^3.7.1",
