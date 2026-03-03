@@ -4,7 +4,7 @@ import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { requestHandler } from "../lib/RequestHandler";
 import { formatMinutesHumanReadable } from "../lib/converters/timeConverter";
-import { __, attr__ } from "../lib/translate";
+import { __, attr__, t, onTranslationsReady } from "../lib/translate";
 import { LMSBookie, LMSCalendar } from "../main";
 import { tailwindStyles } from "../tailwind.lit";
 
@@ -179,6 +179,7 @@ export default class RoomReservationsView extends LitElement {
                 }
 
                 this.updateCalendar();
+                onTranslationsReady(() => this.updateCalendar());
                 this.hasLoaded = true;
             })
             .catch((error) => {
@@ -213,7 +214,7 @@ export default class RoomReservationsView extends LitElement {
                     end: { hour: e.getHours(), minute: e.getMinutes() },
                 },
                 heading,
-                content: (blackedout ? __("Blocked") : __("Booked")) as unknown as string,
+                content: blackedout ? t("Blocked") : t("Booked"),
                 color,
                 isContinuation: false,
             };
