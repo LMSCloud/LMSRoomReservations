@@ -1,6 +1,8 @@
 // Staff interface entry point
 // Includes all components for admin/staff views
 
+import "./themes/apply-koha-theme";
+
 import LMSConfirmationModal from "./components/LMSConfirmationModal";
 import LMSModal from "./components/LMSModal";
 import LMSSearch from "./components/LMSSearch";
