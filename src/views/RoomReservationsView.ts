@@ -1,4 +1,4 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -165,21 +165,6 @@ export default class RoomReservationsView extends LitElement {
                 this.calendarPrimaryColor = calPrimaryColor.value || "";
             })
             .then(() => {
-                this.lmsCalendar.activeDate = {
-                    day: this.currentDate.getDate(),
-                    month: this.currentDate.getMonth() + 1,
-                    year: this.currentDate.getFullYear(),
-                };
-
-                if (this.calendarDefaultView && ["day", "week", "month", "year"].includes(this.calendarDefaultView)) {
-                    const viewState = (this.lmsCalendar as any)?._viewState;
-                    if (viewState?.setViewMode) {
-                        viewState.setViewMode(this.calendarDefaultView);
-                    }
-                }
-
-                this.updateCalendar();
-                onTranslationsReady(() => this.updateCalendar());
                 this.hasLoaded = true;
             })
             .catch((error) => {
@@ -188,7 +173,56 @@ export default class RoomReservationsView extends LitElement {
             });
     }
 
+    override async updated(changedProperties: PropertyValues) {
+        if (changedProperties.has("hasLoaded") && this.hasLoaded && this.lmsCalendar) {
+            this.lmsCalendar.activeDate = {
+                day: this.currentDate.getDate(),
+                month: this.currentDate.getMonth() + 1,
+                year: this.currentDate.getFullYear(),
+            };
+
+            if (this.calendarDefaultView && ["day", "week", "month", "year"].includes(this.calendarDefaultView)) {
+                const viewState = (this.lmsCalendar as any)?._viewState;
+                if (viewState?.setViewMode) {
+                    viewState.setViewMode(this.calendarDefaultView);
+                }
+            }
+
+            this.updateCalendar();
+            onTranslationsReady(() => this.updateCalendar());
+            this.refreshCalendarLocale();
+        }
+    }
+
+    private async refreshCalendarLocale() {
+        if (!this.lmsCalendar || locale.startsWith("en")) return;
+
+        await this.lmsCalendar.updateComplete;
+
+        // After the calendar's initial render, kalendus starts loading the
+        // locale chunk (~2KB) via dynamic import. Once it resolves, kalendus
+        // calls requestUpdate() on itself but its Lit children don't re-render
+        // because their locale prop hasn't changed (dirty-checking).
+        // Force all Lit children in the shadow DOM to pick up the loaded strings.
+        const forceChildUpdates = () => {
+            const walk = (root: ShadowRoot | null) => {
+                if (!root) return;
+                root.querySelectorAll("*").forEach((el: Element) => {
+                    if ("requestUpdate" in el) (el as any).requestUpdate();
+                    if ("shadowRoot" in el && (el as any).shadowRoot) {
+                        walk((el as any).shadowRoot);
+                    }
+                });
+            };
+            walk(this.lmsCalendar?.shadowRoot ?? null);
+        };
+
+        setTimeout(forceChildUpdates, 200);
+        setTimeout(forceChildUpdates, 1000);
+    }
+
     private updateCalendar() {
+        if (!this.lmsCalendar) return;
         this.lmsCalendar.entries = this.bookings.map((booking) => {
             const { roomid, start, end, blackedout } = booking;
             const [s, e] = [new Date(start), new Date(end)];
@@ -247,14 +281,16 @@ export default class RoomReservationsView extends LitElement {
                     class="order-2 w-full lg:order-1 lg:w-1/4"
                     @updated=${this.fetchUpdate}
                 ></lms-bookie>
-                <lms-calendar
-                    .locale=${locale}
-                    .yearDrillTarget=${this.calendarYearDrillTarget || "day"}
-                    .yearDensityMode=${this.calendarYearDensityMode || "heatmap"}
-                    .color=${this.calendarPrimaryColor || "#3b82f6"}
-                    style=${styleMap({ "--primary-color": this.calendarPrimaryColor || "#3b82f6" })}
-                    class="order-1 min-w-0 overflow-hidden w-full lg:order-2 lg:w-3/4"
-                ></lms-calendar>
+                ${this.hasLoaded
+                    ? html`<lms-calendar
+                          .locale=${locale}
+                          .yearDrillTarget=${this.calendarYearDrillTarget || "day"}
+                          .yearDensityMode=${this.calendarYearDensityMode || "heatmap"}
+                          .color=${this.calendarPrimaryColor || "#3b82f6"}
+                          style=${styleMap({ "--primary-color": this.calendarPrimaryColor || "#3b82f6" })}
+                          class="order-1 min-w-0 overflow-hidden w-full lg:order-2 lg:w-3/4"
+                      ></lms-calendar>`
+                    : html`<div class="order-1 min-w-0 w-full lg:order-2 lg:w-3/4"></div>`}
             </div>
             <div class="mt-4 flex flex-row gap-4 overflow-x-auto lg:px-4">
                 ${map(this.rooms, (room) => {
