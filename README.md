@@ -82,10 +82,11 @@ This configuration is no longer necessary and can be removed.
 
 ## Submodules
 
-This project uses Git submodules to share code across LMSCloud plugins:
+This project uses a Git submodule for shared utility code:
 
-- **`Koha/Plugin/Com/LMSCloud/Util/`** - Shared utility modules (Pages, MigrationHelper, I18N)
-- **`src/components/custom/LMSCalendar/`** - Shared calendar component
+- **`vendor/koha-plugin-lmscloud-util/`** - Shared utility modules (Pages, MigrationHelper, I18N)
+  - Source of truth: <https://github.com/lmscloudpauld/koha-plugin-lmscloud-util>
+  - At build time, `tools/sync_util.sh` copies these into `Koha/Plugin/Com/LMSCloud/RoomReservations/Util/` and rewrites the package namespace so each plugin is fully self-contained
 
 **Important**: After cloning this repository, initialize submodules with:
 
@@ -93,11 +94,11 @@ This project uses Git submodules to share code across LMSCloud plugins:
 git submodule update --init --recursive
 ```
 
-For detailed information on working with submodules, see [SUBMODULES.md](./SUBMODULES.md).
+For detailed information on working with submodules, see [docs/SUBMODULES.md](./docs/SUBMODULES.md).
 
 ## Build
 
-- To use the build scripts in `package.json` you'll need [package-kpz](https://github.com/LMSCloudPaulD/package-kpz) in your **PATH**.
+See [docs/BUILD.md](./docs/BUILD.md) for a full walkthrough of building the `.kpz` from a fresh clone.
 
 ## Testing
 
