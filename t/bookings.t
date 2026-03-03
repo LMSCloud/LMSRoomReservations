@@ -2,7 +2,7 @@
 
 use Modern::Perl;
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 use Test::Mojo;
 
 use FindBin qw( $Bin );
@@ -54,6 +54,10 @@ my $booking_date = '2027-01-04';
 
 # Helper: set up a room with open hours and default settings for a subtest
 sub _setup_room_and_hours {
+    # Clean stale data: API-created bookings persist outside the test transaction,
+    # and store_data() auto-commits plugin settings outside txn_rollback.
+    TestHelper::cleanup_all();
+
     my $room = TestHelper::insert_room(
         roomnumber      => 'BK-R1',
         maxcapacity     => 10,
@@ -302,6 +306,48 @@ subtest 'booking with equipment' => sub {
         undef, $room->{roomid}
     );
     is( $count, 1, 'equipment is associated with the room' );
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'update booking' => sub {
+    plan tests => 5;
+    $schema->storage->txn_begin;
+
+    my $room = _setup_room_and_hours();
+
+    # Insert a booking directly via helper
+    my $booking = TestHelper::insert_booking(
+        borrowernumber => $borrowernumber,
+        roomid         => $room->{roomid},
+        start          => "${booking_date} 10:00:00",
+        end            => "${booking_date} 11:00:00",
+    );
+
+    # Update to new times
+    $t->put_ok( "$base_url/bookings/$booking->{bookingid}" => json => {
+        borrowernumber => $borrowernumber,
+        roomid         => $room->{roomid},
+        start          => "${booking_date}T12:00",
+        end            => "${booking_date}T13:00",
+    } )->status_is(200)
+      ->json_is( '/start' => "${booking_date}T12:00" );
+
+    # Insert a second booking
+    TestHelper::insert_booking(
+        borrowernumber => $borrowernumber,
+        roomid         => $room->{roomid},
+        start          => "${booking_date} 14:00:00",
+        end            => "${booking_date} 15:00:00",
+    );
+
+    # Try to update first booking to overlap with the second -> conflict
+    $t->put_ok( "$base_url/bookings/$booking->{bookingid}" => json => {
+        borrowernumber => $borrowernumber,
+        roomid         => $room->{roomid},
+        start          => "${booking_date}T14:00",
+        end            => "${booking_date}T15:00",
+    } )->status_is(400);
 
     $schema->storage->txn_rollback;
 };

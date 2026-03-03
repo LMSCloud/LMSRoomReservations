@@ -38,8 +38,9 @@ subtest 'list settings' => sub {
     plan tests => 2;
     $schema->storage->txn_begin;
 
-    # Pre-populate settings to avoid null values that fail OpenAPI response
-    # validation (the response schema types value as string|array, not nullable).
+    # Pre-populate ALL settings returned by the controller to avoid null values
+    # that fail OpenAPI response validation (the schema types value as
+    # string|array, not nullable).
     TestHelper::insert_setting( setting => 'default_max_booking_time',        value => '120' );
     TestHelper::insert_setting( setting => 'absolute_reservation_limit',      value => '5' );
     TestHelper::insert_setting( setting => 'daily_reservation_limit',         value => '3' );
@@ -48,6 +49,10 @@ subtest 'list settings' => sub {
     TestHelper::insert_setting( setting => 'remove_past_reservations_after',  value => '14' );
     TestHelper::insert_setting( setting => 'enforce_email_notification',      value => '0' );
     TestHelper::insert_setting( setting => 'use_koha_calendar',              value => '0' );
+    TestHelper::insert_setting( setting => 'calendar_default_view',           value => 'week' );
+    TestHelper::insert_setting( setting => 'calendar_year_drill_target',      value => 'day' );
+    TestHelper::insert_setting( setting => 'calendar_year_density_mode',      value => 'dot' );
+    TestHelper::insert_setting( setting => 'calendar_primary_color',          value => '#3788d8' );
 
     $t->get_ok("$base_url/settings")
       ->status_is(200);

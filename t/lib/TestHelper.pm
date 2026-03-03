@@ -254,6 +254,68 @@ sub insert_bookings_equipment {
     return \%args;
 }
 
+sub insert_open_hours_deviation {
+    my (%args) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sql = SQL::Abstract->new;
+
+    my ( $stmt, @bind ) = $sql->insert( $TABLE{open_hours_deviations}, \%args );
+    $dbh->do( $stmt, undef, @bind ) or die $dbh->errstr;
+
+    my $id = $dbh->last_insert_id( undef, undef, $TABLE{open_hours_deviations}, 'deviationid' );
+    return { %args, deviationid => $id };
+}
+
+sub insert_deviation_branch {
+    my (%args) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sql = SQL::Abstract->new;
+
+    my ( $stmt, @bind ) = $sql->insert( $TABLE{deviation_branches}, \%args );
+    $dbh->do( $stmt, undef, @bind ) or die $dbh->errstr;
+
+    return \%args;
+}
+
+sub insert_deviation_room {
+    my (%args) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sql = SQL::Abstract->new;
+
+    my ( $stmt, @bind ) = $sql->insert( $TABLE{deviation_rooms}, \%args );
+    $dbh->do( $stmt, undef, @bind ) or die $dbh->errstr;
+
+    return \%args;
+}
+
+sub cleanup_plugin_data {
+    my $dbh = C4::Context->dbh;
+    $dbh->do(
+        q{DELETE FROM plugin_data WHERE plugin_class = ? AND plugin_key NOT LIKE '\\_\\_%'},
+        undef,
+        'Koha::Plugin::Com::LMSCloud::RoomReservations'
+    );
+    return 1;
+}
+
+sub cleanup_all {
+    my $dbh = C4::Context->dbh;
+
+    # Delete in FK-safe order
+    for my $t (qw(bookings_equipment deviation_rooms deviation_branches
+                   open_hours_deviations rooms_equipment open_hours
+                   bookings equipment rooms)) {
+        $dbh->do("DELETE FROM $TABLE{$t}");
+    }
+
+    cleanup_plugin_data();
+
+    return 1;
+}
+
 sub insert_setting {
     my (%args) = @_;
     $plugin->store_data( { $args{setting} => $args{value} } );
