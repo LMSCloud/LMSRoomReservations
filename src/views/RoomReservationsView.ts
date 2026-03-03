@@ -19,8 +19,6 @@ declare global {
 export default class RoomReservationsView extends LitElement {
     @state() hasLoaded = false;
 
-    @state() private calendarVisible = false;
-
     @state() selectedRoom?: any;
 
     @property({ type: String }) borrowernumber?: string;
@@ -186,44 +184,7 @@ export default class RoomReservationsView extends LitElement {
 
             this.updateCalendar();
             onTranslationsReady(() => this.updateCalendar());
-
-            if (locale.startsWith("en")) {
-                this.calendarVisible = true;
-            } else {
-                this.refreshCalendarLocale();
-            }
         }
-    }
-
-    private async refreshCalendarLocale() {
-        if (!this.lmsCalendar) return;
-
-        await this.lmsCalendar.updateComplete;
-
-        // After the calendar's initial render, kalendus starts loading the
-        // locale chunk (~2KB) via dynamic import. Once it resolves, kalendus
-        // calls requestUpdate() on itself but its Lit children don't re-render
-        // because their locale prop hasn't changed (dirty-checking).
-        // Force all Lit children in the shadow DOM to pick up the loaded
-        // strings, then reveal the calendar to avoid a flash of English text.
-        const forceChildUpdates = () => {
-            const walk = (root: ShadowRoot | null) => {
-                if (!root) return;
-                root.querySelectorAll("*").forEach((el: Element) => {
-                    if ("requestUpdate" in el) (el as any).requestUpdate();
-                    if ("shadowRoot" in el && (el as any).shadowRoot) {
-                        walk((el as any).shadowRoot);
-                    }
-                });
-            };
-            walk(this.lmsCalendar?.shadowRoot ?? null);
-        };
-
-        setTimeout(() => {
-            forceChildUpdates();
-            this.calendarVisible = true;
-        }, 100);
-        setTimeout(forceChildUpdates, 1000);
     }
 
     private updateCalendar() {
@@ -297,8 +258,6 @@ export default class RoomReservationsView extends LitElement {
                           .color=${this.calendarPrimaryColor || "#3b82f6"}
                           style=${styleMap({
                               "--primary-color": this.calendarPrimaryColor || "#3b82f6",
-                              opacity: this.calendarVisible ? "1" : "0",
-                              transition: "opacity 0.15s ease-in",
                           })}
                           class="order-1 w-full min-w-0 overflow-hidden lg:order-2 lg:w-3/4"
                       ></lms-calendar>`
