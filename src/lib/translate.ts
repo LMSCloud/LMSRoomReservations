@@ -181,4 +181,28 @@ const attr__ = directive(TranslateAttributeDirective);
 
 const __ = directive(TranslateDirective);
 
+/**
+ * Returns a plain string translation (not a lit directive).
+ * Use this instead of __() when the result must be a string,
+ * e.g. for data passed to non-lit APIs like ICS export.
+ */
+export function t(text: string): string {
+    if (translationsLoaded && i18nInstance) {
+        return i18nInstance.gettext(text);
+    }
+    return text;
+}
+
+/**
+ * Registers a callback that fires once translations are loaded.
+ * If translations are already loaded, the callback fires immediately.
+ */
+export function onTranslationsReady(callback: () => void): void {
+    if (translationsLoaded || locale.startsWith("en")) {
+        callback();
+        return;
+    }
+    callbacks.push({ text: "", callback });
+}
+
 export { __, attr__ };
