@@ -17,8 +17,8 @@ use English    qw( -no_match_vars );
 use Mojo::JSON qw( decode_json encode_json );
 use Try::Tiny  qw( catch try );
 
-use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
-use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists get_page_url );
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Util::MigrationHelper ();
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Util::Pages           qw( create_opac_page delete_opac_page page_exists get_page_url );
 
 ## Here we set our plugin version
 our $VERSION         = "5.5.1";
@@ -181,7 +181,7 @@ sub install() {
     my $bundle_path = $bundle_dir;
 
     return try {
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::RoomReservations::Util::MigrationHelper->new(
             {   table_name_mappings => {
                     rooms                  => $self->get_qualified_table_name('rooms'),
                     rooms_idx              => $self->get_qualified_table_name('rooms_idx'),
@@ -263,7 +263,7 @@ sub upgrade {
     my $bundle_path = $bundle_dir;
 
     return try {
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::RoomReservations::Util::MigrationHelper->new(
             {   table_name_mappings => {
                     rooms                  => $self->get_qualified_table_name('rooms'),
                     rooms_idx              => $self->get_qualified_table_name('rooms_idx'),

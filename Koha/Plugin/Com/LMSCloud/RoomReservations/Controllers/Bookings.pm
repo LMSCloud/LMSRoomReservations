@@ -26,7 +26,7 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
     send_email_confirmation
 );
-use Koha::Plugin::Com::LMSCloud::Util::I18N qw( __ );
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Util::I18N qw( __ );
 
 our $VERSION = '1.0.0';
 
@@ -35,7 +35,7 @@ Readonly my $CONSTANTS => {
     HTTP_CREATED => 201,
 };
 
-my $i18n = Koha::Plugin::Com::LMSCloud::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../locales/' );
+my $i18n = Koha::Plugin::Com::LMSCloud::RoomReservations::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../locales/' );
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
 my $BOOKINGS_TABLE           = $self ? $self->get_qualified_table_name('bookings')           : undef;

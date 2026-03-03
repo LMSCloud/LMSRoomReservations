@@ -16,13 +16,13 @@ use SQL::Abstract              ();
 use Time::Piece                ();
 use Try::Tiny                  qw( catch try );
 
-use Koha::Plugin::Com::LMSCloud::Util::I18N qw( __ );
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Util::I18N qw( __ );
 
 our $VERSION = '1.0.0';
 
 Readonly my $DATETIME_POS_SECONDS => 5;
 
-my $i18n = Koha::Plugin::Com::LMSCloud::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../locales/' );
+my $i18n = Koha::Plugin::Com::LMSCloud::RoomReservations::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../locales/' );
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
 my $OPEN_HOURS_TABLE = $self ? $self->get_qualified_table_name('open_hours') : undef;
