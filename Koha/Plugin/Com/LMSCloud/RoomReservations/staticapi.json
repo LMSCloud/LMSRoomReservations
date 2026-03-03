@@ -103,6 +103,58 @@
       }
     }
   },
+  "/dist/nl-BN7jCv6e-63n8xhbg.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/uk-BwZ5chTL-CeaAjcs4.js": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -311,7 +363,163 @@
       }
     }
   },
+  "/dist/vi-DDwWNv1q-BQMeo0zl.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/hi-D140JCt3-CQV-49DR.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/bn-Bc9usOxX-Cexxqtuq.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/es-DF1L-hGU-_osY2Oxl.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -520,6 +728,58 @@
     }
   },
   "/dist/ja-_-klu4KO-BaZ6uBNa.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/fr-U5oVkdFo-CMCoOeIE.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -831,6 +1091,110 @@
       }
     }
   },
+  "/dist/zh-Hans-DHhDW79t-CP4f970I.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/pt-B1BEKHxn-Cft5BmZc.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/he-CnBpH34B-BL8jleLO.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -884,6 +1248,110 @@
     }
   },
   "/dist/opac.d.ts": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/hi-D140JCt3-Cst6mLG8.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/index-PDifR_j6-SSsT5j--.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -1143,7 +1611,111 @@
       }
     }
   },
+  "/dist/ko-B0oNLnjW-Cx7u0zhN.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/nl-BN7jCv6e-BvbJbNH4.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/id-CTgww4QD-BROQ4FeT.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -1507,7 +2079,111 @@
       }
     }
   },
+  "/dist/de-XYE39Y0T-BoGjpiHa.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/staff.d.ts": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/ru-BamJwZIS-BTz6zW7-.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -1611,7 +2287,163 @@
       }
     }
   },
+  "/dist/he-CnBpH34B-CnsRM4NI.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/main.css.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/it-CngHnMQL-BxJckSwH.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/el-z82lpX_k-bVgixAWF.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -1715,7 +2547,371 @@
       }
     }
   },
+  "/dist/ja-_-klu4KO-Dlkf31Fv.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/bn-Bc9usOxX-Cexxqtuq.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/uk-BwZ5chTL-CaGyfoiY.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/index-PDifR_j6-SSsT5j--.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/da-CqhWiEag-DkNk3c_E.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/cs-DK81VIMy-BBMKzbWV.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/PatronsBookingsTable.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/ar-CQI2Jy-O-DBKoSj0f.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -2079,6 +3275,58 @@
       }
     }
   },
+  "/dist/nb-DCknIWPm-BVzBmH_K.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/docs/searchSyntax.d.ts": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -2132,6 +3380,58 @@
     }
   },
   "/dist/docs/searchSyntax.d.ts.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/vi-DDwWNv1q-BQMeo0zl.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -2495,6 +3795,110 @@
       }
     }
   },
+  "/dist/id-CTgww4QD-BROQ4FeT.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/el-z82lpX_k-bVgixAWF.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/opac.js": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -2548,6 +3952,58 @@
     }
   },
   "/dist/pt-B1BEKHxn-DKDyB9T3.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/he-CnBpH34B-CnsRM4NI.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -3431,7 +4887,163 @@
       }
     }
   },
+  "/dist/fi-CTfg3Q0E-DoqgXKa6.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/vi-DDwWNv1q-gUSEjAN7.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/th-BUWIlKj9-D7W7F_nv.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/tr-CtX8GHVx-CI-3hfpR.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -6499,6 +8111,58 @@
       }
     }
   },
+  "/dist/ru-BamJwZIS-BTz6zW7-.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/hi-D140JCt3-CQV-49DR.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -6759,6 +8423,58 @@
       }
     }
   },
+  "/dist/pl-BZjSLzk0-CB7lPI2w.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/fi-CTfg3Q0E-Cn5i_Afd.js": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -6915,6 +8631,58 @@
       }
     }
   },
+  "/dist/de-XYE39Y0T-BoGjpiHa.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/de-XYE39Y0T-DefwXkHk.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -6967,7 +8735,111 @@
       }
     }
   },
+  "/dist/th-BUWIlKj9-D7W7F_nv.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/nb-DCknIWPm-C6Kgw7BL.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/sv-ryDtBXj8-BxomQ9Rx.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -10139,6 +12011,214 @@
       }
     }
   },
+  "/dist/hi-D140JCt3-Cst6mLG8.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/es-DF1L-hGU-_osY2Oxl.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/da-CqhWiEag-DkNk3c_E.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/uk-BwZ5chTL-CaGyfoiY.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/ar-CQI2Jy-O-CEy4y5B3.js": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -10192,6 +12272,318 @@
     }
   },
   "/dist/nl-BN7jCv6e-BvbJbNH4.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/pt-B1BEKHxn-Cft5BmZc.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/nl-BN7jCv6e-63n8xhbg.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/ar-CQI2Jy-O-DBKoSj0f.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/ja-_-klu4KO-Dlkf31Fv.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/it-CngHnMQL-BxJckSwH.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/sv-ryDtBXj8-BxomQ9Rx.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -10451,6 +12843,58 @@
       }
     }
   },
+  "/dist/fi-CTfg3Q0E-DoqgXKa6.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/ko-B0oNLnjW-BzlPj8SW.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -10503,7 +12947,163 @@
       }
     }
   },
+  "/dist/pl-BZjSLzk0-CB7lPI2w.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/ja-_-klu4KO-BaZ6uBNa.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/zh-Hans-DHhDW79t-CP4f970I.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/tr-CtX8GHVx-CI-3hfpR.js": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
@@ -11179,6 +13779,58 @@
       }
     }
   },
+  "/dist/nb-DCknIWPm-BVzBmH_K.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/themes/apply-koha-theme.d.ts": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -11439,6 +14091,110 @@
       }
     }
   },
+  "/dist/ko-B0oNLnjW-Cx7u0zhN.js": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/cs-DK81VIMy-BBMKzbWV.js.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/dist/pl-BZjSLzk0-DPhINxPR.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
@@ -11596,6 +14352,58 @@
     }
   },
   "/dist/staff.d.ts.map": {
+    "get": {
+      "x-mojo-to": "Static#get",
+      "tags": [
+        "pluginStatic"
+      ],
+      "responses": {
+        "200": {
+          "description": "File found",
+          "schema": {
+            "type": "file"
+          }
+        },
+        "404": {
+          "description": "File not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/dist/fr-U5oVkdFo-CMCoOeIE.js.map": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
