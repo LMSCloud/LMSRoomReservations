@@ -55,7 +55,7 @@
   "license": "GPL-3.0",
   "minimum_koha_version": "21.05.14.000",
   "name": "lms-room-reservations",
-  "previous_version": "5.9.0",
+  "previous_version": "5.9.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LMSCloud/LMSRoomReservations.git"
@@ -77,5 +77,5 @@
     "translate:instantiate": "./tools/instantiate_translation.sh com.lmscloud.roomreservations.pot",
     "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
   },
-  "version": "5.9.1"
+  "version": "5.9.2"
 }
