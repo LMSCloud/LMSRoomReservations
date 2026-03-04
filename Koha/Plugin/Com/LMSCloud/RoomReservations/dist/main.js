@@ -339,12 +339,10 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             height: var(--day-total-height);
             /* Match time-labels clipping */
             overflow: clip;
-            background-image: repeating-linear-gradient(
+            background-image: linear-gradient(
                 to bottom,
-                transparent 0,
-                transparent calc(var(--hour-height) - 1px),
-                var(--separator-light) calc(var(--hour-height) - 1px),
-                var(--separator-light) var(--hour-height)
+                var(--separator-light) 1px,
+                transparent 1px
             );
             background-size: 100% var(--hour-height);
         }
@@ -1361,12 +1359,10 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             border-inline-end: var(--sidebar-border, 1px solid var(--separator-light));
             /* Match time-labels clipping */
             overflow: clip;
-            background-image: repeating-linear-gradient(
+            background-image: linear-gradient(
                 to bottom,
-                transparent 0,
-                transparent calc(var(--hour-height) - 1px),
-                var(--separator-light) calc(var(--hour-height) - 1px),
-                var(--separator-light) var(--hour-height)
+                var(--separator-light) 1px,
+                transparent 1px
             );
             background-size: 100% var(--hour-height);
         }
