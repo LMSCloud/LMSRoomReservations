@@ -339,11 +339,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             height: var(--day-total-height);
             /* Match time-labels clipping */
             overflow: clip;
-            background-image: linear-gradient(
-                to bottom,
-                var(--separator-light) 1px,
-                transparent 1px
-            );
+            background-image: linear-gradient(to bottom, var(--separator-light) 1px, transparent 1px);
             background-size: 100% var(--hour-height);
         }
 
@@ -1118,9 +1114,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             gap: var(--month-day-gap, 1px);
             min-width: 0;
             min-height: 0;
-            /* Let Blink skip layout/paint for off-screen day cells */
-            content-visibility: auto;
-            contain-intrinsic-size: auto 6em;
+            contain: layout style paint;
         }
 
         /* Ensure consistent multi-day event layering */
@@ -1359,11 +1353,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             border-inline-end: var(--sidebar-border, 1px solid var(--separator-light));
             /* Match time-labels clipping */
             overflow: clip;
-            background-image: linear-gradient(
-                to bottom,
-                var(--separator-light) 1px,
-                transparent 1px
-            );
+            background-image: linear-gradient(to bottom, var(--separator-light) 1px, transparent 1px);
             background-size: 100% var(--hour-height);
         }
 
