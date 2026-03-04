@@ -15,8 +15,8 @@ importers:
         specifier: 4.6.0-0
         version: 4.6.0-0
       '@jpahd/kalendus':
-        specifier: ^0.9.3
-        version: 0.9.3(lit@3.3.1)(luxon@3.7.2)
+        specifier: ^0.9.4
+        version: 0.9.4(lit@3.3.1)(luxon@3.7.2)
       '@juggle/resize-observer':
         specifier: ^3.4.0
         version: 3.4.0
@@ -487,8 +487,8 @@ packages:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
 
-  '@jpahd/kalendus@0.9.3':
-    resolution: {integrity: sha512-FyXNV0o3/YfCrA+R6oAAsoleNr0oKH2FkJXkJbeHP/c7Cd/dtb75SXZXWJTZXGcOIwuTG8TC5Ogk23wzgIPbPQ==}
+  '@jpahd/kalendus@0.9.4':
+    resolution: {integrity: sha512-LPmw6NyvbTtOqDDs+JmgckIb6aDgAVkHbKvebLqoCVUSUZAkMv+/5SjhMEb4BVZ4LQcqkYH/XiykhPX0rivSeg==}
     peerDependencies:
       lit: ^3.0.0
       luxon: ^3.0.0
@@ -2613,7 +2613,7 @@ snapshots:
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
-  '@jpahd/kalendus@0.9.3(lit@3.3.1)(luxon@3.7.2)':
+  '@jpahd/kalendus@0.9.4(lit@3.3.1)(luxon@3.7.2)':
     dependencies:
       lit: 3.3.1
       luxon: 3.7.2
