@@ -259,11 +259,22 @@ export default class LMSPatronSearch extends LitElement {
             .map((entry) => html`${unsafeHTML(entry)}&nbsp;`);
     }
 
+    private escapeHTML(str: string): string {
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     private highlightEntries(obj: Record<string, string>) {
         return Array.from(Object.entries(obj)).reduce((acc: Record<string, string>, entry) => {
             const [key, value] = entry;
+            const safeValue = this.escapeHTML(value?.toString() ?? "");
+
             if (!this.input.value) {
-                acc[key] = value;
+                acc[key] = safeValue;
                 return acc;
             }
 
@@ -271,9 +282,9 @@ export default class LMSPatronSearch extends LitElement {
             const regex = new RegExp(escapedTerm, "gi");
 
             acc[key] =
-                value?.toString().replace(regex, (match) => {
+                safeValue.replace(regex, (match) => {
                     return `<span class="bg-yellow-200">${match}</span>`;
-                }) ?? value;
+                });
             return acc;
         }, {});
     }
