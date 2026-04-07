@@ -31,7 +31,7 @@
         <div class="lmsr-content-main">
             <div class="lmsr-content-block">
                 <h1>[% "Room Reservations" | gettext %]</h1>
-                <lms-room-reservations-view borrowernumber="[% borrowernumber %]"></lms-room-reservations-view>
+                <lms-room-reservations-view borrowernumber="[% borrowernumber | html %]"></lms-room-reservations-view>
             </div>
         </div>
     </div>
