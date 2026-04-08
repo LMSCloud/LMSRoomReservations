@@ -100,7 +100,6 @@ export default class RoomReservationsView extends LitElement {
                 --title-column-weight: 500;
                 --context-bg: var(--separator-light, rgba(0, 0, 0, 0.06));
                 --active-indicator-bg: var(--background-color, white);
-                --indicator-backdrop-filter: blur(10px);
                 --multi-day-separator: 3px solid rgba(255, 255, 255, 0.4);
                 --month-label-font-weight: 600;
                 --year-weekday-font-weight: 500;

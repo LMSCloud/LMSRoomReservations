@@ -6,7 +6,7 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@granite-elements/granite-lit-bootstrap": "4.6.0-0",
-    "@jpahd/kalendus": "^0.9.4",
+    "@jpahd/kalendus": "^0.9.7",
     "@juggle/resize-observer": "^3.4.0",
     "@types/bidirectional-map": "^1.0.4",
     "@types/luxon": "^3.7.1",
@@ -77,5 +77,5 @@
     "translate:instantiate": "./tools/instantiate_translation.sh com.lmscloud.roomreservations.pot",
     "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
   },
-  "version": "5.9.5"
+  "version": "5.9.6"
 }
