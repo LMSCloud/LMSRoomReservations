@@ -281,10 +281,9 @@ export default class LMSPatronSearch extends LitElement {
             const escapedTerm = this.input.value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             const regex = new RegExp(escapedTerm, "gi");
 
-            acc[key] =
-                safeValue.replace(regex, (match) => {
-                    return `<span class="bg-yellow-200">${match}</span>`;
-                });
+            acc[key] = safeValue.replace(regex, (match) => {
+                return `<span class="bg-yellow-200">${match}</span>`;
+            });
             return acc;
         }, {});
     }
