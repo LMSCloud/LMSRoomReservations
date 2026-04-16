@@ -607,10 +607,18 @@ export default class LMSTable extends LitElement {
                                 (datum) => datum["uuid"],
                                 (datum) => html`
                                     <tr class="h-full">
-                                        ${map(
-                                            this.headers,
-                                            (header) => html`<td class="p-0 text-center">${datum[header]}</td>`,
-                                        )}
+                                        ${map(this.headers, (header) => {
+                                            const value = datum[header];
+                                            const titleText =
+                                                typeof value === "string"
+                                                    ? value
+                                                    : typeof value === "number"
+                                                      ? String(value)
+                                                      : "";
+                                            return html`<td class="p-0 text-center" title="${titleText || ""}">
+                                                ${value}
+                                            </td>`;
+                                        })}
                                         ${this.isEditable
                                             ? html`
                                                   <td class="p-0 text-center">

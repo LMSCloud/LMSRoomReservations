@@ -21,7 +21,7 @@ export default class Checklist {
                                     class="checkbox mr-2"
                                     disabled
                                 />
-                                <span class="label-text">${datum.value}</span>
+                                <span class="label-text whitespace-nowrap">${datum.value}</span>
                             </label>
                         </div>
                     `,

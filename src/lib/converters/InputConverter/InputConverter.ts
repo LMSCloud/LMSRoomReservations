@@ -127,7 +127,7 @@ export class InputConverter {
                                         class="checkbox mr-2"
                                         disabled
                                     />
-                                    <span class="label-text">${equipmentItemByRoom.name}</span>
+                                    <span class="label-text whitespace-nowrap">${equipmentItemByRoom.name}</span>
                                 </label>
                             </div>
                         `,
@@ -166,7 +166,11 @@ export class InputConverter {
             updated_at: (value) =>
                 html`<span class="whitespace-nowrap">${formatDatetimeByLocale(value as string, localeFull)}</span>`,
             purpose_of_use: (value) =>
-                html`<span class="block max-w-48 overflow-hidden text-ellipsis whitespace-nowrap">${value}</span>`,
+                html`<span
+                    class="inline-block max-w-36 overflow-hidden text-ellipsis whitespace-nowrap align-middle"
+                    title="${value}"
+                    >${value}</span
+                >`,
             value: (value, data) => {
                 const [name, _value] = value as [string, any];
                 const datum = data?.find((datum) => datum.setting === name);

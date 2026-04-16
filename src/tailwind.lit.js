@@ -4212,8 +4212,8 @@ details.collapse summary::-webkit-details-marker {
   min-width: min-content;
 }
 
-.max-w-48 {
-  max-width: 12rem;
+.max-w-36 {
+  max-width: 9rem;
 }
 
 .max-w-min {

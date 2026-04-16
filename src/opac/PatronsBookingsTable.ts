@@ -108,7 +108,12 @@ export default class PatronsBookingsTable extends LitElement {
                                           <td>${this.rooms.find((room) => room.roomid == roomid).roomnumber}</td>
                                           <td>${formatDatetimeByLocale(start, locale)}</td>
                                           <td>${formatDatetimeByLocale(end, locale)}</td>
-                                          <td>${purpose_of_use}</td>
+                                          <td
+                                              class="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
+                                              title="${purpose_of_use}"
+                                          >
+                                              ${purpose_of_use}
+                                          </td>
                                           <td>
                                               <button
                                                   class="btn"

@@ -14,7 +14,11 @@ module.exports = {
     ], transform: { ts: tailwindTransform }
   },
   theme: {
-    extend: {},
+    extend: {
+      maxWidth: {
+        '36': '9rem',
+      }
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {
