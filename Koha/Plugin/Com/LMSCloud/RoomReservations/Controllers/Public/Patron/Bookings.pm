@@ -10,6 +10,7 @@ use C4::Context ();
 
 use Try::Tiny     qw( catch try );
 use SQL::Abstract ();
+use Time::Piece   ();
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
     send_email_confirmation
@@ -99,19 +100,22 @@ sub delete {
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        my $start = substr( $booking->{'start'}, 0, 16 );
-        $start =~ s/ /T/;
-        my $end = substr( $booking->{'end'}, 0, 16 );
-        $end =~ s/ /T/;
-        send_email_confirmation(
-            {   borrowernumber    => $booking->{'borrowernumber'},
-                roomid            => $booking->{'roomid'},
-                start             => $start,
-                end               => $end,
-                letter_code       => 'ROOM_CANCELLATION',
-                send_confirmation => 1,
-            }
-        );
+        my $end_epoch = Time::Piece->strptime( $booking->{'end'}, '%Y-%m-%d %H:%M:%S' )->epoch;
+        if ( $end_epoch >= time() ) {
+            my $start = substr( $booking->{'start'}, 0, 16 );
+            $start =~ s/ /T/;
+            my $end = substr( $booking->{'end'}, 0, 16 );
+            $end =~ s/ /T/;
+            send_email_confirmation(
+                {   borrowernumber    => $booking->{'borrowernumber'},
+                    roomid            => $booking->{'roomid'},
+                    start             => $start,
+                    end               => $end,
+                    letter_code       => 'ROOM_CANCELLATION',
+                    send_confirmation => 1,
+                }
+            );
+        }
 
         return $c->render( status => 204, openapi => q{} );
     }
