@@ -4,6 +4,7 @@ import { TemplateResult, html } from "lit";
 import LMSPatronSearch from "../../../components/custom/LMSPatronSearch";
 import { InputType, InputTypeValue, ModalField, SelectOption, TaggedData } from "../../../types/common";
 import { dayMapping } from "../../../views/StaffOpenHoursView";
+import { composePatronName } from "../../bookingDisplay";
 import { __, localeFull } from "../../translate";
 import { formatDatetimeByLocale } from "../datetimeConverters";
 import Checkbox from "./inputs/Checkbox";
@@ -81,13 +82,13 @@ export class InputConverter {
                     return html``;
                 }
 
-                const { firstname, surname, cardnumber } = borrower;
+                const { cardnumber } = borrower;
                 return html`
                     <div class="flex items-center gap-1 whitespace-nowrap">
                         <a
                             class="link-primary link"
                             href="/cgi-bin/koha/members/moremember.pl?borrowernumber=${borrowernumber}"
-                            >${firstname}&nbsp;${surname}</a
+                            >${composePatronName(borrower)}</a
                         >
                         <div class="borrowernumber badge">
                             ${litFontawesome(faHashtag, {

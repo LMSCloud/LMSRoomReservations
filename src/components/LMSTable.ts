@@ -1,4 +1,4 @@
-import { faEdit, faSave, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faEdit, faSave, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, property, query, queryAll, state } from "lit/decorators.js";
@@ -46,6 +46,11 @@ export default class LMSTable extends LitElement {
     @property({ type: Boolean, attribute: "is-deletable" })
     protected isDeletable = false;
 
+    @property({ type: Boolean, attribute: "is-expandable" })
+    protected isExpandable = false;
+
+    @state() private expandedUUIDs = new Set<string>();
+
     @property({ type: Object }) queryBuilder?: QueryBuilder;
 
     @property({ type: Array }) nextPage: Column[] | undefined = undefined;
@@ -78,6 +83,8 @@ export default class LMSTable extends LitElement {
     protected sortableColumns: SortableColumns = ["id"];
 
     protected unsortableColumns: string[] = [];
+
+    protected leftAlignedColumns: string[] = [];
 
     protected hasControls = true;
 
@@ -141,6 +148,31 @@ export default class LMSTable extends LitElement {
 
             input:not([type="checkbox"]) {
                 padding: 1.5rem 0.75rem;
+            }
+
+            .expansion-pane {
+                background: rgba(0, 0, 0, 0.025);
+                border-top: 1px solid rgba(0, 0, 0, 0.06);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+                padding: 1rem 1.5rem;
+            }
+
+            .expansion-label {
+                color: rgba(0, 0, 0, 0.55);
+                font-size: 0.75rem;
+                font-weight: 600;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+            }
+
+            .expansion-value {
+                word-break: break-word;
+                white-space: normal;
+            }
+
+            .expansion-empty {
+                color: rgba(0, 0, 0, 0.35);
+                font-style: italic;
             }
 
             input:not([type="checkbox"]):focus,
@@ -240,6 +272,65 @@ export default class LMSTable extends LitElement {
 
     public handleSave(e: Event) {
         console.info(e, this.notImplementedInBaseMessage);
+    }
+
+    private toggleExpandFor(uuid: string) {
+        if (!uuid) {
+            return;
+        }
+
+        const next = new Set(this.expandedUUIDs);
+        if (next.has(uuid)) {
+            next.delete(uuid);
+        } else {
+            next.add(uuid);
+        }
+        this.expandedUUIDs = next;
+    }
+
+    protected formatExpansionValue(value: unknown): unknown {
+        if (value === null || value === undefined || value === "") {
+            return html`<span class="expansion-empty">${__("—")}</span>`;
+        }
+        if (typeof value === "boolean") {
+            return value ? __("Yes") : __("No");
+        }
+        if (typeof value === "string" || typeof value === "number") {
+            return String(value);
+        }
+        if (Array.isArray(value)) {
+            return value
+                .map((item) => (item && typeof item === "object" && "name" in item ? (item as any).name : String(item)))
+                .join(", ");
+        }
+        return String(value);
+    }
+
+    protected getExpansionFields(datum: Column): Array<{ label: unknown; value: unknown }> {
+        const raw = (datum as any)._raw ?? datum;
+        return this.headers.map((header) => ({
+            label: __(header),
+            value: this.formatExpansionValue(raw[header]),
+        }));
+    }
+
+    protected renderExpansionContent(datum: Column) {
+        const fields = this.getExpansionFields(datum);
+        return html`
+            <div class="expansion-pane">
+                <dl class="grid grid-cols-1 gap-x-8 gap-y-3 md:grid-cols-2">
+                    ${map(
+                        fields,
+                        (field) => html`
+                            <div class="flex flex-col gap-1">
+                                <dt class="expansion-label">${field.label}</dt>
+                                <dd class="expansion-value">${field.value}</dd>
+                            </div>
+                        `,
+                    )}
+                </dl>
+            </div>
+        `;
     }
 
     public handleDelete(e: Event) {
@@ -385,6 +476,20 @@ export default class LMSTable extends LitElement {
     protected override willUpdate(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
         super.willUpdate(_changedProperties);
         this.sortColumns();
+        this.assignUUIDs();
+    }
+
+    private assignUUIDs() {
+        this.data.forEach((datum) => {
+            if (!datum["uuid"]) {
+                let newUUID = this.generateRandomUUID();
+                while (this.UUIDs.has(newUUID)) {
+                    newUUID = this.generateRandomUUID();
+                }
+                datum["uuid"] = newUUID;
+                this.UUIDs.add(newUUID);
+            }
+        });
     }
 
     protected override firstUpdated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
@@ -522,21 +627,6 @@ export default class LMSTable extends LitElement {
         ].join("-");
     }
 
-    protected override updated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
-        if (_changedProperties.has("data")) {
-            this.data.forEach((datum) => {
-                if (!datum["uuid"]) {
-                    let newUUID = this.generateRandomUUID();
-                    while (this.UUIDs.has(newUUID)) {
-                        newUUID = this.generateRandomUUID();
-                    }
-                    datum["uuid"] = newUUID;
-                    this.UUIDs.add(newUUID);
-                }
-            });
-        }
-    }
-
     override render() {
         if (!this.data.length) {
             html`<h1 class="text-center">${this.emptyTableMessage}</h1>`;
@@ -599,87 +689,134 @@ export default class LMSTable extends LitElement {
                                 ${this.isEditable
                                     ? html`<th class="text-center text-base font-medium">${__("actions")}</th>`
                                     : nothing}
+                                ${this.isExpandable
+                                    ? html`<th class="text-center text-base font-medium">${__("details")}</th>`
+                                    : nothing}
                             </tr>
                         </thead>
                         <tbody>
                             ${repeat(
                                 this.data,
                                 (datum) => datum["uuid"],
-                                (datum) => html`
-                                    <tr class="h-full">
-                                        ${map(this.headers, (header) => {
-                                            const value = datum[header];
-                                            const titleText =
-                                                typeof value === "string"
-                                                    ? value
-                                                    : typeof value === "number"
-                                                      ? String(value)
-                                                      : "";
-                                            return html`<td class="p-0 text-center" title="${titleText || ""}">
-                                                ${value}
-                                            </td>`;
-                                        })}
-                                        ${this.isEditable
+                                (datum) => {
+                                    const uuid = datum["uuid"] as string;
+                                    const isExpanded = this.expandedUUIDs.has(uuid);
+                                    const colSpan =
+                                        this.headers.length + (this.isEditable ? 1 : 0) + (this.isExpandable ? 1 : 0);
+                                    return html`
+                                        <tr class="h-full">
+                                            ${map(this.headers, (header) => {
+                                                const value = datum[header];
+                                                const titleText =
+                                                    typeof value === "string"
+                                                        ? value
+                                                        : typeof value === "number"
+                                                          ? String(value)
+                                                          : "";
+                                                const alignClass = this.leftAlignedColumns.includes(header)
+                                                    ? "px-2 py-0 text-left"
+                                                    : "p-0 text-center";
+                                                return html`<td class=${alignClass} title="${titleText || ""}">
+                                                    ${value}
+                                                </td>`;
+                                            })}
+                                            ${this.isEditable
+                                                ? html`
+                                                      <td class="p-0 text-center">
+                                                          <div class="join !flex">
+                                                              <button
+                                                                  @click=${this.toggleEdit}
+                                                                  type="button"
+                                                                  class="btn-edit btn join-item flex-1 rounded-none"
+                                                                  aria-label=${attr__("Edit")}
+                                                              >
+                                                                  <span
+                                                                      class="start-edit pointer-events-none flex gap-2"
+                                                                      >${litFontawesome(faEdit, {
+                                                                          className: "w-4 h-4 inline-block sm:hidden",
+                                                                      })}
+                                                                      <span class="hidden sm:inline"
+                                                                          >${__("Edit")}</span
+                                                                      ></span
+                                                                  >
+                                                                  <span
+                                                                      class="abort-edit pointer-events-none flex hidden gap-2"
+                                                                      >${litFontawesome(faTimes, {
+                                                                          className: "w-4 h-4 inline-block sm:hidden",
+                                                                      })}
+                                                                      <span class="hidden sm:inline"
+                                                                          >${__("Abort")}</span
+                                                                      ></span
+                                                                  >
+                                                              </button>
+                                                              <button
+                                                                  @click=${this.handleSave}
+                                                                  type="button"
+                                                                  class="btn join-item flex-1 rounded-none"
+                                                                  aria-label=${attr__("Save")}
+                                                              >
+                                                                  ${litFontawesome(faSave, {
+                                                                      className: "w-4 h-4 inline-block sm:hidden",
+                                                                  })}
+                                                                  <span class="hidden sm:inline">${__("Save")}</span>
+                                                              </button>
+                                                              <button
+                                                                  @click=${this.handleConfirm}
+                                                                  type="button"
+                                                                  class="${classMap({
+                                                                      hidden: !this.isDeletable,
+                                                                  })} btn join-item flex-1 rounded-none"
+                                                                  aria-label=${attr__("Delete")}
+                                                              >
+                                                                  ${litFontawesome(faTrash, {
+                                                                      className: "w-4 h-4 inline-block sm:hidden",
+                                                                  })}
+                                                                  <span class="hidden sm:inline">${__("Delete")}</span>
+                                                              </button>
+                                                              <lms-confirmation-modal
+                                                                  @confirm=${this.handleDelete}
+                                                              ></lms-confirmation-modal>
+                                                          </div>
+                                                      </td>
+                                                  `
+                                                : nothing}
+                                            ${this.isExpandable
+                                                ? html`
+                                                      <td class="p-0 text-center">
+                                                          <div class="join !flex">
+                                                              <button
+                                                                  @click=${() => this.toggleExpandFor(uuid)}
+                                                                  type="button"
+                                                                  class="btn join-item flex-1 rounded-none"
+                                                                  aria-expanded=${isExpanded ? "true" : "false"}
+                                                                  aria-label=${attr__("Toggle details")}
+                                                              >
+                                                                  ${litFontawesome(
+                                                                      isExpanded ? faChevronUp : faChevronDown,
+                                                                      { className: "w-4 h-4 inline-block sm:hidden" },
+                                                                  )}
+                                                                  <span class="hidden sm:inline"
+                                                                      >${isExpanded
+                                                                          ? __("Collapse")
+                                                                          : __("Expand")}</span
+                                                                  >
+                                                              </button>
+                                                          </div>
+                                                      </td>
+                                                  `
+                                                : nothing}
+                                        </tr>
+                                        ${this.isExpandable && isExpanded
                                             ? html`
-                                                  <td class="p-0 text-center">
-                                                      <div class="join !flex">
-                                                          <button
-                                                              @click=${this.toggleEdit}
-                                                              type="button"
-                                                              class="btn-edit btn join-item flex-1 rounded-none"
-                                                              aria-label=${attr__("Edit")}
-                                                          >
-                                                              <span class="start-edit pointer-events-none flex gap-2"
-                                                                  >${litFontawesome(faEdit, {
-                                                                      className: "w-4 h-4 inline-block sm:hidden",
-                                                                  })}
-                                                                  <span class="hidden sm:inline"
-                                                                      >${__("Edit")}</span
-                                                                  ></span
-                                                              >
-                                                              <span
-                                                                  class="abort-edit pointer-events-none flex hidden gap-2"
-                                                                  >${litFontawesome(faTimes, {
-                                                                      className: "w-4 h-4 inline-block sm:hidden",
-                                                                  })}
-                                                                  <span class="hidden sm:inline"
-                                                                      >${__("Abort")}</span
-                                                                  ></span
-                                                              >
-                                                          </button>
-                                                          <button
-                                                              @click=${this.handleSave}
-                                                              type="button"
-                                                              class="btn join-item flex-1 rounded-none"
-                                                              aria-label=${attr__("Save")}
-                                                          >
-                                                              ${litFontawesome(faSave, {
-                                                                  className: "w-4 h-4 inline-block sm:hidden",
-                                                              })}
-                                                              <span class="hidden sm:inline">${__("Save")}</span>
-                                                          </button>
-                                                          <button
-                                                              @click=${this.handleConfirm}
-                                                              type="button"
-                                                              class="${classMap({
-                                                                  hidden: !this.isDeletable,
-                                                              })} btn join-item flex-1 rounded-none"
-                                                              aria-label=${attr__("Delete")}
-                                                          >
-                                                              ${litFontawesome(faTrash, {
-                                                                  className: "w-4 h-4 inline-block sm:hidden",
-                                                              })}
-                                                              <span class="hidden sm:inline">${__("Delete")}</span>
-                                                          </button>
-                                                          <lms-confirmation-modal
-                                                              @confirm=${this.handleDelete}
-                                                          ></lms-confirmation-modal>
-                                                      </div>
-                                                  </td>
+                                                  <tr class="expansion">
+                                                      <td colspan=${colSpan} class="p-0">
+                                                          ${this.renderExpansionContent(datum)}
+                                                      </td>
+                                                  </tr>
                                               `
                                             : nothing}
-                                    </tr>
-                                `,
+                                    `;
+                                },
                             )}
                         </tbody>
                     </table>

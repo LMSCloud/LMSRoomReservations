@@ -1,8 +1,11 @@
-import { PropertyValueMap } from "lit";
+import { PropertyValueMap, html } from "lit";
 import { customElement, property, queryAll } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
 import { requestHandler } from "../lib/RequestHandler";
-import { Input } from "../types/common";
+import { extractEquipmentItems, findRoomName, listEquipmentNames, patronDisplay } from "../lib/bookingDisplay";
+import { formatDatetimeByLocale } from "../lib/converters/datetimeConverters";
+import { __, localeFull } from "../lib/translate";
+import { Column, Input } from "../types/common";
 
 type EquipmentSelection = [number, any[]];
 
@@ -136,7 +139,9 @@ export default class LMSBookingsTable extends LMSTable {
         ];
         this.isEditable = true;
         this.isDeletable = true;
+        this.isExpandable = true;
         this.hasControls = false;
+        this.leftAlignedColumns = ["purpose_of_use"];
     }
 
     override connectedCallback() {
@@ -148,15 +153,43 @@ export default class LMSBookingsTable extends LMSTable {
         this.renderInputs();
     }
 
+    protected override getExpansionFields(datum: Column) {
+        const raw = (datum as any)._raw;
+        if (!raw) {
+            return super.getExpansionFields(datum);
+        }
+
+        const borrower = this.borrowers[raw.borrowernumber];
+        const equipmentItems = extractEquipmentItems(raw.equipment);
+        const equipmentNames = listEquipmentNames(this.equipment, equipmentItems);
+
+        const emptyMark = html`<span class="expansion-empty">${__("—")}</span>`;
+        return [
+            { label: __("Booking ID"), value: String(raw.bookingid) },
+            { label: __("Patron"), value: patronDisplay(borrower, raw.borrowernumber) },
+            { label: __("Room"), value: findRoomName(this.rooms, raw.roomid) },
+            { label: __("Start"), value: formatDatetimeByLocale(raw.start, localeFull) },
+            { label: __("End"), value: formatDatetimeByLocale(raw.end, localeFull) },
+            { label: __("Purpose of use"), value: raw.purpose_of_use || emptyMark },
+            { label: __("Equipment"), value: equipmentNames || emptyMark },
+            { label: __("Blacked out"), value: raw.blackedout ? __("Yes") : __("No") },
+            { label: __("Created"), value: formatDatetimeByLocale(raw.created, localeFull) },
+            { label: __("Updated at"), value: formatDatetimeByLocale(raw.updated_at, localeFull) },
+        ];
+    }
+
     private renderInputs() {
-        this.data = this.bookings.map((bookings) => {
-            return Object.fromEntries(
-                this.getColumnData(bookings, [
+        this.data = this.bookings.map((booking) => {
+            const converted = Object.fromEntries(
+                this.getColumnData(booking, [
                     ["roomid", this.rooms],
                     ["borrowernumber", this.borrowers],
                     ["equipment", this.equipment],
                 ]),
             );
+            (converted as any)._raw = booking;
+            (converted as any).uuid = `booking-${booking.bookingid}`;
+            return converted;
         });
     }
 

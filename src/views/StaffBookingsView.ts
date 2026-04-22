@@ -129,6 +129,7 @@ export default class StaffBookingsView extends LitElement {
                 .borrowers=${this.borrowers ?? []}
                 .equipment=${this.equipment ?? []}
                 @deleted=${this.fetchUpdate}
+                @updated=${this.fetchUpdate}
             ></lms-bookings-table>
             <lms-bookings-modal
                 .rooms=${this.rooms ?? []}
