@@ -167,9 +167,7 @@ export class InputConverter {
             updated_at: (value) =>
                 html`<span class="whitespace-nowrap">${formatDatetimeByLocale(value as string, localeFull)}</span>`,
             purpose_of_use: (value) =>
-                html`<span
-                    class="inline-block max-w-36 overflow-hidden text-ellipsis whitespace-nowrap align-middle"
-                    title="${value}"
+                html`<span class="block overflow-hidden text-ellipsis whitespace-nowrap" title="${value}"
                     >${value}</span
                 >`,
             value: (value, data) => {

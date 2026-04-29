@@ -166,8 +166,8 @@ export default class LMSTable extends LitElement {
             }
 
             .expansion-value {
-                word-break: break-word;
-                white-space: normal;
+                overflow-wrap: anywhere;
+                white-space: pre-wrap;
             }
 
             .expansion-empty {
@@ -714,7 +714,7 @@ export default class LMSTable extends LitElement {
                                                           ? String(value)
                                                           : "";
                                                 const alignClass = this.leftAlignedColumns.includes(header)
-                                                    ? "px-2 py-0 text-left"
+                                                    ? "max-w-xs px-2 py-0 text-left"
                                                     : "p-0 text-center";
                                                 return html`<td class=${alignClass} title="${titleText || ""}">
                                                     ${value}
