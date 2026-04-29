@@ -477,7 +477,7 @@ export default class LMSBookie extends LitElement {
                                     type="button"
                                     class="btn btn-circle btn-ghost btn-sm"
                                     data-dismiss="alert"
-                                    aria-label="Close"
+                                    aria-label=${attr__("Close")}
                                 >
                                     ${litFontawesome(faTimes, { className: "inline-block w-4 h-4" })}
                                 </button>
@@ -641,7 +641,7 @@ export default class LMSBookie extends LitElement {
                                         type="button"
                                         class="btn btn-circle btn-ghost btn-sm"
                                         data-dismiss="alert"
-                                        aria-label="Close"
+                                        aria-label=${attr__("Close")}
                                     >
                                         ${litFontawesome(faTimes, { className: "inline-block w-4 h-4" })}
                                     </button>
