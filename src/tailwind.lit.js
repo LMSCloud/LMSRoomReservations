@@ -718,6 +718,14 @@ html {
     color: hsl(var(--nc) / var(--tw-text-opacity));
   }
 
+  
+.menu li > *:not(ul):not(.menu-title):not(details).\\!active {
+    --tw-bg-opacity: 1 !important;
+    background-color: hsl(var(--n) / var(--tw-bg-opacity)) !important;
+    --tw-text-opacity: 1 !important;
+    color: hsl(var(--nc) / var(--tw-text-opacity)) !important;
+  }
+
   .table tr.hover:hover,
   .table tr.hover:nth-child(even):hover {
     --tw-bg-opacity: 1;
@@ -1820,6 +1828,12 @@ html {
   color: hsl(var(--er) / var(--tw-text-opacity));
 }
 
+.btm-nav > *:where(.\\!active) {
+  border-top-width: 2px !important;
+  --tw-bg-opacity: 1 !important;
+  background-color: hsl(var(--b1) / var(--tw-bg-opacity)) !important;
+}
+
 .btm-nav > *:where(.active) {
   border-top-width: 2px;
   --tw-bg-opacity: 1;
@@ -2629,6 +2643,14 @@ details.collapse summary::-webkit-details-marker {
   color: hsl(var(--nc) / var(--tw-text-opacity));
 }
 
+
+.menu li > *:not(ul):not(.menu-title):not(details).\\!active {
+  --tw-bg-opacity: 1 !important;
+  background-color: hsl(var(--n) / var(--tw-bg-opacity)) !important;
+  --tw-text-opacity: 1 !important;
+  color: hsl(var(--nc) / var(--tw-text-opacity)) !important;
+}
+
 .menu :where(li > details > summary)::-webkit-details-marker {
   display: none;
 }
@@ -2979,11 +3001,29 @@ details.collapse summary::-webkit-details-marker {
   background-color: hsl(var(--b2) / var(--tw-bg-opacity));
 }
 
+.table tr.\\!active,
+  .table tr.\\!active:nth-child(even) {
+  --tw-bg-opacity: 1 !important;
+  background-color: hsl(var(--b2) / var(--tw-bg-opacity)) !important;
+}
+
+.table-zebra tr.\\!active,
+    .table-zebra tr.\\!active:nth-child(even) {
+  --tw-bg-opacity: 1 !important;
+  background-color: hsl(var(--b3) / var(--tw-bg-opacity)) !important;
+}
+
 .table-zebra tr.active,
     .table-zebra tr.active:nth-child(even),
     .table-zebra-zebra tbody tr:nth-child(even) {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--b3) / var(--tw-bg-opacity));
+}
+
+.table-zebra tr.\\!active,
+    .table-zebra tr.\\!active:nth-child(even) {
+  --tw-bg-opacity: 1 !important;
+  background-color: hsl(var(--b3) / var(--tw-bg-opacity)) !important;
 }
 
 .table :where(thead, tbody) :where(tr:not(:last-child)),
@@ -3159,16 +3199,32 @@ details.collapse summary::-webkit-details-marker {
   padding-right: 0.688rem;
 }
 
+.btm-nav-xs > *:where(.\\!active) {
+  border-top-width: 1px !important;
+}
+
 .btm-nav-xs > *:where(.active) {
   border-top-width: 1px;
+}
+
+.btm-nav-sm > *:where(.\\!active) {
+  border-top-width: 2px !important;
 }
 
 .btm-nav-sm > *:where(.active) {
   border-top-width: 2px;
 }
 
+.btm-nav-md > *:where(.\\!active) {
+  border-top-width: 2px !important;
+}
+
 .btm-nav-md > *:where(.active) {
   border-top-width: 2px;
+}
+
+.btm-nav-lg > *:where(.\\!active) {
+  border-top-width: 4px !important;
 }
 
 .btm-nav-lg > *:where(.active) {
@@ -4139,6 +4195,10 @@ details.collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
+.max-h-60 {
+  max-height: 15rem;
+}
+
 .max-h-fit {
   max-height: -moz-fit-content;
   max-height: fit-content;
@@ -4210,10 +4270,6 @@ details.collapse summary::-webkit-details-marker {
 .min-w-min {
   min-width: -moz-min-content;
   min-width: min-content;
-}
-
-.max-w-36 {
-  max-width: 9rem;
 }
 
 .max-w-min {
@@ -4335,6 +4391,10 @@ details.collapse summary::-webkit-details-marker {
   overflow-x: auto;
 }
 
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
 .overflow-y-clip {
   overflow-y: clip;
 }
@@ -4399,6 +4459,11 @@ details.collapse summary::-webkit-details-marker {
 .border-base-200 {
   --tw-border-opacity: 1;
   border-color: hsl(var(--b2) / var(--tw-border-opacity, 1));
+}
+
+.border-base-300 {
+  --tw-border-opacity: 1;
+  border-color: hsl(var(--b3) / var(--tw-border-opacity, 1));
 }
 
 .border-gray-300 {
@@ -4581,6 +4646,10 @@ details.collapse summary::-webkit-details-marker {
   text-transform: none;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .text-base-content\\/60 {
   color: hsl(var(--bc) / 0.6);
 }
@@ -4609,6 +4678,10 @@ details.collapse summary::-webkit-details-marker {
 
 .opacity-100 {
   opacity: 1;
+}
+
+.opacity-60 {
+  opacity: 0.6;
 }
 
 .shadow {
