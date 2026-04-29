@@ -518,6 +518,7 @@ export default class LMSBookie extends LitElement {
                                         name="start-datetime"
                                         class="input input-bordered w-full"
                                         aria-describedby="booking-help"
+                                        min=${dayjs().format("YYYY-MM-DDTHH:mm")}
                                         ?disabled=${!this.borrowernumber}
                                         @change=${this.handleDateChange}
                                         required
