@@ -80,7 +80,8 @@ export default class LMSBookie extends LitElement {
             this.purposeOfUseInput,
             this.confirmationEmailInput,
         ];
-        const [roomid, start, duration, purposeOfUse, confirmation] = inputs.map((input) => input.value);
+        const [roomid, start, duration, purposeOfUse] = inputs.map((input) => input.value);
+        const confirmation = this.confirmationEmailInput.checked;
 
         /** We filter for checked checkbox inputs here. */
         const equipment = Array.from(this.equipmentItemInputs).reduce((accumulator: string[], equipmentInput) => {
@@ -100,7 +101,7 @@ export default class LMSBookie extends LitElement {
             end,
             blackedout: 0,
             equipment,
-            send_confirmation: this.enforceEmailNotification ? 1 : confirmation || 0,
+            send_confirmation: this.enforceEmailNotification || confirmation ? 1 : 0,
             letter_code: "ROOM_RESERVATION",
             purpose_of_use: purposeOfUse || null,
         });
