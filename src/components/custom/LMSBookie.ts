@@ -570,6 +570,7 @@ export default class LMSBookie extends LitElement {
                                         id="purpose-of-use"
                                         name="purpose-of-use"
                                         class="input input-bordered w-full"
+                                        maxlength="255"
                                         ?disabled=${!this.borrowernumber}
                                         placeholder=${attr__("Would you like to communicate something to the staff?")}
                                     />

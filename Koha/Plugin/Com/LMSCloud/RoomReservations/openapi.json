@@ -81,6 +81,7 @@
                   "type": "string"
                 },
                 "purpose_of_use": {
+                  "maxLength": 255,
                   "type": [
                     "string",
                     "null"
@@ -427,6 +428,7 @@
                 "type": "string"
               },
               "purpose_of_use": {
+                "maxLength": 255,
                 "type": [
                   "string",
                   "null"
@@ -2904,6 +2906,7 @@
                 "type": "string"
               },
               "purpose_of_use": {
+                "maxLength": 255,
                 "type": [
                   "string",
                   "null"
