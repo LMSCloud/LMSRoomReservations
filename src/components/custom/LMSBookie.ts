@@ -110,6 +110,10 @@ export default class LMSBookie extends LitElement {
             inputs.forEach((input) => {
                 input.value = "";
             });
+            this.equipmentItemInputs.forEach((equipmentInput) => {
+                equipmentInput.checked = false;
+            });
+            this.confirmationEmailInput.checked = this.enforceEmailNotification || true;
 
             this.alert = {
                 active: true,
