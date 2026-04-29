@@ -4204,7 +4204,10 @@
                   "type": "string"
                 },
                 "value": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
@@ -4262,7 +4265,10 @@
                 "type": "string"
               },
               "value": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "type": "object"
@@ -5219,7 +5225,8 @@
                   },
                   "type": [
                     "string",
-                    "array"
+                    "array",
+                    "null"
                   ]
                 }
               },
@@ -5590,7 +5597,10 @@
                 "type": "string"
               },
               "value": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "type": "object"
