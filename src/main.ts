@@ -4,6 +4,7 @@ import LMSSearch from "./components/LMSSearch";
 import LMSTable from "./components/LMSTable";
 import LMSToast from "./components/LMSToast";
 import LMSBookie from "./components/custom/LMSBookie";
+import LMSCombobox from "./components/custom/LMSCombobox";
 import LMSEquipmentItem from "./components/custom/LMSEquipmentItem";
 import LMSPatronSearch from "./components/custom/LMSPatronSearch";
 import LMSRoom from "./components/custom/LMSRoom";
@@ -33,6 +34,7 @@ export {
     LMSBookingsModal,
     LMSBookingsTable,
     LMSCalendar,
+    LMSCombobox,
     LMSConfirmationModal,
     LMSEquipmentItem,
     LMSEquipmentModal,

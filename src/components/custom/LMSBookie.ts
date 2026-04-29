@@ -4,13 +4,13 @@ import dayjs from "dayjs";
 import { LitElement, PropertyValueMap, TemplateResult, html, nothing } from "lit";
 import { customElement, property, query, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
 import { requestHandler } from "../../lib/RequestHandler";
 import { __, attr__ } from "../../lib/translate";
 import { tailwindStyles } from "../../tailwind.lit";
 import { Deviation } from "../../types/common";
 import { dayMapping } from "../../views/StaffOpenHoursView";
+import LMSCombobox from "./LMSCombobox";
 
 type Alert = {
     active: boolean;
@@ -62,7 +62,7 @@ export default class LMSBookie extends LitElement {
 
     @query("#start-datetime") startDatetimeInput!: HTMLInputElement;
 
-    @query("#duration") durationInput!: HTMLInputElement;
+    @query("#duration") durationCombobox!: LMSCombobox;
 
     @query("#purpose-of-use") purposeOfUseInput!: HTMLInputElement;
 
@@ -77,14 +77,10 @@ export default class LMSBookie extends LitElement {
 
     private async handleSubmit(e: SubmitEvent) {
         e.preventDefault();
-        const inputs = [
-            this.roomSelect,
-            this.startDatetimeInput,
-            this.durationInput,
-            this.purposeOfUseInput,
-            this.confirmationEmailInput,
-        ];
-        const [roomid, start, duration, purposeOfUse] = inputs.map((input) => input.value);
+        const roomid = this.roomSelect.value;
+        const start = this.startDatetimeInput.value;
+        const duration = this.durationCombobox.value;
+        const purposeOfUse = this.purposeOfUseInput.value;
         const confirmation = this.confirmationEmailInput.checked;
 
         /** We filter for checked checkbox inputs here. */
@@ -111,9 +107,10 @@ export default class LMSBookie extends LitElement {
         });
 
         if (response.ok) {
-            inputs.forEach((input) => {
-                input.value = "";
-            });
+            this.roomSelect.value = "";
+            this.startDatetimeInput.value = "";
+            this.purposeOfUseInput.value = "";
+            this.durationCombobox.reset();
             this.equipmentItemInputs.forEach((equipmentInput) => {
                 equipmentInput.checked = false;
             });
@@ -145,29 +142,20 @@ export default class LMSBookie extends LitElement {
         this.alert = undefined;
     }
 
-    /**
-     * Check if this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime has a value, if not, output nothing
-     * Else, create an array with chunks of 30, using this._selectedRoom.maxbookabletime or this._defaultMaxBookingTime,
-     * if the value is not divisible by 30, add the value as the last element of the array,
-     * and then use map function to create <option> elements with each value of the array
-     * @param selectedRoom
-     * @param defaultMaxBookingTime
-     * @returns
-     */
-    private renderTimeOptionsMaybe() {
+    private get durationOptions() {
         const maxBookingTime = this.selectedRoom?.maxbookabletime || this.defaultMaxBookingTime;
         const min = Math.max(1, this.bookingTimeMin);
         const step = Math.max(1, this.bookingTimeStep);
 
         if (!maxBookingTime || maxBookingTime < min) {
-            return nothing;
+            return [];
         }
 
-        const options: number[] = [];
+        const options: { value: string; label: string }[] = [];
         for (let value = min; value <= maxBookingTime; value += step) {
-            options.push(value);
+            options.push({ value: String(value), label: String(value) });
         }
-        return options.map((timespan) => html`<option>${timespan}</option>`);
+        return options;
     }
 
     private handleRoomChange(e: Event) {
@@ -537,21 +525,21 @@ export default class LMSBookie extends LitElement {
                                     <label class="label" for="duration">
                                         <span class="label-text">${__("Duration")}</span></label
                                     >
-                                    <input
-                                        type="number"
-                                        list="durations"
+                                    <lms-combobox
                                         id="duration"
                                         name="duration"
-                                        class="input input-bordered w-full"
-                                        aria-describedby="booking-help"
+                                        input-type="number"
                                         placeholder=${attr__("In minutes, e.g. 60")}
-                                        min=${this.bookingTimeMin}
-                                        step=${this.bookingTimeStep}
-                                        max=${ifDefined(this.selectedRoom?.maxbookabletime)}
+                                        min=${String(this.bookingTimeMin)}
+                                        step=${String(this.bookingTimeStep)}
+                                        max=${this.selectedRoom?.maxbookabletime !== undefined
+                                            ? String(this.selectedRoom.maxbookabletime)
+                                            : nothing}
                                         ?disabled=${!this.borrowernumber}
                                         required
-                                    />
-                                    <datalist id="durations">${this.renderTimeOptionsMaybe()}</datalist>
+                                        aria-label=${attr__("Duration")}
+                                        .options=${this.durationOptions}
+                                    ></lms-combobox>
                                 </div>
                                 <div class=${classMap({ hidden: !shouldDisplayEquipment })}>
                                     <div class="divider">
