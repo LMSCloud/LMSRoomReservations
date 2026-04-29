@@ -44,6 +44,10 @@ export default class LMSBookie extends LitElement {
 
     @property({ type: Number }) defaultMaxBookingTime: number = 0;
 
+    @property({ type: Number }) bookingTimeMin: number = 30;
+
+    @property({ type: Number }) bookingTimeStep: number = 30;
+
     @property({ type: Object }) selectedRoom?: any;
 
     @state() alert?: Alert;
@@ -152,13 +156,18 @@ export default class LMSBookie extends LitElement {
      */
     private renderTimeOptionsMaybe() {
         const maxBookingTime = this.selectedRoom?.maxbookabletime || this.defaultMaxBookingTime;
+        const min = Math.max(1, this.bookingTimeMin);
+        const step = Math.max(1, this.bookingTimeStep);
 
-        return maxBookingTime
-            ? Array.from(
-                  { length: Math.floor(maxBookingTime / 30) + (maxBookingTime % 30 === 0 ? 0 : 1) },
-                  (_, i) => (i + 1) * 30,
-              ).map((timespan) => html`<option>${timespan}</option>`)
-            : nothing;
+        if (!maxBookingTime || maxBookingTime < min) {
+            return nothing;
+        }
+
+        const options: number[] = [];
+        for (let value = min; value <= maxBookingTime; value += step) {
+            options.push(value);
+        }
+        return options.map((timespan) => html`<option>${timespan}</option>`);
     }
 
     private handleRoomChange(e: Event) {
@@ -536,6 +545,8 @@ export default class LMSBookie extends LitElement {
                                         class="input input-bordered w-full"
                                         aria-describedby="booking-help"
                                         placeholder=${attr__("In minutes, e.g. 60")}
+                                        min=${this.bookingTimeMin}
+                                        step=${this.bookingTimeStep}
                                         max=${ifDefined(this.selectedRoom?.maxbookabletime)}
                                         ?disabled=${!this.borrowernumber}
                                         required

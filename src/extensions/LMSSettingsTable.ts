@@ -165,7 +165,14 @@ export default class LMSSettingsTable extends LitElement {
 
     private getSectionIdForSetting(settingName: string) {
         if (
-            ["default_max_booking_time", "absolute_reservation_limit", "daily_reservation_limit"].includes(settingName)
+            [
+                "default_max_booking_time",
+                "default_booking_time_min",
+                "default_booking_time_step",
+                "enforce_booking_time_grain",
+                "absolute_reservation_limit",
+                "daily_reservation_limit",
+            ].includes(settingName)
         ) {
             return "limits";
         }

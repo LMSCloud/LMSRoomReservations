@@ -34,6 +34,7 @@ BEGIN {
         has_passed
         is_koha_calendar_open
         has_open_hours_deviation
+        is_valid_duration_grain
     );
 }
 
@@ -78,6 +79,27 @@ sub has_passed {
 
     # Return true if the start time is in the past
     return $parsed_start_time < $current_time;
+}
+
+sub is_valid_duration_grain {
+    my ( $start_time, $end_time ) = @_;
+
+    return 1 if !$self->retrieve_data('enforce_booking_time_grain');
+
+    my $min  = $self->retrieve_data('default_booking_time_min')  || 0;
+    my $step = $self->retrieve_data('default_booking_time_step') || 0;
+
+    return 1 if $min <= 0 && $step <= 0;
+
+    my $start    = Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' );
+    my $end      = Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' );
+    my $duration = ( $end - $start )->minutes;
+
+    return 0 if $duration <= 0;
+    return 0 if $min > 0  && $duration < $min;
+    return 0 if $step > 0 && ( $duration - $min ) % $step != 0;
+
+    return 1;
 }
 
 sub is_bookable_time {

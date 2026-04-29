@@ -15,6 +15,8 @@ my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
 my @ALLOWED_SETTINGS = qw(
     default_max_booking_time
+    default_booking_time_min
+    default_booking_time_step
     enforce_email_notification
     calendar_default_view
     calendar_year_drill_target

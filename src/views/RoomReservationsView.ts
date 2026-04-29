@@ -37,6 +37,10 @@ export default class RoomReservationsView extends LitElement {
 
     private defaultMaxBookingtime: number = 0;
 
+    private bookingTimeMin: number = 30;
+
+    private bookingTimeStep: number = 30;
+
     private calendarDefaultView = "";
 
     private calendarYearDrillTarget = "";
@@ -150,6 +154,8 @@ export default class RoomReservationsView extends LitElement {
                     settings.map((s: { setting: string; value: string }) => [s.setting, s.value]),
                 );
                 this.defaultMaxBookingtime = Number(settingsMap.get("default_max_booking_time")) || 0;
+                this.bookingTimeMin = Number(settingsMap.get("default_booking_time_min")) || 30;
+                this.bookingTimeStep = Number(settingsMap.get("default_booking_time_step")) || 30;
                 this.calendarDefaultView = settingsMap.get("calendar_default_view") ?? "";
                 this.calendarYearDrillTarget = settingsMap.get("calendar_year_drill_target") ?? "";
                 this.calendarYearDensityMode = settingsMap.get("calendar_year_density_mode") ?? "";
@@ -244,6 +250,8 @@ export default class RoomReservationsView extends LitElement {
                     .rooms=${this.rooms}
                     .equipment=${this.equipment}
                     .defaultMaxBookingTime=${this.defaultMaxBookingtime}
+                    .bookingTimeMin=${this.bookingTimeMin}
+                    .bookingTimeStep=${this.bookingTimeStep}
                     .enforceEmailNotification=${this.enforceEmailNotification}
                     .selectedRoom=${this.selectedRoom}
                     class="order-2 w-full lg:order-1 lg:w-1/4"

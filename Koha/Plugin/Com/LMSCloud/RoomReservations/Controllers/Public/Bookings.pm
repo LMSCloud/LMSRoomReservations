@@ -20,6 +20,7 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
     has_conflicting_booking
     has_reached_reservation_limit
     has_passed
+    is_valid_duration_grain
 );
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
     send_email_confirmation
@@ -110,6 +111,13 @@ sub _check_and_save_booking {
             return $c->render(
                 status  => 400,
                 openapi => { error => __('The booking exceeds the maximum allowed time for the room.') }
+            );
+        }
+
+        if ( !is_valid_duration_grain( $body->{'start'}, $body->{'end'} ) ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('The booking duration does not match the allowed minimum and step.') }
             );
         }
 
