@@ -290,7 +290,7 @@ export default class LMSTable extends LitElement {
 
     protected formatExpansionValue(value: unknown): unknown {
         if (value === null || value === undefined || value === "") {
-            return html`<span class="expansion-empty">${__("—")}</span>`;
+            return html`<span class="expansion-empty">-</span>`;
         }
         if (typeof value === "boolean") {
             return value ? __("Yes") : __("No");

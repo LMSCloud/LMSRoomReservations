@@ -163,7 +163,7 @@ export default class LMSBookingsTable extends LMSTable {
         const equipmentItems = extractEquipmentItems(raw.equipment);
         const equipmentNames = listEquipmentNames(this.equipment, equipmentItems);
 
-        const emptyMark = html`<span class="expansion-empty">${__("—")}</span>`;
+        const emptyMark = html`<span class="expansion-empty">-</span>`;
         return [
             { label: __("Booking ID"), value: String(raw.bookingid) },
             { label: __("Patron"), value: patronDisplay(borrower, raw.borrowernumber) },
