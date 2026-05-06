@@ -82,39 +82,47 @@ export default class PatronsBookingsTable extends LitElement {
               `;
     }
 
-    private renderPatronsBookingsTableMaybe() {
-        return !this.patronsBookings.length
-            ? nothing
-            : html`
-                  <p>${__("This table shows your current room reservations")}.</p>
-                  <table class="table-striped table-bordered table-responsive-sm table">
-                      <thead>
-                          <tr>
-                              <th>${__("Room")}</th>
-                              <th>${__("Start")}</th>
-                              <th>${__("End")}</th>
-                              <th>${__("Purpose of Use")}</th>
-                              <th>${__("actions")}</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${repeat(
-                              this.patronsBookings,
-                              (booking) => booking.bookingid,
-                              (booking) => {
-                                  const { bookingid, roomid, start, end, purpose_of_use } = booking;
-                                  return html`
-                                      <tr>
-                                          <td>${this.rooms.find((room) => room.roomid == roomid).roomnumber}</td>
-                                          <td>${formatDatetimeByLocale(start, locale)}</td>
-                                          <td>${formatDatetimeByLocale(end, locale)}</td>
-                                          <td
-                                              class="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
-                                              title="${purpose_of_use}"
-                                          >
-                                              ${purpose_of_use}
-                                          </td>
-                                          <td>
+    private get upcomingBookings() {
+        const now = new Date();
+        return this.patronsBookings.filter((booking) => new Date(booking.end) >= now);
+    }
+
+    private get pastBookings() {
+        const now = new Date();
+        return this.patronsBookings.filter((booking) => new Date(booking.end) < now);
+    }
+
+    private renderBookingsTable(bookings: any[], withActions: boolean) {
+        return html`
+            <table class="table-striped table-bordered table-responsive-sm table">
+                <thead>
+                    <tr>
+                        <th>${__("Room")}</th>
+                        <th>${__("Start")}</th>
+                        <th>${__("End")}</th>
+                        <th>${__("Purpose of Use")}</th>
+                        ${withActions ? html`<th>${__("actions")}</th>` : nothing}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${repeat(
+                        bookings,
+                        (booking) => booking.bookingid,
+                        (booking) => {
+                            const { bookingid, roomid, start, end, purpose_of_use } = booking;
+                            return html`
+                                <tr>
+                                    <td>${this.rooms.find((room) => room.roomid == roomid).roomnumber}</td>
+                                    <td>${formatDatetimeByLocale(start, locale)}</td>
+                                    <td>${formatDatetimeByLocale(end, locale)}</td>
+                                    <td
+                                        class="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
+                                        title="${purpose_of_use}"
+                                    >
+                                        ${purpose_of_use}
+                                    </td>
+                                    ${withActions
+                                        ? html`<td>
                                               <button
                                                   class="btn"
                                                   data-id=${bookingid}
@@ -123,14 +131,42 @@ export default class PatronsBookingsTable extends LitElement {
                                                   <span class="initiate-delete">${__("Delete")}</span>
                                                   <span class="confirm-delete d-none">${__("Confirm")}</span>
                                               </button>
-                                          </td>
-                                      </tr>
-                                  `;
-                              },
-                          )}
-                      </tbody>
-                  </table>
-              `;
+                                          </td>`
+                                        : nothing}
+                                </tr>
+                            `;
+                        },
+                    )}
+                </tbody>
+            </table>
+        `;
+    }
+
+    private renderUpcomingMaybe() {
+        if (!this.patronsBookings.length) return nothing;
+        const upcoming = this.upcomingBookings;
+        return html`
+            <section>
+                <h2>${__("Upcoming reservations")}</h2>
+                ${upcoming.length
+                    ? html`
+                          <p>${__("This table shows your current room reservations")}.</p>
+                          ${this.renderBookingsTable(upcoming, true)}
+                      `
+                    : html`<p>${__("You have no upcoming reservations.")}</p>`}
+            </section>
+        `;
+    }
+
+    private renderPastMaybe() {
+        const past = this.pastBookings;
+        if (!past.length) return nothing;
+        return html`
+            <section>
+                <h2>${__("Past reservations")}</h2>
+                ${this.renderBookingsTable(past, false)}
+            </section>
+        `;
     }
 
     override render() {
@@ -142,7 +178,8 @@ export default class PatronsBookingsTable extends LitElement {
             <h1>${__("Your bookings")}</h1>
             ${this.renderInfoMaybe()}
             ${this.pageUrl ? html`<a class="py-2" href="${this.pageUrl}">${__("Make a reservation")}</a>` : nothing}
-            ${this.renderPatronsBookingsTableMaybe()}
+            ${this.renderUpcomingMaybe()}
+            ${this.renderPastMaybe()}
         `;
     }
 }
