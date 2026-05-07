@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-29 17:15+0200\n"
-"PO-Revision-Date: 2026-04-29 17:55+0200\n"
+"POT-Creation-Date: 2026-05-07 08:43+0200\n"
+"PO-Revision-Date: 2026-05-07 08:57+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -49,11 +49,12 @@ msgstr "Einen Raum buchen"
 
 #: src/components/custom/LMSBookie.ts:477
 #: src/components/custom/LMSBookie.ts:643 src/components/LMSModal.ts:284
+#: src/opac/PatronsBookingsTable.ts:200
 msgid "Close"
 msgstr "Schließen"
 
 #: src/components/custom/LMSBookie.ts:487
-#: src/extensions/LMSBookingsTable.ts:170 src/opac/PatronsBookingsTable.ts:93
+#: src/extensions/LMSBookingsTable.ts:170 src/opac/PatronsBookingsTable.ts:103
 msgid "Room"
 msgstr "Raum"
 
@@ -80,7 +81,7 @@ msgstr "In Minuten, bspw. 60"
 msgid "Equipment"
 msgstr "Gegenstände"
 
-#: src/components/custom/LMSBookie.ts:571 src/opac/PatronsBookingsTable.ts:96
+#: src/components/custom/LMSBookie.ts:571 src/opac/PatronsBookingsTable.ts:106
 msgid "Purpose of Use"
 msgstr "Verwendungszweck"
 
@@ -331,6 +332,7 @@ msgstr "Abbrechen"
 #: src/components/custom/LMSEquipmentItem.ts:79
 #: src/components/custom/LMSRoom.ts:88 src/components/LMSTable.ts:341
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:193
+#: src/opac/PatronsBookingsTable.ts:196
 msgid "Please confirm"
 msgstr "Bitte bestätigen"
 
@@ -376,7 +378,7 @@ msgstr "Kein Raum assoziiert"
 #: src/components/settings/LMSSettingSelect.ts:124
 #: src/components/settings/LMSSettingText.ts:114
 #: src/components/settings/LMSSettingToggle.ts:120
-#: src/views/StaffOpenHoursView.ts:345
+#: src/opac/PatronsBookingsTable.ts:210 src/views/StaffOpenHoursView.ts:345
 msgid "Abort"
 msgstr "Abbrechen"
 
@@ -390,7 +392,7 @@ msgstr "Bearbeiten"
 #: src/components/custom/LMSRoom.ts:221 src/components/LMSTable.ts:769
 #: src/components/LMSTable.ts:774
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:254
-#: src/opac/PatronsBookingsTable.ts:123
+#: src/opac/PatronsBookingsTable.ts:130
 msgid "Delete"
 msgstr "Löschen"
 
@@ -448,7 +450,7 @@ msgid "Error"
 msgstr "Fehler"
 
 #: src/components/LMSConfirmationModal.ts:46
-#: src/opac/PatronsBookingsTable.ts:124
+#: src/opac/PatronsBookingsTable.ts:213
 msgid "Confirm"
 msgstr "Bestätigen"
 
@@ -510,7 +512,7 @@ msgstr "Hilfe"
 
 #: src/components/LMSTable.ts:690
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:219
-#: src/opac/PatronsBookingsTable.ts:97
+#: src/opac/PatronsBookingsTable.ts:107
 msgid "actions"
 msgstr "Aktionen"
 
@@ -880,11 +882,11 @@ msgstr "Reservierungs-Nr."
 msgid "Patron"
 msgstr "Benutzer*in"
 
-#: src/extensions/LMSBookingsTable.ts:171 src/opac/PatronsBookingsTable.ts:94
+#: src/extensions/LMSBookingsTable.ts:171 src/opac/PatronsBookingsTable.ts:104
 msgid "Start"
 msgstr "Von"
 
-#: src/extensions/LMSBookingsTable.ts:172 src/opac/PatronsBookingsTable.ts:95
+#: src/extensions/LMSBookingsTable.ts:172 src/opac/PatronsBookingsTable.ts:105
 msgid "End"
 msgstr "Bis"
 
@@ -1096,7 +1098,7 @@ msgstr "Stunden"
 msgid "minutes"
 msgstr "Minuten"
 
-#: src/opac/PatronsBookingsTable.ts:79
+#: src/opac/PatronsBookingsTable.ts:82
 msgid ""
 "You haven't made any room reservations yet. Future reservations will show up "
 "right here in your user profile."
@@ -1104,21 +1106,31 @@ msgstr ""
 "Sie haben bisher keine Reservierungen vorgenommen. Zukünftige Reservierungen "
 "werden hier angezeigt."
 
-#: src/opac/PatronsBookingsTable.ts:89
+#: src/opac/PatronsBookingsTable.ts:148
+msgid "Upcoming reservations"
+msgstr "Anstehende Reservierungen"
+
+#: src/opac/PatronsBookingsTable.ts:151
 msgid "This table shows your current room reservations"
 msgstr "Diese Tabelle zeigt Ihre derzeitigen und vergangenen Reservierungen an"
 
-#: src/opac/PatronsBookingsTable.ts:138
-msgid "There has been a technical error. Please inform the staff."
-msgstr ""
-"Es ist ein technisches Problem aufgetreten. Bitte informieren Sie das "
-"Personal."
+#: src/opac/PatronsBookingsTable.ts:154
+msgid "You have no upcoming reservations."
+msgstr "Sie haben keine anstehenden Reservierungen"
 
-#: src/opac/PatronsBookingsTable.ts:142
+#: src/opac/PatronsBookingsTable.ts:164
+msgid "Past reservations"
+msgstr "Vergangene Reservierungen"
+
+#: src/opac/PatronsBookingsTable.ts:205
+msgid "Are you sure you want to cancel this reservation:"
+msgstr "Sind Sie sicher, dass Sie diese Reservierung stornieren möchten:"
+
+#: src/opac/PatronsBookingsTable.ts:224
 msgid "Your bookings"
 msgstr "Ihre Reservierungen"
 
-#: src/opac/PatronsBookingsTable.ts:144
+#: src/opac/PatronsBookingsTable.ts:226
 msgid "Make a reservation"
 msgstr "Zum Reservierungs-Kalender"
 
@@ -1430,6 +1442,11 @@ msgstr "Anzahl"
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:139
 msgid "Calendar accent color"
 msgstr "Akzentfarbe des Kalenders"
+
+#~ msgid "There has been a technical error. Please inform the staff."
+#~ msgstr ""
+#~ "Es ist ein technisches Problem aufgetreten. Bitte informieren Sie das "
+#~ "Personal."
 
 #~ msgid "Enabled"
 #~ msgstr "Aktiv"
