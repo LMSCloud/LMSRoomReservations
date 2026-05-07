@@ -1,8 +1,8 @@
-import { LitElement, PropertyValueMap, html, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { LitElement, html, nothing } from "lit";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { requestHandler } from "../lib/RequestHandler";
-import { formatDatetimeByLocale } from "../lib/converters/datetimeConverters";
+import { convertToFormat, formatDatetimeByLocale } from "../lib/converters/datetimeConverters";
 import { __, locale } from "../lib/translate";
 
 @customElement("lms-patrons-bookings-table")
@@ -11,51 +11,54 @@ export default class PatronsBookingsTable extends LitElement {
 
     @property({ type: Array }) rooms: any[] = [];
 
-    @property({ type: String, attribute: "external-stylesheet-src" }) externalStylesSrc: string | undefined;
-
     @property({ type: String, attribute: "page-url" }) pageUrl: string = "";
 
-    @property({ type: String }) error: "CSS_NOT_FOUND" | undefined;
+    @query("#confirm-dialog") private confirmDialog: HTMLDialogElement | undefined;
 
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
+    @state() private pendingBooking: { id: string; description: string } | undefined;
+
+    protected override createRenderRoot() {
+        return this;
     }
 
-    protected override updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-        if (_changedProperties.has("externalStylesSrc") && this.externalStylesSrc) {
-            fetch(this.externalStylesSrc)
-                .then((response) => response.text())
-                .then((styleSheet) => {
-                    const styleTag = document.createElement("style");
-                    styleTag.textContent = styleSheet;
-                    this.shadowRoot?.appendChild(styleTag);
-                });
-        }
-    }
-
-    private handleConfirmation(e: Event) {
+    private async handleDeleteClick(e: Event) {
         const target = e.target as HTMLElement;
         const button = target.closest("button");
         if (!button) {
             return;
         }
-
-        const initiateSpan = button.querySelector(".initiate-delete");
-        const confirmSpan = button.querySelector(".confirm-delete");
-
-        if (!initiateSpan || !confirmSpan) {
+        const { id } = button.dataset;
+        if (!id) {
             return;
         }
+        const booking = this.patronsBookings.find((b) => String(b.bookingid) === id);
+        if (!booking) {
+            return;
+        }
+        const room = this.rooms.find((r) => r.roomid == booking.roomid);
+        const roomName = room ? room.roomnumber : booking.roomid;
+        const start = convertToFormat(booking.start, "L LT", locale);
+        const end = convertToFormat(booking.end, "L LT", locale);
 
-        initiateSpan.classList.toggle("d-none");
-        confirmSpan.classList.toggle("d-none");
+        this.pendingBooking = {
+            id,
+            description: `${roomName} (${start} – ${end})`,
+        };
+        await this.updateComplete;
+        this.confirmDialog?.showModal();
+    }
 
-        if (confirmSpan.classList.contains("d-none")) {
-            const { id } = button.dataset;
-            if (id) {
-                this.handleCancellation(id);
-            }
+    private handleAbort() {
+        this.confirmDialog?.close();
+        this.pendingBooking = undefined;
+    }
+
+    private handleConfirm() {
+        const id = this.pendingBooking?.id;
+        this.confirmDialog?.close();
+        this.pendingBooking = undefined;
+        if (id) {
+            this.handleCancellation(id);
         }
     }
 
@@ -123,13 +126,8 @@ export default class PatronsBookingsTable extends LitElement {
                                     </td>
                                     ${withActions
                                         ? html`<td>
-                                              <button
-                                                  class="btn"
-                                                  data-id=${bookingid}
-                                                  @click=${this.handleConfirmation}
-                                              >
-                                                  <span class="initiate-delete">${__("Delete")}</span>
-                                                  <span class="confirm-delete d-none">${__("Confirm")}</span>
+                                              <button class="btn" data-id=${bookingid} @click=${this.handleDeleteClick}>
+                                                  ${__("Delete")}
                                               </button>
                                           </td>`
                                         : nothing}
@@ -169,17 +167,64 @@ export default class PatronsBookingsTable extends LitElement {
         `;
     }
 
-    override render() {
-        if (this.error) {
-            return html` <p>${__("There has been a technical error. Please inform the staff.")}</p> `;
-        }
+    private renderConfirmDialog() {
+        return html`
+            <style>
+                lms-patrons-bookings-table dialog.modal#confirm-dialog {
+                    /* BS5 .modal { position: fixed; display: none; width: 100%; height: 100% } would
+                       collide with native <dialog> top-layer rendering — revert to UA dialog defaults */
+                    display: revert;
+                    position: revert;
+                    top: revert;
+                    left: revert;
+                    width: revert;
+                    height: revert;
+                    overflow: revert;
+                    /* Strip the <dialog> UA chrome so .modal-content paints the card */
+                    border: 0;
+                    padding: 0;
+                    background: transparent;
+                }
+                lms-patrons-bookings-table dialog.modal#confirm-dialog::backdrop {
+                    background: rgba(0, 0, 0, 0.5);
+                }
+            </style>
+            <dialog id="confirm-dialog" class="modal" aria-labelledby="confirm-dialog-title">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirm-dialog-title">${__("Please confirm")}</h5>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                aria-label="${__("Close")}"
+                                @click=${this.handleAbort}
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>${__("Are you sure you want to cancel this reservation:")}</p>
+                            <p><strong>${this.pendingBooking?.description ?? ""}</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click=${this.handleAbort}>
+                                <i class="fa fa-times" aria-hidden="true"></i> ${__("Abort")}
+                            </button>
+                            <button type="button" class="btn btn-primary" @click=${this.handleConfirm}>
+                                <i class="fa fa-check" aria-hidden="true"></i> ${__("Confirm")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
+        `;
+    }
 
+    override render() {
         return html`
             <h1>${__("Your bookings")}</h1>
             ${this.renderInfoMaybe()}
             ${this.pageUrl ? html`<a class="py-2" href="${this.pageUrl}">${__("Make a reservation")}</a>` : nothing}
-            ${this.renderUpcomingMaybe()}
-            ${this.renderPastMaybe()}
+            ${this.renderUpcomingMaybe()} ${this.renderPastMaybe()} ${this.renderConfirmDialog()}
         `;
     }
 }

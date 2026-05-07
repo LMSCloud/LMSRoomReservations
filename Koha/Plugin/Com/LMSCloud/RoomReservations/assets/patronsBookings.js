@@ -21,29 +21,13 @@ if (userMenuUl) {
           "lms-patrons-bookings-table",
         );
         lmsPatronsBookingsTable.setAttribute(
-          "is",
-          "lms-patrons-bookings-table",
+          "patrons-bookings",
+          JSON.stringify(patronsBookings),
         );
-
-        const stylesheetLink = document.querySelector(
-          'link[rel="stylesheet"][href*="/opac-tmpl/bootstrap/css/opac_"][href$=".css"]',
-        );
-        if (!stylesheetLink) {
-          lmsPatronsBookingsTable.setAttribute("error", "CSS_NOT_FOUND");
-        } else {
-          lmsPatronsBookingsTable.setAttribute(
-            "external-stylesheet-src",
-            stylesheetLink.href,
-          );
-          lmsPatronsBookingsTable.setAttribute(
-            "patrons-bookings",
-            JSON.stringify(patronsBookings),
-          );
-          lmsPatronsBookingsTable.setAttribute("rooms", JSON.stringify(rooms));
-          const pageUrl = window.__LMS_ROOM_RESERVATIONS_PAGE_URL__;
-          if (pageUrl) {
-            lmsPatronsBookingsTable.setAttribute("page-url", pageUrl);
-          }
+        lmsPatronsBookingsTable.setAttribute("rooms", JSON.stringify(rooms));
+        const pageUrl = window.__LMS_ROOM_RESERVATIONS_PAGE_URL__;
+        if (pageUrl) {
+          lmsPatronsBookingsTable.setAttribute("page-url", pageUrl);
         }
 
         mainContent.appendChild(lmsPatronsBookingsTable);
