@@ -22,7 +22,8 @@ BEGIN {
 
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
-my $ROOMS_TABLE = $self ? $self->get_qualified_table_name('rooms') : undef;
+my $ROOMS_TABLE     = $self ? $self->get_qualified_table_name('rooms')     : undef;
+my $EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('equipment') : undef;
 
 sub send_email_confirmation {
     my ($body) = @_;
@@ -54,6 +55,14 @@ sub send_email_confirmation {
         return 0;
     }
 
+    my $equipment_names = [];
+    if ( ref $body->{'equipment'} eq 'ARRAY' && @{ $body->{'equipment'} } ) {
+        ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, 'equipmentname', { equipmentid => { -in => $body->{'equipment'} } } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+        $equipment_names = [ map { $_->{'equipmentname'} } @{ $sth->fetchall_arrayref( {} ) } ];
+    }
+
     # We need to get the letter template from the body and create the $letter
     # variable accordingly because they need different substitutions
     my $letters = {
@@ -67,6 +76,7 @@ sub send_email_confirmation {
                 from                => Time::Piece->strptime( $body->{'start'}, '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
                 to                  => Time::Piece->strptime( $body->{'end'},   '%Y-%m-%dT%H:%M' )->strftime('%Y-%m-%d %H:%M'),
                 purpose_of_use      => $body->{'purpose_of_use'},
+                booked_equipment    => join( q{, }, @{$equipment_names} ),
                 confirmed_timestamp => Time::Piece->new->strftime('%Y-%m-%d %H:%M:%S'),
             },
         },
