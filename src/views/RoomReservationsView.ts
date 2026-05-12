@@ -242,8 +242,10 @@ export default class RoomReservationsView extends LitElement {
     }
 
     override render() {
-        return html` <div class="flex w-full flex-col gap-4 lg:flex-row lg:px-4">
+        return html`<div part="root" class="flex flex-col">
+            <div part="reservation" class="flex w-full flex-col gap-4 lg:flex-row lg:px-4">
                 <lms-bookie
+                    part="bookie"
                     .borrowernumber=${this.borrowernumber}
                     .patron=${this.patron}
                     .openHours=${this.openHours}
@@ -259,6 +261,7 @@ export default class RoomReservationsView extends LitElement {
                 ></lms-bookie>
                 ${this.hasLoaded
                     ? html`<lms-calendar
+                          part="calendar"
                           .locale=${locale}
                           .yearDrillTarget=${this.calendarYearDrillTarget || "day"}
                           .yearDensityMode=${this.calendarYearDensityMode || "heatmap"}
@@ -268,25 +271,27 @@ export default class RoomReservationsView extends LitElement {
                           })}
                           class="order-1 w-full min-w-0 overflow-hidden lg:order-2 lg:w-3/4"
                       ></lms-calendar>`
-                    : html`<div class="order-1 w-full min-w-0 lg:order-2 lg:w-3/4"></div>`}
+                    : html`<div part="calendar" class="order-1 w-full min-w-0 lg:order-2 lg:w-3/4"></div>`}
             </div>
-            <div class="mt-4 flex flex-row gap-4 overflow-x-auto lg:px-4">
+            <div part="rooms" class="mt-4 flex flex-row gap-4 overflow-x-auto lg:px-4">
                 ${map(this.rooms, (room) => {
                     const { branch, color, description, image, maxbookabletime, maxcapacity, roomnumber } = room;
                     const library = this.libraries.find((library) => library.library_id === branch);
 
                     return html`
-                        <div class="card w-72 shrink-0 border bg-base-100 sm:w-80">
-                            <figure>
+                        <div part="room-card" class="card w-72 shrink-0 border bg-base-100 sm:w-80">
+                            <figure part="room-card-figure">
                                 <img
+                                    part="room-card-image"
                                     class="w-full object-cover"
                                     src=${image}
                                     alt="${attr__("A depiction of room")}&nbsp;${roomnumber}"
                                 />
                             </figure>
-                            <div class="card-body">
-                                <h2 class="card-title">
+                            <div part="room-card-body" class="card-body">
+                                <h2 part="room-card-title" class="card-title">
                                     ${roomnumber}&nbsp;<span
+                                        part="room-card-color-badge"
                                         class="badge badge-lg shadow-md"
                                         style=${styleMap({
                                             color,
@@ -295,26 +300,29 @@ export default class RoomReservationsView extends LitElement {
                                         })}
                                     ></span>
                                 </h2>
-                                <p>${description}</p>
+                                <p part="room-card-description">${description}</p>
                                 <hr />
-                                <!-- List of Properties -->
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-between">
+                                <div part="room-card-properties" class="space-y-2">
+                                    <div part="room-card-property" class="flex items-center justify-between">
                                         <span class="font-semibold">${__("Branch")}</span>
                                         <span>${library?.name ?? branch}</span>
                                     </div>
-                                    <div class="flex items-center justify-between">
+                                    <div part="room-card-property" class="flex items-center justify-between">
                                         <span class="font-semibold">${__("Max Bookable Time")}</span>
                                         <span>${formatMinutesHumanReadable(parseInt(maxbookabletime, 10))}</span>
                                     </div>
-                                    <div class="flex items-center justify-between">
+                                    <div part="room-card-property" class="flex items-center justify-between">
                                         <span class="font-semibold">${__("Max Capacity")}</span>
                                         <span>${maxcapacity} ${__("persons")}</span>
                                     </div>
                                 </div>
                                 <hr />
-                                <div class="card-actions justify-end">
-                                    <button class="btn btn-outline" @click=${() => this.handleRoomSelection(room)}>
+                                <div part="room-card-actions" class="card-actions justify-end">
+                                    <button
+                                        part="room-card-book-button"
+                                        class="btn btn-outline"
+                                        @click=${() => this.handleRoomSelection(room)}
+                                    >
                                         ${__("Book this room")}
                                     </button>
                                 </div>
@@ -322,6 +330,7 @@ export default class RoomReservationsView extends LitElement {
                         </div>
                     `;
                 })}
-            </div>`;
+            </div>
+        </div>`;
     }
 }
