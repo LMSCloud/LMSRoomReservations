@@ -56,6 +56,10 @@ To make the room reservations page easily discoverable, you can add a link to it
 
 3. **Custom OPAC template**: Modify your OPAC theme to include a navigation link
 
+### Theming and Layout
+
+`<lms-room-reservations-view>` exposes a CSS `::part` API plus opt-in skeleton-loading custom properties so site CSS (OPACUserCSS, custom OPAC themes) can restyle and reorder the public view without touching the plugin source. See [`docs/OPAC_THEMING.md`](docs/OPAC_THEMING.md) for the full list of parts, reorder examples, and the skeleton hooks.
+
 ### Legacy Apache Configuration (Deprecated)
 
 **Note**: The following Apache configuration is no longer required as of version 4.8.5. It is kept here for reference only.

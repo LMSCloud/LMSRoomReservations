@@ -125,6 +125,33 @@ export default class RoomReservationsView extends LitElement {
                     height: 700px;
                 }
             }
+
+            /* Opt-in skeleton hooks: no-op until a consumer sets the custom
+               properties from outside (typically when reordering parts so the
+               placeholders aren't collapsed at the top of the page). */
+            div[part="calendar"] {
+                min-height: var(--lmsrr-calendar-min-height, 0);
+                background: var(--lmsrr-skeleton-bg, transparent);
+                border-radius: var(--lmsrr-skeleton-radius, 0);
+                animation: var(--lmsrr-skeleton-animation, none);
+            }
+
+            [part="rooms"]:not(:has(> *)) {
+                min-height: var(--lmsrr-rooms-min-height, 0);
+                background: var(--lmsrr-skeleton-bg, transparent);
+                border-radius: var(--lmsrr-skeleton-radius, 0);
+                animation: var(--lmsrr-skeleton-animation, none);
+            }
+
+            @keyframes lmsrr-skeleton-pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.6;
+                }
+            }
         `,
     ];
 
