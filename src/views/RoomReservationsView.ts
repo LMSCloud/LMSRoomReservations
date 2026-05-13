@@ -200,22 +200,26 @@ export default class RoomReservationsView extends LitElement {
     }
 
     override async updated(changedProperties: PropertyValues) {
-        if (changedProperties.has("hasLoaded") && this.hasLoaded && this.lmsCalendar) {
-            this.lmsCalendar.activeDate = {
-                day: this.currentDate.getDate(),
-                month: this.currentDate.getMonth() + 1,
-                year: this.currentDate.getFullYear(),
-            };
+        if (changedProperties.has("hasLoaded") && this.hasLoaded) {
+            this.toggleAttribute("single-room", this.rooms.length === 1);
 
-            if (this.calendarDefaultView && ["day", "week", "month", "year"].includes(this.calendarDefaultView)) {
-                const viewState = (this.lmsCalendar as any)?._viewState;
-                if (viewState?.setViewMode) {
-                    viewState.setViewMode(this.calendarDefaultView);
+            if (this.lmsCalendar) {
+                this.lmsCalendar.activeDate = {
+                    day: this.currentDate.getDate(),
+                    month: this.currentDate.getMonth() + 1,
+                    year: this.currentDate.getFullYear(),
+                };
+
+                if (this.calendarDefaultView && ["day", "week", "month", "year"].includes(this.calendarDefaultView)) {
+                    const viewState = (this.lmsCalendar as any)?._viewState;
+                    if (viewState?.setViewMode) {
+                        viewState.setViewMode(this.calendarDefaultView);
+                    }
                 }
-            }
 
-            this.updateCalendar();
-            onTranslationsReady(() => this.updateCalendar());
+                this.updateCalendar();
+                onTranslationsReady(() => this.updateCalendar());
+            }
         }
     }
 

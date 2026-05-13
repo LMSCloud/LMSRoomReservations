@@ -64,6 +64,58 @@ lms-room-reservations-view::part(room-card-book-button):hover {
 2. **No transparent traversal through nested shadow roots.** `::part(bookie)` styles the `<lms-bookie>` host (size, margin, order) but cannot reach anything inside its own shadow root. To expose those internals the child component would need its own `part` attributes plus an `exportparts` declaration on the `<lms-bookie>` tag in `RoomReservationsView`. Not currently wired up.
 3. **Pseudo-classes chain after the part**, not before: `::part(name):hover`, not `:hover::part(name)`.
 
+## Single-room layout
+
+When the configured rooms list contains exactly one entry, the host element reflects a `single-room` boolean attribute. This is the supported hook for restyling the lone card across the layout — pure `::part(room-card):only-child` can re-flex the card itself, but cannot reach the figure or body conditionally because `::part()` does not combine with descendant combinators.
+
+The attribute is set in `updated()` once the rooms fetch resolves, so the rule does not flash on during the loading skeleton.
+
+### Recipe: image-left / body-right at wide viewports
+
+The card defaults to DaisyUI's column stacking. Let the card grow to fill the strip at every viewport, then *only* at wide viewports flip it into row layout and rotate the figure's rounded corners onto the leading edge.
+
+```css
+/* Base: let the lone card fill the rooms strip at any viewport.
+   At narrow widths DaisyUI's column stacking is fine — figure spans
+   the card cross-axis and the body sits beneath it. */
+lms-room-reservations-view[single-room]::part(room-card) {
+    width: 100%;
+    max-width: none;
+}
+
+/* Wide viewports: image on the left, body on the right. */
+@media (min-width: 1024px) {
+    lms-room-reservations-view[single-room]::part(room-card) {
+        flex-direction: row;
+    }
+    lms-room-reservations-view[single-room]::part(room-card-figure) {
+        width: 40%;
+        flex-shrink: 0;
+        /* DaisyUI rounds the figure's top corners for column stacking;
+           rotate the rounded pair to the leading edge for row stacking. */
+        border-start-start-radius: inherit;
+        border-start-end-radius: 0;
+        border-end-start-radius: inherit;
+        border-end-end-radius: 0;
+    }
+    lms-room-reservations-view[single-room]::part(room-card-image) {
+        height: 100%;
+        object-fit: cover;
+    }
+    lms-room-reservations-view[single-room]::part(room-card-body) {
+        flex: 1;
+    }
+}
+```
+
+Everything that would visibly break the column layout (`flex-direction: row`, the figure's `width: 40%`, the corner rotation, the image `height: 100%`) is inside the media query. If you see the figure shrink to a thumbnail on mobile, the `@media (min-width: 1024px)` wrapper is missing or mistyped — those rules must not reach narrow viewports.
+
+### Specificity notes
+
+`::part(x)` alone is a pseudo-element at **(0,0,1)** — it loses to DaisyUI's `.card` **(0,1,0)** and `.card figure` / `.card :where(figure:first-child)` **(0,1,1)**. Including the host type selector *and* the `[single-room]` attribute brings the rule to **(0,1,2)**, which wins cleanly. Dropping either drops you back into tie-or-lose territory.
+
+`inherit` on the figure radii walks up to `.card` and resolves to `var(--rounded-box, 1rem)`, so the figure stays in sync if the host theme overrides the box radius. Logical properties keep the layout correct in RTL contexts — the rounded pair follows the leading edge.
+
 ## Skeleton / space-reservation hooks
 
 The bookie hydrates immediately while the calendar and room cards wait on data fetches. With the **default layout** this is invisible — the rooms section is below the fold and the calendar placeholder collapses harmlessly above it. When the layout is **reordered** (typically to put rooms above the reservation row) the empty placeholders cause a noticeable layout shift the moment data lands.
