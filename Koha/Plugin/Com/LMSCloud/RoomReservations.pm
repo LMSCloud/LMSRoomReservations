@@ -373,6 +373,16 @@ sub uninstall() {
         $sth->execute or croak C4::Context->dbh->errstr;
     }
 
+    # Clear the migration counter so a subsequent re-upload starts from
+    # a clean slate. Without this, Koha routes the next upload through
+    # upgrade(), which trusts __CURRENT_MIGRATION__ and skips every
+    # migration — leaving the schema missing on a "reinstall".
+    my $delete_migration_sth = C4::Context->dbh->prepare(
+        q{DELETE FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?}
+    );
+    $delete_migration_sth->execute( $self->{'class'}, '__CURRENT_MIGRATION__' )
+        or croak C4::Context->dbh->errstr;
+
     # Remove OPAC page for room reservations
     delete_opac_page(
         {   code => 'lmscloud-roomreservations',

@@ -1,5 +1,5 @@
 -- Add open_hours_deviations table for managing special hours and blackout periods
-CREATE TABLE { { open_hours_deviations } } (
+CREATE TABLE IF NOT EXISTS { { open_hours_deviations } } (
     `deviationid` INT NOT NULL AUTO_INCREMENT,
     `isblackout` TINYINT(1) NOT NULL DEFAULT 0,
     -- whether this is a blackout (1) or special hours (0)
@@ -24,11 +24,11 @@ CREATE TABLE { { open_hours_deviations } } (
     PRIMARY KEY (`deviationid`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
 
-CREATE INDEX { { deviations_idx } } ON { { open_hours_deviations } }(`start`, `end`);
+CREATE INDEX IF NOT EXISTS { { deviations_idx } } ON { { open_hours_deviations } }(`start`, `end`);
 
 -- Junction table for branch associations
 -- If no entries exist for a deviation, it applies to all branches
-CREATE TABLE { { deviation_branches } } (
+CREATE TABLE IF NOT EXISTS { { deviation_branches } } (
     `deviationid` INT NOT NULL,
     `branch` VARCHAR(255) NOT NULL,
     -- branch code from branches table
@@ -40,11 +40,11 @@ CREATE TABLE { { deviation_branches } } (
     CONSTRAINT lmsr_v4_deviation_branches_iafk FOREIGN KEY (`deviationid`) REFERENCES { { open_hours_deviations } }(`deviationid`) ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
 
-CREATE INDEX { { deviation_branches_idx } } ON { { deviation_branches } }(`deviationid`, `branch`);
+CREATE INDEX IF NOT EXISTS { { deviation_branches_idx } } ON { { deviation_branches } }(`deviationid`, `branch`);
 
 -- Junction table for room associations
 -- If no entries exist for a deviation, it applies to all rooms (within specified branches if any)
-CREATE TABLE { { deviation_rooms } } (
+CREATE TABLE IF NOT EXISTS { { deviation_rooms } } (
     `deviationid` INT NOT NULL,
     `roomid` INT NOT NULL,
     `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -56,4 +56,4 @@ CREATE TABLE { { deviation_rooms } } (
     CONSTRAINT lmsr_v4_deviation_rooms_ibfk FOREIGN KEY (`roomid`) REFERENCES { { rooms } }(`roomid`) ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
 
-CREATE INDEX { { deviation_rooms_idx } } ON { { deviation_rooms } }(`deviationid`, `roomid`);
+CREATE INDEX IF NOT EXISTS { { deviation_rooms_idx } } ON { { deviation_rooms } }(`deviationid`, `roomid`);

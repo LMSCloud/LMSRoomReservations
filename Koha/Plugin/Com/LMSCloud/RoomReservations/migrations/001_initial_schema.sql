@@ -1,10 +1,4 @@
-DROP TABLE IF EXISTS { { bookings_equipment } },
-{ { rooms_equipment } },
-{ { equipment } },
-{ { open_hours } },
-{ { bookings } },
-{ { rooms } };
-CREATE TABLE { { rooms } } (
+CREATE TABLE IF NOT EXISTS { { rooms } } (
     `roomid` INT NOT NULL AUTO_INCREMENT,
     `roomnumber` VARCHAR(20) NOT NULL,
     -- alphanumeric room identifier
@@ -22,8 +16,8 @@ CREATE TABLE { { rooms } } (
     -- the maximum timespan for a booking on this room
     PRIMARY KEY (roomid)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
-CREATE INDEX { { rooms_idx } } ON { { rooms } }(roomid);
-CREATE TABLE { { bookings } } (
+CREATE INDEX IF NOT EXISTS { { rooms_idx } } ON { { rooms } }(roomid);
+CREATE TABLE IF NOT EXISTS { { bookings } } (
     `bookingid` INT NOT NULL AUTO_INCREMENT,
     `borrowernumber` INT NOT NULL,
     -- foreign key; borrowers table
@@ -43,8 +37,8 @@ CREATE TABLE { { bookings } } (
     CONSTRAINT lmsr_v4_calendar_icfk FOREIGN KEY (roomid) REFERENCES { { rooms } }(roomid),
     CONSTRAINT lmsr_v4_calendar_ibfk FOREIGN KEY (borrowernumber) REFERENCES borrowers(borrowernumber) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
-CREATE INDEX { { bookings_idx } } ON { { bookings } }(borrowernumber, roomid);
-CREATE TABLE { { open_hours } } (
+CREATE INDEX IF NOT EXISTS { { bookings_idx } } ON { { bookings } }(borrowernumber, roomid);
+CREATE TABLE IF NOT EXISTS { { open_hours } } (
     `openid` INT NOT NULL AUTO_INCREMENT,
     `day` INT NOT NULL,
     `start` TIME NOT NULL,
@@ -55,8 +49,8 @@ CREATE TABLE { { open_hours } } (
     -- branch on which open hours apply
     PRIMARY KEY (openid)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
-CREATE INDEX { { open_hours_idx } } ON { { open_hours } }(openid);
-CREATE TABLE { { equipment } } (
+CREATE INDEX IF NOT EXISTS { { open_hours_idx } } ON { { open_hours } }(openid);
+CREATE TABLE IF NOT EXISTS { { equipment } } (
     `equipmentid` INT NOT NULL AUTO_INCREMENT,
     `equipmentname` VARCHAR(20) NOT NULL,
     `description` TEXT DEFAULT NULL,
@@ -67,8 +61,8 @@ CREATE TABLE { { equipment } } (
     -- the maximum timespan for a booking of this item
     PRIMARY KEY (equipmentid)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
-CREATE INDEX { { equipment_idx } } ON { { equipment } }(equipmentid);
-CREATE TABLE { { rooms_equipment } } (
+CREATE INDEX IF NOT EXISTS { { equipment_idx } } ON { { equipment } }(equipmentid);
+CREATE TABLE IF NOT EXISTS { { rooms_equipment } } (
     `roomid` INT NOT NULL,
     `equipmentid` INT NOT NULL,
     `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -79,8 +73,8 @@ CREATE TABLE { { rooms_equipment } } (
     CONSTRAINT lmsr_v4_roomequipment_iafk FOREIGN KEY (roomid) REFERENCES { { rooms } }(roomid) ON DELETE CASCADE,
     CONSTRAINT lmsr_v4_roomequipment_ibfk FOREIGN KEY (equipmentid) REFERENCES { { equipment } }(equipmentid) ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
-CREATE INDEX { { rooms_equipment_idx } } ON { { rooms_equipment } }(roomid, equipmentid);
-CREATE TABLE { { bookings_equipment } } (
+CREATE INDEX IF NOT EXISTS { { rooms_equipment_idx } } ON { { rooms_equipment } }(roomid, equipmentid);
+CREATE TABLE IF NOT EXISTS { { bookings_equipment } } (
     `bookingid` INT NOT NULL,
     `equipmentid` INT NOT NULL,
     `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -91,4 +85,4 @@ CREATE TABLE { { bookings_equipment } } (
     CONSTRAINT lmsr_v4_bookings_equipment_iafk FOREIGN KEY (bookingid) REFERENCES { { bookings } }(bookingid) ON DELETE CASCADE,
     CONSTRAINT lmsr_v4_bookings_equipment_ibfk FOREIGN KEY (equipmentid) REFERENCES { { equipment } }(equipmentid) ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
-CREATE INDEX { { bookings_equipment_idx } } ON { { bookings_equipment } }(bookingid, equipmentid);
+CREATE INDEX IF NOT EXISTS { { bookings_equipment_idx } } ON { { bookings_equipment } }(bookingid, equipmentid);
