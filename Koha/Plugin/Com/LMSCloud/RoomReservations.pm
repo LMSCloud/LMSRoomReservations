@@ -377,9 +377,7 @@ sub uninstall() {
     # a clean slate. Without this, Koha routes the next upload through
     # upgrade(), which trusts __CURRENT_MIGRATION__ and skips every
     # migration — leaving the schema missing on a "reinstall".
-    my $delete_migration_sth = C4::Context->dbh->prepare(
-        q{DELETE FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?}
-    );
+    my $delete_migration_sth = C4::Context->dbh->prepare(q{DELETE FROM plugin_data WHERE plugin_class = ? AND plugin_key = ?});
     $delete_migration_sth->execute( $self->{'class'}, '__CURRENT_MIGRATION__' )
         or croak C4::Context->dbh->errstr;
 

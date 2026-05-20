@@ -38,7 +38,7 @@ export default class StaffBookingsView extends LitElement {
         Promise.all([
             requestHandler.get("rooms", { include_deleted: "1" }),
             requestHandler.get("bookings"),
-            requestHandler.get("equipment"),
+            requestHandler.get("equipment", { include_deleted: "1" }),
         ])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
             .then(([rooms, bookings, equipment]) => {

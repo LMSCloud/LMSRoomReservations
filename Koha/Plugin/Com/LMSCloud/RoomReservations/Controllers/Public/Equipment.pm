@@ -25,7 +25,7 @@ sub list {
         my $dbh = C4::Context->dbh;
         my $sql = SQL::Abstract->new;
 
-        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*} );
+        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { deleted_at => undef } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 

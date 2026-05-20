@@ -28,6 +28,7 @@ BEGIN {
     our @EXPORT_OK = qw(
         is_allowed_to_book
         is_active_room
+        is_active_equipment
         is_bookable_time
         is_open_during_booking_time
         has_conflicting_booking
@@ -65,6 +66,7 @@ my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 my $BOOKINGS_TABLE     = $self ? $self->get_qualified_table_name('bookings')              : undef;
 my $OPEN_HOURS_TABLE   = $self ? $self->get_qualified_table_name('open_hours')            : undef;
 my $ROOMS_TABLE        = $self ? $self->get_qualified_table_name('rooms')                 : undef;
+my $EQUIPMENT_TABLE    = $self ? $self->get_qualified_table_name('equipment')             : undef;
 my $DEVIATIONS_TABLE   = $self ? $self->get_qualified_table_name('open_hours_deviations') : undef;
 my $DEV_BRANCHES_TABLE = $self ? $self->get_qualified_table_name('deviation_branches')    : undef;
 my $DEV_ROOMS_TABLE    = $self ? $self->get_qualified_table_name('deviation_rooms')       : undef;
@@ -109,6 +111,16 @@ sub is_active_room {
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare("SELECT 1 FROM $ROOMS_TABLE WHERE roomid = ? AND deleted_at IS NULL");
     $sth->execute($room_id);
+
+    return $sth->fetchrow_array ? 1 : 0;
+}
+
+sub is_active_equipment {
+    my ($equipment_id) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare("SELECT 1 FROM $EQUIPMENT_TABLE WHERE equipmentid = ? AND deleted_at IS NULL");
+    $sth->execute($equipment_id);
 
     return $sth->fetchrow_array ? 1 : 0;
 }

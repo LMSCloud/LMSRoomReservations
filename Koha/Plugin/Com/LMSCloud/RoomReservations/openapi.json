@@ -687,6 +687,13 @@
           "name": "lang",
           "required": false,
           "type": "string"
+        },
+        {
+          "description": "Include soft-deleted equipment in the response",
+          "in": "query",
+          "name": "include_deleted",
+          "required": false,
+          "type": "boolean"
         }
       ],
       "produces": [

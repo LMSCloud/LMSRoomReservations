@@ -19,6 +19,7 @@ use Try::Tiny      qw( catch try );
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
     is_allowed_to_book
     is_active_room
+    is_active_equipment
     is_bookable_time
     is_open_during_booking_time
     has_conflicting_booking
@@ -243,6 +244,17 @@ sub _check_and_save_booking {
                 status  => 400,
                 openapi => { error => __('The selected room is no longer available.') }
             );
+        }
+
+        if ( defined $body->{'equipment'} && @{ $body->{'equipment'} } ) {
+            for my $equipmentid ( @{ $body->{'equipment'} } ) {
+                if ( !is_active_equipment($equipmentid) ) {
+                    return $c->render(
+                        status  => 400,
+                        openapi => { error => __('One of the selected equipment items is no longer available.') }
+                    );
+                }
+            }
         }
 
         if ( !is_bookable_time( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {

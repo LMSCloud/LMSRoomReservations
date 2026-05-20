@@ -81,6 +81,7 @@ sub setup_tables {
             `description` TEXT DEFAULT NULL,
             `image` TEXT DEFAULT NULL,
             `maxbookabletime` INT DEFAULT NULL,
+            `deleted_at` TIMESTAMP NULL DEFAULT NULL,
             PRIMARY KEY (equipmentid)
         ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci},
 

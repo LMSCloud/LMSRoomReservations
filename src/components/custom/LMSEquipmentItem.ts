@@ -6,7 +6,7 @@ import { map } from "lit/directives/map.js";
 import { requestHandler } from "../../lib/RequestHandler";
 import NumberInput from "../../lib/converters/InputConverter/inputs/NumberInput";
 import TextInput from "../../lib/converters/InputConverter/inputs/TextInput";
-import { __ } from "../../lib/translate";
+import { __, t } from "../../lib/translate";
 import { tailwindStyles } from "../../tailwind.lit";
 import LMSConfirmationModal from "../LMSConfirmationModal";
 
@@ -94,10 +94,28 @@ export default class LMSEquipmentItem extends LitElement {
         const response = await requestHandler.delete("equipment", undefined, [this.equipmentid]);
 
         if (response.ok) {
-            // Emit an event with the current property values
             const event = new CustomEvent("deleted", { bubbles: true });
             this.dispatchEvent(event);
+            return;
         }
+
+        let message: string = t("The equipment could not be deleted.");
+        try {
+            const body = await response.json();
+            if (body?.error) {
+                message = body.error;
+            }
+        } catch {
+            // response had no JSON body — keep the default message
+        }
+
+        const toast = document.createElement("lms-toast", { is: "lms-toast" }) as HTMLElement & {
+            heading: string;
+            message: string;
+        };
+        toast.heading = `${response.status} ${response.statusText}`;
+        toast.message = message;
+        this.renderRoot.appendChild(toast);
     }
 
     private handleChange(e: Event) {

@@ -2,8 +2,10 @@
 
 use Modern::Perl;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 use Test::Mojo;
+
+use C4::Context ();
 
 use FindBin qw( $Bin );
 use lib "$Bin/lib";
@@ -153,8 +155,9 @@ subtest 'update equipment' => sub {
     $schema->storage->txn_rollback;
 };
 
-subtest 'delete equipment' => sub {
-    plan tests => 4;
+subtest 'delete equipment soft-deletes the row' => sub {
+    plan tests => 11;
+    TestHelper::cleanup_all();
     $schema->storage->txn_begin;
 
     my $equip = TestHelper::insert_equipment( equipmentname => 'Eraser' );
@@ -162,8 +165,64 @@ subtest 'delete equipment' => sub {
     $t->delete_ok("$base_url/equipment/$equip->{equipmentid}")
       ->status_is(204);
 
+    my $dbh             = C4::Context->dbh;
+    my $equipment_table = TestHelper::table_name('equipment');
+    my $row             = $dbh->selectrow_hashref(
+        "SELECT equipmentid, deleted_at FROM $equipment_table WHERE equipmentid = ?",
+        undef, $equip->{equipmentid},
+    );
+    ok( $row,                       'soft-deleted row still exists in the equipment table' );
+    ok( defined $row->{deleted_at}, 'deleted_at is populated' );
+
+    # Default list endpoint hides soft-deleted equipment.
+    $t->get_ok("$base_url/equipment")
+      ->status_is(200)
+      ->json_is( [] );
+
+    # GET by id still resolves so historical bookings_equipment can display the name.
+    $t->get_ok("$base_url/equipment/$equip->{equipmentid}")
+      ->status_is(200);
+
     $t->delete_ok("$base_url/equipment/999999")
       ->status_is(404);
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'delete equipment with upcoming bookings is blocked' => sub {
+    plan tests => 3;
+    TestHelper::cleanup_all();
+    $schema->storage->txn_begin;
+
+    my $room = TestHelper::insert_room(
+        roomnumber  => 'EQ-R5',
+        maxcapacity => 10,
+        color       => '#cccccc',
+        description => 'Test room',
+        branch      => $branch,
+    );
+    my $equip = TestHelper::insert_equipment( equipmentname => 'Future-bound' );
+
+    my $booking = TestHelper::insert_booking(
+        borrowernumber => $patron->borrowernumber,
+        roomid         => $room->{roomid},
+        start          => '2099-12-31 09:00:00',
+        end            => '2099-12-31 10:00:00',
+    );
+    TestHelper::insert_bookings_equipment(
+        bookingid   => $booking->{bookingid},
+        equipmentid => $equip->{equipmentid},
+    );
+
+    $t->delete_ok("$base_url/equipment/$equip->{equipmentid}")
+      ->status_is(409);
+
+    my $equipment_table = TestHelper::table_name('equipment');
+    my ($deleted_at)    = C4::Context->dbh->selectrow_array(
+        "SELECT deleted_at FROM $equipment_table WHERE equipmentid = ?",
+        undef, $equip->{equipmentid},
+    );
+    is( $deleted_at, undef, 'equipment remains active after the 409' );
 
     $schema->storage->txn_rollback;
 };

@@ -23,8 +23,10 @@ Readonly my $MAX_LENGTH_EQUIPMENTNAME => 20;
 my $i18n = Koha::Plugin::Com::LMSCloud::RoomReservations::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../locales/' );
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
-my $EQUIPMENT_TABLE       = $self ? $self->get_qualified_table_name('equipment')       : undef;
-my $ROOMS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('rooms_equipment') : undef;
+my $EQUIPMENT_TABLE          = $self ? $self->get_qualified_table_name('equipment')          : undef;
+my $ROOMS_EQUIPMENT_TABLE    = $self ? $self->get_qualified_table_name('rooms_equipment')    : undef;
+my $BOOKINGS_TABLE           = $self ? $self->get_qualified_table_name('bookings')           : undef;
+my $BOOKINGS_EQUIPMENT_TABLE = $self ? $self->get_qualified_table_name('bookings_equipment') : undef;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -32,7 +34,11 @@ sub list {
     my $dbh = C4::Context->dbh;
     my $sql = SQL::Abstract->new;
 
-    my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*} );
+    my $include_deleted = $c->param('include_deleted');
+    my ( $stmt, @bind ) =
+          $include_deleted
+        ? $sql->select( $EQUIPMENT_TABLE, q{*} )
+        : $sql->select( $EQUIPMENT_TABLE, q{*}, { deleted_at => undef } );
     my $sth = $dbh->prepare($stmt);
     $sth->execute(@bind);
 
@@ -140,7 +146,7 @@ sub update {
         my $sql = SQL::Abstract->new;
 
         my $equipmentid = $c->param('equipmentid');
-        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid } );
+        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid, deleted_at => undef } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
         my $equipment = $sth->fetchrow_hashref();
@@ -233,7 +239,7 @@ sub delete {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid } );
+        my ( $stmt, @bind ) = $sql->select( $EQUIPMENT_TABLE, q{*}, { equipmentid => $equipmentid, deleted_at => undef } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
@@ -245,10 +251,22 @@ sub delete {
             );
         }
 
-        ( $stmt, @bind ) =
-            $sql->delete( $EQUIPMENT_TABLE, { equipmentid => $equipmentid } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        my $upcoming_sth = $dbh->prepare(
+            "SELECT COUNT(*) FROM $BOOKINGS_EQUIPMENT_TABLE be
+             JOIN $BOOKINGS_TABLE b ON b.bookingid = be.bookingid
+             WHERE be.equipmentid = ? AND b.`end` >= NOW()"
+        );
+        $upcoming_sth->execute($equipmentid);
+        my ($upcoming_count) = $upcoming_sth->fetchrow_array();
+        if ($upcoming_count) {
+            return $c->render(
+                status  => 409,
+                openapi => { error => __('Cannot delete equipment that is reserved by upcoming bookings') }
+            );
+        }
+
+        my $soft_delete_sth = $dbh->prepare("UPDATE $EQUIPMENT_TABLE SET deleted_at = NOW() WHERE equipmentid = ?");
+        $soft_delete_sth->execute($equipmentid);
 
         return $c->render(
             status  => 204,
