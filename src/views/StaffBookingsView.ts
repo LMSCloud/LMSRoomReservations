@@ -35,7 +35,11 @@ export default class StaffBookingsView extends LitElement {
     override connectedCallback() {
         super.connectedCallback();
 
-        Promise.all([requestHandler.get("rooms"), requestHandler.get("bookings"), requestHandler.get("equipment")])
+        Promise.all([
+            requestHandler.get("rooms", { include_deleted: "1" }),
+            requestHandler.get("bookings"),
+            requestHandler.get("equipment"),
+        ])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
             .then(([rooms, bookings, equipment]) => {
                 this.rooms = rooms.map((room: any) => ({

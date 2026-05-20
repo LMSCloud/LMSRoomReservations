@@ -18,6 +18,7 @@ use Try::Tiny      qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
     is_allowed_to_book
+    is_active_room
     is_bookable_time
     is_open_during_booking_time
     has_conflicting_booking
@@ -234,6 +235,13 @@ sub _check_and_save_booking {
             return $c->render(
                 status  => 400,
                 openapi => { error => $self->retrieve_data('restrict_message') || __('The patron is not allowed to book rooms.') }
+            );
+        }
+
+        if ( !is_active_room( $body->{'roomid'} ) ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('The selected room is no longer available.') }
             );
         }
 

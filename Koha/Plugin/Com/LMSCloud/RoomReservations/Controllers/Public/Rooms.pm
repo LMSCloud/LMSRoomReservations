@@ -21,7 +21,7 @@ sub list {
 
     return try {
         my $dbh   = C4::Context->dbh;
-        my $query = "SELECT * FROM $ROOMS_TABLE";
+        my $query = "SELECT * FROM $ROOMS_TABLE WHERE deleted_at IS NULL";
         my $sth   = $dbh->prepare($query);
         $sth->execute();
 

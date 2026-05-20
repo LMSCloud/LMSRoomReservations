@@ -2,7 +2,7 @@
 
 use Modern::Perl;
 
-use Test::More tests => 5;
+use Test::More tests => 7;
 use Test::Mojo;
 
 use FindBin qw( $Bin );
@@ -159,8 +159,9 @@ subtest 'update room' => sub {
     $schema->storage->txn_rollback;
 };
 
-subtest 'delete room' => sub {
-    plan tests => 4;
+subtest 'delete room soft-deletes the row' => sub {
+    plan tests => 11;
+    TestHelper::cleanup_all();
     $schema->storage->txn_begin;
 
     my $room = TestHelper::insert_room(
@@ -174,8 +175,93 @@ subtest 'delete room' => sub {
     $t->delete_ok("$base_url/rooms/$room->{roomid}")
       ->status_is(204);
 
+    # Row is still present in the table; deleted_at is now stamped.
+    my $dbh         = C4::Context->dbh;
+    my $rooms_table = TestHelper::table_name('rooms');
+    my $row         = $dbh->selectrow_hashref(
+        "SELECT roomid, deleted_at FROM $rooms_table WHERE roomid = ?",
+        undef, $room->{roomid},
+    );
+    ok( $row,                       'soft-deleted row still exists in the rooms table' );
+    ok( defined $row->{deleted_at}, 'deleted_at is populated' );
+
+    # List endpoint hides soft-deleted rooms.
+    $t->get_ok("$base_url/rooms")
+      ->status_is(200)
+      ->json_is( [] );
+
+    # GET by id still resolves so historical bookings can display the room.
+    $t->get_ok("$base_url/rooms/$room->{roomid}")
+      ->status_is(200);
+
+    # Deleting a non-existent room still 404s.
     $t->delete_ok("$base_url/rooms/999999")
       ->status_is(404);
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'delete room with upcoming bookings is blocked' => sub {
+    plan tests => 3;
+    $schema->storage->txn_begin;
+
+    my $room = TestHelper::insert_room(
+        roomnumber  => 'R601',
+        maxcapacity => 5,
+        color       => '#444444',
+        description => 'Has future booking',
+        branch      => $branch,
+    );
+
+    TestHelper::insert_booking(
+        borrowernumber => $patron->borrowernumber,
+        roomid         => $room->{roomid},
+        start          => '2099-12-31 09:00:00',
+        end            => '2099-12-31 10:00:00',
+    );
+
+    $t->delete_ok("$base_url/rooms/$room->{roomid}")
+      ->status_is(409);
+
+    my $rooms_table = TestHelper::table_name('rooms');
+    my ($deleted_at) = C4::Context->dbh->selectrow_array(
+        "SELECT deleted_at FROM $rooms_table WHERE roomid = ?",
+        undef, $room->{roomid},
+    );
+    is( $deleted_at, undef, 'room remains active after the 409' );
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'delete room with only past bookings succeeds' => sub {
+    plan tests => 3;
+    $schema->storage->txn_begin;
+
+    my $room = TestHelper::insert_room(
+        roomnumber  => 'R701',
+        maxcapacity => 5,
+        color       => '#555555',
+        description => 'Has past booking',
+        branch      => $branch,
+    );
+
+    TestHelper::insert_booking(
+        borrowernumber => $patron->borrowernumber,
+        roomid         => $room->{roomid},
+        start          => '2020-01-01 09:00:00',
+        end            => '2020-01-01 10:00:00',
+    );
+
+    $t->delete_ok("$base_url/rooms/$room->{roomid}")
+      ->status_is(204);
+
+    # Past booking still points at the (now soft-deleted) room.
+    my $bookings_table = TestHelper::table_name('bookings');
+    my ($count) = C4::Context->dbh->selectrow_array(
+        "SELECT COUNT(*) FROM $bookings_table WHERE roomid = ?",
+        undef, $room->{roomid},
+    );
+    is( $count, 1, 'historical booking still references the room' );
 
     $schema->storage->txn_rollback;
 };

@@ -23,15 +23,20 @@ Readonly my $MAX_LENGTH_ROOMNUMBER => 20;
 my $i18n = Koha::Plugin::Com::LMSCloud::RoomReservations::Util::I18N->new( 'com.lmscloud.roomreservations', dirname(__FILE__) . '/../locales/' );
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
 
-my $ROOMS_TABLE = $self ? $self->get_qualified_table_name('rooms') : undef;
+my $ROOMS_TABLE    = $self ? $self->get_qualified_table_name('rooms')    : undef;
+my $BOOKINGS_TABLE = $self ? $self->get_qualified_table_name('bookings') : undef;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $dbh   = C4::Context->dbh;
-        my $query = "SELECT * FROM $ROOMS_TABLE";
-        my $sth   = $dbh->prepare($query);
+        my $dbh             = C4::Context->dbh;
+        my $include_deleted = $c->param('include_deleted');
+        my $query =
+            $include_deleted
+            ? "SELECT * FROM $ROOMS_TABLE"
+            : "SELECT * FROM $ROOMS_TABLE WHERE deleted_at IS NULL";
+        my $sth = $dbh->prepare($query);
         $sth->execute();
 
         my $rooms = $sth->fetchall_arrayref( {} );
@@ -127,7 +132,7 @@ sub update {
         my $dbh = C4::Context->dbh;
 
         my $roomid = $c->param('roomid');
-        my $query  = "SELECT * FROM $ROOMS_TABLE WHERE roomid = ?";
+        my $query  = "SELECT * FROM $ROOMS_TABLE WHERE roomid = ? AND deleted_at IS NULL";
         my $sth    = $dbh->prepare($query);
         $sth->execute($roomid);
 
@@ -194,21 +199,30 @@ sub delete {
         my $dbh = C4::Context->dbh;
 
         my ( $stmt, @bind ) =
-            $sql->select( $ROOMS_TABLE, q{*}, { roomid => $roomid } );
+            $sql->select( $ROOMS_TABLE, q{*}, { roomid => $roomid, deleted_at => undef } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        my $equipment = $sth->fetchrow_hashref();
-        if ( !$equipment ) {
+        my $room = $sth->fetchrow_hashref();
+        if ( !$room ) {
             return $c->render(
                 status  => 404,
                 openapi => { error => 'Object not found' }
             );
         }
 
-        ( $stmt, @bind ) = $sql->delete( $ROOMS_TABLE, { roomid => $roomid } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        my $upcoming_sth = $dbh->prepare("SELECT COUNT(*) FROM $BOOKINGS_TABLE WHERE roomid = ? AND `end` >= NOW()");
+        $upcoming_sth->execute($roomid);
+        my ($upcoming_count) = $upcoming_sth->fetchrow_array();
+        if ($upcoming_count) {
+            return $c->render(
+                status  => 409,
+                openapi => { error => __('Cannot delete a room that has upcoming bookings') }
+            );
+        }
+
+        my $soft_delete_sth = $dbh->prepare("UPDATE $ROOMS_TABLE SET deleted_at = NOW() WHERE roomid = ?");
+        $soft_delete_sth->execute($roomid);
 
         return $c->render(
             status  => 204,

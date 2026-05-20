@@ -44,6 +44,7 @@ sub setup_tables {
             `image` TEXT,
             `branch` VARCHAR(255),
             `maxbookabletime` INT,
+            `deleted_at` TIMESTAMP NULL DEFAULT NULL,
             PRIMARY KEY (roomid)
         ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci},
 

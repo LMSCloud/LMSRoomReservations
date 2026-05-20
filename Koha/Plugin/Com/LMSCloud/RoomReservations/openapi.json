@@ -4364,6 +4364,13 @@
           "name": "lang",
           "required": false,
           "type": "string"
+        },
+        {
+          "description": "Include soft-deleted rooms in the response",
+          "in": "query",
+          "name": "include_deleted",
+          "required": false,
+          "type": "boolean"
         }
       ],
       "produces": [

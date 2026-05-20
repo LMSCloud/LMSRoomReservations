@@ -27,6 +27,7 @@ our $VERSION = '1.0.0';
 BEGIN {
     our @EXPORT_OK = qw(
         is_allowed_to_book
+        is_active_room
         is_bookable_time
         is_open_during_booking_time
         has_conflicting_booking
@@ -100,6 +101,16 @@ sub is_valid_duration_grain {
     return 0 if $step > 0 && ( $duration - $min ) % $step != 0;
 
     return 1;
+}
+
+sub is_active_room {
+    my ($room_id) = @_;
+
+    my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare("SELECT 1 FROM $ROOMS_TABLE WHERE roomid = ? AND deleted_at IS NULL");
+    $sth->execute($room_id);
+
+    return $sth->fetchrow_array ? 1 : 0;
 }
 
 sub is_bookable_time {
