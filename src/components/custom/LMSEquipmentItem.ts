@@ -6,7 +6,7 @@ import { map } from "lit/directives/map.js";
 import { requestHandler } from "../../lib/RequestHandler";
 import NumberInput from "../../lib/converters/InputConverter/inputs/NumberInput";
 import TextInput from "../../lib/converters/InputConverter/inputs/TextInput";
-import { __, t } from "../../lib/translate";
+import { __, attr__, t } from "../../lib/translate";
 import { tailwindStyles } from "../../tailwind.lit";
 import LMSConfirmationModal from "../LMSConfirmationModal";
 
@@ -131,19 +131,37 @@ export default class LMSEquipmentItem extends LitElement {
 
     override render() {
         return html`
-            <div class="lms-equipment-item card my-1 bg-base-100 shadow-xl">
-                <figure>
-                    <img
-                        class="lms-equipment-item-img"
-                        ?hidden=${!this.image}
-                        src="${this.image ?? "..."}"
-                        alt="Image for ${this.equipmentname}"
-                    />
-                </figure>
+            <div class="lms-equipment-item card my-1 bg-base-100 shadow-md">
                 <div class="card-body" @change=${this.handleChange}>
-                    <h5 class="card-title">
-                        <span class="badge badge-lg">${this.equipmentid}</span>
-                    </h5>
+                    <div
+                        class="card-title flex h-24 items-center justify-center rounded-md bg-base-200 bg-cover bg-center"
+                        style=${this.image ? `background-image: url(${this.image});` : ""}
+                    >
+                        <h3 class="rounded-lg bg-base-100 p-2 text-xl">
+                            ${this.equipmentname || html`<span class="badge badge-lg">${this.equipmentid}</span>`}
+                        </h3>
+                    </div>
+
+                    <div class="join mb-3 w-full" aria-label=${attr__("Equipment controls")}>
+                        <button class="btn btn-secondary btn-outline join-item flex-auto" @click=${this.toggleEdit}>
+                            ${this.editable
+                                ? html`${litFontawesome(faTimes, {
+                                          className: "w-4 h-4 inline-block sm:hidden",
+                                      })}<span class="hidden sm:inline">&nbsp;${__("Abort")}</span>`
+                                : html`${litFontawesome(faEdit, {
+                                          className: "w-4 h-4 inline-block sm:hidden",
+                                      })}<span class="hidden sm:inline">&nbsp;${__("Edit")}</span>`}
+                        </button>
+                        <button class="btn btn-secondary btn-outline join-item flex-auto" @click=${this.handleSave}>
+                            ${litFontawesome(faSave, { className: "w-4 h-4 inline-block sm:hidden" })}
+                            <span class="hidden sm:inline">&nbsp;${__("Save")}</span>
+                        </button>
+                        <button class="btn btn-secondary btn-outline join-item flex-auto" @click=${this.handleConfirm}>
+                            ${litFontawesome(faTrash, { className: "w-4 h-4 inline-block sm:hidden" })}
+                            <span class="hidden sm:inline">&nbsp;${__("Delete")}</span>
+                        </button>
+                    </div>
+
                     <div class="form-control w-full">
                         <label class="label" for="equipmentname"
                             ><span class="label-text">${__("Equipmentname")}</span></label
@@ -179,32 +197,7 @@ export default class LMSEquipmentItem extends LitElement {
                             <option ?selected=${!this.roomid}>${__("No room associated")}</option>
                         </select>
                     </div>
-                    <div class="card-actions my-4 w-full justify-end">
-                        <button class="btn btn-secondary btn-outline" @click=${this.toggleEdit}>
-                            ${this.editable
-                                ? html` ${litFontawesome(faTimes, {
-                                          className: "w-4 h-4 inline-block",
-                                      })}
-                                      <span>${__("Abort")}</span>`
-                                : html` ${litFontawesome(faEdit, {
-                                          className: "w-4 h-4 inline-block",
-                                      })}
-                                      <span>${__("Edit")}</span>`}
-                        </button>
-                        <button class="btn btn-secondary btn-outline" @click=${this.handleSave}>
-                            ${litFontawesome(faSave, {
-                                className: "w-4 h-4 inline-block",
-                            })}
-                            <span>${__("Save")}</span>
-                        </button>
-                        <button class="btn btn-secondary btn-outline" @click=${this.handleConfirm}>
-                            ${litFontawesome(faTrash, {
-                                className: "w-4 h-4 inline-block",
-                            })}
-                            <span>${__("Delete")}</span>
-                        </button>
-                        <lms-confirmation-modal @confirm=${this.handleDelete}> </lms-confirmation-modal>
-                    </div>
+                    <lms-confirmation-modal @confirm=${this.handleDelete}></lms-confirmation-modal>
                 </div>
             </div>
         `;
