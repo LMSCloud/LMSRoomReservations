@@ -1,4 +1,4 @@
-import { LitElement, PropertyValueMap, html, nothing } from "lit";
+import { LitElement, PropertyValueMap, TemplateResult, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
@@ -7,7 +7,11 @@ import { tailwindStyles } from "../../tailwind.lit";
 
 export type LMSComboboxOption = {
     value: string | number;
-    label: string;
+    label: string | TemplateResult;
+    // Optional text used for filtering; falls back to `label` when it's a
+    // string. Required if `label` is a TemplateResult and you want the
+    // built-in substring filter to work.
+    searchText?: string;
 };
 
 @customElement("lms-combobox")
@@ -55,7 +59,10 @@ export default class LMSCombobox extends LitElement {
         if (!query) {
             return this.options;
         }
-        return this.options.filter((option) => String(option.label).toLowerCase().includes(query));
+        return this.options.filter((option) => {
+            const searchSource = option.searchText ?? (typeof option.label === "string" ? option.label : "");
+            return searchSource.toLowerCase().includes(query);
+        });
     }
 
     private optionId(index: number) {
@@ -73,6 +80,10 @@ export default class LMSCombobox extends LitElement {
     }
 
     private handleInput(e: Event) {
+        // The native input event would otherwise bubble past the host
+        // (composed: true) and arrive at consumer @input listeners as a
+        // duplicate with no detail, racing with the CustomEvent below.
+        e.stopPropagation();
         const target = e.target as HTMLInputElement;
         this.value = target.value;
         this.focusedIndex = -1;

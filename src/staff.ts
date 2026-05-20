@@ -8,6 +8,7 @@ import LMSModal from "./components/LMSModal";
 import LMSSearch from "./components/LMSSearch";
 import LMSTable from "./components/LMSTable";
 import LMSToast from "./components/LMSToast";
+import LMSCombobox from "./components/custom/LMSCombobox";
 import LMSDeviationForm from "./components/custom/LMSDeviationForm";
 import LMSEquipmentItem from "./components/custom/LMSEquipmentItem";
 import LMSPatronSearch from "./components/custom/LMSPatronSearch";
@@ -35,6 +36,7 @@ import StaffSettingsView from "./views/StaffSettingsView";
 export {
     LMSBookingsModal,
     LMSBookingsTable,
+    LMSCombobox,
     LMSConfirmationModal,
     LMSDeviationForm,
     LMSEquipmentItem,
