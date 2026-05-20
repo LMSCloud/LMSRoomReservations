@@ -365,6 +365,18 @@
             },
             "type": "object"
           }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
         }
       },
       "summary": "Delete a single room booking",

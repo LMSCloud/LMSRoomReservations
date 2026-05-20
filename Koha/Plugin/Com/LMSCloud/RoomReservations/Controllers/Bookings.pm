@@ -183,12 +183,19 @@ sub delete {
             );
         }
 
+        my $end_epoch = Time::Piece->strptime( $booking->{'end'}, '%Y-%m-%d %H:%M:%S' )->epoch;
+        if ( $end_epoch < time() ) {
+            return $c->render(
+                status  => 409,
+                openapi => { error => __('Cannot delete a booking that has already ended') }
+            );
+        }
+
         ( $stmt, @bind ) =
             $sql->delete( $BOOKINGS_TABLE, { bookingid => $booking_id } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        my $end_epoch = Time::Piece->strptime( $booking->{'end'}, '%Y-%m-%d %H:%M:%S' )->epoch;
         if ( $end_epoch >= time() ) {
             my $start = substr( $booking->{'start'}, 0, 16 );
             $start =~ s/ /T/;

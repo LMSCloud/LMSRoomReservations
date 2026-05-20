@@ -15,6 +15,7 @@ use Time::Piece   ();
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
     send_email_confirmation
 );
+use Koha::Plugin::Com::LMSCloud::RoomReservations::Util::I18N qw( __ );
 
 our $VERSION = '1.0.0';
 
@@ -96,11 +97,18 @@ sub delete {
             );
         }
 
+        my $end_epoch = Time::Piece->strptime( $booking->{'end'}, '%Y-%m-%d %H:%M:%S' )->epoch;
+        if ( $end_epoch < time() ) {
+            return $c->render(
+                status  => 409,
+                openapi => { error => __('Cannot delete a booking that has already ended') }
+            );
+        }
+
         ( $stmt, @bind ) = $sql->delete( $BOOKINGS_TABLE, { bookingid => $id } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        my $end_epoch = Time::Piece->strptime( $booking->{'end'}, '%Y-%m-%d %H:%M:%S' )->epoch;
         if ( $end_epoch >= time() ) {
             my $start = substr( $booking->{'start'}, 0, 16 );
             $start =~ s/ /T/;
