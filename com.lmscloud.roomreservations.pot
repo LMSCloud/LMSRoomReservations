@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-07 08:43+0200\n"
+"POT-Creation-Date: 2026-05-20 14:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -142,7 +142,7 @@ msgstr ""
 msgid "Closed"
 msgstr ""
 
-#: src/components/custom/LMSCombobox.ts:222
+#: src/components/custom/LMSCombobox.ts:233
 msgid "No matches"
 msgstr ""
 
@@ -298,8 +298,8 @@ msgid "Leave 'All Rooms' checked to apply to all rooms in this branch"
 msgstr ""
 
 #: src/components/custom/LMSDeviationForm.ts:397
-#: src/components/custom/LMSEquipmentItem.ts:137
-#: src/components/custom/LMSRoom.ts:175 src/extensions/LMSEquipmentModal.ts:28
+#: src/components/custom/LMSEquipmentItem.ts:173
+#: src/components/custom/LMSRoom.ts:255 src/extensions/LMSEquipmentModal.ts:28
 #: src/extensions/LMSRoomModal.ts:45
 msgid "Description"
 msgstr ""
@@ -309,8 +309,8 @@ msgid "e.g., Christmas Holiday, Staff Training Day"
 msgstr ""
 
 #: src/components/custom/LMSDeviationForm.ts:409
-#: src/components/custom/LMSEquipmentItem.ts:180
-#: src/components/custom/LMSRoom.ts:215 src/components/LMSTable.ts:756
+#: src/components/custom/LMSEquipmentItem.ts:157
+#: src/components/custom/LMSRoom.ts:230 src/components/LMSTable.ts:756
 #: src/components/LMSTable.ts:761
 #: src/components/settings/LMSSettingChecklist.ts:163
 #: src/components/settings/LMSSettingColor.ts:122
@@ -325,48 +325,32 @@ msgid "Cancel"
 msgstr ""
 
 #: src/components/custom/LMSEquipmentItem.ts:79
-#: src/components/custom/LMSRoom.ts:88 src/components/LMSTable.ts:341
+#: src/components/custom/LMSRoom.ts:92 src/components/LMSTable.ts:341
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:193
 #: src/opac/PatronsBookingsTable.ts:196
 msgid "Please confirm"
 msgstr ""
 
 #: src/components/custom/LMSEquipmentItem.ts:83
-#: src/components/custom/LMSRoom.ts:92 src/components/LMSTable.ts:345
+#: src/components/custom/LMSRoom.ts:96 src/components/LMSTable.ts:345
 msgid "Are you sure you want to delete: "
 msgstr ""
 
 #: src/components/custom/LMSEquipmentItem.ts:86
-#: src/components/custom/LMSRoom.ts:95 src/components/LMSTable.ts:348
+#: src/components/custom/LMSRoom.ts:99 src/components/LMSTable.ts:348
 msgid "Are you sure you want to delete this entry?"
 msgstr ""
 
-#: src/components/custom/LMSEquipmentItem.ts:131
-#: src/extensions/LMSEquipmentModal.ts:21
-msgid "Equipmentname"
+#: src/components/custom/LMSEquipmentItem.ts:102
+msgid "The equipment could not be deleted."
 msgstr ""
 
-#: src/components/custom/LMSEquipmentItem.ts:142
-#: src/components/custom/LMSRoom.ts:184 src/extensions/LMSEquipmentModal.ts:35
-#: src/extensions/LMSRoomModal.ts:38
-msgid "Image"
+#: src/components/custom/LMSEquipmentItem.ts:145
+msgid "Equipment controls"
 msgstr ""
 
-#: src/components/custom/LMSEquipmentItem.ts:147
-#: src/components/custom/LMSRoom.ts:195 src/views/RoomReservationsView.ts:307
-msgid "Max Bookable Time"
-msgstr ""
-
-#: src/components/custom/LMSEquipmentItem.ts:152
-msgid "Roomid"
-msgstr ""
-
-#: src/components/custom/LMSEquipmentItem.ts:161
-msgid "No room associated"
-msgstr ""
-
-#: src/components/custom/LMSEquipmentItem.ts:170
-#: src/components/custom/LMSRoom.ts:205
+#: src/components/custom/LMSEquipmentItem.ts:150
+#: src/components/custom/LMSRoom.ts:223
 #: src/components/LMSConfirmationModal.ts:45 src/components/LMSTable.ts:748
 #: src/components/settings/LMSSettingChecklist.ts:166
 #: src/components/settings/LMSSettingColor.ts:125
@@ -377,43 +361,93 @@ msgstr ""
 msgid "Abort"
 msgstr ""
 
-#: src/components/custom/LMSEquipmentItem.ts:174
-#: src/components/custom/LMSRoom.ts:209 src/components/LMSTable.ts:731
+#: src/components/custom/LMSEquipmentItem.ts:153
+#: src/components/custom/LMSRoom.ts:226 src/components/LMSTable.ts:731
 #: src/components/LMSTable.ts:739 src/views/StaffOpenHoursView.ts:333
 msgid "Edit"
 msgstr ""
 
-#: src/components/custom/LMSEquipmentItem.ts:186
-#: src/components/custom/LMSRoom.ts:221 src/components/LMSTable.ts:769
+#: src/components/custom/LMSEquipmentItem.ts:161
+#: src/components/custom/LMSRoom.ts:237 src/components/LMSTable.ts:769
 #: src/components/LMSTable.ts:774
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:254
 #: src/opac/PatronsBookingsTable.ts:130
 msgid "Delete"
 msgstr ""
 
-#: src/components/custom/LMSPatronSearch.ts:246
-msgid "Cardno"
+#: src/components/custom/LMSEquipmentItem.ts:167
+#: src/extensions/LMSEquipmentModal.ts:21
+msgid "Equipmentname"
 msgstr ""
 
-#: src/components/custom/LMSPatronSearch.ts:250
+#: src/components/custom/LMSEquipmentItem.ts:178
+#: src/components/custom/LMSRoom.ts:264 src/extensions/LMSEquipmentModal.ts:35
+#: src/extensions/LMSRoomModal.ts:38
+msgid "Image"
+msgstr ""
+
+#: src/components/custom/LMSEquipmentItem.ts:183
+#: src/components/custom/LMSRoom.ts:275 src/components/custom/LMSRoom.ts:332
+#: src/views/RoomReservationsView.ts:344
+msgid "Max Bookable Time"
+msgstr ""
+
+#: src/components/custom/LMSEquipmentItem.ts:188
+msgid "Roomid"
+msgstr ""
+
+#: src/components/custom/LMSEquipmentItem.ts:197
+msgid "No room associated"
+msgstr ""
+
+#: src/components/custom/LMSPatronSearch.ts:70
 msgid "Id"
 msgstr ""
 
-#: src/components/custom/LMSRoom.ts:163 src/extensions/LMSRoomModal.ts:64
+#: src/components/custom/LMSRoom.ts:115
+msgid "The room could not be deleted."
+msgstr ""
+
+#: src/components/custom/LMSRoom.ts:194
+msgid "Data"
+msgstr ""
+
+#: src/components/custom/LMSRoom.ts:204
+msgid "Preview"
+msgstr ""
+
+#: src/components/custom/LMSRoom.ts:218
+msgid "Room controls"
+msgstr ""
+
+#: src/components/custom/LMSRoom.ts:243 src/extensions/LMSRoomModal.ts:64
 msgid "Roomnumber"
 msgstr ""
 
-#: src/components/custom/LMSRoom.ts:169 src/views/RoomReservationsView.ts:311
+#: src/components/custom/LMSRoom.ts:249 src/components/custom/LMSRoom.ts:340
+#: src/views/RoomReservationsView.ts:348
 msgid "Max Capacity"
 msgstr ""
 
-#: src/components/custom/LMSRoom.ts:180 src/extensions/LMSRoomModal.ts:32
+#: src/components/custom/LMSRoom.ts:260 src/extensions/LMSRoomModal.ts:32
 msgid "Color"
 msgstr ""
 
-#: src/components/custom/LMSRoom.ts:188 src/extensions/LMSRoomModal.ts:58
-#: src/views/RoomReservationsView.ts:303
+#: src/components/custom/LMSRoom.ts:268 src/components/custom/LMSRoom.ts:328
+#: src/extensions/LMSRoomModal.ts:58 src/views/RoomReservationsView.ts:340
 msgid "Branch"
+msgstr ""
+
+#: src/components/custom/LMSRoom.ts:316 src/views/RoomReservationsView.ts:320
+msgid "A depiction of room"
+msgstr ""
+
+#: src/components/custom/LMSRoom.ts:341 src/views/RoomReservationsView.ts:349
+msgid "persons"
+msgstr ""
+
+#: src/components/custom/LMSRoom.ts:346 src/views/RoomReservationsView.ts:359
+msgid "Book this room"
 msgstr ""
 
 #: src/components/custom/ZodErrorElement.ts:50
@@ -817,7 +851,7 @@ msgid "none"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:38
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Checks.pm:286
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Checks.pm:309
 msgid "daily"
 msgstr ""
 
@@ -1056,6 +1090,11 @@ msgstr ""
 msgid "Customize the OPAC calendar look and behavior."
 msgstr ""
 
+#: src/lib/bookingDisplay.ts:16 src/lib/bookingDisplay.ts:18
+#: src/lib/bookingDisplay.ts:31
+msgid "Unknown"
+msgstr ""
+
 #: src/lib/converters/datetimeConverters.ts:29
 msgid "Error: Invalid date"
 msgstr ""
@@ -1072,15 +1111,19 @@ msgstr ""
 msgid "days"
 msgstr ""
 
-#: src/lib/converters/timeConverter.ts:15
+#: src/lib/converters/timeConverter.ts:14
 msgid "hour"
 msgstr ""
 
-#: src/lib/converters/timeConverter.ts:15
+#: src/lib/converters/timeConverter.ts:14
 msgid "hours"
 msgstr ""
 
-#: src/lib/converters/timeConverter.ts:19
+#: src/lib/converters/timeConverter.ts:17
+msgid "minute"
+msgstr ""
+
+#: src/lib/converters/timeConverter.ts:17
 msgid "minutes"
 msgstr ""
 
@@ -1118,19 +1161,15 @@ msgstr ""
 msgid "Make a reservation"
 msgstr ""
 
-#: src/views/RoomReservationsView.ts:284
-msgid "A depiction of room"
+#: src/views/RoomReservationsView.ts:254
+msgid "Blocked"
 msgstr ""
 
-#: src/views/RoomReservationsView.ts:312
-msgid "persons"
+#: src/views/RoomReservationsView.ts:254
+msgid "Booked"
 msgstr ""
 
-#: src/views/RoomReservationsView.ts:318
-msgid "Book this room"
-msgstr ""
-
-#: src/views/StaffBookingsView.ts:116
+#: src/views/StaffBookingsView.ts:120
 msgid "You can add a new booking by clicking on the + button below"
 msgstr ""
 
@@ -1162,120 +1201,143 @@ msgstr ""
 msgid "No settings found"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Checks.pm:265
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Checks.pm:288
 msgid "absolute"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:229
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:190
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Patron/Bookings.pm:104
+msgid "Cannot delete a booking that has already ended"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:238
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/OpenHours.pm:151
 msgid "End time must be after start time"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:236
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:245
 msgid "The patron is not allowed to book rooms."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:243
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:113
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:252
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:108
+msgid "The selected room is no longer available."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:261
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:117
+msgid "One of the selected equipment items is no longer available."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:270
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:133
 msgid "The booking exceeds the maximum allowed time for the room."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:250
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:127
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:277
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:147
 msgid "The institution is closed during the selected time frame."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:257
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:134
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:284
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:154
 msgid "There is a conflicting booking."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:267
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:294
 msgid "The borrower has reached the "
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:267
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:143
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:294
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:163
 msgid " limit of reservations."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:105
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:158
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:96
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:162
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:111
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:164
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:101
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:167
 msgid "The maximum length for"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:105
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:158
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:111
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:164
 msgid "equipmentname"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:105
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:158
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:96
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:162
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:111
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:164
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:101
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:167
 msgid "is 20 characters"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:109
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:162
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:84
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:92
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:150
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:158
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:115
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:168
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:89
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:97
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:155
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:163
 msgid "Please enter a number for"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:109
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:162
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:92
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:158
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:115
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:168
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:97
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:163
 msgid "maxbookabletime"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Equipment.pm:264
+msgid "Cannot delete equipment that is reserved by upcoming bookings"
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/OpenHours.pm:144
 msgid "One of the supplied times is invalid, please use HH:mm"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:73
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:75
 msgid "Authentication required"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:99
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:101
 msgid "You are not allowed to book rooms"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:106
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:126
 msgid "A booking cannot be scheduled for a past date."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:120
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:140
 msgid "The booking duration does not match the allowed minimum and step."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:143
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:163
 msgid "You have reached the "
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:84
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:150
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:89
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:155
 msgid "maxcapacity"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:88
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:154
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:93
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:159
 msgid "Please enter a color in the format #RRGGBB for"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:88
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:154
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:93
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:159
 msgid "color"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:96
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:162
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:101
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:167
 msgid "roomnumber"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Rooms.pm:220
+msgid "Cannot delete a room that has upcoming bookings"
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:34
