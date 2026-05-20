@@ -1,4 +1,4 @@
-import { LitElement, PropertyValues, css, html } from "lit";
+import { LitElement, PropertyValues, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -311,14 +311,16 @@ export default class RoomReservationsView extends LitElement {
 
                     return html`
                         <div part="room-card" class="card w-72 shrink-0 border bg-base-100 sm:w-80">
-                            <figure part="room-card-figure">
-                                <img
-                                    part="room-card-image"
-                                    class="w-full object-cover"
-                                    src=${image}
-                                    alt="${attr__("A depiction of room")}&nbsp;${roomnumber}"
-                                />
-                            </figure>
+                            ${image
+                                ? html`<figure part="room-card-figure">
+                                      <img
+                                          part="room-card-image"
+                                          class="w-full object-cover"
+                                          src=${image}
+                                          alt="${attr__("A depiction of room")}&nbsp;${roomnumber}"
+                                      />
+                                  </figure>`
+                                : nothing}
                             <div part="room-card-body" class="card-body">
                                 <h2 part="room-card-title" class="card-title">
                                     ${roomnumber}&nbsp;<span
