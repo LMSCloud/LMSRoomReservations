@@ -26,9 +26,13 @@ export default class StaffBookingsView extends LitElement {
 
     private rooms?: Column[];
 
+    private activeRooms?: Column[];
+
     private bookings?: Column[];
 
     private equipment?: Column[];
+
+    private activeEquipment?: Column[];
 
     static override styles = [tailwindStyles, skeletonStyles, cardDeckStylesStaff];
 
@@ -42,10 +46,14 @@ export default class StaffBookingsView extends LitElement {
         ])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
             .then(([rooms, bookings, equipment]) => {
-                this.rooms = rooms.map((room: any) => ({
-                    id: room.roomid,
-                    name: room.roomnumber,
-                }));
+                const toRoomOption = (room: any) => ({ id: room.roomid, name: room.roomnumber });
+                const toEquipmentOption = (item: any) => ({
+                    id: item.equipmentid,
+                    name: item.equipmentname,
+                    roomid: item.roomid,
+                });
+                this.rooms = rooms.map(toRoomOption);
+                this.activeRooms = rooms.filter((room: any) => !room.deleted_at).map(toRoomOption);
                 this.bookings = bookings.map((booking: any) => {
                     return {
                         ...booking,
@@ -54,11 +62,8 @@ export default class StaffBookingsView extends LitElement {
                         equipment: [booking["roomid"], booking["equipment"]],
                     };
                 });
-                this.equipment = equipment.map((equipmentItem: any) => ({
-                    id: equipmentItem.equipmentid,
-                    name: equipmentItem.equipmentname,
-                    roomid: equipmentItem.roomid,
-                }));
+                this.equipment = equipment.map(toEquipmentOption);
+                this.activeEquipment = equipment.filter((item: any) => !item.deleted_at).map(toEquipmentOption);
 
                 return Array.from(new Set(bookings.map((booking: any) => booking.borrowernumber)));
             })
@@ -120,8 +125,8 @@ export default class StaffBookingsView extends LitElement {
                     ${__("You can add a new booking by clicking on the + button below")}.
                 </h1>
                 <lms-bookings-modal
-                    .rooms=${this.rooms ?? []}
-                    .equipment=${this.equipment ?? []}
+                    .rooms=${this.activeRooms ?? []}
+                    .equipment=${this.activeEquipment ?? []}
                     @created=${this.fetchUpdate}
                 ></lms-bookings-modal>`;
         }
@@ -136,8 +141,8 @@ export default class StaffBookingsView extends LitElement {
                 @updated=${this.fetchUpdate}
             ></lms-bookings-table>
             <lms-bookings-modal
-                .rooms=${this.rooms ?? []}
-                .equipment=${this.equipment ?? []}
+                .rooms=${this.activeRooms ?? []}
+                .equipment=${this.activeEquipment ?? []}
                 @created=${this.fetchUpdate}
             ></lms-bookings-modal>
         `;
