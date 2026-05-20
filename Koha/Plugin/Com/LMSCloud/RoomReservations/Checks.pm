@@ -11,10 +11,9 @@ use Koha::Patrons  ();
 use DateTime       ();
 
 use Exporter 'import';
-use Readonly         qw( Readonly );
-use SQL::Abstract    ();
-use Time::Piece      qw( localtime );
-use Locale::Messages qw( LC_TIME setlocale );
+use Readonly      qw( Readonly );
+use SQL::Abstract ();
+use Time::Piece   qw( localtime );
 
 use Koha::Plugin::Com::LMSCloud::RoomReservations;
 use Koha::Plugin::Com::LMSCloud::RoomReservations::State qw(
@@ -41,8 +40,6 @@ BEGIN {
 }
 
 Readonly my $CONSTANTS => {
-    INDEX_SUNDAY_TIME_PIECE_WDAY => -1,
-    INDEX_SUNDAY_SCHEMA          => 6,
     DATETIME_YEAR_START          => 0,
     DATETIME_YEAR_LENGTH         => 4,
     DATETIME_MONTH_START         => 5,
@@ -158,10 +155,6 @@ sub is_bookable_time {
 sub is_open_during_booking_time {
     my ( $roomid, $start_time, $end_time ) = @_;
 
-    # Set the locale of Time::Piece to en_US for the duration of this function call
-    my $global_locale = setlocale(LC_TIME);
-    setlocale( LC_TIME, 'en_US' );
-
     my $sql = SQL::Abstract->new;
     my $dbh = C4::Context->dbh;
 
@@ -176,59 +169,66 @@ sub is_open_during_booking_time {
     # Only check if the setting is enabled (opt-in for backward compatibility)
     my $use_koha_calendar = $self->retrieve_data('use_koha_calendar');
     if ( $use_koha_calendar && !is_koha_calendar_open( $branch, $start_time, $end_time ) ) {
-        setlocale( LC_TIME, $global_locale );
         return 0;
     }
 
-    # Check for open hours deviations (blackouts or special hours)
+    # Check for open hours deviations (blackouts or special hours) across the full range
     my $deviation_result = has_open_hours_deviation( $branch, $roomid, $start_time, $end_time );
 
     # If blocked by blackout, deny the booking
-    if ( $deviation_result->{status} eq 'blocked' ) {
-        setlocale( LC_TIME, $global_locale );
-        return 0;
-    }
+    return 0 if $deviation_result->{status} eq 'blocked';
 
     # If explicitly allowed by special hours, allow immediately (bypass regular hours check)
-    if ( $deviation_result->{status} eq 'allowed' ) {
-        setlocale( LC_TIME, $global_locale );
-        return 1;
+    return 1 if $deviation_result->{status} eq 'allowed';
+
+    # Regular hours: walk the booking one calendar day at a time and require each day's
+    # segment to fit within that weekday's open hours. This correctly handles bookings
+    # that cross midnight — both days must be open, and continuously so across the boundary.
+    my $start_dt = _parse_datetime($start_time);
+    my $end_dt   = _parse_datetime($end_time);
+
+    my $cursor = $start_dt->clone;
+    while ( DateTime->compare( $cursor, $end_dt ) < 0 ) {
+        my $next_midnight = $cursor->clone->truncate( to => 'day' )->add( days => 1 );
+        my $segment_end   = DateTime->compare( $next_midnight, $end_dt ) < 0 ? $next_midnight : $end_dt;
+
+        # Schema stores day as 0=Mon..6=Sun; DateTime->day_of_week is 1=Mon..7=Sun.
+        my $wday = $cursor->day_of_week - 1;
+
+        ( $stmt, @bind ) = $sql->select( $OPEN_HOURS_TABLE, [ 'start', 'end' ], { branch => $branch, day => $wday } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+        my ( $start_hour, $end_hour ) = $sth->fetchrow_array;
+
+        # No row, or both endpoints "00:00:00" -> closed that day
+        if ( !defined $start_hour || ( $start_hour eq '00:00:00' && $end_hour eq '00:00:00' ) ) {
+            return 0;
+        }
+
+        my $open_sod      = _time_string_to_seconds($start_hour);
+        my $close_sod     = _time_string_to_seconds($end_hour);
+        my $seg_start_sod = ( $cursor->hour * 3600 ) + ( $cursor->minute * 60 ) + $cursor->second;
+
+        # When the segment runs into the next day, compare its end against end-of-day
+        # (23:59:59). That way an open_hours row ending at 23:59:59 qualifies as
+        # "open through midnight" and allows continuity into the next day's hours.
+        my $seg_end_sod =
+            DateTime->compare( $segment_end, $next_midnight ) == 0
+            ? 86_399
+            : ( $segment_end->hour * 3600 ) + ( $segment_end->minute * 60 ) + $segment_end->second;
+
+        return 0 if $seg_start_sod < $open_sod || $seg_end_sod > $close_sod;
+
+        $cursor = $next_midnight;
     }
 
-    # If neutral (no applicable deviation), continue to regular hours check below
+    return 1;
+}
 
-    # Then we have to find the open hours for the branch on the day of the booking.
-    # The wday with index 0 is Monday in the $OPEN_HOURS_TABLE and the _wday method
-    # returns index 0 as Sunday so we have to subtract 1 from the _wday result and set
-    # the value to 6 if it is -1.
-    my $start_wday = ( Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->_wday - 1 );
-    $start_wday = $start_wday == $CONSTANTS->{'INDEX_SUNDAY_TIME_PIECE_WDAY'} ? $CONSTANTS->{'INDEX_SUNDAY_SCHEMA'} : $start_wday;
-    ( $stmt, @bind ) = $sql->select( $OPEN_HOURS_TABLE, [ 'start', 'end' ], { branch => $branch, day => $start_wday } );
-    $sth = $dbh->prepare($stmt);
-    $sth->execute(@bind);
-    my ( $start_hour, $end_hour ) = $sth->fetchrow_array;
-
-    # If both the start and end hours are "00:00:00" then the branch is closed on that day
-    # meaning that we return false.
-    if ( $start_hour eq '00:00:00' and $end_hour eq '00:00:00' ) {
-        setlocale( LC_TIME, $global_locale );
-        return 0;
-    }
-
-    # Reset the locale of Time::Piece to the original value
-    setlocale( LC_TIME, $global_locale );
-
-    # Now we have to use Time::Piece to check if the $start_time's time portion is equal or
-    # greater than the $start_hour and if the $end_time's time portion is equal or less than
-    # the $end_hour. We normalize the date components to a fixed date for time comparison.
-    my $fixed_date    = '1970-01-01';
-    my $booking_start = Time::Piece->strptime( "$fixed_date " . Time::Piece->strptime( $start_time, '%Y-%m-%dT%H:%M' )->hms, '%Y-%m-%d %H:%M:%S' );
-    my $booking_end   = Time::Piece->strptime( "$fixed_date " . Time::Piece->strptime( $end_time,   '%Y-%m-%dT%H:%M' )->hms, '%Y-%m-%d %H:%M:%S' );
-    my $branch_open   = Time::Piece->strptime( "$fixed_date " . Time::Piece->strptime( $start_hour, '%H:%M:%S' )->hms,       '%Y-%m-%d %H:%M:%S' );
-    my $branch_close  = Time::Piece->strptime( "$fixed_date " . Time::Piece->strptime( $end_hour,   '%H:%M:%S' )->hms,       '%Y-%m-%d %H:%M:%S' );
-
-    return $booking_start->epoch >= $branch_open->epoch
-        && $booking_end->epoch <= $branch_close->epoch;
+sub _time_string_to_seconds {
+    my ($hms) = @_;
+    my ( $h, $m, $s ) = split /:/sm, $hms;
+    return ( $h * 3600 ) + ( $m * 60 ) + ( $s // 0 );
 }
 
 sub has_conflicting_booking {
