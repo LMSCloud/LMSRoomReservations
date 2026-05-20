@@ -27,12 +27,14 @@ type ApiGroup = Record<string, Endpoint>;
  * @property {ApiGroup} get - Endpoints for GET requests
  * @property {ApiGroup} post - Endpoints for POST requests
  * @property {ApiGroup} put - Endpoints for PUT requests
+ * @property {ApiGroup} patch - Endpoints for PATCH requests
  * @property {ApiGroup} delete - Endpoints for DELETE requests
  */
 type ApiEndpoints = {
     get: ApiGroup;
     post: ApiGroup;
     put: ApiGroup;
+    patch: ApiGroup;
     delete: ApiGroup;
 };
 
@@ -212,6 +214,26 @@ class RequestHandler {
         pathParams?: Array<string>,
     ): Promise<Response> {
         return this.makeRequest("put", endpoint, body, queryParams, pathParams);
+    }
+
+    /**
+     * @method patch
+     * @description Makes a PATCH request to a configured endpoint.
+     * @public
+     * @param {string} endpoint - The name of the endpoint to request
+     * @param {any} [body] - The body of the request
+     * @param {Record<string, string> | string} [queryParams] - Additional query parameters to append to the URL
+     * @param {Array<string>} [pathParams] - Path parameters to append to the URL
+     * @throws {Error} - Throws an error if the specified endpoint is not found
+     * @returns {Promise<Response>} - A promise that resolves to the fetch Response
+     */
+    public async patch(
+        endpoint: keyof ApiGroup,
+        body?: unknown,
+        queryParams?: Record<string, string> | string,
+        pathParams?: Array<string>,
+    ): Promise<Response> {
+        return this.makeRequest("patch", endpoint, body, queryParams, pathParams);
     }
 
     /**
@@ -429,6 +451,7 @@ const endpoints: ApiEndpoints = {
             },
         },
     },
+    patch: {},
     delete: {
         rooms: {
             url: `${BASE_URL}/rooms`,
