@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-20 14:43+0200\n"
+"POT-Creation-Date: 2026-05-22 13:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,127 +17,140 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/components/custom/LMSBookie.ts:122
+#: src/components/custom/LMSBookie.ts:126
 msgid "Success"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:123
+#: src/components/custom/LMSBookie.ts:127
 msgid "Your booking is set"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:135
+#: src/components/custom/LMSBookie.ts:139
 msgid "Sorry"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:136
+#: src/components/custom/LMSBookie.ts:140
 msgid "Something went wrong"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:438
+#: src/components/custom/LMSBookie.ts:449
 msgid "Please log in to book rooms"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:440
+#: src/components/custom/LMSBookie.ts:451
 msgid "Log in"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:461
+#: src/components/custom/LMSBookie.ts:477
 msgid "Book a room"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:477
-#: src/components/custom/LMSBookie.ts:643 src/components/LMSModal.ts:284
+#: src/components/custom/LMSBookie.ts:493
+#: src/components/custom/LMSBookie.ts:691 src/components/LMSModal.ts:284
 #: src/opac/PatronsBookingsTable.ts:200
 msgid "Close"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:487
+#: src/components/custom/LMSBookie.ts:503
 #: src/extensions/LMSBookingsTable.ts:170 src/opac/PatronsBookingsTable.ts:103
 msgid "Room"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:498
+#: src/components/custom/LMSBookie.ts:514
 msgid "Please select a room"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:510
+#: src/components/custom/LMSBookie.ts:526
 msgid "Date & Time"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:526
-#: src/components/custom/LMSBookie.ts:540
+#: src/components/custom/LMSBookie.ts:542
+#: src/components/custom/LMSBookie.ts:556
 msgid "Duration"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:532
+#: src/components/custom/LMSBookie.ts:548
 msgid "In minutes, e.g. 60"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:546
+#: src/components/custom/LMSBookie.ts:562
 #: src/extensions/LMSBookingsTable.ts:174
 #: src/extensions/LMSRoomReservationsMenu.ts:42
 msgid "Equipment"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:571 src/opac/PatronsBookingsTable.ts:106
+#: src/components/custom/LMSBookie.ts:587 src/opac/PatronsBookingsTable.ts:106
 msgid "Purpose of Use"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:580
+#: src/components/custom/LMSBookie.ts:596
 msgid "Would you like to communicate something to the staff?"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:585
+#: src/components/custom/LMSBookie.ts:601
 msgid "Confirmation Email"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:599
+#: src/components/custom/LMSBookie.ts:620
 msgid "Should we send you a confirmation email"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:607
+#: src/components/custom/LMSBookie.ts:630
 msgid "We would use"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:616
+#: src/components/custom/LMSBookie.ts:641
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:110
+msgid ""
+"An email address is required to book a room. Please add an email to your "
+"patron account."
+msgstr ""
+
+#: src/components/custom/LMSBookie.ts:650
+msgid ""
+"No confirmation email will be sent because we don't have an email address on "
+"file. You can still review this booking in your bookings list."
+msgstr ""
+
+#: src/components/custom/LMSBookie.ts:660
 msgid "Pick a room, a date, a time"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:618
+#: src/components/custom/LMSBookie.ts:662
 msgid "items you'd like to use"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:620
+#: src/components/custom/LMSBookie.ts:664
 msgid "and the duration of your reservation"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:625
+#: src/components/custom/LMSBookie.ts:673
 msgid "Submit"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:652
+#: src/components/custom/LMSBookie.ts:700
 msgid "Open hours"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:654
+#: src/components/custom/LMSBookie.ts:702
 msgid "Week of"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:662
+#: src/components/custom/LMSBookie.ts:710
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:119
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Settings.pm:129
 msgid "Day"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:663
+#: src/components/custom/LMSBookie.ts:711
 msgid "Open from"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:664
+#: src/components/custom/LMSBookie.ts:712
 msgid "Closed after"
 msgstr ""
 
-#: src/components/custom/LMSBookie.ts:688
+#: src/components/custom/LMSBookie.ts:736
 #: src/extensions/LMSOpenHoursDeviationsTable.ts:139
 msgid "Closed"
 msgstr ""
@@ -1169,7 +1182,7 @@ msgstr ""
 msgid "Booked"
 msgstr ""
 
-#: src/views/StaffBookingsView.ts:120
+#: src/views/StaffBookingsView.ts:125
 msgid "You can add a new booking by clicking on the + button below"
 msgstr ""
 
@@ -1220,27 +1233,27 @@ msgid "The patron is not allowed to book rooms."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:252
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:108
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:118
 msgid "The selected room is no longer available."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:261
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:117
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:127
 msgid "One of the selected equipment items is no longer available."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:270
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:133
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:143
 msgid "The booking exceeds the maximum allowed time for the room."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:277
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:147
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:157
 msgid "The institution is closed during the selected time frame."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:284
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:154
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:164
 msgid "There is a conflicting booking."
 msgstr ""
 
@@ -1249,7 +1262,7 @@ msgid "The borrower has reached the "
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Bookings.pm:294
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:163
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:173
 msgid " limit of reservations."
 msgstr ""
 
@@ -1304,15 +1317,15 @@ msgstr ""
 msgid "You are not allowed to book rooms"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:126
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:136
 msgid "A booking cannot be scheduled for a past date."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:140
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:150
 msgid "The booking duration does not match the allowed minimum and step."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:163
+#: Koha/Plugin/Com/LMSCloud/RoomReservations/Controllers/Public/Bookings.pm:173
 msgid "You have reached the "
 msgstr ""
 
