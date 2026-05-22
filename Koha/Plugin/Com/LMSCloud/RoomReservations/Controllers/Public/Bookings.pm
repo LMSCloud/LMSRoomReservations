@@ -7,6 +7,7 @@ use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context ();
+use Koha::Patrons ();
 
 use File::Basename qw( dirname );
 use Readonly       qw( Readonly );
@@ -100,6 +101,16 @@ sub _check_and_save_booking {
                 status  => 400,
                 openapi => { error => $self->retrieve_data('restrict_message') || __('You are not allowed to book rooms') }
             );
+        }
+
+        if ( $self->retrieve_data('enforce_email_notification') ) {
+            my $patron = Koha::Patrons->find( $body->{'borrowernumber'} );
+            if ( !$patron || !$patron->email ) {
+                return $c->render(
+                    status  => 400,
+                    openapi => { error => __('An email address is required to book a room. Please add an email to your patron account.') }
+                );
+            }
         }
 
         if ( !is_active_room( $body->{'roomid'} ) ) {

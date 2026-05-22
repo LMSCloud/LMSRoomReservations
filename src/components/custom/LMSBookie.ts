@@ -3,6 +3,7 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import dayjs from "dayjs";
 import { LitElement, PropertyValueMap, TemplateResult, html, nothing } from "lit";
 import { customElement, property, query, queryAll, state } from "lit/decorators.js";
+import { choose } from "lit/directives/choose.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { requestHandler } from "../../lib/RequestHandler";
@@ -52,6 +53,8 @@ export default class LMSBookie extends LitElement {
 
     @state() alert?: Alert;
 
+    @state() private sendConfirmationRequested = true;
+
     @property({ type: Boolean }) enforceEmailNotification: boolean = false;
 
     @state() selectedDate: dayjs.Dayjs = dayjs();
@@ -66,8 +69,6 @@ export default class LMSBookie extends LitElement {
 
     @query("#purpose-of-use") purposeOfUseInput!: HTMLInputElement;
 
-    @query("#confirmation-email") confirmationEmailInput!: HTMLInputElement;
-
     @queryAll(".equipment-item")
     equipmentItemInputs!: NodeListOf<HTMLInputElement>;
 
@@ -81,7 +82,8 @@ export default class LMSBookie extends LitElement {
         const start = this.startDatetimeInput.value;
         const duration = this.durationCombobox.value;
         const purposeOfUse = this.purposeOfUseInput.value;
-        const confirmation = this.confirmationEmailInput.checked;
+        const hasEmail = Boolean(this.patron?.["email"]);
+        const confirmation = hasEmail && (this.enforceEmailNotification || this.sendConfirmationRequested);
 
         /** We filter for checked checkbox inputs here. */
         const equipment = Array.from(this.equipmentItemInputs).reduce((accumulator: string[], equipmentInput) => {
@@ -101,7 +103,7 @@ export default class LMSBookie extends LitElement {
             end,
             blackedout: 0,
             equipment,
-            send_confirmation: this.enforceEmailNotification || confirmation ? 1 : 0,
+            send_confirmation: confirmation ? 1 : 0,
             letter_code: "ROOM_RESERVATION",
             purpose_of_use: purposeOfUse || null,
         });
@@ -114,7 +116,7 @@ export default class LMSBookie extends LitElement {
             this.equipmentItemInputs.forEach((equipmentInput) => {
                 equipmentInput.checked = false;
             });
-            this.confirmationEmailInput.checked = this.enforceEmailNotification || true;
+            this.sendConfirmationRequested = true;
 
             this.alert = {
                 active: true,
@@ -219,6 +221,13 @@ export default class LMSBookie extends LitElement {
 
     private shouldDisplayEquipment() {
         return this.equipment.some((item: any) => item.roomid && item.roomid === this.selectedRoom?.roomid);
+    }
+
+    private getConfirmationHintKind(hasEmail: boolean): "none" | "have-email" | "enforce-no-email" | "soft-no-email" {
+        if (!this.borrowernumber) return "none";
+        if (hasEmail) return "have-email";
+        if (this.enforceEmailNotification) return "enforce-no-email";
+        return "soft-no-email";
     }
 
     private getOpenHoursWithDeviations(): OpenHoursRow[] {
@@ -454,6 +463,11 @@ export default class LMSBookie extends LitElement {
 
     override render() {
         const shouldDisplayEquipment = this.shouldDisplayEquipment();
+        const hasEmail = Boolean(this.patron?.["email"]);
+        const blockForMissingEmail = this.enforceEmailNotification && !hasEmail;
+        const confirmationChecked = hasEmail && (this.enforceEmailNotification || this.sendConfirmationRequested);
+        const confirmationDisabled = !this.borrowernumber || this.enforceEmailNotification || !hasEmail;
+        const confirmationHint = this.getConfirmationHintKind(hasEmail);
         return html`
             <div class="card bg-base-100 shadow-lg">
                 <div class="card-body">
@@ -592,23 +606,48 @@ export default class LMSBookie extends LitElement {
                                                 id="confirmation-email"
                                                 name="confirmation-email"
                                                 class="checkbox mr-2"
-                                                ?disabled=${!this.borrowernumber || this.enforceEmailNotification}
-                                                ?checked=${this.enforceEmailNotification || true}
+                                                ?disabled=${confirmationDisabled}
+                                                .checked=${confirmationChecked}
+                                                @change=${(e: Event) => {
+                                                    this.sendConfirmationRequested = (
+                                                        e.target as HTMLInputElement
+                                                    ).checked;
+                                                }}
                                             />
                                             <span class="label-text">
                                                 ${__("Should we send you a confirmation email")}?
                                             </span>
                                         </label>
-                                        <div
-                                            class="${classMap({
-                                                hidden: !this.patron?.["email"],
-                                            })} text-sm"
-                                        >
-                                            ${__("We would use")}&nbsp;
-                                            <span class="badge badge-neutral badge-outline">
-                                                ${this.patron?.["email"]}
-                                            </span>
-                                        </div>
+                                        ${choose(confirmationHint, [
+                                            [
+                                                "have-email",
+                                                () =>
+                                                    html`<div class="text-sm">
+                                                        ${__("We would use")}&nbsp;
+                                                        <span class="badge badge-neutral badge-outline">
+                                                            ${this.patron?.["email"]}
+                                                        </span>
+                                                    </div>`,
+                                            ],
+                                            [
+                                                "enforce-no-email",
+                                                () =>
+                                                    html`<div class="text-sm" role="note">
+                                                        ${__(
+                                                            "An email address is required to book a room. Please add an email to your patron account.",
+                                                        )}
+                                                    </div>`,
+                                            ],
+                                            [
+                                                "soft-no-email",
+                                                () =>
+                                                    html`<div class="text-sm" role="note">
+                                                        ${__(
+                                                            "No confirmation email will be sent because we don't have an email address on file. You can still review this booking in your bookings list.",
+                                                        )}
+                                                    </div>`,
+                                            ],
+                                        ])}
                                     </div>
                                 </div>
                                 <div class="my-4">
@@ -621,7 +660,11 @@ export default class LMSBookie extends LitElement {
                                     >
                                 </div>
                                 <div class="card-actions justify-end">
-                                    <button type="submit" class="btn btn-primary" ?disabled=${!this.borrowernumber}>
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                        ?disabled=${!this.borrowernumber || blockForMissingEmail}
+                                    >
                                         ${__("Submit")}
                                     </button>
                                 </div>
