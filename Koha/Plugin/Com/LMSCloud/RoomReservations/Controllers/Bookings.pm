@@ -304,6 +304,10 @@ sub _check_and_save_booking {
             blackedout     => $body->{'blackedout'} || 0
         };
 
+        if ( exists $body->{'purpose_of_use'} ) {
+            $booking->{'purpose_of_use'} = $body->{'purpose_of_use'} || undef;
+        }
+
         my $is_update = defined $booking_id;
         my ( $stmt, @bind ) =
               $is_update

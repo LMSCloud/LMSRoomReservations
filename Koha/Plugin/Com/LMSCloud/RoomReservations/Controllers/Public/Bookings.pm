@@ -6,7 +6,7 @@ use utf8;
 use Modern::Perl;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context ();
+use C4::Context   ();
 use Koha::Patrons ();
 
 use File::Basename qw( dirname );
@@ -183,8 +183,8 @@ sub _check_and_save_booking {
             blackedout     => 0
         };
 
-        if ( $body->{'purpose_of_use'} ) {
-            $booking->{'purpose_of_use'} = $body->{'purpose_of_use'};
+        if ( exists $body->{'purpose_of_use'} ) {
+            $booking->{'purpose_of_use'} = $body->{'purpose_of_use'} || undef;
         }
 
         my ( $stmt, @bind ) =
