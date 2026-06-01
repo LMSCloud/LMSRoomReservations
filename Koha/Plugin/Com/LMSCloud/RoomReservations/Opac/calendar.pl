@@ -5,11 +5,11 @@ use English qw( -no_match_vars );
 use Modern::Perl;
 
 use File::Basename qw( dirname );
-use File::Spec ();
-use CGI qw ( -utf8 );
+use File::Spec     ();
+use CGI            qw ( -utf8 );
 
-use C4::Output qw( output_html_with_http_headers );
-use C4::Auth qw( get_template_and_user );
+use C4::Output    qw( output_html_with_http_headers );
+use C4::Auth      qw( get_template_and_user );
 use C4::Languages qw( getlanguage );
 
 our $VERSION = '1.0.0';
