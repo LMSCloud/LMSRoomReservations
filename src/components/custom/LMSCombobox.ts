@@ -12,6 +12,11 @@ export type LMSComboboxOption = {
     // string. Required if `label` is a TemplateResult and you want the
     // built-in substring filter to work.
     searchText?: string;
+    // Optional plain text shown in the input once this option is selected.
+    // Lets the visible text differ from the committed `value` (e.g. show a
+    // patron's name while the value stays their borrowernumber). Falls back to
+    // a string `label`, then to `value`.
+    displayText?: string;
 };
 
 @customElement("lms-combobox")
@@ -163,11 +168,13 @@ export default class LMSCombobox extends LitElement {
     }
 
     private selectOption(option: LMSComboboxOption) {
-        this.value = String(option.value);
+        // Show a human-friendly label in the input while emitting the option's
+        // real value to consumers (e.g. patron name shown, borrowernumber sent).
+        this.value = option.displayText ?? (typeof option.label === "string" ? option.label : String(option.value));
         this.closeList();
         this.dispatchEvent(
             new CustomEvent("change", {
-                detail: { value: this.value, option },
+                detail: { value: String(option.value), option },
                 bubbles: true,
                 composed: true,
             }),

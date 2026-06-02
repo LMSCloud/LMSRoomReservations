@@ -73,6 +73,7 @@ export default class LMSPatronSearch extends LitElement {
                 label: html`<span class="font-medium">${primaryName}${cardnumber}</span
                     ><small class="ml-2 text-base-content/70">${idLabel}</small>`,
                 searchText: [primaryName, patron.cardnumber ?? "", String(patron.patron_id)].join(" "),
+                displayText: `${primaryName}${cardnumber}`,
             };
         });
     }

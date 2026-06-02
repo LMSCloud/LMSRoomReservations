@@ -272,7 +272,7 @@ export default class LMSModal extends LitElement {
                         <!-- Here we render the inputs -->
                         ${repeat(
                             this.inputs,
-                            ([field]) => field.value,
+                            ([field]) => field.name,
                             ([, templateResult]) => templateResult,
                         )}
                     </div>
