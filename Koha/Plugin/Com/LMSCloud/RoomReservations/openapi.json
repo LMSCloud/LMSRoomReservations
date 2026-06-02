@@ -4112,6 +4112,21 @@
                 "roomnumber": {
                   "description": "The number of the room",
                   "type": "string"
+                },
+                "slot_length": {
+                  "description": "When set, the room is bookable only in fixed slots of this many minutes; null or 0 means free start time",
+                  "type": [
+                    "integer",
+                    "null",
+                    "string"
+                  ]
+                },
+                "slot_start": {
+                  "description": "Optional time-of-day anchor (HH:MM:SS) for slot generation; null aligns slots to that weekday's opening time",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
@@ -4196,6 +4211,91 @@
         "rooms"
       ],
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Rooms#list"
+    }
+  },
+  "/public/rooms/{roomid}/slots": {
+    "get": {
+      "operationId": "getRoomSlotsPublic",
+      "parameters": [
+        {
+          "description": "ISO 639-1",
+          "in": "query",
+          "name": "lang",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "description": "The ID of the room",
+          "in": "path",
+          "name": "roomid",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "The day to compute slots for (YYYY-MM-DD)",
+          "in": "query",
+          "name": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Available booking slots for the room on the given day",
+          "schema": {
+            "properties": {
+              "slot_length": {
+                "description": "The room's slot length in minutes, or null when the room has no fixed slots",
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "slots": {
+                "items": {
+                  "properties": {
+                    "available": {
+                      "description": "Whether the slot is free to book",
+                      "type": "boolean"
+                    },
+                    "end": {
+                      "description": "Slot end (YYYY-MM-DDTHH:MM)",
+                      "type": "string"
+                    },
+                    "start": {
+                      "description": "Slot start (YYYY-MM-DDTHH:MM)",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "tags": [
+        "rooms"
+      ],
+      "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Public::Rooms#slots"
     }
   },
   "/public/settings": {
@@ -4442,6 +4542,21 @@
                 "roomnumber": {
                   "description": "The number of the room",
                   "type": "string"
+                },
+                "slot_length": {
+                  "description": "When set, the room is bookable only in fixed slots of this many minutes; null or 0 means free start time",
+                  "type": [
+                    "integer",
+                    "null",
+                    "string"
+                  ]
+                },
+                "slot_start": {
+                  "description": "Optional time-of-day anchor (HH:MM:SS) for slot generation; null aligns slots to that weekday's opening time",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
@@ -4590,6 +4705,21 @@
               "roomnumber": {
                 "description": "The number of the room",
                 "type": "string"
+              },
+              "slot_length": {
+                "description": "When set, the room is bookable only in fixed slots of this many minutes; null or 0 means free start time",
+                "type": [
+                  "integer",
+                  "null",
+                  "string"
+                ]
+              },
+              "slot_start": {
+                "description": "Optional time-of-day anchor (HH:MM:SS) for slot generation; null aligns slots to that weekday's opening time",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "type": "object"
@@ -4645,6 +4775,21 @@
               "roomnumber": {
                 "description": "The number of the room",
                 "type": "string"
+              },
+              "slot_length": {
+                "description": "When set, the room is bookable only in fixed slots of this many minutes; null or 0 means free start time",
+                "type": [
+                  "integer",
+                  "null",
+                  "string"
+                ]
+              },
+              "slot_start": {
+                "description": "Optional time-of-day anchor (HH:MM:SS) for slot generation; null aligns slots to that weekday's opening time",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "type": "object"
@@ -4910,6 +5055,21 @@
               "roomnumber": {
                 "description": "The number of the room",
                 "type": "string"
+              },
+              "slot_length": {
+                "description": "When set, the room is bookable only in fixed slots of this many minutes; null or 0 means free start time",
+                "type": [
+                  "integer",
+                  "null",
+                  "string"
+                ]
+              },
+              "slot_start": {
+                "description": "Optional time-of-day anchor (HH:MM:SS) for slot generation; null aligns slots to that weekday's opening time",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "type": "object"
@@ -5063,6 +5223,21 @@
               "roomnumber": {
                 "description": "The number of the room",
                 "type": "string"
+              },
+              "slot_length": {
+                "description": "When set, the room is bookable only in fixed slots of this many minutes; null or 0 means free start time",
+                "type": [
+                  "integer",
+                  "null",
+                  "string"
+                ]
+              },
+              "slot_start": {
+                "description": "Optional time-of-day anchor (HH:MM:SS) for slot generation; null aligns slots to that weekday's opening time",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "type": "object"
@@ -5118,6 +5293,21 @@
               "roomnumber": {
                 "description": "The number of the room",
                 "type": "string"
+              },
+              "slot_length": {
+                "description": "When set, the room is bookable only in fixed slots of this many minutes; null or 0 means free start time",
+                "type": [
+                  "integer",
+                  "null",
+                  "string"
+                ]
+              },
+              "slot_start": {
+                "description": "Optional time-of-day anchor (HH:MM:SS) for slot generation; null aligns slots to that weekday's opening time",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "type": "object"

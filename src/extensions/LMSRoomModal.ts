@@ -53,6 +53,20 @@ export default class LMSRoomModal extends LMSModal {
                 desc: __("Max bookable time"),
             },
             {
+                name: "slot_length",
+                type: "text",
+                placeholder: attr__(
+                    "Offer fixed slots of this many minutes, e.g. '120'. Leave empty for free start time.",
+                ),
+                desc: __("Slot length"),
+            },
+            {
+                name: "slot_start",
+                type: "time",
+                placeholder: attr__("Optional anchor time, e.g. '10:00'. Leave empty to align to the opening time."),
+                desc: __("Slot start"),
+            },
+            {
                 name: "branch",
                 type: "select",
                 desc: __("Branch"),

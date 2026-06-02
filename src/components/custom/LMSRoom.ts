@@ -7,6 +7,7 @@ import { requestHandler } from "../../lib/RequestHandler.js";
 import ColorInput from "../../lib/converters/InputConverter/inputs/ColorInput.js";
 import NumberInput from "../../lib/converters/InputConverter/inputs/NumberInput.js";
 import TextInput from "../../lib/converters/InputConverter/inputs/TextInput.js";
+import TimeInput from "../../lib/converters/InputConverter/inputs/TimeInput.js";
 import { formatMinutesHumanReadable } from "../../lib/converters/timeConverter.js";
 import { __, attr__, t } from "../../lib/translate.js";
 import { tailwindStyles } from "../../tailwind.lit.js";
@@ -35,6 +36,10 @@ export default class LMSRoom extends LitElement {
     @property({ type: String }) roomid: string = "";
 
     @property({ type: String }) roomnumber: string = "";
+
+    @property({ type: String }) slot_length: string = "";
+
+    @property({ type: String }) slot_start: string = "";
 
     @state() private tab: "data" | "preview" = "data";
 
@@ -66,6 +71,8 @@ export default class LMSRoom extends LitElement {
                 image: this.image,
                 description: this.description,
                 maxbookabletime: this.maxbookabletime,
+                slot_length: this.slot_length,
+                slot_start: this.slot_start,
                 branch: this.branch,
                 roomnumber: this.roomnumber,
             },
@@ -143,6 +150,8 @@ export default class LMSRoom extends LitElement {
                 "image",
                 "roomid",
                 "maxbookabletime",
+                "slot_length",
+                "slot_start",
                 "branch",
             ].includes(name)
         ) {
@@ -276,6 +285,30 @@ export default class LMSRoom extends LitElement {
                             </label>
                             ${new NumberInput("maxbookabletime", this.maxbookabletime).render()}
                             ${this.renderMaxBookableTimeHint()}
+                        </div>
+                        <div class="form-control">
+                            <label class="label" for="slot_length">
+                                <span class="label-text"> ${__("Slot length")} </span>
+                            </label>
+                            ${new NumberInput("slot_length", this.slot_length).render()}
+                            <label class="label">
+                                <span class="label-text-alt text-base-content/70">
+                                    ${__(
+                                        "Offer fixed booking slots of this many minutes. Leave empty for a free start time.",
+                                    )}
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label" for="slot_start">
+                                <span class="label-text"> ${__("Slot start")} </span>
+                            </label>
+                            ${new TimeInput("slot_start", this.slot_start).render()}
+                            <label class="label">
+                                <span class="label-text-alt text-base-content/70">
+                                    ${__("Optional anchor time. Leave empty to align slots to the opening time.")}
+                                </span>
+                            </label>
                         </div>
                     </div>
 

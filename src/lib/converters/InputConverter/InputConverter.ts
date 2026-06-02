@@ -24,6 +24,7 @@ import ModalInfo from "./inputs/modal/ModalInfo";
 import ModalNumberInput from "./inputs/modal/ModalNumberInputs";
 import ModalSelect from "./inputs/modal/ModalSelect";
 import ModalTextInput from "./inputs/modal/ModalTextInput";
+import ModalTimeInput from "./inputs/modal/ModalTimeInput";
 
 declare global {
     interface HTMLTagNameMap {
@@ -146,6 +147,7 @@ export class InputConverter {
             modal_number: (value) => new ModalNumberInput(value as ModalField).render(),
             modal_select: (value, data) => new ModalSelect(value as ModalField, data as SelectOption[]).render(),
             modal_text: (value) => new ModalTextInput(value as ModalField).render(),
+            modal_time: (value) => new ModalTimeInput(value as ModalField).render(),
             "modal_patron-search": (value) => {
                 const { name, desc, placeholder, required, value: _value } = value as ModalField;
                 return html`

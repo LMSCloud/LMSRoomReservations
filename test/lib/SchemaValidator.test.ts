@@ -46,6 +46,42 @@ describe("SchemaValidator", () => {
             expect(result.color).toBeNull();
             expect(result.maxbookabletime).toBeNull();
         });
+
+        it("coerces slot fields and treats empty values as null", () => {
+            const input = {
+                roomnumber: "101",
+                maxcapacity: 5,
+                description: null,
+                color: null,
+                image: null,
+                branch: null,
+                maxbookabletime: null,
+                slot_length: "120",
+                slot_start: "",
+            };
+
+            const result = validator.validateAndCoerce("rooms", input);
+            expect(result.slot_length).toBe(120);
+            expect(result.slot_start).toBeNull();
+        });
+
+        it("keeps a provided slot_start time and nulls an empty slot_length", () => {
+            const input = {
+                roomnumber: "101",
+                maxcapacity: 5,
+                description: null,
+                color: null,
+                image: null,
+                branch: null,
+                maxbookabletime: null,
+                slot_length: "",
+                slot_start: "10:00",
+            };
+
+            const result = validator.validateAndCoerce("rooms", input);
+            expect(result.slot_length).toBeNull();
+            expect(result.slot_start).toBe("10:00");
+        });
     });
 
     describe("bookings", () => {

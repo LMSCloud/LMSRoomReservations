@@ -36,6 +36,9 @@ BEGIN {
         is_koha_calendar_open
         has_open_hours_deviation
         is_valid_duration_grain
+        compute_room_slots
+        is_slot_mode
+        is_valid_slot
     );
 }
 
@@ -50,12 +53,16 @@ Readonly my $CONSTANTS => {
     DATETIME_HOUR_LENGTH         => 2,
     DATETIME_MINUTE_START        => 14,
     DATETIME_MINUTE_LENGTH       => 2,
+    DATE_STRING_LENGTH           => 10,       # length of YYYY-MM-DD
     DOW_MONDAY                   => 1,
     DOW_FRIDAY                   => 5,
     DOW_SUNDAY                   => 7,
-    RECURRENCE_MAX_INSTANCES     => 730,    # 2 years of daily occurrences
+    RECURRENCE_MAX_INSTANCES     => 730,      # 2 years of daily occurrences
     RECURRENCE_END_OF_DAY_HOUR   => 23,
     RECURRENCE_END_OF_DAY_MINUTE => 59,
+    SECONDS_PER_MINUTE           => 60,
+    SECONDS_PER_HOUR             => 3600,
+    SECONDS_PER_DAY              => 86_400,
 };
 
 my $self = Koha::Plugin::Com::LMSCloud::RoomReservations->new;
@@ -100,6 +107,196 @@ sub is_valid_duration_grain {
     return 0 if $step > 0 && ( $duration - $min ) % $step != 0;
 
     return 1;
+}
+
+# Build the fixed booking-slot grid for a room on a given day (YYYY-MM-DD).
+# Slots are generated from every open window that applies to the room that day —
+# the weekday's regular open hours plus any non-blackout special-hours
+# deviations — stepping by the room's slot_length and clamped to each window.
+# The grid is anchored to the room's slot_start when set (a stable per-room
+# phase across every window), otherwise to each window's own opening time.
+# Overlapping windows are deduplicated and the slots returned in chronological
+# order, as an arrayref of { start, end } in YYYY-MM-DDTHH:MM form — empty when
+# the room is in free mode (no slot_length) or has no open window that day.
+# This is a pure function of the room configuration and open hours; remaining
+# availability (bookings, blackouts, holidays, past times) is decorated by
+# callers. Slots from special hours are mirrored by is_open_during_booking_time,
+# which treats those windows as additionally bookable.
+sub compute_room_slots {
+    my ( $roomid, $date ) = @_;
+
+    my $sql = SQL::Abstract->new;
+    my $dbh = C4::Context->dbh;
+
+    my ( $stmt, @bind ) = $sql->select( $ROOMS_TABLE, [ 'branch', 'slot_length', 'slot_start' ], { roomid => $roomid } );
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    my ( $branch, $slot_length, $slot_start ) = $sth->fetchrow_array;
+
+    # Free mode — no fixed slots
+    return [] if !$slot_length || $slot_length <= 0;
+
+    my ( $year, $month, $day ) = split /-/sm, $date;
+    return [] if !( $year && $month && $day );
+
+    my $step_sec = $slot_length * $CONSTANTS->{'SECONDS_PER_MINUTE'};
+    return [] if $step_sec <= 0;
+
+    # Schema stores day as 0=Mon..6=Sun; DateTime->day_of_week is 1=Mon..7=Sun.
+    my $day_dt = eval { DateTime->new( year => $year, month => $month, day => $day ) };
+    return [] if !$day_dt;
+    my $wday = $day_dt->day_of_week - 1;
+
+    # Collect every open window for the day as second-of-day [start, end) ranges:
+    # the weekday's regular open hours, plus any special-hours deviations.
+    my $windows = [];
+
+    ( $stmt, @bind ) = $sql->select( $OPEN_HOURS_TABLE, [ 'start', 'end' ], { branch => $branch, day => $wday } );
+    $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    my ( $open_start, $open_end ) = $sth->fetchrow_array;
+
+    # A regular row is open unless it's missing or both endpoints are "00:00:00".
+    if ( defined $open_start && !( $open_start eq '00:00:00' && $open_end eq '00:00:00' ) ) {
+        push @{$windows}, { start => _time_string_to_seconds($open_start), end => _time_string_to_seconds($open_end) };
+    }
+
+    push @{$windows}, @{ _special_hours_windows_for_date( $branch, $roomid, $date ) };
+
+    return [] if !@{$windows};
+
+    # Build the grid for each window. When slot_start is configured the anchor is
+    # the same phase for every window; otherwise each window anchors to its own
+    # opening second. Dedup by start so overlapping windows don't repeat a slot
+    # (slot_length is constant, so equal starts imply equal ends), then sort.
+    my %seen;
+    my $slots = [];
+    for my $window ( @{$windows} ) {
+        my $anchor_sec = $slot_start ? _time_string_to_seconds($slot_start) : $window->{start};
+        for my $slot ( @{ _slots_in_window( $date, $window->{start}, $window->{end}, $anchor_sec, $step_sec ) } ) {
+            next if $seen{ $slot->{start} }++;
+            push @{$slots}, $slot;
+        }
+    }
+
+    return [ sort { $a->{start} cmp $b->{start} } @{$slots} ];
+}
+
+# Generate slot hashrefs for a single open window. Steps from the anchor by
+# step_sec, emitting a { start, end } for every full slot that lands inside
+# [window_start_sec, window_end_sec). The trailing remainder is dropped.
+sub _slots_in_window {
+    my ( $date, $window_start_sec, $window_end_sec, $anchor_sec, $step_sec ) = @_;
+
+    my $slots  = [];
+    my $cursor = $anchor_sec;
+    while ( $cursor + $step_sec <= $window_end_sec ) {
+        if ( $cursor >= $window_start_sec ) {
+            push @{$slots},
+                {
+                start => _date_seconds_to_iso( $date, $cursor ),
+                end   => _date_seconds_to_iso( $date, $cursor + $step_sec ),
+                };
+        }
+        $cursor += $step_sec;
+    }
+
+    return $slots;
+}
+
+# Collect non-blackout special-hours deviation windows that apply to the room on
+# a given date, as second-of-day [start, end) ranges clamped to that date.
+# Recurring deviations are expanded. Blackouts are skipped — they narrow
+# availability (decorated by is_open_during_booking_time) rather than create
+# bookable slots, mirroring the additive semantics of has_open_hours_deviation.
+sub _special_hours_windows_for_date {
+    my ( $branch, $roomid, $date ) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    my $day_start_dt = _parse_datetime("${date}T00:00");
+    my $day_end_dt   = _parse_datetime("${date}T23:59");
+
+    my $query = <<~"SQL";
+        SELECT d.deviationid, d.isblackout, d.start, d.end,
+               d.recurrencetype, d.recurrencedays, d.recurrenceuntil
+        FROM $DEVIATIONS_TABLE d
+    SQL
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my $windows = [];
+    while ( my $deviation = $sth->fetchrow_hashref ) {
+        next if $deviation->{'isblackout'};
+        next if !_deviation_applies_to_branch( $deviation->{'deviationid'}, $branch );
+        next if !_deviation_applies_to_room( $deviation->{'deviationid'}, $roomid );
+
+        for my $instance ( @{ _expand_deviation_instances( $deviation, $day_start_dt, $day_end_dt ) } ) {
+            my $istart = $instance->{start};
+            my $iend   = $instance->{end};
+
+            # Keep only instances that overlap the requested date.
+            next if DateTime->compare( $istart, $day_end_dt ) > 0;
+            next if DateTime->compare( $iend,   $day_start_dt ) <= 0;
+
+            # Clamp to the date: instances starting earlier open from 00:00,
+            # instances ending later run through to end-of-day.
+            my $start_sec = $istart->ymd lt $date ? 0 : ( $istart->hour * $CONSTANTS->{'SECONDS_PER_HOUR'} ) + ( $istart->minute * $CONSTANTS->{'SECONDS_PER_MINUTE'} );
+            my $end_sec =
+                  $iend->ymd gt $date
+                ? $CONSTANTS->{'SECONDS_PER_DAY'}
+                : ( $iend->hour * $CONSTANTS->{'SECONDS_PER_HOUR'} ) + ( $iend->minute * $CONSTANTS->{'SECONDS_PER_MINUTE'} );
+
+            push @{$windows}, { start => $start_sec, end => $end_sec };
+        }
+    }
+
+    return $windows;
+}
+
+# True when the room is configured for fixed-slot booking (slot_length > 0).
+# In slot mode the slot length defines the booking duration, so the global
+# duration-grain rules don't apply.
+sub is_slot_mode {
+    my ($roomid) = @_;
+
+    my $sql = SQL::Abstract->new;
+    my $dbh = C4::Context->dbh;
+
+    my ( $stmt, @bind ) = $sql->select( $ROOMS_TABLE, ['slot_length'], { roomid => $roomid } );
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
+    my ($slot_length) = $sth->fetchrow_array;
+
+    return ( $slot_length && $slot_length > 0 ) ? 1 : 0;
+}
+
+# Validate that a booking's start/end land on the room's slot grid. Rooms in
+# free mode (no slot_length) accept any time. In slot mode the start and end
+# must exactly match one generated slot for the start date.
+sub is_valid_slot {
+    my ( $roomid, $start_time, $end_time ) = @_;
+
+    # Free mode — any time is acceptable
+    return 1 if !is_slot_mode($roomid);
+
+    my $date  = substr $start_time, 0, $CONSTANTS->{'DATE_STRING_LENGTH'};
+    my $slots = compute_room_slots( $roomid, $date );
+
+    for my $slot ( @{$slots} ) {
+        return 1 if $slot->{start} eq $start_time && $slot->{end} eq $end_time;
+    }
+
+    return 0;
+}
+
+sub _date_seconds_to_iso {
+    my ( $date, $seconds ) = @_;
+
+    my $hour   = int( $seconds / $CONSTANTS->{'SECONDS_PER_HOUR'} );
+    my $minute = int( ( $seconds % $CONSTANTS->{'SECONDS_PER_HOUR'} ) / $CONSTANTS->{'SECONDS_PER_MINUTE'} );
+
+    return sprintf '%sT%02d:%02d', $date, $hour, $minute;
 }
 
 sub is_active_room {
@@ -207,15 +404,15 @@ sub is_open_during_booking_time {
 
         my $open_sod      = _time_string_to_seconds($start_hour);
         my $close_sod     = _time_string_to_seconds($end_hour);
-        my $seg_start_sod = ( $cursor->hour * 3600 ) + ( $cursor->minute * 60 ) + $cursor->second;
+        my $seg_start_sod = ( $cursor->hour * $CONSTANTS->{'SECONDS_PER_HOUR'} ) + ( $cursor->minute * $CONSTANTS->{'SECONDS_PER_MINUTE'} ) + $cursor->second;
 
         # When the segment runs into the next day, compare its end against end-of-day
         # (23:59:59). That way an open_hours row ending at 23:59:59 qualifies as
         # "open through midnight" and allows continuity into the next day's hours.
         my $seg_end_sod =
             DateTime->compare( $segment_end, $next_midnight ) == 0
-            ? 86_399
-            : ( $segment_end->hour * 3600 ) + ( $segment_end->minute * 60 ) + $segment_end->second;
+            ? $CONSTANTS->{'SECONDS_PER_DAY'} - 1
+            : ( $segment_end->hour * $CONSTANTS->{'SECONDS_PER_HOUR'} ) + ( $segment_end->minute * $CONSTANTS->{'SECONDS_PER_MINUTE'} ) + $segment_end->second;
 
         return 0 if $seg_start_sod < $open_sod || $seg_end_sod > $close_sod;
 
@@ -228,7 +425,7 @@ sub is_open_during_booking_time {
 sub _time_string_to_seconds {
     my ($hms) = @_;
     my ( $h, $m, $s ) = split /:/sm, $hms;
-    return ( $h * 3600 ) + ( $m * 60 ) + ( $s // 0 );
+    return ( $h * $CONSTANTS->{'SECONDS_PER_HOUR'} ) + ( $m * $CONSTANTS->{'SECONDS_PER_MINUTE'} ) + ( $s // 0 );
 }
 
 sub has_conflicting_booking {
@@ -408,10 +605,10 @@ sub has_open_hours_deviation {
         }
 
         # Get all instances of this deviation (expanded if recurring)
-        my @instances = _expand_deviation_instances( $deviation, $start_dt, $end_dt );
+        my $instances = _expand_deviation_instances( $deviation, $start_dt, $end_dt );
 
         # Check each instance for overlap with booking time
-        for my $instance (@instances) {
+        for my $instance ( @{$instances} ) {
             my $deviation_start_dt = $instance->{start};
             my $deviation_end_dt   = $instance->{end};
 
@@ -441,8 +638,8 @@ sub has_open_hours_deviation {
         : { status => 'neutral' };
 }
 
-# Expand a deviation into all its instances within the given time range
-# Returns array of hashrefs with {start => DateTime, end => DateTime}
+# Expand a deviation into all its instances within the given time range.
+# Returns an arrayref of hashrefs with {start => DateTime, end => DateTime}.
 sub _expand_deviation_instances {
     my ( $deviation, $booking_start_dt, $booking_end_dt ) = @_;
 
@@ -472,7 +669,7 @@ sub _expand_deviation_instances {
 
     # Non-recurring deviation - return early
     if ( $recurrence_type eq 'none' ) {
-        return { start => $dev_start_dt->clone, end => $dev_end_dt->clone };
+        return [ { start => $dev_start_dt->clone, end => $dev_end_dt->clone } ];
     }
 
     # Dispatch table for recurrence pattern matching
@@ -507,11 +704,11 @@ sub _expand_deviation_instances {
     # Get the matcher for this recurrence type
     my $matcher = $pattern_matchers->{$recurrence_type};
     if ( !$matcher ) {
-        return ();
+        return [];
     }
 
     # Generate recurring instances
-    my @instances;
+    my $instances      = [];
     my $current_dt     = $dev_start_dt->clone;
     my $max_instances  = $CONSTANTS->{'RECURRENCE_MAX_INSTANCES'};
     my $instance_count = 0;
@@ -527,7 +724,7 @@ sub _expand_deviation_instances {
         # Check if this date matches the recurrence pattern
         if ( $matcher->($current_dt) ) {
             my $instance_end_dt = $current_dt->clone->add_duration($duration);
-            push @instances, { start => $current_dt->clone, end => $instance_end_dt };
+            push @{$instances}, { start => $current_dt->clone, end => $instance_end_dt };
         }
 
         # Move to next day
@@ -535,7 +732,7 @@ sub _expand_deviation_instances {
         $instance_count++;
     }
 
-    return @instances;
+    return $instances;
 }
 
 sub _deviation_applies_to_branch {

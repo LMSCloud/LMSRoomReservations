@@ -24,6 +24,8 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
     has_reached_reservation_limit
     has_passed
     is_valid_duration_grain
+    is_slot_mode
+    is_valid_slot
 );
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
     send_email_confirmation
@@ -145,10 +147,20 @@ sub _check_and_save_booking {
             );
         }
 
-        if ( !is_valid_duration_grain( $body->{'start'}, $body->{'end'} ) ) {
+        # In slot mode the slot length defines the duration, so the global
+        # duration-grain rules don't apply (and would otherwise reject every slot
+        # whose length is grain-incompatible).
+        if ( !is_slot_mode( $body->{'roomid'} ) && !is_valid_duration_grain( $body->{'start'}, $body->{'end'} ) ) {
             return $c->render(
                 status  => 400,
                 openapi => { error => __('The booking duration does not match the allowed minimum and step.') }
+            );
+        }
+
+        if ( !is_valid_slot( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('The selected time does not match an available slot for this room.') }
             );
         }
 

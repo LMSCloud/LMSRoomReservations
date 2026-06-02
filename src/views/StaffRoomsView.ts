@@ -112,6 +112,8 @@ export default class StaffRoomsView extends LitElement {
                                 .libraries=${this.libraries}
                                 .openHours=${this.openHours}
                                 .maxbookabletime=${room["maxbookabletime"]}
+                                .slot_length=${room["slot_length"]}
+                                .slot_start=${room["slot_start"]}
                                 .maxcapacity=${room["maxcapacity"]}
                                 .roomid=${room["roomid"]}
                                 .roomnumber=${room["roomnumber"]}

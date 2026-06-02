@@ -61,7 +61,7 @@ subtest 'list rooms' => sub {
 };
 
 subtest 'add room' => sub {
-    plan tests => 9;
+    plan tests => 13;
     $schema->storage->txn_begin;
 
     # Valid room
@@ -98,6 +98,27 @@ subtest 'add room' => sub {
         maxcapacity => 5,
         color       => '#112233',
         description => 'Long roomnumber',
+        branch      => $branch,
+    } )->status_is(400);
+
+    # Valid slot configuration
+    $t->post_ok( "$base_url/rooms" => json => {
+        roomnumber  => 'R204',
+        maxcapacity => 8,
+        color       => '#445566',
+        description => 'Slot room',
+        slot_length => 120,
+        slot_start  => '10:00',
+        branch      => $branch,
+    } )->status_is(201);
+
+    # Out-of-range slot_start
+    $t->post_ok( "$base_url/rooms" => json => {
+        roomnumber  => 'R205',
+        maxcapacity => 8,
+        color       => '#445566',
+        description => 'Bad slot_start',
+        slot_start  => '99:99',
         branch      => $branch,
     } )->status_is(400);
 

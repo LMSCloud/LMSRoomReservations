@@ -1,13 +1,19 @@
-import { PropertyValueMap, html } from "lit";
+import dayjs from "dayjs";
+import { PropertyValueMap, TemplateResult, html } from "lit";
 import { customElement, property, queryAll } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
 import { requestHandler } from "../lib/RequestHandler";
 import { extractEquipmentItems, findRoomName, listEquipmentNames, patronDisplay } from "../lib/bookingDisplay";
 import { formatDatetimeByLocale } from "../lib/converters/datetimeConverters";
-import { __, localeFull } from "../lib/translate";
+import { packSlotValue, unpackSlotValue } from "../lib/slots";
+import { __, attr__, localeFull, t } from "../lib/translate";
 import { Column, Input } from "../types/common";
 
 type EquipmentSelection = [number, any[]];
+
+type Slot = { start: string; end: string; available: boolean };
+
+type RowSlotState = { date: string; slots: Slot[]; selected: string };
 
 @customElement("lms-bookings-table")
 export default class LMSBookingsTable extends LMSTable {
@@ -22,6 +28,17 @@ export default class LMSBookingsTable extends LMSTable {
     @queryAll('select[name="roomid"]') roomSelects!: NodeListOf<HTMLSelectElement>;
 
     private originalEquipmentSelection: EquipmentSelection | undefined;
+
+    // Bookings (by bookingid) whose inline edit is in custom-time mode: start/end
+    // fall back to free datetime-local inputs instead of the slot dropdown.
+    private overriddenRows = new Set<number>();
+
+    // Per-row slot picker state (date, fetched slots, selected "start|end").
+    private rowSlotState = new Map<number, RowSlotState>();
+
+    // The bookingid whose inline edit is currently open, so we can reset its
+    // transient slot/override state when it closes.
+    private editingId?: number;
 
     private boundUpdateEquipmentItemsOnRoomChange = this.updateEquipmentItemsOnRoomChange.bind(this);
 
@@ -58,28 +75,39 @@ export default class LMSBookingsTable extends LMSTable {
             return;
         }
 
-        const response = await requestHandler.put(
-            "bookings",
-            {
-                borrowernumber,
-                equipment: equipmentCheckboxInputs?.reduce((acc: string[], equipmentCheckboxInput) => {
-                    if (equipmentCheckboxInput.checked) {
-                        acc.push(equipmentCheckboxInput.name);
-                    }
-                    return acc;
-                }, []),
-                ...checkboxInputs?.reduce((acc: Record<string, boolean>, checkboxInput) => {
-                    acc[checkboxInput.name] = checkboxInput.checked;
-                    return acc;
-                }, {}),
-                ...Array.from(inputs).reduce((acc: Record<string, string>, input: Input) => {
-                    acc[input.name] = input.value;
-                    return acc;
-                }, {}),
-            },
-            undefined,
-            [key.toString()],
-        );
+        const body: Record<string, any> = {
+            borrowernumber,
+            equipment: equipmentCheckboxInputs?.reduce((acc: string[], equipmentCheckboxInput) => {
+                if (equipmentCheckboxInput.checked) {
+                    acc.push(equipmentCheckboxInput.name);
+                }
+                return acc;
+            }, []),
+            ...checkboxInputs?.reduce((acc: Record<string, boolean>, checkboxInput) => {
+                acc[checkboxInput.name] = checkboxInput.checked;
+                return acc;
+            }, {}),
+            ...Array.from(inputs).reduce((acc: Record<string, string>, input: Input) => {
+                acc[input.name] = input.value;
+                return acc;
+            }, {}),
+        };
+
+        // Slot-mode rooms edit times through a single dropdown whose value packs
+        // "start|end"; unpack it into the fields the API expects.
+        if (body["slot"] !== undefined) {
+            const unpacked = unpackSlotValue(String(body["slot"]));
+            if (!unpacked) {
+                this.renderToast("", { error: t("Please select a time slot"), errors: [] });
+                return;
+            }
+            body["start"] = unpacked.start;
+            body["end"] = unpacked.end;
+            delete body["slot"];
+            delete body["slot-date"];
+        }
+
+        const response = await requestHandler.put("bookings", body, undefined, [key.toString()]);
         if (response.ok) {
             inputs.forEach((input) => {
                 input.disabled = true;
@@ -187,10 +215,269 @@ export default class LMSBookingsTable extends LMSTable {
                     ["equipment", this.equipment],
                 ]),
             );
+
+            const room = this.findRoom(booking.roomid);
+            if (this.isSlotRoom(room)) {
+                const id = Number(booking.bookingid);
+                if (this.overriddenRows.has(id)) {
+                    (converted as any).start = this.renderOverriddenStartCell((converted as any).start);
+                } else {
+                    (converted as any).start = this.renderSlotStartCell(booking);
+                    (converted as any).end = this.renderSlotEndCell(booking);
+                }
+            }
+
             (converted as any)._raw = booking;
             (converted as any).uuid = `booking-${booking.bookingid}`;
             return converted;
         });
+    }
+
+    private findRoom(roomid: unknown) {
+        return this.rooms.find((room) => Number((room as any).id) === Number(roomid));
+    }
+
+    private isSlotRoom(room: any): boolean {
+        return Number(room?.slot_length) > 0;
+    }
+
+    private getRowState(booking: any): RowSlotState {
+        const id = Number(booking.bookingid);
+        let state = this.rowSlotState.get(id);
+        if (!state) {
+            state = {
+                date: booking.start ? dayjs(booking.start).format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD"),
+                slots: [],
+                selected: booking.start && booking.end ? `${booking.start}|${booking.end}` : "",
+            };
+            this.rowSlotState.set(id, state);
+        }
+        return state;
+    }
+
+    private async fetchRowSlots(booking: any) {
+        const room = this.findRoom(booking.roomid);
+        const state = this.getRowState(booking);
+        if (!this.isSlotRoom(room) || !state.date) {
+            state.slots = [];
+            return;
+        }
+
+        try {
+            const response = await requestHandler.get("roomSlotsPublic", { date: state.date }, [
+                String((room as any).id),
+                "slots",
+            ]);
+            state.slots = response.ok ? ((await response.json()).slots ?? []) : [];
+        } catch (error) {
+            state.slots = [];
+            return;
+        }
+
+        // When the booking sits on the fetched date, reconcile the selection to
+        // the matching fetched slot so its <option> value lines up exactly.
+        if (booking.start && booking.end && dayjs(booking.start).format("YYYY-MM-DD") === state.date) {
+            const match = state.slots.find(
+                (slot) => dayjs(slot.start).isSame(dayjs(booking.start)) && dayjs(slot.end).isSame(dayjs(booking.end)),
+            );
+            if (match) {
+                state.selected = `${match.start}|${match.end}`;
+            }
+        }
+    }
+
+    /**
+     * Slot-mode start cell: a "Custom time" override toggle, a date picker and a
+     * dropdown of available slots. Mirrors the staff booking modal, but inline.
+     * Controls render disabled and are enabled by the table's edit toggle.
+     */
+    private renderSlotStartCell(booking: any): TemplateResult {
+        const state = this.getRowState(booking);
+        const today = dayjs().format("YYYY-MM-DD");
+
+        // Offer available slots plus the booking's own slot (which the slots
+        // endpoint reports as unavailable because it conflicts with itself).
+        const onGrid = state.slots.filter(
+            (slot) => slot.available || (booking.start && dayjs(slot.start).isSame(dayjs(booking.start))),
+        );
+        const hasSelected = onGrid.some((slot) => packSlotValue(slot.start, slot.end) === state.selected);
+        const current = unpackSlotValue(state.selected);
+        const options = hasSelected || !current ? onGrid : [{ ...current, available: true } as Slot, ...onGrid];
+
+        return html`
+            <div class="flex items-center whitespace-nowrap px-2">
+                <label class="flex cursor-pointer items-center pr-2">
+                    <input
+                        type="checkbox"
+                        name="slot_override"
+                        class="checkbox"
+                        ?disabled=${true}
+                        @change=${this.handleOverrideToggle}
+                    />
+                    <span class="label-text pl-2">${__("Custom time")}</span>
+                </label>
+                <input
+                    type="date"
+                    name="slot-date"
+                    class="input input-bordered w-min"
+                    aria-label=${attr__("Booking date")}
+                    min=${today}
+                    .value=${state.date}
+                    ?disabled=${true}
+                    @change=${this.handleRowDateChange}
+                />
+                <select
+                    name="slot"
+                    class="select select-bordered w-min"
+                    aria-label=${attr__("Time slot")}
+                    ?disabled=${true}
+                    @change=${this.handleRowSlotChange}
+                >
+                    <option value="">
+                        ${options.length === 0 ? __("No slots available") : __("Please select a time slot")}
+                    </option>
+                    ${options.map((slot) => {
+                        const value = packSlotValue(slot.start, slot.end);
+                        const label = `${dayjs(slot.start).format("HH:mm")} – ${dayjs(slot.end).format("HH:mm")}`;
+                        return html`<option value=${value} ?selected=${value === state.selected}>${label}</option>`;
+                    })}
+                </select>
+            </div>
+        `;
+    }
+
+    /** Slot-mode end cell: read-only, derived from the selected slot. */
+    private renderSlotEndCell(booking: any): TemplateResult {
+        const end = unpackSlotValue(this.getRowState(booking).selected)?.end;
+        return html`<span class="whitespace-nowrap px-2">${end ? dayjs(end).format("HH:mm") : "—"}</span>`;
+    }
+
+    /** Override mode: keep the free datetime-local start input, prepend the toggle. */
+    private renderOverriddenStartCell(originalStart: TemplateResult): TemplateResult {
+        return html`
+            <div class="flex items-center whitespace-nowrap px-2">
+                <label class="flex cursor-pointer items-center pr-2">
+                    <input
+                        type="checkbox"
+                        name="slot_override"
+                        class="checkbox"
+                        ?checked=${true}
+                        ?disabled=${true}
+                        @change=${this.handleOverrideToggle}
+                    />
+                    <span class="label-text pl-2">${__("Custom time")}</span>
+                </label>
+                ${originalStart}
+            </div>
+        `;
+    }
+
+    /**
+     * The slot <select> lives in a cached template, so a re-render re-commits it
+     * with the `selected` attribute (defaultSelected), which the browser ignores
+     * for the live value. Sync each row's select value imperatively.
+     */
+    private syncSlotSelects() {
+        this.renderRoot.querySelectorAll<HTMLSelectElement>('select[name="slot"]').forEach((select) => {
+            const id = Number(select.closest("tr")?.firstElementChild?.textContent?.trim());
+            const state = this.rowSlotState.get(id);
+            if (state && select.value !== state.selected) {
+                select.value = state.selected;
+            }
+        });
+    }
+
+    private bookingFromRow(row: Element | null): { id: number; booking: any } | undefined {
+        const id = Number(row?.firstElementChild?.textContent?.trim());
+        if (!id) {
+            return undefined;
+        }
+        const booking = this.bookings.find((candidate: any) => Number(candidate.bookingid) === id);
+        return booking ? { id, booking } : undefined;
+    }
+
+    // A template swap (slot dropdown <-> free inputs) renders the new inputs
+    // disabled; re-enable the row's inputs after the re-render so the open edit
+    // session stays editable.
+    private async reenableRow(row: Element | null) {
+        await this.updateComplete;
+        row?.querySelectorAll("input, select, textarea, .lit-element").forEach((input) =>
+            input.removeAttribute("disabled"),
+        );
+    }
+
+    private async handleOverrideToggle(e: Event) {
+        const checkbox = e.target as HTMLInputElement;
+        const row = checkbox.closest("tr");
+        const found = this.bookingFromRow(row);
+        if (!found) {
+            return;
+        }
+
+        if (checkbox.checked) {
+            this.overriddenRows.add(found.id);
+        } else {
+            this.overriddenRows.delete(found.id);
+            await this.fetchRowSlots(found.booking);
+        }
+        this.renderInputs();
+        await this.reenableRow(row);
+
+        // The re-render swaps the start-cell template, destroying the checkbox
+        // the user just activated. Move focus to the recreated one so keyboard
+        // and screen-reader users keep their place and hear the new state.
+        row?.querySelector<HTMLInputElement>('input[name="slot_override"]')?.focus();
+    }
+
+    private handleRowDateChange(e: Event) {
+        const input = e.target as HTMLInputElement;
+        const row = input.closest("tr");
+        const found = this.bookingFromRow(row);
+        if (!found) {
+            return;
+        }
+
+        const state = this.getRowState(found.booking);
+        state.date = input.value;
+        state.selected = "";
+        void this.fetchRowSlots(found.booking).then(() => this.renderInputs());
+    }
+
+    private handleRowSlotChange(e: Event) {
+        const select = e.target as HTMLSelectElement;
+        const found = this.bookingFromRow(select.closest("tr"));
+        if (!found) {
+            return;
+        }
+
+        this.getRowState(found.booking).selected = select.value;
+        this.renderInputs();
+    }
+
+    // Fetch the available slots for a row when its inline edit opens, and drop a
+    // row's transient slot/override state when its edit closes so display cells
+    // always fall back to the canonical slot view. Each edit session is seeded
+    // fresh from the current booking.
+    protected override toggleEdit(e: Event | CustomEvent) {
+        super.toggleEdit(e);
+
+        const opened = this.bookingFromRow(this.renderRoot.querySelector(".btn-edit.active")?.closest("tr") ?? null);
+        const openedId = opened?.id;
+
+        // A previously open row just closed (save/abort/switching rows).
+        if (this.editingId !== undefined && this.editingId !== openedId) {
+            this.overriddenRows.delete(this.editingId);
+            this.rowSlotState.delete(this.editingId);
+        }
+        this.editingId = openedId;
+
+        if (opened && this.isSlotRoom(this.findRoom(opened.booking.roomid))) {
+            this.overriddenRows.delete(opened.id);
+            this.rowSlotState.delete(opened.id);
+            void this.fetchRowSlots(opened.booking).then(() => this.renderInputs());
+        }
+
+        this.renderInputs();
     }
 
     private updateEquipmentItemsOnRoomChange(e: Event) {
@@ -228,7 +515,29 @@ export default class LMSBookingsTable extends LMSTable {
         };
         this.bookings[bookingIndex] = updatedBooking;
 
-        this.renderInputs();
+        // The room drives whether start/end are slot or free inputs. Reset this
+        // row's slot state (the old slot belongs to the old room) and refetch.
+        const id = Number(updatedBooking.bookingid);
+        this.overriddenRows.delete(id);
+        this.rowSlotState.set(id, {
+            date: updatedBooking.start
+                ? dayjs(updatedBooking.start).format("YYYY-MM-DD")
+                : dayjs().format("YYYY-MM-DD"),
+            slots: [],
+            selected: "",
+        });
+
+        const newRoomIsSlot = this.isSlotRoom(this.findRoom(roomid));
+        const row = target.closest("tr");
+        if (newRoomIsSlot) {
+            void this.fetchRowSlots(updatedBooking).then(async () => {
+                this.renderInputs();
+                await this.reenableRow(row);
+            });
+        } else {
+            this.renderInputs();
+            void this.reenableRow(row);
+        }
     }
 
     protected override updated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
@@ -242,6 +551,8 @@ export default class LMSBookingsTable extends LMSTable {
                 });
             }
         }
+
+        this.syncSlotSelects();
     }
 
     override disconnectedCallback(): void {

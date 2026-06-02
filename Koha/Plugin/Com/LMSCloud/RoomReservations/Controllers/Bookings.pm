@@ -24,6 +24,7 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::Checks qw(
     is_open_during_booking_time
     has_conflicting_booking
     has_reached_reservation_limit
+    is_valid_slot
 );
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Actions qw(
     send_email_confirmation
@@ -275,6 +276,15 @@ sub _check_and_save_booking {
             return $c->render(
                 status  => 400,
                 openapi => { error => __('The institution is closed during the selected time frame.') }
+            );
+        }
+
+        # Slot-mode rooms require bookings to match a generated slot. Staff can
+        # bypass this with slot_override (other checks above still apply).
+        if ( !$body->{'slot_override'} && !is_valid_slot( $body->{'roomid'}, $body->{'start'}, $body->{'end'} ) ) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => __('The selected time does not match an available slot for this room. Enable override to book a custom time.') }
             );
         }
 

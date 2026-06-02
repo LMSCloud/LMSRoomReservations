@@ -46,7 +46,12 @@ export default class StaffBookingsView extends LitElement {
         ])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
             .then(([rooms, bookings, equipment]) => {
-                const toRoomOption = (room: any) => ({ id: room.roomid, name: room.roomnumber });
+                const toRoomOption = (room: any) => ({
+                    id: room.roomid,
+                    name: room.roomnumber,
+                    slot_length: room.slot_length,
+                    slot_start: room.slot_start,
+                });
                 const toEquipmentOption = (item: any) => ({
                     id: item.equipmentid,
                     name: item.equipmentname,

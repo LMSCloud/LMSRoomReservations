@@ -97,6 +97,14 @@ sub add {
             push @{$errors}, __('Please enter a number for') . q{ } . __('maxbookabletime');
         }
 
+        if ( $room->{'slot_length'} and !looks_like_number( $room->{'slot_length'} ) ) {
+            push @{$errors}, __('Please enter a number for') . q{ } . __('slot_length');
+        }
+
+        if ( $room->{'slot_start'} and $room->{'slot_start'} !~ m/^(?:[01]?\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/smx ) {
+            push @{$errors}, __('Please enter a time (HH:MM) for') . q{ } . __('slot_start');
+        }
+
         if ( length $room->{'roomnumber'} > $MAX_LENGTH_ROOMNUMBER ) {
             push @{$errors}, __('The maximum length for') . q{ } . __('roomnumber') . q{ } . __('is 20 characters');
         }
@@ -161,6 +169,14 @@ sub update {
 
         if ( $new_room->{'maxbookabletime'} and !looks_like_number( $new_room->{'maxbookabletime'} ) ) {
             push @{$errors}, __('Please enter a number for') . q{ } . __('maxbookabletime');
+        }
+
+        if ( $new_room->{'slot_length'} and !looks_like_number( $new_room->{'slot_length'} ) ) {
+            push @{$errors}, __('Please enter a number for') . q{ } . __('slot_length');
+        }
+
+        if ( $new_room->{'slot_start'} and $new_room->{'slot_start'} !~ m/^(?:[01]?\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/smx ) {
+            push @{$errors}, __('Please enter a time (HH:MM) for') . q{ } . __('slot_start');
         }
 
         if ( length $new_room->{'roomnumber'} > $MAX_LENGTH_ROOMNUMBER ) {

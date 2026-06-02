@@ -6,6 +6,7 @@ import { customElement, property, query, queryAll, state } from "lit/decorators.
 import { choose } from "lit/directives/choose.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { when } from "lit/directives/when.js";
 import { requestHandler } from "../../lib/RequestHandler";
 import { __, attr__ } from "../../lib/translate";
 import { tailwindStyles } from "../../tailwind.lit";
@@ -61,11 +62,17 @@ export default class LMSBookie extends LitElement {
 
     @state() weekDeviations: Deviation[] = [];
 
+    @state() private slots: Array<{ start: string; end: string; available: boolean }> = [];
+
+    @state() private selectedSlot: string = "";
+
     @query("#room") roomSelect!: HTMLSelectElement;
 
-    @query("#start-datetime") startDatetimeInput!: HTMLInputElement;
+    @query("#start-datetime") startDatetimeInput?: HTMLInputElement;
 
-    @query("#duration") durationCombobox!: LMSCombobox;
+    @query("#duration") durationCombobox?: LMSCombobox;
+
+    @query("#slot") slotSelect?: HTMLSelectElement;
 
     @query("#purpose-of-use") purposeOfUseInput!: HTMLInputElement;
 
@@ -79,8 +86,6 @@ export default class LMSBookie extends LitElement {
     private async handleSubmit(e: SubmitEvent) {
         e.preventDefault();
         const roomid = this.roomSelect.value;
-        const start = this.startDatetimeInput.value;
-        const duration = this.durationCombobox.value;
         const purposeOfUse = this.purposeOfUseInput.value;
         const hasEmail = Boolean(this.patron?.["email"]);
         const confirmation = hasEmail && (this.enforceEmailNotification || this.sendConfirmationRequested);
@@ -93,8 +98,28 @@ export default class LMSBookie extends LitElement {
             return accumulator;
         }, []);
 
-        const startDatetime = dayjs(start);
-        const end = startDatetime.add(parseInt(duration ?? "0", 10), "minute").format("YYYY-MM-DDTHH:mm");
+        let start: string;
+        let end: string;
+        if (this.isSlotMode) {
+            if (!this.selectedSlot) {
+                this.alert = {
+                    active: true,
+                    type: "Warning",
+                    message: html`<h3 class="font-bold">${__("Sorry")}!</h3>
+                        <span class="text-xs">${__("Please select a time slot")}.</span>`,
+                };
+                return;
+            }
+            const [slotStart, slotEnd] = this.selectedSlot.split("|");
+            start = slotStart ?? "";
+            end = slotEnd ?? "";
+        } else {
+            start = this.startDatetimeInput?.value ?? "";
+            const duration = this.durationCombobox?.value;
+            end = dayjs(start)
+                .add(parseInt(duration ?? "0", 10), "minute")
+                .format("YYYY-MM-DDTHH:mm");
+        }
 
         const response = await requestHandler.post("bookingsPublic", {
             borrowernumber: this.borrowernumber,
@@ -110,9 +135,13 @@ export default class LMSBookie extends LitElement {
 
         if (response.ok) {
             this.roomSelect.value = "";
-            this.startDatetimeInput.value = "";
             this.purposeOfUseInput.value = "";
-            this.durationCombobox.reset();
+            if (this.startDatetimeInput) {
+                this.startDatetimeInput.value = "";
+            }
+            this.durationCombobox?.reset();
+            this.selectedSlot = "";
+            this.slots = [];
             this.equipmentItemInputs.forEach((equipmentInput) => {
                 equipmentInput.checked = false;
             });
@@ -142,6 +171,36 @@ export default class LMSBookie extends LitElement {
 
     private dismissAlert() {
         this.alert = undefined;
+    }
+
+    private get isSlotMode() {
+        return Number(this.selectedRoom?.slot_length) > 0;
+    }
+
+    private async fetchSlots() {
+        if (!this.selectedRoom || !this.isSlotMode) {
+            this.slots = [];
+            this.selectedSlot = "";
+            return;
+        }
+
+        try {
+            const response = await requestHandler.get(
+                "roomSlotsPublic",
+                { date: this.selectedDate.format("YYYY-MM-DD") },
+                [String(this.selectedRoom.roomid), "slots"],
+            );
+            if (response.ok) {
+                const result = await response.json();
+                this.slots = (result.slots ?? []).filter((slot: { available: boolean }) => slot.available);
+            } else {
+                this.slots = [];
+            }
+        } catch (error) {
+            this.slots = [];
+        }
+
+        this.selectedSlot = "";
     }
 
     private get durationOptions() {
@@ -459,6 +518,18 @@ export default class LMSBookie extends LitElement {
                 this.selectedRoom = this.rooms.find((room) => room.roomid === parseInt(this.preselectedRoom, 10));
             }
         }
+
+        if (
+            (_changedProperties.has("selectedRoom") || _changedProperties.has("selectedDate")) &&
+            this.selectedRoom &&
+            this.isSlotMode
+        ) {
+            this.fetchSlots();
+        }
+    }
+
+    private handleSlotChange(e: Event) {
+        this.selectedSlot = (e.target as HTMLSelectElement).value;
     }
 
     override render() {
@@ -519,42 +590,98 @@ export default class LMSBookie extends LitElement {
                                         })}
                                     </select>
                                 </div>
-                                <div class="form-control">
-                                    <label class="label" for="start-datetime">
-                                        <span class="label-text"> ${__("Date & Time")} </span>
-                                    </label>
-                                    <input
-                                        type="datetime-local"
-                                        id="start-datetime"
-                                        name="start-datetime"
-                                        class="input input-bordered w-full"
-                                        aria-describedby="booking-help"
-                                        min=${dayjs().format("YYYY-MM-DDTHH:mm")}
-                                        ?disabled=${!this.borrowernumber}
-                                        @change=${this.handleDateChange}
-                                        required
-                                    />
-                                </div>
-                                <div class="form-control">
-                                    <label class="label" for="duration">
-                                        <span class="label-text">${__("Duration")}</span></label
-                                    >
-                                    <lms-combobox
-                                        id="duration"
-                                        name="duration"
-                                        input-type="number"
-                                        placeholder=${attr__("In minutes, e.g. 60")}
-                                        min=${String(this.bookingTimeMin)}
-                                        step=${String(this.bookingTimeStep)}
-                                        max=${this.selectedRoom?.maxbookabletime !== undefined
-                                            ? String(this.selectedRoom.maxbookabletime)
-                                            : nothing}
-                                        ?disabled=${!this.borrowernumber}
-                                        required
-                                        aria-label=${attr__("Duration")}
-                                        .options=${this.durationOptions}
-                                    ></lms-combobox>
-                                </div>
+                                ${when(
+                                    this.isSlotMode,
+                                    () => html`
+                                        <div class="form-control">
+                                            <label class="label" for="slot-date">
+                                                <span class="label-text"> ${__("Date")} </span>
+                                            </label>
+                                            <input
+                                                type="date"
+                                                id="slot-date"
+                                                name="slot-date"
+                                                class="input input-bordered w-full"
+                                                aria-describedby="booking-help"
+                                                min=${dayjs().format("YYYY-MM-DD")}
+                                                .value=${this.selectedDate.format("YYYY-MM-DD")}
+                                                ?disabled=${!this.borrowernumber}
+                                                @change=${this.handleDateChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="label" for="slot">
+                                                <span class="label-text"> ${__("Time slot")} </span>
+                                            </label>
+                                            <select
+                                                id="slot"
+                                                name="slot"
+                                                class="select select-bordered w-full"
+                                                aria-describedby="booking-help"
+                                                ?disabled=${!this.borrowernumber || this.slots.length === 0}
+                                                @change=${this.handleSlotChange}
+                                                required
+                                            >
+                                                <option value="">
+                                                    ${this.slots.length === 0
+                                                        ? __("No slots available")
+                                                        : __("Please select a time slot")}
+                                                </option>
+                                                ${map(this.slots, (slot) => {
+                                                    const value = `${slot.start}|${slot.end}`;
+                                                    const label = `${dayjs(slot.start).format("HH:mm")} – ${dayjs(
+                                                        slot.end,
+                                                    ).format("HH:mm")}`;
+                                                    return html`<option
+                                                        value=${value}
+                                                        ?selected=${this.selectedSlot === value}
+                                                    >
+                                                        ${label}
+                                                    </option>`;
+                                                })}
+                                            </select>
+                                        </div>
+                                    `,
+                                    () => html`
+                                        <div class="form-control">
+                                            <label class="label" for="start-datetime">
+                                                <span class="label-text"> ${__("Date & Time")} </span>
+                                            </label>
+                                            <input
+                                                type="datetime-local"
+                                                id="start-datetime"
+                                                name="start-datetime"
+                                                class="input input-bordered w-full"
+                                                aria-describedby="booking-help"
+                                                min=${dayjs().format("YYYY-MM-DDTHH:mm")}
+                                                ?disabled=${!this.borrowernumber}
+                                                @change=${this.handleDateChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="label" for="duration">
+                                                <span class="label-text">${__("Duration")}</span></label
+                                            >
+                                            <lms-combobox
+                                                id="duration"
+                                                name="duration"
+                                                input-type="number"
+                                                placeholder=${attr__("In minutes, e.g. 60")}
+                                                min=${String(this.bookingTimeMin)}
+                                                step=${String(this.bookingTimeStep)}
+                                                max=${this.selectedRoom?.maxbookabletime !== undefined
+                                                    ? String(this.selectedRoom.maxbookabletime)
+                                                    : nothing}
+                                                ?disabled=${!this.borrowernumber}
+                                                required
+                                                aria-label=${attr__("Duration")}
+                                                .options=${this.durationOptions}
+                                            ></lms-combobox>
+                                        </div>
+                                    `,
+                                )}
                                 <div class=${classMap({ hidden: !shouldDisplayEquipment })}>
                                     <div class="divider">
                                         <span class="label-text"> ${__("Equipment")} </span>

@@ -266,6 +266,10 @@ const endpoints: ApiEndpoints = {
                 lang: locale,
             },
         },
+        roomSlotsPublic: {
+            url: `${BASE_URL}/public/rooms`,
+            cache: false,
+        },
         rooms: {
             url: `${BASE_URL}/rooms`,
             cache: false,

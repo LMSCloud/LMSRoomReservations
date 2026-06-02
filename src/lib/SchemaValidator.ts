@@ -6,6 +6,11 @@ const nullableNumber = z.preprocess(
     z.coerce.number().nullable(),
 );
 
+const nullableString = z.preprocess(
+    (val) => (val === undefined || val === "" ? null : val),
+    z.coerce.string().nullable(),
+);
+
 export type Table =
     | "rooms"
     | "bookingsPublic"
@@ -49,6 +54,8 @@ const validationSchemas = {
         image: z.coerce.string().nullable(),
         branch: z.coerce.string().nullable(),
         maxbookabletime: nullableNumber,
+        slot_length: nullableNumber,
+        slot_start: nullableString,
     }),
     bookingsPublic: z.object({
         borrowernumber: z.coerce.number(),
@@ -69,6 +76,7 @@ const validationSchemas = {
         blackedout: z.coerce.number(),
         send_confirmation: z.coerce.number().optional().default(0),
         letter_code: z.string().optional().default("ROOM_RESERVATION"),
+        slot_override: z.coerce.number().optional().default(0),
     }),
     openHours: z.union([openHoursSimpleSchema, openHoursArraySchema]),
     openHoursDeviations: z.object({
