@@ -172,7 +172,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "tool"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#list"
@@ -323,7 +323,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "tool"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#add"
@@ -385,7 +385,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "tool"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#delete"
@@ -529,7 +529,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "tool"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#get"
@@ -683,7 +683,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "tool"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Bookings#update"
@@ -827,7 +827,10 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": [
+            "tool",
+            "configure"
+          ]
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#list"
@@ -1028,7 +1031,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#add"
@@ -1138,7 +1141,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#delete"
@@ -1276,7 +1279,10 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": [
+            "tool",
+            "configure"
+          ]
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#get"
@@ -1457,7 +1463,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Equipment#update"
@@ -1584,7 +1590,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#list"
@@ -1741,7 +1747,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#add"
@@ -1851,7 +1857,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#delete"
@@ -1987,7 +1993,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#get"
@@ -2091,7 +2097,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHours#update"
@@ -2215,7 +2221,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#list"
@@ -2378,7 +2384,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#add"
@@ -2511,7 +2517,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#get"
@@ -2687,7 +2693,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#update"
@@ -2759,7 +2765,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::OpenHoursDeviations#delete"
@@ -4642,7 +4648,10 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": [
+            "tool",
+            "configure"
+          ]
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#list"
@@ -4873,7 +4882,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#add"
@@ -4983,7 +4992,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#delete"
@@ -5153,7 +5162,10 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": [
+            "tool",
+            "configure"
+          ]
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#get"
@@ -5391,7 +5403,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Rooms#update"
@@ -5530,7 +5542,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#list"
@@ -5669,7 +5681,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#add"
@@ -5779,7 +5791,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#delete"
@@ -5901,7 +5913,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#get"
@@ -6034,7 +6046,7 @@
       ],
       "x-koha-authorization": {
         "permissions": {
-          "plugins": "1"
+          "plugins": "configure"
         }
       },
       "x-mojo-to": "Com::LMSCloud::RoomReservations::Controllers::Settings#update"

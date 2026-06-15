@@ -45,15 +45,15 @@ export default class LMSRoomReservationsMenu extends LMSFloatingMenu {
                 method: "configure",
             },
             {
+                name: __("Open Hours"),
+                icon: faClock,
+                url: this.composeUrl("configure", "open-hours"),
+                method: "configure",
+            },
+            {
                 name: __("Bookings"),
                 icon: faList,
                 url: this.composeUrl("tool"),
-                method: "tool",
-            },
-            {
-                name: __("Open Hours"),
-                icon: faClock,
-                url: this.composeUrl("tool", "open-hours"),
                 method: "tool",
             },
         ];

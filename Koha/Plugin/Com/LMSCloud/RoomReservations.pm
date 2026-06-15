@@ -69,10 +69,6 @@ sub tool {
             $template = $self->get_template( { file => 'views/tool/bookings.tt' } );
             $template->param( op => $op, );
         },
-        q{open-hours} => sub {
-            $template = $self->get_template( { file => 'views/tool/open-hours.tt' } );
-            $template->param( op => $op, );
-        },
     };
 
     $operations->{$op}->() if exists $operations->{$op};
@@ -125,6 +121,10 @@ sub configure {
         },
         q{equipment} => sub {
             $template = $self->get_template( { file => 'views/configuration/equipment.tt' } );
+            $template->param( op => $op, );
+        },
+        q{open-hours} => sub {
+            $template = $self->get_template( { file => 'views/configuration/open-hours.tt' } );
             $template->param( op => $op, );
         },
     };
