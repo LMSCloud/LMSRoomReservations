@@ -4114,18 +4114,6 @@ details.collapse summary::-webkit-details-marker {
   bottom: auto;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
 .pointer-events-none {
   pointer-events: none;
 }
@@ -4855,11 +4843,6 @@ details.collapse summary::-webkit-details-marker {
 
 .text-base-content\\/70 {
   color: hsl(var(--bc) / 0.7);
-}
-
-.text-primary {
-  --tw-text-opacity: 1;
-  color: hsl(var(--p) / var(--tw-text-opacity, 1));
 }
 
 .text-primary-content {
