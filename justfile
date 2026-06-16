@@ -43,3 +43,7 @@ update-meta:
 seed container="kohadev-koha-1" binary="docker":
   CONTAINER_NAME={{container}} DOCKER_BINARY={{binary}} ./testing/seed-fixtures.pl
 
+# Seeds a volume of bookings (default 200) to exercise the paginated bookings table. Run `just seed` first. Pass `--clean` to remove them.
+seed-bookings count="200" container="kohadev-koha-1" binary="docker" *args="":
+  CONTAINER_NAME={{container}} DOCKER_BINARY={{binary}} ./testing/seed-bookings.pl --count {{count}} {{args}}
+
