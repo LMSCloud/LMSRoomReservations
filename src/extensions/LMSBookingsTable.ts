@@ -168,7 +168,15 @@ export default class LMSBookingsTable extends LMSTable {
         this.isEditable = true;
         this.isDeletable = true;
         this.isExpandable = true;
-        this.hasControls = false;
+        this.hasControls = true;
+        this.hasSearch = true;
+        this.sortClientSide = false;
+        this.unsortableColumns = ["equipment"];
+        // Virtual search fields (not table columns): a bare-term search also
+        // matches patron name and room number via the backend's joined query.
+        // "id" stays first to satisfy the SortableColumns type; the backend
+        // simply ignores it as it maps to no real column.
+        this.sortableColumns = ["id", "patron", "roomnumber"];
         this.leftAlignedColumns = ["purpose_of_use"];
     }
 

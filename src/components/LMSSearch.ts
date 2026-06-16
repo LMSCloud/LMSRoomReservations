@@ -138,16 +138,15 @@ export default class LMSSearch extends LitElement {
                 const builtQuery = this.buildQuery(parsedQuery);
                 q = JSON.stringify(builtQuery);
             } else {
-                // It's a bare search term, build a wildcard query for each field
-                const encoded = {
-                    "%": window.encodeURIComponent("%"),
-                    query: window.encodeURIComponent(query),
-                };
+                // It's a bare search term, build a wildcard query for each field.
+                // The literal "%" wildcards belong in the LIKE pattern itself;
+                // URL-encoding is handled by the transport, so pre-encoding here
+                // would search for the literal text "%25" instead.
                 const wildcardQuery = this.sortableColumns.reduce(
                     (entries, field) => {
                         entries.push({
                             [field]: {
-                                "-like": `${encoded["%"]}${encoded.query}${encoded["%"]}`,
+                                "-like": `%${query}%`,
                             },
                         });
                         return entries;

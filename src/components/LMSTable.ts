@@ -88,6 +88,16 @@ export default class LMSTable extends LitElement {
 
     protected hasControls = true;
 
+    // Whether the controls navbar shows the search box. Tables driven by
+    // server-side pagination can keep the pagination control while hiding
+    // search until it is wired to the backend query.
+    protected hasSearch = true;
+
+    // Whether the table sorts its own rows by `order` on every render. Views
+    // that fetch already-sorted pages from the server disable this so the
+    // server's ordering survives.
+    protected sortClientSide = true;
+
     protected inputConverter = new InputConverter();
 
     private notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
@@ -469,7 +479,7 @@ export default class LMSTable extends LitElement {
         this.headers = this.order.filter((header) => headers && {}.hasOwnProperty.call(headers, header));
 
         if (hasData) {
-            this.data = this.order.length ? (this.sortByOrder(data, this.order) as []) : data;
+            this.data = this.sortClientSide && this.order.length ? (this.sortByOrder(data, this.order) as []) : data;
         }
     }
 
@@ -639,11 +649,13 @@ export default class LMSTable extends LitElement {
                         hidden: !this.hasControls,
                     })}
                 >
-                    <lms-search
-                        slot="navbar-center"
-                        @search=${this.handleSearch}
-                        .sortableColumns=${this.sortableColumns}
-                    ></lms-search>
+                    ${this.hasSearch
+                        ? html`<lms-search
+                              slot="navbar-center"
+                              @search=${this.handleSearch}
+                              .sortableColumns=${this.sortableColumns}
+                          ></lms-search>`
+                        : nothing}
                     <lms-pagination
                         slot="navbar-end"
                         .nextPage=${this.nextPage}

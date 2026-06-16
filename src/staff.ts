@@ -4,7 +4,9 @@
 import "./themes/apply-koha-theme";
 
 import LMSConfirmationModal from "./components/LMSConfirmationModal";
+import LMSDataNavbar from "./components/LMSDataNavbar";
 import LMSModal from "./components/LMSModal";
+import LMSPagination from "./components/LMSPagination";
 import LMSSearch from "./components/LMSSearch";
 import LMSTable from "./components/LMSTable";
 import LMSToast from "./components/LMSToast";
@@ -38,12 +40,14 @@ export {
     LMSBookingsTable,
     LMSCombobox,
     LMSConfirmationModal,
+    LMSDataNavbar,
     LMSDeviationForm,
     LMSEquipmentItem,
     LMSEquipmentModal,
     LMSModal,
     LMSOpenHoursDeviationsTable,
     LMSOpenHoursTable,
+    LMSPagination,
     LMSPatronSearch,
     LMSRoom,
     LMSRoomModal,
