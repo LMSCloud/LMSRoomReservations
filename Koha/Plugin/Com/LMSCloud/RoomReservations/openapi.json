@@ -9,6 +9,34 @@
           "name": "lang",
           "required": false,
           "type": "string"
+        },
+        {
+          "description": "Page number, for paginated object listing",
+          "in": "query",
+          "name": "_page",
+          "required": false,
+          "type": "integer"
+        },
+        {
+          "description": "Page size, for paginated object listing",
+          "in": "query",
+          "name": "_per_page",
+          "required": false,
+          "type": "integer"
+        },
+        {
+          "description": "Column to order by; prefix with '-' for descending order",
+          "in": "query",
+          "name": "_order_by",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "description": "JSON query for searching/filtering bookings (Koha REST q syntax)",
+          "in": "query",
+          "name": "q",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": [
