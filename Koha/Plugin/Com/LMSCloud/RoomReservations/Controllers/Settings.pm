@@ -138,6 +138,11 @@ sub list {
                 value       => $self->retrieve_data('calendar_primary_color'),
                 description => __('Calendar accent color'),
                 type        => 'color',
+            },
+            {   setting     => 'show_calendar_closures',
+                value       => $self->retrieve_data('show_calendar_closures'),
+                description => __('Show open-hours closures on the OPAC calendar'),
+                type        => 'checkbox',
             }
         ];
 

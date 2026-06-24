@@ -47,3 +47,7 @@ seed container="kohadev-koha-1" binary="docker":
 seed-bookings count="200" container="kohadev-koha-1" binary="docker" *args="":
   CONTAINER_NAME={{container}} DOCKER_BINARY={{binary}} ./testing/seed-bookings.pl --count {{count}} {{args}}
 
+# Seeds blackout deviations to exercise the OPAC calendar's closure entries. Run `just seed` first. Pass `--clean` to remove them.
+seed-deviations container="kohadev-koha-1" binary="docker" *args="":
+  CONTAINER_NAME={{container}} DOCKER_BINARY={{binary}} ./testing/seed-deviations.pl {{args}}
+

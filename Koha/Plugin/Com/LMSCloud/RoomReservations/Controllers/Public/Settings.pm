@@ -22,6 +22,7 @@ my @ALLOWED_SETTINGS = qw(
     calendar_year_drill_target
     calendar_year_density_mode
     calendar_primary_color
+    show_calendar_closures
 );
 
 sub list {

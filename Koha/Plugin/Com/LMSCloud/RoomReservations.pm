@@ -155,6 +155,7 @@ sub _ensure_settings_exist {
         calendar_year_drill_target     => q{},
         calendar_year_density_mode     => q{},
         calendar_primary_color         => q{},
+        show_calendar_closures         => q{},
     };
 
     for my $setting_key ( keys %{$default_settings} ) {

@@ -3,10 +3,19 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { requestHandler } from "../lib/RequestHandler";
+import { deviationsToCalendarEntries } from "../lib/converters/deviationEntries";
 import { formatMinutesHumanReadable } from "../lib/converters/timeConverter";
 import { __, attr__, locale, onTranslationsReady, t } from "../lib/translate";
 import { LMSBookie, LMSCalendar } from "../main";
 import { tailwindStyles } from "../tailwind.lit";
+import type { Deviation } from "../types/common";
+
+/** Neutral red used for blocked/closed entries so they read as closures rather
+    than room bookings (which are tinted with their room color). */
+const BLOCKED_ENTRY_COLOR = "#dc2626";
+
+/** How far on either side of today recurring closures are materialized. */
+const DEVIATION_WINDOW_MONTHS = 12;
 
 declare global {
     interface HTMLElementTagNameMap {
@@ -35,6 +44,8 @@ export default class RoomReservationsView extends LitElement {
 
     private rooms: any[] = [];
 
+    private deviations: Deviation[] = [];
+
     private defaultMaxBookingtime: number = 0;
 
     private bookingTimeMin: number = 30;
@@ -50,6 +61,8 @@ export default class RoomReservationsView extends LitElement {
     private calendarPrimaryColor = "";
 
     private enforceEmailNotification = false;
+
+    private showCalendarClosures = false;
 
     private currentDate = new Date();
 
@@ -167,15 +180,17 @@ export default class RoomReservationsView extends LitElement {
             requestHandler.get("settingsPublic"),
             requestHandler.get("bookingsPublic"),
             requestHandler.get("patronPublic"),
+            requestHandler.get("openHoursDeviationsPublic"),
         ])
             .then((responses) => Promise.all(responses.map((response) => response.json())))
-            .then(([libraries, openHours, rooms, equipment, settings, bookings, patron]) => {
+            .then(([libraries, openHours, rooms, equipment, settings, bookings, patron, deviations]) => {
                 this.libraries = libraries;
                 this.openHours = openHours;
                 this.rooms = rooms;
                 this.equipment = equipment;
                 this.bookings = bookings;
                 this.patron = patron;
+                this.deviations = deviations;
 
                 const settingsMap = new Map<string, string>(
                     settings.map((s: { setting: string; value: string }) => [s.setting, s.value]),
@@ -189,6 +204,7 @@ export default class RoomReservationsView extends LitElement {
                 this.calendarPrimaryColor = settingsMap.get("calendar_primary_color") ?? "";
 
                 this.enforceEmailNotification = settingsMap.get("enforce_email_notification") === "1";
+                this.showCalendarClosures = settingsMap.get("show_calendar_closures") === "1";
             })
             .then(() => {
                 this.hasLoaded = true;
@@ -225,7 +241,7 @@ export default class RoomReservationsView extends LitElement {
 
     private updateCalendar() {
         if (!this.lmsCalendar) return;
-        this.lmsCalendar.entries = this.bookings
+        const bookingEntries = this.bookings
             .map((booking) => {
                 const { roomid, start, end, blackedout } = booking;
                 const [s, e] = [new Date(start), new Date(end)];
@@ -257,6 +273,24 @@ export default class RoomReservationsView extends LitElement {
                 };
             })
             .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+
+        const blockedEntries = this.showCalendarClosures ? this.buildBlockedEntries() : [];
+
+        this.lmsCalendar.entries = [...bookingEntries, ...blockedEntries];
+    }
+
+    private buildBlockedEntries() {
+        const windowStart = new Date(this.currentDate);
+        windowStart.setMonth(windowStart.getMonth() - DEVIATION_WINDOW_MONTHS);
+        const windowEnd = new Date(this.currentDate);
+        windowEnd.setMonth(windowEnd.getMonth() + DEVIATION_WINDOW_MONTHS);
+
+        return deviationsToCalendarEntries(this.deviations, this.rooms, windowStart, windowEnd, {
+            closedLabel: t("Closed"),
+            allRoomsLabel: t("all rooms"),
+            roomsLabel: t("rooms"),
+            color: BLOCKED_ENTRY_COLOR,
+        });
     }
 
     async fetchUpdate() {

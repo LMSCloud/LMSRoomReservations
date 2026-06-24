@@ -15,8 +15,8 @@ importers:
         specifier: 4.6.0-0
         version: 4.6.0-0
       '@jpahd/kalendus':
-        specifier: ^0.9.7
-        version: 0.9.7(lit@3.3.1)(luxon@3.7.2)
+        specifier: ^0.10.2
+        version: 0.10.2(lit@3.3.1)(luxon@3.7.2)
       '@jpahd/qparams':
         specifier: ~0.1.0
         version: 0.1.0
@@ -490,8 +490,8 @@ packages:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
 
-  '@jpahd/kalendus@0.9.7':
-    resolution: {integrity: sha512-lc6c3MUZ1wf34VSfL13t2uRHqSdfE/bIVkXcnaG2ECd+JTi9VLf3h0+zaX6ZaxZc20xjx8HzLELivHsh7ApUYg==}
+  '@jpahd/kalendus@0.10.2':
+    resolution: {integrity: sha512-INn+5P59piIXN97oKNMMx+v98pWEnKGpsJNsuqE8qiTS1DmdLtz1soI2isA3aXN/kPvDZNG3atTMhmHAcJW+mA==}
     peerDependencies:
       lit: ^3.0.0
       luxon: ^3.0.0
@@ -2636,7 +2636,7 @@ snapshots:
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
-  '@jpahd/kalendus@0.9.7(lit@3.3.1)(luxon@3.7.2)':
+  '@jpahd/kalendus@0.10.2(lit@3.3.1)(luxon@3.7.2)':
     dependencies:
       lit: 3.3.1
       luxon: 3.7.2
