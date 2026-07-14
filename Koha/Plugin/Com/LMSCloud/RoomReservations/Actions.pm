@@ -97,6 +97,7 @@ sub send_email_confirmation {
     my $letter = C4::Letters::GetPreparedLetter(
         %{ $letters->{ $body->{'letter_code'} } },
         branchcode => $patron->branchcode,
+        lang       => $patron->lang,
     );
 
     my $message_ids       = [];
