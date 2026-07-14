@@ -96,23 +96,24 @@ sub send_email_confirmation {
 
     my $letter = C4::Letters::GetPreparedLetter( %{ $letters->{ $body->{'letter_code'} } } );
 
-    my @message_ids;
+    my $message_ids       = [];
+    my $patron_message_id = undef;
     if ( $send_confirmation && $patron->email ) {
-        push @message_ids,
-            C4::Letters::EnqueueLetter(
+        $patron_message_id = C4::Letters::EnqueueLetter(
             {   letter                 => $letter,
                 borrowernumber         => $body->{'borrowernumber'},
                 branchcode             => $patron->branchcode,
                 message_transport_type => 'email',
             }
-            );
+        );
+        push @{$message_ids}, $patron_message_id;
     }
 
     if ($reply_to_address) {
         my %seen;
         my $addresses = [ grep { !$seen{$_}++ } grep {$_} map { my $addr = $_; $addr =~ s/^\s+|\s+$//g; $addr } split /,/, $reply_to_address ];
         for my $address ( @{$addresses} ) {
-            push @message_ids,
+            push @{$message_ids},
                 C4::Letters::EnqueueLetter(
                 {   letter                 => $letter,
                     to_address             => $address,
@@ -123,12 +124,12 @@ sub send_email_confirmation {
         }
     }
 
-    for my $message_id (@message_ids) {
+    for my $message_id ( @{$message_ids} ) {
         C4::Letters::SendQueuedMessages( { message_id => $message_id } );
     }
 
-    if ( $send_confirmation && $patron->email ) {
-        return C4::Letters::GetMessage( shift @message_ids )->{'status'} eq 'sent' ? 1 : 0;
+    if ( defined $patron_message_id ) {
+        return C4::Letters::GetMessage($patron_message_id)->{'status'} eq 'sent' ? 1 : 0;
     }
 
     return 0;
