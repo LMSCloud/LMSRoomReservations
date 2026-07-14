@@ -94,7 +94,10 @@ sub send_email_confirmation {
         }
     };
 
-    my $letter = C4::Letters::GetPreparedLetter( %{ $letters->{ $body->{'letter_code'} } } );
+    my $letter = C4::Letters::GetPreparedLetter(
+        %{ $letters->{ $body->{'letter_code'} } },
+        branchcode => $patron->branchcode,
+    );
 
     my $message_ids       = [];
     my $patron_message_id = undef;
