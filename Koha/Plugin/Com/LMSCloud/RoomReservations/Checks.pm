@@ -6,9 +6,8 @@ use 5.010;
 
 use C4::Context ();
 
-use Koha::Calendar ();
-use Koha::Patrons  ();
-use DateTime       ();
+use Koha::Patrons ();
+use DateTime      ();
 
 use Exporter 'import';
 use Readonly      qw( Readonly );
@@ -20,6 +19,20 @@ use Koha::Plugin::Com::LMSCloud::RoomReservations::State qw(
     get_restricted_patron_categories
 );
 use Koha::Plugin::Com::LMSCloud::RoomReservations::Util::I18N qw( __ );
+
+use Module::Load              qw( load );
+use Module::Load::Conditional qw( check_install );
+
+# Koha::Calendar was moved to Koha::Library::Calendar in newer Koha versions
+my $CALENDAR_CLASS;
+
+BEGIN {
+    $CALENDAR_CLASS =
+        check_install( module => 'Koha::Library::Calendar' )
+        ? 'Koha::Library::Calendar'
+        : 'Koha::Calendar';
+    load $CALENDAR_CLASS;
+}
 
 our $VERSION = '1.0.0';
 
@@ -550,8 +563,8 @@ sub _parse_datetime {
 sub is_koha_calendar_open {
     my ( $branch, $start_time, $end_time ) = @_;
 
-    # Initialize Koha::Calendar for the branch
-    my $calendar = Koha::Calendar->new( branchcode => $branch, days_mode => 'Calendar' );
+    # Initialize the Koha calendar for the branch
+    my $calendar = $CALENDAR_CLASS->new( branchcode => $branch, days_mode => 'Calendar' );
 
     # Convert start and end times to DateTime objects
     my $start_dt = _parse_datetime($start_time);
